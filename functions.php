@@ -19,28 +19,21 @@ add_action( 'after_setup_theme', 'two_fiftyseven_setup' );
 
 
 /**
- * Check whether the Vite HMR dev server is currently running.
- * Only ever returns true in a local environment.
- * Result is cached for the lifetime of the PHP process (one page load).
+ * Returns true when running in a local environment.
+ * In local: load assets from the Vite dev server.
+ * Everywhere else: load from the built manifest in assets/dist/.
+ *
+ * To override locally (e.g. to test the production build), add:
+ *   define( 'VITE_HMR', false );
+ * to wp-config.php.
  */
 function is_vite_hmr_available(): bool {
-	static $available = null;
-
-	if ( $available !== null ) {
-		return $available;
+	// Allow explicit override via wp-config.php.
+	if ( defined( 'VITE_HMR' ) ) {
+		return (bool) VITE_HMR;
 	}
 
-	// Only check on local environments.
-	if ( ! defined( 'WP_ENVIRONMENT_TYPE' ) || WP_ENVIRONMENT_TYPE !== 'local' ) {
-		$available = false;
-		return $available;
-	}
-
-	$ctx       = stream_context_create( [ 'http' => [ 'timeout' => 0.3 ] ] );
-	$response  = @file_get_contents( 'http://localhost:5173/@vite/client', false, $ctx ); // phpcs:ignore WordPress.PHP.NoSilencedErrors
-	$available = ( $response !== false );
-
-	return $available;
+	return defined( 'WP_ENVIRONMENT_TYPE' ) && WP_ENVIRONMENT_TYPE === 'local';
 }
 
 
@@ -52,6 +45,7 @@ function is_vite_hmr_available(): bool {
 function two_fiftyseven_enqueue_assets(): void {
 	if ( is_vite_hmr_available() ) {
 		// Vite dev server — inject HMR client then the entry module.
+		// Scripts are loaded from the Mac host; localhost resolves correctly in the browser.
 		wp_enqueue_script( 'vite-client', 'http://localhost:5173/@vite/client', [], null, false );
 		wp_enqueue_script( 'two-fiftyseven-main', 'http://localhost:5173/assets/js/main.js', [], null, false );
 	} else {

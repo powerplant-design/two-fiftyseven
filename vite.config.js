@@ -7,9 +7,14 @@ export default defineConfig({
     host: 'localhost',
     port: 5173,
     strictPort: true,
-    // Allow requests from the DevKinsta local domain.
     cors: true,
     origin: 'http://localhost:5173',
+    // Allow DevKinsta local domain to make requests to the Vite server.
+    allowedHosts: ['two-fiftyseven.local', 'localhost'],
+    hmr: {
+      host: 'localhost',
+      port: 5173,
+    },
   },
 
   build: {
