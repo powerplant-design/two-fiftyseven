@@ -1,0 +1,65 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// ─── Base / Typography ───────────────────────────────────────────────────────
+
+:root {
+  --color-primary: #257;
+  --color-text: #1a1a1a;
+  --color-bg: #fff;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+// ─── Layout ──────────────────────────────────────────────────────────────────
+
+.container {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+// ─── Site Header ─────────────────────────────────────────────────────────────
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-block: 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+// ─── Site Footer ─────────────────────────────────────────────────────────────
+
+.site-footer {
+  padding-block: 2rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+// ─── Prose (content) ─────────────────────────────────────────────────────────
+
+.entry-content {
+  line-height: 1.8;
+
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+  }
+
+  p {
+    margin-bottom: 1.25em;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+}

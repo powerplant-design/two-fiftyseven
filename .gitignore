@@ -1,0 +1,16 @@
+node_modules/
+
+# Keep the built manifest so WordPress can load assets in production,
+# but ignore everything else in the dist folder.
+assets/dist/*
+!assets/dist/.vite/
+!assets/dist/.vite/manifest.json
+
+# macOS
+.DS_Store
+
+# Editor
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
