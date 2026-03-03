@@ -12,19 +12,48 @@ html {
 	--border-width-thick: 4px;
 
 	/* -----------------------------------------------
-	Colors
+	Colors — Maroon
 	----------------------------------------------- */
 
-	--color-white: hsl(229deg 0% 100%);
-	--color-gray-50: hsl(224deg 28% 97%);
-	--color-gray-200: hsl(224deg 9% 90%);
-	--color-gray-300: hsl(224deg 5% 84%);
-	--color-gray-900: hsl(224deg 20% 10%);
-	--color-blue: hsl(229deg 80% 56%);
-	--color-blue-darker: hsl(230deg 68% 51%);
-	--color-green: hsl(167deg 61% 32%);
-	--color-green-darker: hsl(169deg 100% 23%);
-	--color-red: hsl(360deg 100% 40%);
+	--color-maroon-100: #fbe4e3;
+	--color-maroon-200: #f7c9c7;
+	--color-maroon-300: #f3afac;
+	--color-maroon-400: #ef9490;
+	--color-maroon-500: #471820;
+	--color-maroon-600: #2e0f14;
+
+	/* -----------------------------------------------
+	Colors — Purple
+	----------------------------------------------- */
+
+	--color-purple-100: #f1e1ff;
+	--color-purple-200: #e2c4ff;
+	--color-purple-300: #d3a7fe;
+	--color-purple-400: #c589fe;
+	--color-purple-500: #5b3860;
+	--color-purple-600: #3f2143;
+
+	/* -----------------------------------------------
+	Colors — Forest
+	----------------------------------------------- */
+
+	--color-forest-100: #f6ffe2;
+	--color-forest-200: #eeffc5;
+	--color-forest-300: #e5ffa9;
+	--color-forest-400: #ddff8c;
+	--color-forest-500: #182d09;
+	--color-forest-600: #111d08;
+
+	/* -----------------------------------------------
+	Colors — Neutral
+	----------------------------------------------- */
+
+	--color-neutral-100: #ffffff;
+	--color-neutral-200: #f1f1f1;
+	--color-neutral-300: #989898;
+	--color-neutral-400: #707070;
+	--color-neutral-500: #424242;
+	--color-neutral-600: #222222;
 
 	/* -----------------------------------------------
 	Corner Radiuses

@@ -11,9 +11,9 @@ Notes:
 
 /* Interactive anchors (with href) */
 a:where([href]) {
-	color: var(--link-text-color, var(--color-accent-primary));
+	color: var(--link-text-color, var(--color-link));
 	text-decoration-thickness: var(--link-decoration-thickness, from-font);
-	text-decoration-color: var(--link-decoration-color, var(--color-accent-primary, currentcolor));
+	text-decoration-color: var(--link-decoration-color, var(--color-link, currentcolor));
 	text-underline-position: from-font;
 	text-underline-offset: var(--link-underline-offset);
 

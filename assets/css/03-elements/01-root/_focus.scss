@@ -23,7 +23,7 @@ Notes:
 	outline-color: var(--focus-ring-outer-color, revert);
 	outline-offset: var(--_outline-offset, revert);
 	box-shadow:
-		0 0 0 var(--focus-ring-offset) var(--color-surface),
+		0 0 0 var(--focus-ring-offset) var(--color-surface-primary),
 		0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-inner-width)) var(--focus-ring-inner-color);
 
 	@media (prefers-reduced-motion: no-preference) {

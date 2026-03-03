@@ -1,0 +1,320 @@
+/* ===================================================================
+Colour Themes
+---
+8 themes: light (default), dark, forest-light, forest-dark,
+          purple-light, purple-dark, maroon-light, maroon-dark.
+
+Apply via: <html data-theme="dark"> (or any ancestor element).
+
+Token categories:
+  Content  — text / icon colours
+  Surface  — background colours
+  Border   — border colours
+  Button   — interactive control colours
+  Link     — anchor colours
+=================================================================== */
+
+/* -----------------------------------------------
+Light (default)
+----------------------------------------------- */
+
+html,
+html[data-theme="light"] {
+	/* Content */
+	--color-content-primary: var(--color-neutral-600);
+	--color-content-secondary: var(--color-neutral-500);
+	--color-content-tertiary: var(--color-neutral-400);
+	--color-content-inverse: var(--color-neutral-100);
+	--color-content-secondary-inverse: var(--color-neutral-200);
+	--color-content-tertiary-inverse: var(--color-neutral-300);
+	--color-content-unchanged: var(--color-neutral-100);
+
+	/* Surface */
+	--color-surface-primary: var(--color-neutral-100);
+	--color-surface-secondary: var(--color-neutral-200);
+	--color-surface-inverse-primary: var(--color-neutral-600);
+	--color-surface-inverse-secondary: var(--color-neutral-500);
+	--color-surface-unchanged: var(--color-neutral-600);
+
+	/* Border */
+	--color-border-primary: var(--color-neutral-600);
+	--color-border-secondary: var(--color-neutral-500);
+	--color-border-tertiary: var(--color-neutral-400);
+	--color-border-button: var(--color-purple-500);
+
+	/* Button */
+	--color-btn-primary-text: var(--color-purple-100);
+	--color-btn-primary-bg: var(--color-purple-500);
+	--color-btn-secondary-text: var(--color-purple-500);
+	--color-btn-secondary-bg: var(--color-purple-100);
+
+	/* Link */
+	--color-link: var(--color-purple-500);
+	--color-link-hover: var(--color-purple-400);
+}
+
+/* -----------------------------------------------
+Dark
+----------------------------------------------- */
+
+html[data-theme="dark"] {
+	/* Content */
+	--color-content-primary: var(--color-neutral-100);
+	--color-content-secondary: var(--color-neutral-200);
+	--color-content-tertiary: var(--color-neutral-300);
+	--color-content-inverse: var(--color-neutral-600);
+	--color-content-secondary-inverse: var(--color-neutral-500);
+	--color-content-tertiary-inverse: var(--color-neutral-400);
+	--color-content-unchanged: var(--color-neutral-100);
+
+	/* Surface */
+	--color-surface-primary: var(--color-neutral-600);
+	--color-surface-secondary: var(--color-neutral-500);
+	--color-surface-inverse-primary: var(--color-neutral-100);
+	--color-surface-inverse-secondary: var(--color-neutral-200);
+	--color-surface-unchanged: var(--color-neutral-600);
+
+	/* Border */
+	--color-border-primary: var(--color-neutral-100);
+	--color-border-secondary: var(--color-neutral-200);
+	--color-border-tertiary: var(--color-neutral-300);
+	--color-border-button: var(--color-purple-400);
+
+	/* Button */
+	--color-btn-primary-text: var(--color-purple-600);
+	--color-btn-primary-bg: var(--color-purple-400);
+	--color-btn-secondary-text: var(--color-purple-400);
+	--color-btn-secondary-bg: var(--color-purple-600);
+
+	/* Link */
+	--color-link: var(--color-purple-400);
+	--color-link-hover: var(--color-purple-300);
+}
+
+/* -----------------------------------------------
+Forest Light
+----------------------------------------------- */
+
+html[data-theme="forest-light"] {
+	/* Content */
+	--color-content-primary: var(--color-forest-600);
+	--color-content-secondary: var(--color-forest-500);
+	--color-content-tertiary: var(--color-neutral-400);
+	--color-content-inverse: var(--color-forest-100);
+	--color-content-secondary-inverse: var(--color-forest-200);
+	--color-content-tertiary-inverse: var(--color-forest-300);
+	--color-content-unchanged: var(--color-neutral-100);
+
+	/* Surface */
+	--color-surface-primary: var(--color-forest-100);
+	--color-surface-secondary: var(--color-forest-200);
+	--color-surface-inverse-primary: var(--color-forest-600);
+	--color-surface-inverse-secondary: var(--color-forest-500);
+	--color-surface-unchanged: var(--color-neutral-600);
+
+	/* Border */
+	--color-border-primary: var(--color-forest-600);
+	--color-border-secondary: var(--color-forest-500);
+	--color-border-tertiary: var(--color-neutral-400);
+	--color-border-button: var(--color-forest-500);
+
+	/* Button */
+	--color-btn-primary-text: var(--color-forest-100);
+	--color-btn-primary-bg: var(--color-forest-500);
+	--color-btn-secondary-text: var(--color-forest-500);
+	--color-btn-secondary-bg: var(--color-forest-100);
+
+	/* Link */
+	--color-link: var(--color-forest-500);
+	--color-link-hover: var(--color-forest-400);
+}
+
+/* -----------------------------------------------
+Forest Dark
+----------------------------------------------- */
+
+html[data-theme="forest-dark"] {
+	/* Content */
+	--color-content-primary: var(--color-forest-100);
+	--color-content-secondary: var(--color-forest-200);
+	--color-content-tertiary: var(--color-forest-300);
+	--color-content-inverse: var(--color-forest-600);
+	--color-content-secondary-inverse: var(--color-forest-500);
+	--color-content-tertiary-inverse: var(--color-neutral-400);
+	--color-content-unchanged: var(--color-neutral-100);
+
+	/* Surface */
+	--color-surface-primary: var(--color-forest-600);
+	--color-surface-secondary: var(--color-forest-500);
+	--color-surface-inverse-primary: var(--color-forest-100);
+	--color-surface-inverse-secondary: var(--color-forest-200);
+	--color-surface-unchanged: var(--color-neutral-600);
+
+	/* Border */
+	--color-border-primary: var(--color-forest-100);
+	--color-border-secondary: var(--color-forest-200);
+	--color-border-tertiary: var(--color-forest-300);
+	--color-border-button: var(--color-forest-400);
+
+	/* Button */
+	--color-btn-primary-text: var(--color-forest-600);
+	--color-btn-primary-bg: var(--color-forest-400);
+	--color-btn-secondary-text: var(--color-forest-400);
+	--color-btn-secondary-bg: var(--color-forest-600);
+
+	/* Link */
+	--color-link: var(--color-forest-400);
+	--color-link-hover: var(--color-forest-300);
+}
+
+/* -----------------------------------------------
+Purple Light
+----------------------------------------------- */
+
+html[data-theme="purple-light"] {
+	/* Content */
+	--color-content-primary: var(--color-purple-600);
+	--color-content-secondary: var(--color-purple-500);
+	--color-content-tertiary: var(--color-neutral-400);
+	--color-content-inverse: var(--color-purple-100);
+	--color-content-secondary-inverse: var(--color-purple-200);
+	--color-content-tertiary-inverse: var(--color-purple-300);
+	--color-content-unchanged: var(--color-neutral-100);
+
+	/* Surface */
+	--color-surface-primary: var(--color-purple-100);
+	--color-surface-secondary: var(--color-purple-200);
+	--color-surface-inverse-primary: var(--color-purple-600);
+	--color-surface-inverse-secondary: var(--color-purple-500);
+	--color-surface-unchanged: var(--color-neutral-600);
+
+	/* Border */
+	--color-border-primary: var(--color-purple-600);
+	--color-border-secondary: var(--color-purple-500);
+	--color-border-tertiary: var(--color-neutral-400);
+	--color-border-button: var(--color-purple-500);
+
+	/* Button */
+	--color-btn-primary-text: var(--color-purple-100);
+	--color-btn-primary-bg: var(--color-purple-500);
+	--color-btn-secondary-text: var(--color-purple-500);
+	--color-btn-secondary-bg: var(--color-purple-100);
+
+	/* Link */
+	--color-link: var(--color-purple-500);
+	--color-link-hover: var(--color-purple-400);
+}
+
+/* -----------------------------------------------
+Purple Dark
+----------------------------------------------- */
+
+html[data-theme="purple-dark"] {
+	/* Content */
+	--color-content-primary: var(--color-purple-100);
+	--color-content-secondary: var(--color-purple-200);
+	--color-content-tertiary: var(--color-purple-300);
+	--color-content-inverse: var(--color-purple-600);
+	--color-content-secondary-inverse: var(--color-purple-500);
+	--color-content-tertiary-inverse: var(--color-neutral-400);
+	--color-content-unchanged: var(--color-neutral-100);
+
+	/* Surface */
+	--color-surface-primary: var(--color-purple-600);
+	--color-surface-secondary: var(--color-purple-500);
+	--color-surface-inverse-primary: var(--color-purple-100);
+	--color-surface-inverse-secondary: var(--color-purple-200);
+	--color-surface-unchanged: var(--color-neutral-600);
+
+	/* Border */
+	--color-border-primary: var(--color-purple-100);
+	--color-border-secondary: var(--color-purple-200);
+	--color-border-tertiary: var(--color-purple-300);
+	--color-border-button: var(--color-purple-400);
+
+	/* Button */
+	--color-btn-primary-text: var(--color-purple-600);
+	--color-btn-primary-bg: var(--color-purple-400);
+	--color-btn-secondary-text: var(--color-purple-400);
+	--color-btn-secondary-bg: var(--color-purple-600);
+
+	/* Link */
+	--color-link: var(--color-purple-400);
+	--color-link-hover: var(--color-purple-300);
+}
+
+/* -----------------------------------------------
+Maroon Light
+----------------------------------------------- */
+
+html[data-theme="maroon-light"] {
+	/* Content */
+	--color-content-primary: var(--color-maroon-600);
+	--color-content-secondary: var(--color-maroon-500);
+	--color-content-tertiary: var(--color-neutral-400);
+	--color-content-inverse: var(--color-maroon-100);
+	--color-content-secondary-inverse: var(--color-maroon-200);
+	--color-content-tertiary-inverse: var(--color-maroon-300);
+	--color-content-unchanged: var(--color-neutral-100);
+
+	/* Surface */
+	--color-surface-primary: var(--color-maroon-100);
+	--color-surface-secondary: var(--color-maroon-200);
+	--color-surface-inverse-primary: var(--color-maroon-600);
+	--color-surface-inverse-secondary: var(--color-maroon-500);
+	--color-surface-unchanged: var(--color-neutral-600);
+
+	/* Border */
+	--color-border-primary: var(--color-maroon-600);
+	--color-border-secondary: var(--color-maroon-500);
+	--color-border-tertiary: var(--color-neutral-400);
+	--color-border-button: var(--color-maroon-500);
+
+	/* Button */
+	--color-btn-primary-text: var(--color-maroon-100);
+	--color-btn-primary-bg: var(--color-maroon-500);
+	--color-btn-secondary-text: var(--color-maroon-500);
+	--color-btn-secondary-bg: var(--color-maroon-100);
+
+	/* Link */
+	--color-link: var(--color-maroon-500);
+	--color-link-hover: var(--color-maroon-400);
+}
+
+/* -----------------------------------------------
+Maroon Dark
+----------------------------------------------- */
+
+html[data-theme="maroon-dark"] {
+	/* Content */
+	--color-content-primary: var(--color-maroon-100);
+	--color-content-secondary: var(--color-maroon-200);
+	--color-content-tertiary: var(--color-maroon-300);
+	--color-content-inverse: var(--color-maroon-600);
+	--color-content-secondary-inverse: var(--color-maroon-500);
+	--color-content-tertiary-inverse: var(--color-neutral-400);
+	--color-content-unchanged: var(--color-neutral-100);
+
+	/* Surface */
+	--color-surface-primary: var(--color-maroon-600);
+	--color-surface-secondary: var(--color-maroon-500);
+	--color-surface-inverse-primary: var(--color-maroon-100);
+	--color-surface-inverse-secondary: var(--color-maroon-200);
+	--color-surface-unchanged: var(--color-neutral-600);
+
+	/* Border */
+	--color-border-primary: var(--color-maroon-100);
+	--color-border-secondary: var(--color-maroon-200);
+	--color-border-tertiary: var(--color-maroon-300);
+	--color-border-button: var(--color-maroon-400);
+
+	/* Button */
+	--color-btn-primary-text: var(--color-maroon-600);
+	--color-btn-primary-bg: var(--color-maroon-400);
+	--color-btn-secondary-text: var(--color-maroon-400);
+	--color-btn-secondary-bg: var(--color-maroon-600);
+
+	/* Link */
+	--color-link: var(--color-maroon-400);
+	--color-link-hover: var(--color-maroon-300);
+}
