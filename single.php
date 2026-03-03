@@ -1,8 +1,8 @@
 <?php get_header(); ?>
 
-<div class="container mx-auto px-4 py-8">
+<div class="wrapper">
 	<?php while ( have_posts() ) : the_post(); ?>
-		<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+		<article id="post-<?php the_ID(); ?>" <?php post_class(''); ?>>
 			<h1 class="text-4xl font-bold mb-2"><?php the_title(); ?></h1>
 			<div class="entry-meta text-sm text-gray-500 mb-8">
 				<time datetime="<?php the_date( 'c' ); ?>"><?php the_date(); ?></time>
