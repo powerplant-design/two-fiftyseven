@@ -1,14 +1,3 @@
-/** @type {import('tailwindcss').Config} */
-export default {
-  content: [
-    './**/*.php',
-    './assets/js/**/*.js',
-  ],
-  theme: {
-    extend: {},
-  },
-  plugins: [
-    // Uncomment if you want prose/typography support:
-    // require('@tailwindcss/typography'),
-  ],
-};
+// Tailwind v4 uses CSS-first config — see assets/css/tailwind.css.
+// This file is no longer used.
+

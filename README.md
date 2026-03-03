@@ -7,8 +7,9 @@ Custom WordPress theme by [Powerplant Design](https://powerplant.design).
 - **WordPress** — local development via [DevKinsta](https://kinsta.com/devkinsta/)
 - **Vite 6** — JS/CSS bundling with HMR
 - **SCSS** — compiled via Vite's built-in Sass support
-- **Tailwind CSS 3** — utility-first CSS
-- **PostCSS** — Autoprefixer + CSSNano (production only)
+- **Tailwind CSS 4** — utility-first CSS, CSS-first config via `assets/css/tailwind.css`
+- **`@tailwindcss/postcss`** — PostCSS integration, configured inline in `vite.config.js`
+- **CSSNano** — minification in production builds
 - **ES modules** — no jQuery
 
 ---
@@ -83,15 +84,32 @@ Remove it when you're done testing.
 
 ---
 
+## How CSS Compiles
+
+`main.js` imports both CSS entry points, which Vite processes through PostCSS on every build:
+
+1. `assets/css/tailwind.css` — `@import "tailwindcss"` pulls in Tailwind's base, components, and utilities. `@tailwindcss/postcss` scans all `.php` and `.js` files and generates only the utility classes that are actually used.
+2. `assets/css/styles.scss` — custom SCSS compiled via Vite's built-in Sass support. Tailwind utilities and CSS custom properties are available here.
+
+Both are merged into a single hashed CSS file in `assets/dist/assets/`, e.g. `main-Dh9v1Y0m.css`.
+
+**Tailwind configuration** is CSS-first in Tailwind v4 — no `tailwind.config.js`. Theme tokens, custom utilities, and plugins are added directly in `assets/css/tailwind.css` using `@theme`, `@utility`, and `@plugin` directives.
+
+**PostCSS** is configured inline in `vite.config.js` via the `css.postcss` option. There is no separate `postcss.config.js` — if one exists, Vite will use it exclusively and ignore the inline config, which would break the build.
+
+---
+
 ## Production Build
 
 ```bash
 npm run build
 ```
 
-Output goes to `assets/dist/`. The manifest at `assets/dist/.vite/manifest.json` is committed to version control so WordPress can resolve asset paths on production without a build step being run on the server.
+Every build is a clean recompile — `emptyOutDir: true` wipes `assets/dist/` before writing new output. Tailwind re-scans all templates, outputs only the classes in use, and CSSNano minifies the result.
 
-Everything else in `assets/dist/` is gitignored.
+The manifest at `assets/dist/.vite/manifest.json` is committed to version control so WordPress can resolve hashed asset paths on production without Node being available on the server. Everything else in `assets/dist/` is gitignored.
+
+> Make sure to run `npm run build` before deploying — if the manifest is stale, WordPress will enqueue old hashed filenames that no longer exist.
 
 ---
 
@@ -101,20 +119,19 @@ Everything else in `assets/dist/` is gitignored.
 two-fiftyseven/
 ├── assets/
 │   ├── css/
-│   │   └── styles.scss       # Main stylesheet (Tailwind + custom SCSS)
+│   │   ├── tailwind.css      # Tailwind v4 entry point (@import "tailwindcss")
+│   │   └── styles.scss       # Custom SCSS
 │   ├── dist/                 # Built assets (gitignored except manifest.json)
 │   └── js/
-│       └── main.js           # JS entry point
+│       └── main.js           # JS entry point (imports both CSS files)
 ├── footer.php
 ├── functions.php             # Vite enqueue logic + theme setup
 ├── header.php
 ├── index.php
 ├── page.php
-├── postcss.config.js
 ├── single.php
 ├── style.css                 # WordPress theme header
-├── tailwind.config.js
-└── vite.config.js
+└── vite.config.js            # Vite + inline PostCSS config
 ```
 
 ---
@@ -124,5 +141,6 @@ two-fiftyseven/
 | Command | Description |
 |---|---|
 | `npm run dev` | Start Vite dev server with HMR |
-| `npm run build` | Build and hash assets to `assets/dist/` |
+| `npm run build` | Production build — clean recompile, minified, hashed filenames |
+| `npm run build-watch` | Watch mode — rebuilds to `assets/dist/` on file changes (no HMR) |
 | `npm run preview` | Preview the production build locally |

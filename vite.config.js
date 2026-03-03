@@ -1,7 +1,20 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
+import tailwindcss from '@tailwindcss/postcss';
 
 export default defineConfig({
+  css: {
+    devSourcemap: true,
+    postcss: {
+      plugins: [tailwindcss()],
+    },
+    preprocessorOptions: {
+      scss: {
+        silenceDeprecations: ['legacy-js-api'],
+      },
+    },
+  },
+
   // Allow WordPress to serve the page while Vite handles assets.
   server: {
     host: 'localhost',
@@ -22,6 +35,9 @@ export default defineConfig({
     outDir: 'assets/dist',
     emptyOutDir: true,
     manifest: true,
+    target: 'esnext',
+    minify: true,
+    sourcemap: false,
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'assets/js/main.js'),

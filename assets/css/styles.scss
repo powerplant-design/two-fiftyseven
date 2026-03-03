@@ -1,13 +1,9 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 // ─── Base / Typography ───────────────────────────────────────────────────────
 
 :root {
   --color-primary: #257;
   --color-text: #1a1a1a;
-  --color-bg: #fff;
+  --color-bg: blueshite;
 }
 
 body {
