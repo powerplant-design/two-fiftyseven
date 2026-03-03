@@ -1,0 +1,12 @@
+/* ===================================================================
+Region
+---
+Consistent block padding for page sections.
+---
+Variables:
+--region-space
+=================================================================== */
+
+.region {
+	padding-block: var(--region-space);
+}

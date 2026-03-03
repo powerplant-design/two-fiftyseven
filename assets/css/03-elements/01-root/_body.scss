@@ -1,0 +1,10 @@
+/* Body */
+
+body {
+	font-family: var(--font-body-family);
+	font-size: var(--text-base-size);
+	font-weight: var(--text-base-weight);
+	line-height: var(--text-base-leading, 1.5);
+	color: var(--color-on-surface);
+	background-color: var(--color-surface);
+}

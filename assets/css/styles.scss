@@ -1,61 +1,34 @@
-// ─── Base / Typography ───────────────────────────────────────────────────────
+// ============================================================
+// styles.scss — CUBE CSS orchestrator
+//
+// Import order is critical for correct CSS specificity.
+// Add new partials inside the relevant layer folder and
+// register them in that layer's _index.scss.
+// ============================================================
 
-:root {
-  --color-primary: #257;
-  --color-text: #1a1a1a;
-  --color-bg: blueshite;
-}
+// 1. Reset
+@use '01-reset' as *;
 
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  color: var(--color-text);
-  background: var(--color-bg);
-}
+// 2. Design tokens (custom properties)
+@use '02-tokens' as *;
 
-// ─── Layout ──────────────────────────────────────────────────────────────────
+// 3. Bare HTML element styles
+@use '03-elements' as *;
 
-.container {
-  max-width: 1200px;
-  margin-inline: auto;
-  padding-inline: 1.5rem;
-}
+// 4. WordPress block overrides
+@use '04-wp-overrides' as *;
 
-// ─── Site Header ─────────────────────────────────────────────────────────────
+// 5. Layout primitives
+@use '05-layouts' as *;
 
-.site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-block: 1.25rem;
-  border-bottom: 1px solid #e5e7eb;
-}
+// 6. Components
+@use '06-components' as *;
 
-// ─── Site Footer ─────────────────────────────────────────────────────────────
+// 7. Site parts (header, footer…)
+@use '07-parts' as *;
 
-.site-footer {
-  padding-block: 2rem;
-  border-top: 1px solid #e5e7eb;
-  font-size: 0.875rem;
-  color: #6b7280;
-}
+// 8. Page-specific styles
+@use '08-pages' as *;
 
-// ─── Prose (content) ─────────────────────────────────────────────────────────
-
-.entry-content {
-  line-height: 1.8;
-
-  h1, h2, h3, h4, h5, h6 {
-    font-weight: 700;
-    margin-top: 1.5em;
-    margin-bottom: 0.5em;
-  }
-
-  p {
-    margin-bottom: 1.25em;
-  }
-
-  a {
-    color: var(--color-primary);
-    text-decoration: underline;
-  }
-}
+// 9. Utilities (always last — highest specificity wins)
+@use '09-utilities' as *;

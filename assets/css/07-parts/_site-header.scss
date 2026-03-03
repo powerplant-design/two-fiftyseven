@@ -1,0 +1,9 @@
+/* Site header */
+
+.site-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-block: var(--space-s, 1.25rem);
+	border-block-end: var(--border);
+}

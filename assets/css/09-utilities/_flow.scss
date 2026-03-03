@@ -1,0 +1,40 @@
+/* ===================================================================
+Flow
+---
+Utilities for controlling the block space between elements.
+---
+References:
+- https://piccalil.li/blog/my-favourite-3-lines-of-css/
+=================================================================== */
+
+/* When the CSS property 'margin-trim' is widely available (see https://caniuse.com/?search=margin-trim), replace the rules with: */
+/* .flow {
+	margin-trim: block;
+
+	> * {
+		margin-block: var(--block-gap, 1em);
+	}
+} */
+
+/*
+-----------------------------------------------
+Remove previous possible space between elements
+----------------------------------------------- */
+
+:where(.flow, [class*="flow-"]) > * {
+	margin-block: 0;
+}
+
+/*
+-----------------------------------------------
+Default value to provides consistent vertical spacing between elements.
+----------------------------------------------- */
+
+.flow > * + * {
+	margin-block-start: var(--block-gap, 1em);
+}
+
+/*
+-----------------------------------------------
+Utilities
+----------------------------------------------- */

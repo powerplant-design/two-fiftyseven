@@ -1,11 +1,11 @@
 <?php get_header(); ?>
 
-<div class="container mx-auto px-4 py-8">
+<div class="wrapper">
 	<?php if ( have_posts() ) : ?>
 
 		<?php while ( have_posts() ) : the_post(); ?>
-			<article id="post-<?php the_ID(); ?>" <?php post_class( 'mb-12' ); ?>>
-				<h2 class="text-2xl font-bold mb-2">
+			<article id="post-<?php the_ID(); ?>" <?php post_class( 'flow' ); ?>>
+				<h2 class="">
 					<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 				</h2>
 				<div class="entry-meta text-sm text-gray-500 mb-4">

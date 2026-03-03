@@ -1,0 +1,26 @@
+/* ===================================================================
+LISTS (ol, ul, dl)
+---
+Resources:
+- https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ul
+- https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/ol
+- https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/dl
+=================================================================== */
+
+:where(ul, ol) {
+	padding-inline-start: var(--list-indent, 1.5em);
+}
+
+:where(ul, ol) :where(ul, ol) {
+	margin-block: 0;
+}
+
+:where(dl) {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: var(--dl-gap, 0.25em var(--block-gap, 1em));
+}
+
+:where(dt) {
+	font-weight: bolder;
+}

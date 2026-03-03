@@ -9,7 +9,7 @@
 <?php wp_body_open(); ?>
 
 <header class="site-header">
-	<div class="container mx-auto px-4">
+	<div class="wrapper">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-logo font-bold text-xl">
 			<?php bloginfo( 'name' ); ?>
 		</a>
