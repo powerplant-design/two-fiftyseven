@@ -82,6 +82,20 @@ add_action( 'wp_enqueue_scripts', 'two_fiftyseven_enqueue_assets' );
 
 
 /**
+ * ACF JSON — save and load field groups as JSON files in the theme.
+ * Edit field groups in wp-admin and commit the generated files in acf-json/.
+ */
+add_filter( 'acf/settings/save_json', function (): string {
+	return get_template_directory() . '/acf-json';
+} );
+
+add_filter( 'acf/settings/load_json', function ( array $paths ): array {
+	$paths[] = get_template_directory() . '/acf-json';
+	return $paths;
+} );
+
+
+/**
  * Add type="module" to Vite scripts so ES modules load correctly.
  */
 add_filter( 'script_loader_tag', function ( string $tag, string $handle ): string {

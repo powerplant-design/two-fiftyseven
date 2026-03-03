@@ -113,10 +113,25 @@ The manifest at `assets/dist/.vite/manifest.json` is committed to version contro
 
 ---
 
+## Advanced Custom Fields (ACF)
+
+Field groups are version-controlled via **ACF JSON**. When you save a field group in wp-admin, ACF automatically writes a `.json` file to `acf-json/`. Commit that file and the fields will be available on any environment that has the theme deployed.
+
+**Workflow:**
+1. Edit or create a field group in **Custom Fields → Field Groups**
+2. Save — ACF writes/updates `acf-json/<group_key>.json`
+3. `git add acf-json/ && git commit`
+4. Deploy — ACF reads the JSON files on the live site automatically
+
+If wp-admin shows a field group as "Sync available", click **Sync** to pull in changes committed by another developer.
+
+---
+
 ## File Structure
 
 ```
 two-fiftyseven/
+├── acf-json/                 # ACF field group JSON (committed to git)
 ├── assets/
 │   ├── css/
 │   │   ├── tailwind.css      # Tailwind v4 entry point (@import "tailwindcss")
@@ -125,7 +140,7 @@ two-fiftyseven/
 │   └── js/
 │       └── main.js           # JS entry point (imports both CSS files)
 ├── footer.php
-├── functions.php             # Vite enqueue logic + theme setup
+├── functions.php             # Vite enqueue logic + theme setup + ACF JSON config
 ├── header.php
 ├── index.php
 ├── page.php
