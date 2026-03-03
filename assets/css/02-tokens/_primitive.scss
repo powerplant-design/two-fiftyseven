@@ -120,32 +120,6 @@ html {
 	--space-4xl-6xl: clamp(6rem, 5rem + 4.1667vw, 9rem);
 
 	/* -----------------------------------------------
-	Text Sizes
-	---
-	@link https://utopia.fyi/type/calculator?c=384,16,1.15,1440,18,1.2,5,1,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12
-	----------------------------------------------- */
-	/* 13.913px → 15px */
-	--text-size-s: clamp(0.8696rem, 0.8469rem + 0.0944vi, 0.9375rem);
-
-	/* 16px → 18px */
-	--text-size-m: clamp(1rem, 0.9583rem + 0.1736vi, 1.125rem);
-
-	/* 18.4px → 21.6px */
-	--text-size-l: clamp(1.15rem, 1.0833rem + 0.2778vi, 1.35rem);
-
-	/* 21.16px → 25.92px */
-	--text-size-xl: clamp(1.3225rem, 1.2233rem + 0.4132vi, 1.62rem);
-
-	/* 24.334px → 31.104px */
-	--text-size-2xl: clamp(1.5209rem, 1.3798rem + 0.5877vi, 1.944rem);
-
-	/* 27.9841px → 37.3248px */
-	--text-size-3xl: clamp(1.749rem, 1.5544rem + 0.8108vi, 2.3328rem);
-
-	/* 32.1817px → 44.7898px */
-	--text-size-4xl: clamp(2.0114rem, 1.7487rem + 1.0944vi, 2.7994rem);
-
-	/* -----------------------------------------------
 	Transitions
 	----------------------------------------------- */
 
