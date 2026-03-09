@@ -1,6 +1,23 @@
 <?php
 
 /**
+ * Returns the colour space for the current post/page.
+ * Uses the ACF 'colour_space' field if set, otherwise falls back to 'neutral'.
+ * JS then combines this with the OS dark/light preference to produce data-theme.
+ */
+function two_fiftyseven_get_colour_space(): string {
+	if ( is_singular() && function_exists( 'get_field' ) ) {
+		$space = get_field( 'colour_space' );
+		if ( $space ) {
+			return sanitize_key( $space );
+		}
+	}
+
+	return 'neutral';
+}
+
+
+/**
  * Theme setup
  */
 function two_fiftyseven_setup(): void {
@@ -108,3 +125,29 @@ add_filter( 'script_loader_tag', function ( string $tag, string $handle ): strin
 
 	return $tag;
 }, 10, 2 );
+
+
+/**
+ * Register ACF Gutenberg blocks.
+ */
+add_action( 'acf/init', function (): void {
+	if ( ! function_exists( 'acf_register_block_type' ) ) {
+		return;
+	}
+
+	acf_register_block_type( [
+		'name'            => 'colour-section',
+		'title'           => __( 'Colour Section', 'two-fiftyseven' ),
+		'description'     => __( 'A section wrapper with its own colour space and optional forced light/dark mode.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/colour-section/block.php',
+		'category'        => 'layout',
+		'icon'            => 'color-picker',
+		'keywords'        => [ 'colour', 'color', 'theme', 'section', 'block' ],
+		'supports'        => [
+			'innerBlocks'     => true,
+			'jsx'             => true,
+			'align'           => false,
+			'mode'            => false,
+		],
+	] );
+} );

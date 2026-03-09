@@ -159,3 +159,136 @@ two-fiftyseven/
 | `npm run build` | Production build — clean recompile, minified, hashed filenames |
 | `npm run build-watch` | Watch mode — rebuilds to `assets/dist/` on file changes (no HMR) |
 | `npm run preview` | Preview the production build locally |
+
+---
+
+## Colour Engine
+
+The colour system separates two independent concerns — **colour space** (the brand palette) and **mode** (light or dark) — so they can be controlled by different parties without conflict.
+
+### Concepts
+
+| Concept | What it is | Who controls it |
+|---|---|---|
+| **Colour space** | The palette family: `neutral`, `maroon`, `forest`, `purple` | Content editor via ACF field |
+| **Mode** | `light` or `dark` | OS preference, overridable by the user or the editor |
+| **data-theme** | The resolved combination, e.g. `maroon-dark` | Written by JS; never hardcoded in PHP |
+
+### The eight themes
+
+`assets/css/02-tokens/_color-themes.scss` defines eight scoped token sets:
+
+| Value | Space | Mode |
+|---|---|---|
+| `neutral-light` | Neutral | Light |
+| `neutral-dark` | Neutral | Dark |
+| `maroon-light` | Maroon | Light |
+| `maroon-dark` | Maroon | Dark |
+| `forest-light` | Forest | Light |
+| `forest-dark` | Forest | Dark |
+| `purple-light` | Purple | Light |
+| `purple-dark` | Purple | Dark |
+
+Each theme overrides the same set of 22 CSS custom properties across five categories: **Content**, **Surface**, **Border**, **Button**, **Link**. These are all defined under `:root` (the `neutral-light` defaults) and each `[data-theme="..."]` block only overrides that specific scope.
+
+Crucially, the selectors target `[data-theme="..."]` on **any element**, not just `html`. This means a `<div data-theme="forest-dark">` anywhere in the DOM creates a fully isolated colour context for everything inside it — enabling block-level theming.
+
+### Token categories
+
+| Prefix | Tokens | Purpose |
+|---|---|---|
+| `--color-content-*` | primary, secondary, tertiary, inverse, secondary-inverse, tertiary-inverse, unchanged | Text and icon colours |
+| `--color-surface-*` | primary, secondary, inverse-primary, inverse-secondary, unchanged | Background colours |
+| `--color-border-*` | primary, secondary, tertiary, button | Border colours |
+| `--color-btn-*` | primary-text, primary-bg, secondary-text, secondary-bg | Interactive control colours |
+| `--color-link` / `--color-link-hover` | — | Anchor colours |
+
+### Primitive palette
+
+All token values resolve back to primitive colour vars defined in `assets/css/02-tokens/_primitive.scss`:
+
+```
+--color-neutral-{100–600}
+--color-maroon-{100–600}
+--color-forest-{100–600}
+--color-purple-{100–600}
+```
+
+Shades 100–400 are light/tints; 500–600 are dark/shades. Each colour space uses its own palette for content and surface tokens, but neutral shades serve as tertiary/fallback values across all spaces.
+
+### Runtime resolution order
+
+Mode is determined at runtime through the following priority chain (highest first):
+
+```
+1. data-color-mode="light|dark" on the element   →  editor-forced (ACF block field)
+2. localStorage 'color-mode'                      →  user toggle preference
+3. OS prefers-color-scheme                        →  system default
+```
+
+The JS colour engine in `assets/js/main.js` applies this logic to every `[data-color-space]` element on the page whenever the page loads or the OS mode changes.
+
+### No-FOUC strategy
+
+A synchronous inline `<script>` in `<head>` (before `wp_head()`) runs before the browser paints. It reads `data-color-space` from `<html>`, checks `localStorage` then `matchMedia`, and immediately writes `data-theme` to `<html>`. Because it runs before any CSS is applied, there is no flash of incorrect colour on page load — including hard refresh.
+
+```html
+<script>/* no-FOUC */
+(function(){
+  var e = document.documentElement,
+      s = e.getAttribute('data-color-space') || 'neutral',
+      stored = localStorage.getItem('color-mode'),
+      d = stored ? stored === 'dark' : window.matchMedia('(prefers-color-scheme:dark)').matches;
+  e.setAttribute('data-theme', s + (d ? '-dark' : '-light'));
+})();
+</script>
+```
+
+### Page-level colour space (ACF)
+
+The ACF field group `group_two57_page_colour` (`acf-json/group_two57_page_colour.json`) adds a **Colour Space** select field to the sidebar of every post and page. The `two_fiftyseven_get_colour_space()` PHP helper reads this field and outputs it as `data-color-space` on `<html>`. If no field value is set, it falls back to `neutral`.
+
+```php
+// In functions.php
+function two_fiftyseven_get_colour_space(): string {
+    if ( is_singular() && function_exists( 'get_field' ) ) {
+        $space = get_field( 'colour_space' );
+        if ( $space ) return sanitize_key( $space );
+    }
+    return 'neutral';
+}
+```
+
+### Block-level colour space (ACF block)
+
+The `acf/colour-section` block (`blocks/colour-section/block.php`) wraps inner blocks in a `<div>` with its own `data-color-space` and optional `data-color-mode`. This creates an isolated colour context — the block's children inherit a completely different theme from the rest of the page.
+
+The block exposes two fields (ACF group `group_two57_block_colour`):
+
+| Field | Options | Default | Behaviour |
+|---|---|---|---|
+| **Colour Space** | neutral, maroon, forest, purple | neutral | Sets the palette for inner content |
+| **Mode** | auto, light, dark | auto | `auto` — follows OS/localStorage; `light`/`dark` — forces a mode regardless |
+
+When mode is `auto`, JS resolves it the same way as the page-level theme (localStorage → OS). When mode is `light` or `dark`, the block template writes `data-theme` directly on the wrapper (no-JS fallback) and also sets `data-color-mode` so JS locks that element to the chosen mode even if the user toggles dark mode globally.
+
+### User light/dark toggle
+
+A `<button data-js="color-mode-toggle">` in `header.php` lets users override their OS setting. Clicking it flips `localStorage('color-mode')` between `'light'` and `'dark'` and re-applies all themes. The button's `aria-pressed` and visible label stay in sync with the current mode.
+
+To programmatically clear the user's override and return to OS-driven behaviour:
+
+```js
+localStorage.removeItem('color-mode');
+```
+
+### Adding a new colour space
+
+1. Add 6 primitive shades to `assets/css/02-tokens/_primitive.scss`:
+   ```scss
+   --color-{name}-100: #...;
+   /* ... through 600 */
+   ```
+2. Add two new blocks to `assets/css/02-tokens/_color-themes.scss` — one for `[data-theme="{name}-light"]` and one for `[data-theme="{name}-dark"]`, following the same token structure as the existing eight.
+3. Add `{name}: "Label"` to the `choices` array in both ACF JSON files (`group_two57_page_colour.json` and `group_two57_block_colour.json`), then click **Sync available** in WP Admin → ACF.
+4. Run `npm run build`.

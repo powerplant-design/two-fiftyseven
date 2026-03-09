@@ -4,7 +4,9 @@ Colour Themes
 8 themes: light (default), dark, forest-light, forest-dark,
           purple-light, purple-dark, maroon-light, maroon-dark.
 
-Apply via: <html data-theme="dark"> (or any ancestor element).
+Apply a colour space via data-color-space="..." on any element.
+   JS combines it with the OS dark/light preference to write data-theme="[space]-[light|dark]".
+   Force a mode independently of the OS by adding data-color-mode="light|dark".
 
 Token categories:
   Content  — text / icon colours
@@ -18,8 +20,9 @@ Token categories:
 Light (default)
 ----------------------------------------------- */
 
-html,
-html[data-theme="light"] {
+:root,
+[data-theme="light"],
+[data-theme="neutral-light"] {
 	/* Content */
 	--color-content-primary: var(--color-neutral-600);
 	--color-content-secondary: var(--color-neutral-500);
@@ -57,7 +60,8 @@ html[data-theme="light"] {
 Dark
 ----------------------------------------------- */
 
-html[data-theme="dark"] {
+[data-theme="dark"],
+[data-theme="neutral-dark"] {
 	/* Content */
 	--color-content-primary: var(--color-neutral-100);
 	--color-content-secondary: var(--color-neutral-200);
@@ -95,7 +99,7 @@ html[data-theme="dark"] {
 Forest Light
 ----------------------------------------------- */
 
-html[data-theme="forest-light"] {
+[data-theme="forest-light"] {
 	/* Content */
 	--color-content-primary: var(--color-forest-600);
 	--color-content-secondary: var(--color-forest-500);
@@ -133,7 +137,7 @@ html[data-theme="forest-light"] {
 Forest Dark
 ----------------------------------------------- */
 
-html[data-theme="forest-dark"] {
+[data-theme="forest-dark"] {
 	/* Content */
 	--color-content-primary: var(--color-forest-100);
 	--color-content-secondary: var(--color-forest-200);
@@ -171,7 +175,7 @@ html[data-theme="forest-dark"] {
 Purple Light
 ----------------------------------------------- */
 
-html[data-theme="purple-light"] {
+[data-theme="purple-light"] {
 	/* Content */
 	--color-content-primary: var(--color-purple-600);
 	--color-content-secondary: var(--color-purple-500);
@@ -209,7 +213,7 @@ html[data-theme="purple-light"] {
 Purple Dark
 ----------------------------------------------- */
 
-html[data-theme="purple-dark"] {
+[data-theme="purple-dark"] {
 	/* Content */
 	--color-content-primary: var(--color-purple-100);
 	--color-content-secondary: var(--color-purple-200);
@@ -247,7 +251,7 @@ html[data-theme="purple-dark"] {
 Maroon Light
 ----------------------------------------------- */
 
-html[data-theme="maroon-light"] {
+[data-theme="maroon-light"] {
 	/* Content */
 	--color-content-primary: var(--color-maroon-600);
 	--color-content-secondary: var(--color-maroon-500);
@@ -285,7 +289,7 @@ html[data-theme="maroon-light"] {
 Maroon Dark
 ----------------------------------------------- */
 
-html[data-theme="maroon-dark"] {
+[data-theme="maroon-dark"] {
 	/* Content */
 	--color-content-primary: var(--color-maroon-100);
 	--color-content-secondary: var(--color-maroon-200);
