@@ -4,7 +4,7 @@
 
 .hero-home {
 	position: relative;
-	min-block-size: 90svh;
+	min-block-size: 100svh;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -17,8 +17,10 @@
 	background-color: var(--color-neutral-600); // fallback when no image
 
 	// ── Inner content wrapper ─────────────────────────────────
-	// &__inner {
-	// }
+	&__inner {
+		min-width: 0; // flex child: allow shrinking below content width
+		width: 100%;
+	}
 
 	// ── Headline ──────────────────────────────────────────────
 	&__headline {
@@ -51,18 +53,21 @@
 
 	// ── Icon marquee ──────────────────────────────────────────
 	&__marquee {
-		// overflow: hidden;
+		overflow: hidden;
+		min-width: 0; // prevent track's intrinsic width from stretching the panel
 	}
 
 	&__marquee-track {
 		display: flex;
 		align-items: center;
 		gap: var(--space-xl);
-		// // list-style: none;
-		// margin: 0;
-		// padding: 0;
-		// width: max-content;
+		width: max-content; // single row — overflow is clipped by __marquee
 		will-change: transform;
+
+		@media (prefers-reduced-motion: no-preference) {
+			// CSS animation is the no-JS fallback; JS takes over at runtime.
+			animation: hero-marquee 80s linear infinite;
+		}
 	}
 
 	&__marquee-item {
@@ -85,4 +90,7 @@
 	}
 }
 
-
+@keyframes hero-marquee {
+	from { transform: translateX(0); }
+	to   { transform: translateX(-50%); }
+}

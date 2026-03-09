@@ -81,5 +81,8 @@ export function destroyMarquee() {
 	position    = 0;
 	scrollBoost = 0;
 	lastScroll  = null;
+
+	const track = document.querySelector( '.hero-home__marquee-track' );
+	if ( track ) track.style.animation = '';
 }
 

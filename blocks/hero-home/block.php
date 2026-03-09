@@ -65,7 +65,7 @@ $marquee_icons = ! empty( $icons ) ? array_merge( $icons, $icons ) : [];
 
 		<div class="hero-home__panel | stack" <?php echo $panel_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?>>
 
-			<p class="hero-home__eyebrow">Need space for</p>
+			<!-- <p class="hero-home__eyebrow">Need space for</p> -->
 
 			<?php if ( $cards ) : ?>
 				<ul class="hero-home__cards | grid cards" data-grid-layout="thirds">
