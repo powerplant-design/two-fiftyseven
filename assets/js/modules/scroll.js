@@ -30,3 +30,8 @@ export function destroyScroll() {
 		instance = null;
 	}
 }
+
+/** Returns the live Locomotive Scroll instance (null between page swaps). */
+export function getScrollInstance() {
+	return instance;
+}

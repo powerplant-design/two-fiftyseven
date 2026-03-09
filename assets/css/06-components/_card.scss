@@ -1,1 +1,36 @@
-// Card
+.cards {
+    padding-inline: var(--space-m);
+}
+
+.card {
+    background-color: var(--color-surface-secondary);
+    border-radius: var(--space-m);
+
+    a {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-s);
+        padding: var(--space-m);
+        text-decoration: none;
+        color: inherit;
+        // block-size: 100%;
+
+        &:hover,
+        &:focus-visible {
+            outline: 2px solid var(--color-border-primary);
+            outline-offset: -2px;
+            border-radius: var(--space-s);
+        }
+    }        
+
+    &-title {
+        font-size: var(--step-2);
+        font-weight: 700;
+        line-height: 1.1;
+        color: var(--color-content-primary);
+    }
+    
+    &-desc {
+        color: var(--color-content-secondary);
+    }
+}

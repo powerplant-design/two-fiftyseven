@@ -150,4 +150,58 @@ add_action( 'acf/init', function (): void {
 			'mode'            => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'hero-home',
+		'title'           => __( '257 Hero Home', 'two-fiftyseven' ),
+		'description'     => __( 'Full-viewport hero with background image, display headline, 3 linked cards, and an icon marquee.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/hero-home/block.php',
+		'category'        => 'layout',
+		'icon'            => 'cover-image',
+		'keywords'        => [ 'hero', 'home', 'banner', 'cards' ],
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => [ 'full' ],
+			'mode'        => false,
+		],
+	] );
 } );
+
+
+/**
+ * Returns inline SVG markup for a media attachment.
+ *
+ * Requires the Safe SVG plugin (wordpress.org/plugins/safe-svg) to be active
+ * for SVG uploads to be permitted and sanitized.
+ *
+ * All fill/stroke values (except "none" and "currentColor") are replaced with
+ * currentColor so the SVG inherits its colour from the CSS `color` property,
+ * allowing it to respond to the colour token system (light/dark/colour-space).
+ *
+ * @param int $attachment_id WordPress attachment ID.
+ * @return string Inline SVG markup, or '' if not an SVG attachment.
+ */
+function two_fiftyseven_get_inline_svg( int $attachment_id ): string {
+	$file_path = get_attached_file( $attachment_id );
+
+	if ( ! $file_path || ! file_exists( $file_path ) ) {
+		return '';
+	}
+	if ( 'svg' !== strtolower( pathinfo( $file_path, PATHINFO_EXTENSION ) ) ) {
+		return '';
+	}
+
+	$content = file_get_contents( $file_path );
+	if ( ! $content ) {
+		return '';
+	}
+
+	// Replace hardcoded fill/stroke values (preserving "none" and "currentColor") with currentColor.
+	$content = preg_replace( '/\bfill="(?!none|currentColor)[^"]*"/i',   'fill="currentColor"',   $content );
+	$content = preg_replace( '/\bstroke="(?!none|currentColor)[^"]*"/i', 'stroke="currentColor"', $content );
+
+	// Mark as decorative — marquee icons carry no semantic meaning.
+	$content = preg_replace( '/<svg\b/i', '<svg aria-hidden="true" focusable="false"', $content, 1 );
+
+	return $content;
+}

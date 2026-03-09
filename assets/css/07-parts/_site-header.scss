@@ -2,12 +2,15 @@
 
 .site-header {
 	display: flex;
+	width: 100%;
 	align-items: center;
 	justify-content: space-between;
 	padding-block: var(--space-s, 1.25rem);
-	border-block-end: var(--border);
-}
+	// border-block-end: var(--border);
 
-main {
-    height: calc(100vh - 200px);
+	position: fixed;
+	top: 2rem;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
 }

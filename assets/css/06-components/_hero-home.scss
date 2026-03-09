@@ -1,0 +1,88 @@
+// ============================================================
+// Hero Home Block
+// ============================================================
+
+.hero-home {
+	position: relative;
+	min-block-size: 90svh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	overflow: hidden;
+
+	// Background image via CSS custom property set inline by PHP.
+	background-image: var(--hero-bg, none);
+	background-size: cover;
+	background-position: center;
+	background-color: var(--color-neutral-600); // fallback when no image
+
+	// ── Inner content wrapper ─────────────────────────────────
+	// &__inner {
+	// }
+
+	// ── Headline ──────────────────────────────────────────────
+	&__headline {
+		text-align: center;
+		color: var(--color-content-unchanged);
+		text-wrap: balance;
+	}
+
+	// ── Panel (the rounded colour card) ───────────────────────
+	&__panel {
+		background-color: var(--color-surface-primary);
+		border-radius: var(--space-xl);
+		overflow: hidden;
+		padding-block: var(--space-l);
+        margin-inline: var(--space-l);
+	}
+
+	// ── "Need space for" eyebrow ──────────────────────────────
+	&__eyebrow {
+		color: var(--color-content-secondary);
+		text-align: center;
+		text-transform: uppercase;
+		font-size: var(--step--1);
+	}
+
+	// ── Cards grid ────────────────────────────────────────────
+	// &__cards {
+	// 	list-style: none;	
+	// }
+
+	// ── Icon marquee ──────────────────────────────────────────
+	&__marquee {
+		// overflow: hidden;
+	}
+
+	&__marquee-track {
+		display: flex;
+		align-items: center;
+		gap: var(--space-xl);
+		// // list-style: none;
+		// margin: 0;
+		// padding: 0;
+		// width: max-content;
+		will-change: transform;
+	}
+
+	&__marquee-item {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		// SVGs rendered inline inherit this as currentColor.
+		color: var(--color-content-primary);
+
+		svg,
+		img {
+			block-size: var(--space-l);
+			inline-size: auto;
+		}
+
+		// Belt-and-braces in case the SVG has no fill attribute at all.
+		svg {
+			fill: currentColor;
+		}
+	}
+}
+
+

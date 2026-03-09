@@ -18,6 +18,7 @@ import SwupScrollPlugin from '@swup/scroll-plugin';
 import SwupA11yPlugin from '@swup/a11y-plugin';
 import { applyThemes } from './color-theme.js';
 import { initScroll, destroyScroll } from './scroll.js';
+import { initMarquee, destroyMarquee } from './marquee.js';
 
 export function initTransitions() {
 	const swup = new Swup( {
@@ -37,8 +38,9 @@ export function initTransitions() {
 		],
 	} );
 
-	// 1. Destroy Locomotive before the DOM is swapped.
+	// 1. Destroy Locomotive + marquee before the DOM is swapped.
 	swup.hooks.on( 'visit:start', () => {
+		destroyMarquee();
 		destroyScroll();
 	} );
 
@@ -54,8 +56,9 @@ export function initTransitions() {
 		applyThemes();
 	} );
 
-	// 3. Reinit Locomotive once the new content is in the DOM and becoming visible.
+	// 3. Reinit Locomotive + marquee once the new content is in the DOM.
 	swup.hooks.on( 'page:view', () => {
 		initScroll();
+		initMarquee();
 	} );
 }
