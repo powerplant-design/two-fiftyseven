@@ -15,6 +15,7 @@
 	background-size: cover;
 	background-position: center;
 	background-color: var(--color-neutral-600); // fallback when no image
+    background-attachment: fixed;
 
 	// ── Inner content wrapper ─────────────────────────────────
 	&__inner {
@@ -31,20 +32,36 @@
 
 	// ── Panel (the rounded colour card) ───────────────────────
 	&__panel {
-		background-color: var(--color-surface-primary);
+		backdrop-filter: blur(20px);
 		border-radius: var(--space-xl);
 		overflow: hidden;
-		padding-block: var(--space-l);
-        margin-inline: var(--space-l);
+		padding-block: var(--space-xl);
+		margin-inline: var(--space-xl);
+
+		// Glassy gradient border: bright highlight at top, fades to near-transparent at bottom.
+		border: 1px solid transparent;
+		background-image:
+			linear-gradient(
+				color-mix(in srgb, var(--color-surface-primary, transparent) 80%, transparent),
+				color-mix(in srgb, var(--color-surface-primary, transparent) 10%, transparent)
+			),
+			linear-gradient(
+				to bottom right,
+				hsl(0 0% 100% / 0.35) 0%,
+				hsl(0 0% 100% / 0.10) 40%,
+				hsl(0 0% 0%   / 0.15) 100%
+			);
+		background-origin: padding-box, border-box;
+		background-clip: padding-box, border-box;
 	}
 
 	// ── "Need space for" eyebrow ──────────────────────────────
-	&__eyebrow {
-		color: var(--color-content-secondary);
-		text-align: center;
-		text-transform: uppercase;
-		font-size: var(--step--1);
-	}
+	// &__eyebrow {
+	// 	color: var(--color-content-secondary);
+	// 	text-align: center;
+	// 	text-transform: uppercase;
+	// 	font-size: var(--step--1);
+	// }
 
 	// ── Cards grid ────────────────────────────────────────────
 	// &__cards {

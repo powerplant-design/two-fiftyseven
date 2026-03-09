@@ -169,6 +169,18 @@ add_action( 'acf/init', function (): void {
 
 
 /**
+ * Register custom button block styles so "Text link" appears in the editor
+ * style panel alongside the native Fill and Outline options.
+ */
+add_action( 'init', function (): void {
+	register_block_style( 'core/button', [
+		'name'  => 'text',
+		'label' => __( 'Text link', 'two-fiftyseven' ),
+	] );
+} );
+
+
+/**
  * Returns inline SVG markup for a media attachment.
  *
  * Requires the Safe SVG plugin (wordpress.org/plugins/safe-svg) to be active

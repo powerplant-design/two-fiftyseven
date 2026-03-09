@@ -1,1 +1,136 @@
+// ============================================================
 // Button
+// ============================================================
+//
+// Custom usage:
+//   <button class="btn" data-type="primary">Label</button>
+//   <button class="btn" data-type="secondary">Label</button>
+//   <a     class="btn" data-type="text">Label</a>
+//
+// WordPress block button — style panel:
+//   Fill (default / is-style-fill)  → primary
+//   Outline    (is-style-outline)   → secondary
+//   Text link  (is-style-text)      → text
+//
+// All variants adapt automatically to the active colour space.
+// ============================================================
+
+// ── Mixins ───────────────────────────────────────────────────
+
+@mixin btn-primary {
+	color: var(--color-btn-primary-text);
+	background-color: var(--color-btn-primary-bg);
+	background-image:
+		linear-gradient(
+			var(--color-btn-primary-bg),
+			var(--color-btn-primary-bg)
+		),
+		linear-gradient(
+			156.52deg,
+			hsl(0 0% 100% / 0.22) 2%,
+			hsl(0 0% 100% / 0.00) 40%,
+			hsl(0 0% 100% / 0.00) 54%,
+			hsl(0 0% 100% / 0.06) 93%
+		);
+	background-origin: padding-box, border-box;
+	background-clip: padding-box, border-box;
+}
+
+@mixin btn-secondary {
+	color: var(--color-btn-secondary-text);
+	border-color: var(--color-btn-secondary-text);
+	background-color: color-mix(in srgb, var(--color-btn-secondary-bg) 20%, transparent);
+	background-image:
+		linear-gradient(
+			color-mix(in srgb, var(--color-btn-secondary-bg) 20%, transparent),
+			color-mix(in srgb, var(--color-btn-secondary-bg) 20%, transparent)
+		),
+		linear-gradient(
+			156.52deg,
+			hsl(0 0% 100% / 0.20) 2%,
+			hsl(0 0% 100% / 0.00) 40%,
+			hsl(0 0% 100% / 0.00) 54%,
+			hsl(0 0% 100% / 0.05) 93%
+		);
+	background-origin: padding-box, border-box;
+	background-clip: padding-box, border-box;
+	backdrop-filter: blur(30px);
+	-webkit-backdrop-filter: blur(30px);
+}
+
+@mixin btn-text {
+	color: var(--color-link);
+	background: none;
+	border-color: transparent;
+	padding-inline: 0;
+	filter: none;
+
+	&:hover {
+		color: var(--color-link-hover);
+		text-decoration: underline;
+		filter: none;
+	}
+}
+
+// ── Base placeholder ─────────────────────────────────────────
+
+%btn-base {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	padding-block: var(--space-xs);
+	padding-inline: var(--space-m);
+	border-radius: 9999px;
+	border: 1.25px solid transparent;
+	font-size: var(--step-0);
+	font-weight: 600;
+	line-height: 1;
+	text-decoration: none;
+	text-decoration-color: transparent; // override _links.scss text-decoration-color
+	cursor: pointer;
+	position: relative;
+	transition:
+		opacity 0.2s ease,
+		filter 0.2s ease;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-button);
+		outline-offset: 3px;
+	}
+
+	&:hover  { filter: brightness(1.08); }
+	&:active { filter: brightness(0.94); }
+}
+
+// ── .btn (custom usage) ───────────────────────────────────────
+
+.btn {
+	@extend %btn-base;
+
+	&[data-type="primary"]   { @include btn-primary; }
+	&[data-type="secondary"] { @include btn-secondary; }
+	&[data-type="text"]      { @include btn-text; }
+}
+
+// ── WordPress block button ────────────────────────────────────
+
+.wp-block-button__link {
+	@extend %btn-base;
+	cursor: pointer; // explicit override — wp-element-button can lose this
+}
+
+// Fill (default) → primary
+.wp-block-button.is-style-fill .wp-block-button__link,
+.wp-block-button:not([class*="is-style-"]) .wp-block-button__link {
+	@include btn-primary;
+}
+
+// Outline → secondary
+.wp-block-button.is-style-outline .wp-block-button__link {
+	@include btn-secondary;
+}
+
+// Text link → text (registered via register_block_style in functions.php)
+.wp-block-button.is-style-text .wp-block-button__link {
+	@include btn-text;
+}
