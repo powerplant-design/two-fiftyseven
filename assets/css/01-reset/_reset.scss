@@ -97,12 +97,13 @@ Smooth scrolling, but only when users have no preference for reduced motion, and
 	}
 }
 
-/* Opt in all pages to cross-document view transitions. */
-@media (prefers-reduced-motion: no-preference) {
-	@view-transition {
-		navigation: auto;
-	}
-}
+/* Cross-document view transitions disabled — Swup handles page transitions via AJAX.
+	   Re-enable only if Swup is removed. */
+	// @media (prefers-reduced-motion: no-preference) {
+	// 	@view-transition {
+	// 		navigation: auto;
+	// 	}
+	// }
 
 /*
 When scrolling to target elements, a reasonable spacing is added above them to ensure they remain visible, especially with sticky headers or similar.

@@ -19,6 +19,11 @@
     "vite": "^6.0.7"
   },
   "dependencies": {
+    "@swup/a11y-plugin": "^5.0.0",
+    "@swup/head-plugin": "^2.3.1",
+    "@swup/scroll-plugin": "^4.0.0",
+    "locomotive-scroll": "^5.0.1",
+    "swup": "^4.8.3",
     "utopia-core-scss": "^1.3.1"
   }
 }

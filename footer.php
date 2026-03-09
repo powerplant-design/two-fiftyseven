@@ -1,3 +1,4 @@
+	</div><!-- /#swup -->
 </main>
 
 <footer class="site-footer">

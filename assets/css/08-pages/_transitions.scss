@@ -1,0 +1,32 @@
+// ============================================================
+// Page transitions — Swup fade animation
+//
+// Swup adds `is-animating` to <html> during every navigation.
+// We target the #swup container for the opacity fade.
+//
+// Colour cross-fade: `background-color` on body is transitioned
+// so that when Swup calls applyThemes() at content:replace
+// (while content is invisible), the page background smoothly
+// blends from the outgoing colour space to the incoming one.
+// ============================================================
+
+@media (prefers-reduced-motion: no-preference) {
+
+	// Fade the swapped content container in and out.
+	#swup {
+		transition: opacity 0.3s ease;
+	}
+
+	html.is-animating #swup {
+		opacity: 0;
+	}
+
+	// Smooth body background cross-fade between colour spaces.
+	// When applyThemes() fires at content:replace, the new
+	// --color-surface-primary value resolves immediately but
+	// the rendered background transitions smoothly over 0.4s.
+	body {
+		transition: background-color 0.4s ease;
+	}
+
+}
