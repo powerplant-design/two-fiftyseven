@@ -73,29 +73,30 @@ html {
 	Fonts
 	----------------------------------------------- */
 
-	--font-body-family: "Atkinson Hyperlegible Next", sans-serif;
+	--font-body-family: "Overused Grotesk", sans-serif;
 	--font-body-weight-light: 300;
 	--font-body-weight-normal: 400;
 	--font-body-weight-medium: 500;
 	--font-body-weight-bold: 700;
-	--font-display-family: "Inter", sans-serif;
+	--font-display-family: "Gopher Display", sans-serif;
 	--font-display-features: "calt" 1, "ss02" 1;
-	--font-display-weight: 800;
-	--font-monospace-family: "JetBrains Mono", monospace;
+	--font-display-weight: 400;
+	--font-monospace-family: "Maple Mono", monospace;
 	--font-monospace-weight: 400;
 
 	/* -----------------------------------------------
 	Kerning (letter spacing)
 	----------------------------------------------- */
 
-	--kerning-caps: 0.025em;
+	--kerning-heading: -0.03em;
+	--kerning-caps: 0.05em;
 
 	/* -----------------------------------------------
 	Leading (line height)
 	----------------------------------------------- */
 
-	--leading-slim: 1.2;
-	--leading-base: 1.5;
+	--leading-slim: 1.1;
+	--leading-base: 1.45;
 	--leading-loose: 1.8;
 
 	/* -----------------------------------------------

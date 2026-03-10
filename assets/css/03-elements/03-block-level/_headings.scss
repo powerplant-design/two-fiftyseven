@@ -16,67 +16,25 @@ h4,
 h5,
 h6 {
 	overflow-wrap: anywhere;
+	font-family: var(--font-body-family);
+	font-weight: var(--font-body-weight-bold);
+	line-height: var(--leading-slim);
+	letter-spacing: var(--kerning-heading);
 }
 
-h1 {
-	font-family: var(--text-4xl-family);
-	font-size: var(--text-4xl-size, 2rem);
-	font-weight: var(--text-4xl-weight, bold);
-	font-feature-settings: var(--text-4xl-features);
-	line-height: var(--text-4xl-leading, normal);
-	text-transform: var(--text-4xl-transform, none);
-	letter-spacing: var(--text-4xl-kerning, normal);
-}
-
+h1,
 h2 {
-	font-family: var(--text-3xl-family);
-	font-size: var(--text-3xl-size, 2rem);
-	font-weight: var(--text-3xl-weight, bold);
-	font-feature-settings: var(--text-3xl-features);
-	line-height: var(--text-3xl-leading, normal);
-	text-transform: var(--text-3xl-transform, none);
-	letter-spacing: var(--text-3xl-kerning, normal);
+	font-family: var(--font-display-family);
+	font-weight: var(--font-display-weight);
+	font-feature-settings: var(--font-display-features);
 }
 
-h3 {
-	font-family: var(--text-2xl-family);
-	font-size: var(--text-2xl-size, 2rem);
-	font-weight: var(--text-2xl-weight, bold);
-	font-feature-settings: var(--text-2xl-features);
-	line-height: var(--text-2xl-leading, normal);
-	text-transform: var(--text-2xl-transform, none);
-	letter-spacing: var(--text-2xl-kerning, normal);
-}
-
-h4 {
-	font-family: var(--text-xl-family);
-	font-size: var(--text-xl-size, 2rem);
-	font-weight: var(--text-xl-weight, bold);
-	font-feature-settings: var(--text-xl-features);
-	line-height: var(--text-xl-leading, normal);
-	text-transform: var(--text-xl-transform, none);
-	letter-spacing: var(--text-xl-kerning, normal);
-}
-
-h5 {
-	font-family: var(--text-l-family);
-	font-size: var(--text-l-size, 2rem);
-	font-weight: var(--text-l-weight, bold);
-	font-feature-settings: var(--text-l-features);
-	line-height: var(--text-l-leading, normal);
-	text-transform: var(--text-l-transform, none);
-	letter-spacing: var(--text-l-kerning, normal);
-}
-
-h6 {
-	font-family: var(--text-m-family);
-	font-size: var(--text-m-size, 2rem);
-	font-weight: var(--text-m-weight, bold);
-	font-feature-settings: var(--text-m-features);
-	line-height: var(--text-m-leading, normal);
-	text-transform: var(--text-m-transform, none);
-	letter-spacing: var(--text-m-kerning, normal);
-}
+h1 { font-size: var(--step-5); }
+h2 { font-size: var(--step-4); }
+h3 { font-size: var(--step-3); }
+h4 { font-size: var(--step-2); }
+h5 { font-size: var(--step-1); }
+h6 { font-size: var(--step-0); }
 
 /* -----------------------------------------------
 Variant: Eyebrow
