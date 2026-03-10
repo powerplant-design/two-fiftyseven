@@ -27,7 +27,9 @@
 	}
 
 	.color-mode-toggle {
+		width: var(--space-s);
 		color: var(--color-content-unchanged);
+		font-size: var(--text-l-size);
 	}
 
 	// No-hero modifier on the header itself — switches all relevant children.

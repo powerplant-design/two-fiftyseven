@@ -4,13 +4,15 @@
 
 .hero-home {
 	position: relative;
-	min-block-size: 95svh;
+	min-block-size: 90svh;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	overflow: hidden;
 	border-end-start-radius: var(--space-xl-3xl);
 	border-end-end-radius: var(--space-xl-3xl);
+	border-block-end: var(--border);
+	border-block-end-width: var(--border-width-medium);
     padding-block: var(--space-3xl);
 
 	// Background image via CSS custom property set inline by PHP.

@@ -8,3 +8,14 @@ body {
 	color: var(--color-content-primary);
 	background-color: var(--color-surface-unchanged);
 }
+
+// Applied only during user-triggered theme toggles (not on initial paint).
+html.theme-transition,
+html.theme-transition * {
+	transition:
+		color 500ms,
+		background-color 500ms,
+		border-color 500ms,
+		fill 500ms,
+		stroke 500ms !important;
+}

@@ -49,8 +49,11 @@ function syncToggleButton() {
 
 /** Toggles the user preference and persists it to localStorage. */
 function toggleColorMode() {
+	const html = document.documentElement;
+	html.classList.add( 'theme-transition' );
 	localStorage.setItem( STORAGE_KEY, isDarkMode() ? 'light' : 'dark' );
 	applyThemes();
+	window.setTimeout( () => html.classList.remove( 'theme-transition' ), 500 );
 }
 
 /** Wires up toggle button click, applies themes on load, and listens for OS changes. */
