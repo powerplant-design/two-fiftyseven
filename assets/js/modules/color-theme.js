@@ -44,7 +44,7 @@ function syncToggleButton() {
 	const btn   = document.querySelector( '[data-js="color-mode-toggle"]' );
 	const label = document.querySelector( '[data-mode-label]' );
 	if ( btn )   btn.setAttribute( 'aria-pressed', String( dark ) );
-	if ( label ) label.textContent = dark ? 'Dark mode' : 'Light mode';
+	if ( label ) label.textContent = dark ? '⏾' : '✴︎';
 }
 
 /** Toggles the user preference and persists it to localStorage. */

@@ -18,15 +18,23 @@
 		color: var(--color-content-unchanged);
 		transition: none; // prevent _links.scss transition layer from overriding
 
-		&--no-hero {
-			color: var(--color-content-primary);
-		}
-
 		svg {
 			display: block;
 			// height: 2rem;
 			width: var(--space-3xl-6xl);
 			fill: currentColor;
+		}
+	}
+
+	.color-mode-toggle {
+		color: var(--color-content-unchanged);
+	}
+
+	// No-hero modifier on the header itself — switches all relevant children.
+	&--no-hero {
+		.site-logo,
+		.color-mode-toggle {
+			color: var(--color-content-primary);
 		}
 	}
 }

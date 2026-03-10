@@ -9,7 +9,17 @@
 <body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
-<header class="site-header">
+<?php
+// Resolve the current post ID robustly: queried object for singular/front-page,
+// falling back to the static front page option if is_front_page() without a query object.
+$current_post_id = get_queried_object_id();
+if ( ! $current_post_id && is_front_page() ) {
+	$current_post_id = (int) get_option( 'page_on_front' );
+}
+$has_hero = $current_post_id && has_block( 'acf/hero-home', $current_post_id );
+?>
+
+<header class="site-header<?php echo $has_hero ? '' : ' site-header--no-hero'; ?>">
 	<div class="wrapper repel | w-full">
 		<nav class="site-nav">
 			<?php
@@ -20,16 +30,7 @@
 			] );
 			?>
 		</nav>
-		<?php
-		// Resolve the current post ID robustly: queried object for singular/front-page,
-		// falling back to the static front page option if is_front_page() without a query object.
-		$current_post_id = get_queried_object_id();
-		if ( ! $current_post_id && is_front_page() ) {
-			$current_post_id = (int) get_option( 'page_on_front' );
-		}
-		$has_hero = $current_post_id && has_block( 'acf/hero-home', $current_post_id );
-		?>
-		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-logo<?php echo $has_hero ? '' : ' site-logo--no-hero'; ?>" aria-label="<?php bloginfo( 'name' ); ?>">
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-logo" aria-label="<?php bloginfo( 'name' ); ?>">
 			<?php
 			$logo = get_template_directory() . '/assets/images/logo-257.svg';
 			if ( file_exists( $logo ) ) {
@@ -41,7 +42,7 @@
 			?>
 		</a>
 		<button
-			class="color-mode-toggle"
+			class="btn color-mode-toggle"
 			data-js="color-mode-toggle"
 			aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
 			aria-pressed="false"

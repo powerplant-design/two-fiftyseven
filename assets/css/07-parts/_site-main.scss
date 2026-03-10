@@ -1,0 +1,17 @@
+/* Site main */
+
+.site-main {
+	min-block-size: 100svh;
+	position: relative;
+	z-index: 2;
+	background-color: var(--color-surface-primary);
+	border-end-start-radius: var(--space-xl-3xl);
+	border-end-end-radius: var(--space-xl-3xl);
+	padding-block-end: var(--space-xl-3xl);
+	// Clearance for fixed footer — height is measured by JS and set as --footer-height.
+	margin-block-end: var(--footer-height, 20rem);
+	// border-inline-start: var(--border);
+	// border-inline-end: var(--border);
+	border-block-end: var(--border);
+	border-block-end-width: var(--border-width-medium);
+}

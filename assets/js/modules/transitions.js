@@ -56,12 +56,12 @@ export function initTransitions() {
 		}
 		applyThemes();
 
-		// Sync logo colour class: the header persists across Swup navigations so
+		// Sync no-hero modifier: the header persists across Swup navigations so
 		// the PHP-rendered class won't update — copy it from the fetched document.
-		const incomingLogo = visit.to.document?.querySelector( '.site-logo' );
-		const currentLogo  = document.querySelector( '.site-logo' );
-		if ( incomingLogo && currentLogo ) {
-			currentLogo.classList.toggle( 'site-logo--no-hero', incomingLogo.classList.contains( 'site-logo--no-hero' ) );
+		const incomingHeader = visit.to.document?.querySelector( '.site-header' );
+		const currentHeader  = document.querySelector( '.site-header' );
+		if ( incomingHeader && currentHeader ) {
+			currentHeader.classList.toggle( 'site-header--no-hero', incomingHeader.classList.contains( 'site-header--no-hero' ) );
 		}
 	} );
 
