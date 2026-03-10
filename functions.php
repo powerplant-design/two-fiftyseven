@@ -165,6 +165,21 @@ add_action( 'acf/init', function (): void {
 			'mode'        => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'hero-page',
+		'title'           => __( '257 Hero Page', 'two-fiftyseven' ),
+		'description'     => __( 'Page-level hero with background image, headline, subtitle, and a full-width icon marquee.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/hero-page/block.php',
+		'category'        => 'layout',
+		'icon'            => 'cover-image',
+		'keywords'        => [ 'hero', 'page', 'banner', 'marquee' ],
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => [ 'full' ],
+			'mode'        => false,
+		],
+	] );
 } );
 
 

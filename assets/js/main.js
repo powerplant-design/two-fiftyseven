@@ -8,9 +8,11 @@ import { initScroll }     from './modules/scroll.js';
 import { initMarquee }    from './modules/marquee.js';
 import { initTransitions } from './modules/transitions.js';
 import { initFooter }     from './modules/footer.js';
+import { initHeader }     from './modules/header.js';
 
 initColorTheme();
 initScroll();
 initMarquee();
 initTransitions();
 initFooter();
+initHeader();

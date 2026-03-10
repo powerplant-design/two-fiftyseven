@@ -17,8 +17,10 @@ get_header(); ?>
 	$blocks    = array_filter( parse_blocks( get_the_content() ), fn( $b ) => ! empty( $b['blockName'] ) );
 	$wrap_open = false;
 
+	$full_bleed_blocks = [ 'acf/hero-home', 'acf/hero-page' ];
+
 	foreach ( $blocks as $block ) {
-		if ( 'acf/hero-home' === $block['blockName'] ) {
+		if ( in_array( $block['blockName'], $full_bleed_blocks, true ) ) {
 			// Close any open wrapper before the hero (e.g. hero placed mid-page).
 			if ( $wrap_open ) {
 				echo '</div>';

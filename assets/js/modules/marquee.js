@@ -1,15 +1,12 @@
 /**
  * Hero marquee — JS-driven animation.
  *
- * Base: slow continuous left-scroll via requestAnimationFrame.
- * On scroll: the raw Lenis scroll delta is added each frame so the marquee
- * moves in direct proportion to how far the page has scrolled — it's tied
- * to scroll position, not just speed.  When the page stops, the marquee
- * returns to its idle base pace immediately.
+ * Supports multiple marquee tracks on the same page via [data-js="marquee-track"].
+ * Each track maintains its own scroll position. A single rAF loop drives all.
  *
  * PHP doubles the icon list for a seamless loop; we reset at -50% of total
  * track width.  The CSS animation on the track is disabled by JS on init and
- * restored on destroy — it remains as a no-JS / reduced-motion fallback.
+ * remains as a no-JS / reduced-motion fallback.
  */
 
 import { getScrollInstance } from './scroll.js';
@@ -20,21 +17,20 @@ const SCROLL_SCALE = 0.3;  // fraction of scroll delta added to marquee per fram
 // ─────────────────────────────────────────────────────────────
 
 let rafId       = null;
-let position    = 0;
-let scrollBoost = 0; // px to add this frame, set by Lenis event, consumed per tick
+let tracks      = []; // [{ el, position }]
+let scrollBoost = 0;
 let lastScroll  = null;
 let unsubscribe = null;
 
 export function initMarquee() {
-	const track = document.querySelector( '.hero-home__marquee-track' );
-	if ( ! track ) return;
+	const trackEls = document.querySelectorAll( '[data-js="marquee-track"]' );
+	if ( ! trackEls.length ) return;
 
-	// Hand off from CSS animation to JS transform.
-	track.style.animation = 'none';
+	tracks = Array.from( trackEls ).map( ( el ) => {
+		el.style.animation = 'none';
+		return { el, position: 0 };
+	} );
 
-	// Subscribe to Lenis scroll position.
-	// Lenis fires its scroll event each rAF frame that the page is moving,
-	// giving us the raw scroll position so we can compute a true positional delta.
 	const lenis = getScrollInstance()?.lenisInstance;
 	if ( lenis ) {
 		const onScroll = ( { scroll } ) => {
@@ -52,17 +48,18 @@ export function initMarquee() {
 	}
 
 	function tick() {
-		// Move by base speed + this frame's scroll contribution, then reset boost.
-		position   -= BASE_SPEED + scrollBoost;
+		const boost = scrollBoost;
 		scrollBoost = 0;
 
-		// Seamless loop — reset at the halfway point (items are doubled in PHP).
-		const half = track.scrollWidth / 2;
-		if ( Math.abs( position ) >= half ) {
-			position += half;
+		for ( const track of tracks ) {
+			track.position -= BASE_SPEED + boost;
+			const half = track.el.scrollWidth / 2;
+			if ( Math.abs( track.position ) >= half ) {
+				track.position += half;
+			}
+			track.el.style.transform = `translateX(${ track.position }px)`;
 		}
 
-		track.style.transform = `translateX(${ position }px)`;
 		rafId = requestAnimationFrame( tick );
 	}
 
@@ -78,11 +75,6 @@ export function destroyMarquee() {
 		unsubscribe();
 		unsubscribe = null;
 	}
-	position    = 0;
-	scrollBoost = 0;
-	lastScroll  = null;
-
-	const track = document.querySelector( '.hero-home__marquee-track' );
-	if ( track ) track.style.animation = '';
+	tracks = [];
 }
 

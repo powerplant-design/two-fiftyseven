@@ -22,8 +22,18 @@
 	background-color: var(--color-neutral-600); // fallback when no image
     background-attachment: fixed;
 
+	// ── Backdrop overlay ────────────────────────────────────
+	&__backdrop {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		z-index: 0;
+	}
+
 	// ── Inner content wrapper ─────────────────────────────────
 	&__inner {
+		position: relative;
+		z-index: 1;
 		box-sizing: border-box; // .wrapper uses content-box; override so padding-inline doesn't add to 100%
 		width: 100%;
 		min-width: 0;

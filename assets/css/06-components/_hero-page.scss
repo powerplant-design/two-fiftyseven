@@ -1,0 +1,113 @@
+// ============================================================
+// Hero Page Block
+// ============================================================
+
+.hero-page {
+	position: relative;
+	min-block-size: 90svh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	overflow: hidden;
+	border-end-start-radius: var(--space-xl-3xl);
+	border-end-end-radius: var(--space-xl-3xl);
+	border-block-end: var(--border);
+	border-block-end-width: var(--border-width-medium);
+
+	// Background image via CSS custom property set inline by PHP.
+	background-image: var(--hero-bg, none);
+	background-size: cover;
+	background-position: center;
+	background-color: var(--color-neutral-600); // fallback when no image
+	background-attachment: fixed;
+
+    overflow: hidden; // clip background-attachment: fixed to the hero area (mostly for mobile Safari, which doesn't support background-attachment: local)
+
+	// ── Backdrop overlay ────────────────────────────────────
+	&__backdrop {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+        // z-index: 0;
+	}
+
+	// ── Inner content wrapper ─────────────────────────────────
+	&__inner {
+		position: relative;
+		z-index: 1;
+		width: 100%;
+		min-width: 0;
+		padding-block: var(--space-3xl);
+		padding-inline: var(--global-padding-inline, 1rem);
+        justify-content: center;
+		flex: 1;
+	}
+
+	// ── Headline ──────────────────────────────────────────────
+	// No text styles set here — inherits from h1 element styles.
+	&__headline {
+		text-align: center;
+		color: var(--color-content-unchanged);
+		text-wrap: balance;
+	}
+
+	// ── Subtitle ──────────────────────────────────────────────
+	&__subtitle {
+		text-align: center;
+		color: var(--color-content-unchanged);
+		max-inline-size: 36ch;
+		margin-inline: auto;
+	}
+
+	// ── Marquee wrapper (label + strip) ───────────────────────
+	&__marquee-wrap {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-s);
+		padding-block-end: var(--space-xl);
+	}
+
+	// ── Eyebrow label ─────────────────────────────────────────
+	&__marquee-label {
+		text-align: center;
+		text-transform: uppercase;
+		letter-spacing: var(--kerning-caps);
+		color: var(--color-content-unchanged);
+		opacity: 0.6;
+	}
+
+	// ── Full-width marquee ────────────────────────────────────
+	&__marquee {
+		overflow: hidden;
+	}
+
+	&__marquee-track {
+		display: flex;
+		align-items: center;
+		gap: var(--space-xl);
+		width: max-content; // single row — overflow clipped by __marquee
+		will-change: transform;
+
+		@media (prefers-reduced-motion: no-preference) {
+			// CSS animation is the no-JS fallback; JS takes over at runtime.
+			animation: hero-marquee 80s linear infinite;
+		}
+	}
+
+	&__marquee-item {
+		flex-shrink: 0;
+		display: flex;
+		align-items: center;
+		color: var(--color-content-unchanged);
+
+		svg,
+		img {
+			block-size: var(--space-l);
+			inline-size: auto;
+		}
+
+		svg {
+			fill: currentColor;
+		}
+	}
+}

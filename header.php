@@ -16,7 +16,10 @@ $current_post_id = get_queried_object_id();
 if ( ! $current_post_id && is_front_page() ) {
 	$current_post_id = (int) get_option( 'page_on_front' );
 }
-$has_hero = $current_post_id && has_block( 'acf/hero-home', $current_post_id );
+$has_hero = $current_post_id && (
+	has_block( 'acf/hero-home', $current_post_id ) ||
+	has_block( 'acf/hero-page', $current_post_id )
+);
 ?>
 
 <header class="site-header<?php echo $has_hero ? '' : ' site-header--no-hero'; ?>">

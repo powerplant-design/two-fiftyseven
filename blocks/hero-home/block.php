@@ -95,7 +95,7 @@ $marquee_icons = ! empty( $icons ) ? array_merge( $icons, $icons ) : [];
 
 			<?php if ( $marquee_icons ) : ?>
 				<div class="hero-home__marquee" aria-hidden="true">
-					<ul class="hero-home__marquee-track">
+					<ul class="hero-home__marquee-track" data-js="marquee-track">
 						<?php
 						// Repeat icons enough times to fill the strip (minimum 6 passes),
 						// then double the result for a seamless CSS looping animation.

@@ -19,6 +19,7 @@ import SwupA11yPlugin from '@swup/a11y-plugin';
 import { applyThemes } from './color-theme.js';
 import { initScroll, destroyScroll } from './scroll.js';
 import { initMarquee, destroyMarquee } from './marquee.js';
+import { syncHeader } from './header.js';
 
 export function initTransitions() {
 	const swup = new Swup( {
@@ -66,8 +67,11 @@ export function initTransitions() {
 	} );
 
 	// 3. Reinit Locomotive + marquee once the new content is in the DOM.
+	//    Also sync header scroll state — Swup resets scroll to 0 so the
+	//    --scrolled class should be removed immediately on navigation.
 	swup.hooks.on( 'page:view', () => {
 		initScroll();
 		initMarquee();
+		syncHeader();
 	} );
 }

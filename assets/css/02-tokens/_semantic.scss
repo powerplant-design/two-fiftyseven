@@ -78,19 +78,19 @@ html {
 	/* XL — h4, body font */
 	--text-xl-family: var(--font-body-family);
 	--text-xl-features: normal;
-	--text-xl-weight: var(--font-body-weight-bold);
+	--text-xl-weight: var(--font-body-weight-normal);
 	--text-xl-size: var(--step-2);
 	--text-xl-leading: var(--leading-slim);
-	--text-xl-kerning: var(--kerning-heading);
+	--text-xl-kerning: var(--kerning-regular);
 	--text-xl-transform: none;
 
 	/* L — h5, body font */
 	--text-l-family: var(--font-body-family);
 	--text-l-features: normal;
-	--text-l-weight: var(--font-body-weight-medium);
+	--text-l-weight: var(--font-body-weight-normal);
 	--text-l-size: var(--step-1);
 	--text-l-leading: var(--leading-slim);
-	--text-l-kerning: var(--kerning-heading);
+	--text-l-kerning: var(--kerning-regular);
 	--text-l-transform: none;
 
 	/* M — h6, body font */
@@ -99,7 +99,7 @@ html {
 	--text-m-weight: var(--font-body-weight-normal);
 	--text-m-size: var(--step-0);
 	--text-m-leading: var(--leading-slim);
-	--text-m-kerning: var(--kerning-heading);
+	--text-m-kerning: var(--kerning-regular);
 	--text-m-transform: none;
 
 	/* S — small text, body font */
@@ -108,6 +108,6 @@ html {
 	--text-s-weight: var(--font-body-weight-normal);
 	--text-s-size: var(--step--1);
 	--text-s-leading: var(--leading-slim);
-	--text-s-kerning: var(--kerning-heading);
+	--text-s-kerning: var(--kerning-regular);
 	--text-s-transform: none;
 }

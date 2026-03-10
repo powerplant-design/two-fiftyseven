@@ -1,0 +1,128 @@
+{
+	"key": "group_two57_block_hero_page",
+	"title": "Hero Page Block",
+	"fields": [
+		{
+			"key": "field_two57_page_hero_headline",
+			"label": "Headline",
+			"name": "page_hero_headline",
+			"aria-label": "",
+			"type": "textarea",
+			"instructions": "Main display heading. Use Shift+Enter for a line break.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": "",
+			"new_lines": "br",
+			"maxlength": "",
+			"rows": 2
+		},
+		{
+			"key": "field_two57_page_hero_subtitle",
+			"label": "Subtitle",
+			"name": "page_hero_subtitle",
+			"aria-label": "",
+			"type": "textarea",
+			"instructions": "Optional supporting paragraph beneath the headline.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": "",
+			"new_lines": "br",
+			"maxlength": "",
+			"rows": 3
+		},
+		{
+			"key": "field_two57_page_hero_bg_image",
+			"label": "Background Image",
+			"name": "page_hero_background_image",
+			"aria-label": "",
+			"type": "image",
+			"instructions": "Full-bleed hero background. Aim for at least 1920×1080px.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"return_format": "array",
+			"library": "all",
+			"min_width": "",
+			"min_height": "",
+			"min_size": "",
+			"max_width": "",
+			"max_height": "",
+			"max_size": "",
+			"mime_types": "",
+			"preview_size": "medium"
+		},
+		{
+			"key": "field_two57_page_hero_marquee_label",
+			"label": "Marquee Label",
+			"name": "page_hero_marquee_label",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Optional eyebrow text above the marquee strip, e.g. \"As used by\".",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "As used by"
+		},
+		{
+			"key": "field_two57_page_hero_icons",
+			"label": "Marquee Icons",
+			"name": "page_hero_marquee_icons",
+			"aria-label": "",
+			"type": "repeater",
+			"instructions": "SVG or PNG icons that scroll in the full-width marquee strip. Add at least 4 for a smooth loop.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"min": 0,
+			"max": 0,
+			"layout": "block",
+			"button_label": "Add Icon",
+			"sub_fields": [
+				{
+					"key": "field_two57_page_hero_icon_img",
+					"label": "Icon",
+					"name": "icon_image",
+					"aria-label": "",
+					"type": "image",
+					"instructions": "Upload an SVG or PNG. Recommended size: 80×80px.",
+					"required": 1,
+					"conditional_logic": 0,
+					"wrapper": { "width": "", "class": "", "id": "" },
+					"return_format": "array",
+					"library": "all",
+					"min_width": "",
+					"min_height": "",
+					"min_size": "",
+					"max_width": "",
+					"max_height": "",
+					"max_size": "",
+					"mime_types": "svg, png",
+					"preview_size": "thumbnail"
+				}
+			]
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/hero-page"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Controls the headline, subtitle, background image, and icon marquee for the Hero Page block.",
+	"show_in_rest": 0,
+	"modified": 1741478400
+}

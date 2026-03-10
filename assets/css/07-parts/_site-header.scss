@@ -14,6 +14,29 @@
 	width: 100%;
 	z-index: 1000;
 
+	// Fading backdrop blur — full at top, none at bottom.
+	// Only rendered once .site-header--scrolled is set by header.js.
+	&::before {
+		content: '';
+		position: absolute;
+		inset-inline: 0;
+		top: -2rem; // extend up to cover gap above header
+		bottom: -1rem; // extend down so the fade has room
+		background: linear-gradient(to bottom, var(--color-surface-unchanged) 0%, transparent 100%);
+		backdrop-filter: blur(18px);
+		-webkit-backdrop-filter: blur(18px);
+		mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+		-webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+		pointer-events: none;
+		z-index: -1;
+		opacity: 0;
+		transition: opacity 300ms ease;
+	}
+
+	&--scrolled::before {
+		opacity: 1;
+	}
+
 	.site-logo {
 		color: var(--color-content-unchanged);
 		transition: none; // prevent _links.scss transition layer from overriding
