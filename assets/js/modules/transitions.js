@@ -48,12 +48,21 @@ export function initTransitions() {
 	//    <html> persists across Swup navigations so we must manually transfer
 	//    data-color-space from the incoming document before resolving themes —
 	//    otherwise applyThemes() reads the stale value from the previous page.
+	//    Also sync the logo hero/no-hero class from the incoming page's header.
 	swup.hooks.on( 'content:replace', ( visit ) => {
 		const incomingSpace = visit.to.document?.documentElement?.getAttribute( 'data-color-space' );
 		if ( incomingSpace ) {
 			document.documentElement.setAttribute( 'data-color-space', incomingSpace );
 		}
 		applyThemes();
+
+		// Sync logo colour class: the header persists across Swup navigations so
+		// the PHP-rendered class won't update — copy it from the fetched document.
+		const incomingLogo = visit.to.document?.querySelector( '.site-logo' );
+		const currentLogo  = document.querySelector( '.site-logo' );
+		if ( incomingLogo && currentLogo ) {
+			currentLogo.classList.toggle( 'site-logo--no-hero', incomingLogo.classList.contains( 'site-logo--no-hero' ) );
+		}
 	} );
 
 	// 3. Reinit Locomotive + marquee once the new content is in the DOM.

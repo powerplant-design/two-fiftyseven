@@ -13,4 +13,20 @@
 	left: 0;
 	width: 100%;
 	z-index: 1000;
+
+	.site-logo {
+		color: var(--color-content-unchanged);
+		transition: none; // prevent _links.scss transition layer from overriding
+
+		&--no-hero {
+			color: var(--color-content-primary);
+		}
+
+		svg {
+			display: block;
+			// height: 2rem;
+			width: var(--space-3xl-6xl);
+			fill: currentColor;
+		}
+	}
 }

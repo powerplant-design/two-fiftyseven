@@ -10,19 +10,36 @@
 <?php wp_body_open(); ?>
 
 <header class="site-header">
-	<div class="wrapper repel">
-		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-logo font-bold text-xl">
-			<?php bloginfo( 'name' ); ?>
-		</a>
+	<div class="wrapper repel | w-full">
 		<nav class="site-nav">
 			<?php
 			wp_nav_menu( [
 				'theme_location' => 'primary',
-				'menu_class'     => 'nav-menu flex gap-4',
+				'menu_class'     => 'nav-menu cluster',
 				'fallback_cb'    => false,
 			] );
 			?>
 		</nav>
+		<?php
+		// Resolve the current post ID robustly: queried object for singular/front-page,
+		// falling back to the static front page option if is_front_page() without a query object.
+		$current_post_id = get_queried_object_id();
+		if ( ! $current_post_id && is_front_page() ) {
+			$current_post_id = (int) get_option( 'page_on_front' );
+		}
+		$has_hero = $current_post_id && has_block( 'acf/hero-home', $current_post_id );
+		?>
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-logo<?php echo $has_hero ? '' : ' site-logo--no-hero'; ?>" aria-label="<?php bloginfo( 'name' ); ?>">
+			<?php
+			$logo = get_template_directory() . '/assets/images/logo-257.svg';
+			if ( file_exists( $logo ) ) {
+				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				echo file_get_contents( $logo );
+			} else {
+				bloginfo( 'name' );
+			}
+			?>
+		</a>
 		<button
 			class="color-mode-toggle"
 			data-js="color-mode-toggle"

@@ -9,6 +9,7 @@
 	flex-direction: column;
 	justify-content: center;
 	overflow: hidden;
+    padding-block: var(--space-3xl);
 
 	// Background image via CSS custom property set inline by PHP.
 	background-image: var(--hero-bg, none);
@@ -19,8 +20,9 @@
 
 	// ── Inner content wrapper ─────────────────────────────────
 	&__inner {
-		min-width: 0; // flex child: allow shrinking below content width
+		box-sizing: border-box; // .wrapper uses content-box; override so padding-inline doesn't add to 100%
 		width: 100%;
+		min-width: 0;
 	}
 
 	// ── Headline ──────────────────────────────────────────────
@@ -32,11 +34,12 @@
 
 	// ── Panel (the rounded colour card) ───────────────────────
 	&__panel {
+        --stack-gap : var(--space-xl);
 		backdrop-filter: blur(20px);
 		border-radius: var(--space-xl);
 		overflow: hidden;
-		padding-block: var(--space-xl);
-		margin-inline: var(--space-xl);
+		padding-block-start: var(--space-s-xl);
+		padding-block-end: var(--space-xl);
 
 		// Glassy gradient border: bright highlight at top, fades to near-transparent at bottom.
 		border: 1px solid transparent;
