@@ -1,0 +1,119 @@
+{
+	"key": "group_two57_block_stacked_cards",
+	"title": "Stacked Cards Block",
+	"fields": [
+		{
+			"key": "field_two57_stacked_cards_items",
+			"label": "Cards",
+			"name": "stacked_cards_items",
+			"aria-label": "",
+			"type": "repeater",
+			"instructions": "Add one item per card. Cards reveal on scroll.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"min": 0,
+			"max": 0,
+			"layout": "block",
+			"button_label": "Add Card",
+			"sub_fields": [
+				{
+					"key": "field_two57_stacked_cards_tab_label",
+					"label": "Tab Label",
+					"name": "tab_label",
+					"aria-label": "",
+					"type": "text",
+					"instructions": "Short label shown on the card tab, e.g. \"Teams\" or \"Freelancers\".",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "50%", "class": "", "id": "" },
+					"default_value": "",
+					"maxlength": 30,
+					"placeholder": "e.g. For Teams"
+				},
+				{
+					"key": "field_two57_stacked_cards_heading",
+					"label": "Heading",
+					"name": "heading",
+					"aria-label": "",
+					"type": "text",
+					"instructions": "H3 card heading.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "50%", "class": "", "id": "" },
+					"default_value": "",
+					"maxlength": "",
+					"placeholder": ""
+				},
+				{
+					"key": "field_two57_stacked_cards_content",
+					"label": "Content",
+					"name": "content",
+					"aria-label": "",
+					"type": "wysiwyg",
+					"instructions": "Body copy for this card.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "", "class": "", "id": "" },
+					"default_value": "",
+					"tabs": "all",
+					"toolbar": "basic",
+					"media_upload": 0,
+					"delay": 0
+				},
+				{
+					"key": "field_two57_stacked_cards_button",
+					"label": "Button",
+					"name": "button",
+					"aria-label": "",
+					"type": "link",
+					"instructions": "Optional CTA. The link title becomes the button text.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "", "class": "", "id": "" },
+					"return_format": "array"
+				},
+				{
+					"key": "field_two57_stacked_cards_image",
+					"label": "Image",
+					"name": "image",
+					"aria-label": "",
+					"type": "image",
+					"instructions": "Card image. Aim for at least 800×600px.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "", "class": "", "id": "" },
+					"return_format": "array",
+					"library": "all",
+					"min_width": "",
+					"min_height": "",
+					"min_size": "",
+					"max_width": "",
+					"max_height": "",
+					"max_size": "",
+					"mime_types": "",
+					"preview_size": "medium"
+				}
+			]
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/stacked-cards"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Controls the cards in the Stacked Cards block.",
+	"show_in_rest": 0,
+	"modified": 1741564800
+}

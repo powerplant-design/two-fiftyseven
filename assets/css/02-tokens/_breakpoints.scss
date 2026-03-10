@@ -1,10 +1,18 @@
 // Breakpoints
 // Reference these in @media queries using the token values directly.
+// CSS custom properties cannot be used inside @media, so SCSS variables
+// are provided as the canonical source — used by @use in component files.
+
+$bp-sm:  640px;
+$bp-md:  768px;
+$bp-lg:  1024px;
+$bp-xl:  1280px;
+$bp-2xl: 1536px;
 
 :root {
-  --bp-sm:  640px;
-  --bp-md:  768px;
-  --bp-lg:  1024px;
-  --bp-xl:  1280px;
-  --bp-2xl: 1536px;
+  --bp-sm:  #{$bp-sm};
+  --bp-md:  #{$bp-md};
+  --bp-lg:  #{$bp-lg};
+  --bp-xl:  #{$bp-xl};
+  --bp-2xl: #{$bp-2xl};
 }

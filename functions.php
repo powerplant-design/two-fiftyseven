@@ -159,10 +159,10 @@ add_action( 'acf/init', function (): void {
 		'category'        => 'layout',
 		'icon'            => 'cover-image',
 		'keywords'        => [ 'hero', 'home', 'banner', 'cards' ],
+		'mode'            => 'edit',
 		'supports'        => [
 			'innerBlocks' => false,
 			'align'       => [ 'full' ],
-			'mode'        => false,
 		],
 	] );
 
@@ -174,10 +174,25 @@ add_action( 'acf/init', function (): void {
 		'category'        => 'layout',
 		'icon'            => 'cover-image',
 		'keywords'        => [ 'hero', 'page', 'banner', 'marquee' ],
+		'mode'            => 'edit',
 		'supports'        => [
 			'innerBlocks' => false,
 			'align'       => [ 'full' ],
-			'mode'        => false,
+		],
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'stacked-cards',
+		'title'           => __( '257 Stacked Cards', 'two-fiftyseven' ),
+		'description'     => __( 'A series of content cards that reveal on scroll, each with a tab label, heading, rich content, optional CTA, and image.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/stacked-cards/block.php',
+		'category'        => 'layout',
+		'icon'            => 'media-document',
+		'keywords'        => [ 'cards', 'tabs', 'stacked', 'scroll', 'reveal' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
 		],
 	] );
 } );

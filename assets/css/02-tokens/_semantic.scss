@@ -8,7 +8,9 @@ html {
 	Borders
 	----------------------------------------------- */
 
-	--border: var(--border-width-thin) solid var(--border-color, currentcolor);
+	--border: var(--border-width-thin) solid var(--color-border-primary, currentcolor);
+	--border-secondary: var(--border-width-thin) solid var(--color-border-secondary, currentcolor);
+	--border-tertiary: var(--border-width-thin) solid var(--color-border-tertiary, currentcolor);
 
 	/* -----------------------------------------------
 	Focus Indicator

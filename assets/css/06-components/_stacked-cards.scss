@@ -1,0 +1,149 @@
+// ============================================================
+// Stacked Cards Block
+// ============================================================
+@use '../02-tokens/breakpoints' as bp;
+
+// ── Outer wrapper — height set by JS for scroll runway ───────
+.stacked-cards {
+	--tab-width: 6.25rem; // 100px — each tab is this wide
+	margin-block-start: var(--space-2xl);
+
+	@media (min-width: bp.$bp-md) {
+		margin-block-start: 0;
+	}
+}
+
+// ── Sticky viewport — cards are clipped here ─────────────────
+.stacked-cards__track {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-s);
+
+	@media (min-width: bp.$bp-md) {
+		position: sticky;
+		top: 0;
+		height: 100svh;
+		overflow: hidden;
+		display: block; // revert flex so absolute children take over
+	}
+}
+
+// ── Individual card ───────────────────────────────────────────
+.stacked-cards__item {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+
+	@media (min-width: bp.$bp-md) {
+		position: absolute;
+		inset: 0;
+		justify-content: center;
+		// First card (index 0) = on top; last card = furthest back.
+		z-index: calc(50 - var(--card-index, 0));
+		will-change: transform;
+		// Cards underneath must not block pointer events — tabs re-enable them.
+		pointer-events: none;
+	}
+}
+
+// ── Tab label ─────────────────────────────────────────────────
+.stacked-cards__tab {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: var(--tab-width, 6.25rem);
+	// Indent tab only — panel stays full width. Desktop only.
+	@media (min-width: bp.$bp-md) {
+		margin-inline-start: calc(var(--card-index, 0) * var(--tab-width, 6.25rem));
+	}
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-s);
+	background-color: var(--color-surface-secondary);
+	border: var(--border-tertiary);
+	border-block-end: none;
+	border-start-start-radius: var(--space-s);
+	border-start-end-radius: var(--space-s);
+	border-end-start-radius: 0;
+	border-end-end-radius: 0;
+	font-family: var(--font-monospace-family);
+	letter-spacing: var(--kerning-caps);
+	text-transform: uppercase;
+	color: var(--color-content-secondary);
+	position: relative;
+	z-index: 1;
+	margin-block-end: -3px;
+	pointer-events: all;
+
+	// Button-specific resets + interaction styles
+	&[type='button'] {
+		appearance: none;
+		cursor: pointer;
+		transition: color 0.2s ease;
+
+		&:hover {
+			color: var(--color-content-primary);
+		}
+	}
+}
+
+// ── Panel ─────────────────────────────────────────────────────
+.stacked-cards__panel {
+	width: 100%;
+	// min-height: 40svh;
+	--block-gap: var(--space-l);
+	background-color: var(--color-surface-secondary);
+	border: var(--border-tertiary);
+	border-radius: var(--space-m);
+	border-start-start-radius: 0; // card 0: tab sits in this corner
+	padding: var(--space-l);
+	overflow: hidden;
+	align-items: center;
+
+	@media (min-width: bp.$bp-md) {
+		min-height: unset;
+		height: 70svh;
+		--block-gap: var(--space-s-xl);
+		padding: var(--space-xl);
+	}
+}
+
+// Cards 1+ have their tab indented on desktop so the top-left corner is free.
+.stacked-cards__item:not(:first-child) .stacked-cards__panel {
+	@media (min-width: bp.$bp-md) {
+		border-start-start-radius: var(--space-m);
+	}
+}
+
+// ── Body ──────────────────────────────────────────────────────
+.stacked-cards__body {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-m);
+}
+
+.stacked-cards__heading {
+	color: var(--color-content-primary);
+}
+
+.stacked-cards__content {
+	color: var(--color-content-secondary);
+}
+
+// ── Image ─────────────────────────────────────────────────────
+.stacked-cards__image {
+	border-radius: var(--space-s);
+	overflow: hidden;
+	aspect-ratio: 1;
+
+	@media (min-width: bp.$bp-md) {
+		aspect-ratio: 4 / 4.2;
+	}
+}
+
+.stacked-cards__img {
+	display: block;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}

@@ -20,6 +20,7 @@ import { applyThemes } from './color-theme.js';
 import { initScroll, destroyScroll } from './scroll.js';
 import { initMarquee, destroyMarquee } from './marquee.js';
 import { syncHeader } from './header.js';
+import { initStackedCards, destroyStackedCards } from './stacked-cards.js';
 
 export function initTransitions() {
 	const swup = new Swup( {
@@ -42,6 +43,7 @@ export function initTransitions() {
 	// 1. Destroy Locomotive + marquee before the DOM is swapped.
 	swup.hooks.on( 'visit:start', () => {
 		destroyMarquee();
+		destroyStackedCards();
 		destroyScroll();
 	} );
 
@@ -72,6 +74,7 @@ export function initTransitions() {
 	swup.hooks.on( 'page:view', () => {
 		initScroll();
 		initMarquee();
+		initStackedCards();
 		syncHeader();
 	} );
 }
