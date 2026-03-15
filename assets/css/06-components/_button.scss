@@ -63,6 +63,8 @@
 	background: none;
 	border-color: transparent;
 	padding-inline: 0;
+	text-transform: none;
+	letter-spacing: normal;
 	filter: none;
 
 	&:hover {
@@ -84,8 +86,9 @@
 	border: var(--border-width-thin) solid transparent;
 	font-family: var(--font-monospace-family);
     letter-spacing: var(--kerning-caps);
+	text-transform: uppercase;
 	font-size: var(--step-0);
-	font-weight: 600;
+	font-weight: 400;
 	line-height: 1;
 	text-decoration: none;
 	text-decoration-color: transparent; // override _links.scss text-decoration-color
@@ -100,7 +103,7 @@
 		outline-offset: 3px;
 	}
 
-	&:hover  { filter: brightness(1.08); }
+	&:hover  { filter: brightness(1.2); }
 	&:active { filter: brightness(0.94); }
 }
 

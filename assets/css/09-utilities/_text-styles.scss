@@ -71,3 +71,10 @@ Text Styles
 	text-transform: var(--text-s-transform);
 	letter-spacing: var(--text-s-kerning);
 }
+
+.text-monospace {
+	font-family: var(--font-monospace-family);
+	font-weight: var(--font-monospace-weight);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+}

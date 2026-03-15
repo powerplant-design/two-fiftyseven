@@ -13,6 +13,9 @@ import { getScrollInstance } from './scroll.js';
 /** How many px the logo travels upward when the footer is fully revealed. */
 const PARALLAX_DISTANCE = 40;
 
+let lenisInstance  = null;
+let scrollListener = null;
+
 export function initFooter() {
 	const footer = document.querySelector( '.site-footer' );
 	const logo   = document.querySelector( '.site-footer__logo' );
@@ -54,10 +57,20 @@ export function initFooter() {
 	const attachLenis = () => {
 		const lenis = getScrollInstance()?.lenisInstance;
 		if ( lenis ) {
+			lenisInstance  = lenis;
+			scrollListener = onScroll;
 			lenis.on( 'scroll', onScroll );
 		} else {
 			requestAnimationFrame( attachLenis );
 		}
 	};
 	attachLenis();
+}
+
+export function destroyFooter() {
+	if ( lenisInstance && scrollListener ) {
+		lenisInstance.off( 'scroll', scrollListener );
+	}
+	lenisInstance  = null;
+	scrollListener = null;
 }

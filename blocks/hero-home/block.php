@@ -58,7 +58,7 @@ $marquee_icons = ! empty( $icons ) ? array_merge( $icons, $icons ) : [];
 	<div class="hero-home__inner wrapper stack">
 
 		<?php if ( $headline ) : ?>
-			<h1 class="hero-home__headline"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
+			<h1 class="hero-home__headline text-3xl"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
 		<?php elseif ( $is_preview ) : ?>
 			<p class="hero-home__preview-hint" style="color:white;opacity:0.5;text-align:center;">Add a headline in the block settings →</p>
 		<?php endif; ?>

@@ -9,7 +9,7 @@
 	// border-block-end: var(--border);
 
 	position: fixed;
-	top: 2rem;
+	top: 1rem;
 	left: 0;
 	width: 100%;
 	z-index: 1000;
@@ -25,12 +25,12 @@
 		background: linear-gradient(to bottom, var(--color-surface-unchanged) 0%, transparent 100%);
 		backdrop-filter: blur(18px);
 		-webkit-backdrop-filter: blur(18px);
-		mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
-		-webkit-mask-image: linear-gradient(to bottom, black 30%, transparent 100%);
+		mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+		-webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
 		pointer-events: none;
 		z-index: -1;
 		opacity: 0;
-		transition: opacity 300ms ease;
+		transition: opacity 300ms ease-out;
 	}
 
 	&--scrolled::before {

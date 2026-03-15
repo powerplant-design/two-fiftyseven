@@ -45,18 +45,12 @@ $items = get_field( 'stacked_cards_items' ) ?: [];
 			style="--card-index: <?php echo esc_attr( $index ); ?>;"
 		>
 			<?php if ( $tab_label ) : ?>
-				<?php if ( $index > 0 ) : ?>
-					<button type="button" class="stacked-cards__tab" data-js="stacked-card-tab">
-						<?php echo esc_html( $tab_label ); ?>
-					</button>
-				<?php else : ?>
-					<div class="stacked-cards__tab" aria-hidden="true">
-						<?php echo esc_html( $tab_label ); ?>
-					</div>
-				<?php endif; ?>
+				<button type="button" class="stacked-cards__tab | text-monospace" data-js="stacked-card-tab">
+					<?php echo esc_html( $tab_label ); ?>
+				</button>
 			<?php endif; ?>
 
-			<div class="stacked-cards__panel | grid" data-grid-layout="halves">
+			<div class="stacked-cards__panel">
 
 				<div class="stacked-cards__body | stack">
 
@@ -65,7 +59,7 @@ $items = get_field( 'stacked_cards_items' ) ?: [];
 					<?php endif; ?>
 
 					<?php if ( $content ) : ?>
-						<div class="stacked-cards__content | prose">
+						<div class="stacked-cards__content | stack">
 							<?php echo wp_kses_post( $content ); ?>
 						</div>
 					<?php endif; ?>
@@ -87,30 +81,19 @@ $items = get_field( 'stacked_cards_items' ) ?: [];
 
 				</div>
 
-				<?php if ( ! empty( $image['url'] ) ) :
-					$attachment_id = (int) ( $image['id'] ?? 0 );
-					$alt           = ! empty( $image['alt'] ) ? $image['alt'] : '';
+				<?php if ( ! empty( $image['id'] ) ) :
+					$alt = ! empty( $image['alt'] ) ? $image['alt'] : '';
 				?>
-					<div class="stacked-cards__image">
-						<?php if ( $attachment_id ) : ?>
-							<?php echo wp_get_attachment_image(
-								$attachment_id,
-								'large',
-								false,
-								[
-									'alt'     => $alt,
-									'loading' => $index === 0 ? 'eager' : 'lazy',
-									'class'   => 'stacked-cards__img',
-								]
-							); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-						<?php else : ?>
-							<img
-								src="<?php echo esc_url( $image['url'] ); ?>"
-								alt="<?php echo esc_attr( $alt ); ?>"
-								class="stacked-cards__img"
-								loading="<?php echo $index === 0 ? 'eager' : 'lazy'; ?>"
-							>
-						<?php endif; ?>
+					<div class="stacked-cards__image | frame">
+						<?php echo wp_get_attachment_image(
+							(int) $image['id'],
+							'large',
+							false,
+							[
+								'alt'     => $alt,
+								'loading' => $index === 0 ? 'eager' : 'lazy',
+							]
+						); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
 					</div>
 				<?php endif; ?>
 

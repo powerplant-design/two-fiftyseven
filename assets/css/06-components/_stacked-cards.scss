@@ -5,7 +5,7 @@
 
 // ── Outer wrapper — height set by JS for scroll runway ───────
 .stacked-cards {
-	--tab-width: 6.25rem; // 100px — each tab is this wide
+	--tab-width: var(--space-5xl); // 100px — each tab is this wide
 	margin-block-start: var(--space-2xl);
 
 	@media (min-width: bp.$bp-md) {
@@ -61,14 +61,10 @@
 	background-color: var(--color-surface-secondary);
 	border: var(--border-tertiary);
 	border-block-end: none;
-	border-start-start-radius: var(--space-s);
-	border-start-end-radius: var(--space-s);
+	border-start-start-radius: var(--space-m);
+	border-start-end-radius: var(--space-m);
 	border-end-start-radius: 0;
 	border-end-end-radius: 0;
-	font-family: var(--font-monospace-family);
-	letter-spacing: var(--kerning-caps);
-	text-transform: uppercase;
-	color: var(--color-content-secondary);
 	position: relative;
 	z-index: 1;
 	margin-block-end: -3px;
@@ -78,72 +74,46 @@
 	&[type='button'] {
 		appearance: none;
 		cursor: pointer;
-		transition: color 0.2s ease;
+		transition: background-color 0.2s ease;
 
 		&:hover {
-			color: var(--color-content-primary);
+			// color: var(--color-content-primary);
+            background-color: var(--color-surface-primary);
 		}
 	}
 }
 
 // ── Panel ─────────────────────────────────────────────────────
 .stacked-cards__panel {
-	width: 100%;
-	// min-height: 40svh;
-	--block-gap: var(--space-l);
+    color: var(--color-content-primary);
+    display: grid;
+	gap: var(--space-s-xl);
+	pointer-events: all; // re-enable for panel contents (buttons, links) on the active card
 	background-color: var(--color-surface-secondary);
 	border: var(--border-tertiary);
-	border-radius: var(--space-m);
+	border-radius: var(--space-s-xl);
 	border-start-start-radius: 0; // card 0: tab sits in this corner
-	padding: var(--space-l);
 	overflow: hidden;
 	align-items: center;
 
 	@media (min-width: bp.$bp-md) {
-		min-height: unset;
+        grid-template-columns: 3fr 2fr;
+		align-items: stretch;
 		height: 70svh;
-		--block-gap: var(--space-s-xl);
-		padding: var(--space-xl);
 	}
 }
 
 // Cards 1+ have their tab indented on desktop so the top-left corner is free.
 .stacked-cards__item:not(:first-child) .stacked-cards__panel {
 	@media (min-width: bp.$bp-md) {
-		border-start-start-radius: var(--space-m);
+		border-start-start-radius: var(--space-s-xl);
 	}
 }
 
 // ── Body ──────────────────────────────────────────────────────
 .stacked-cards__body {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: var(--space-m);
-}
-
-.stacked-cards__heading {
-	color: var(--color-content-primary);
-}
-
-.stacked-cards__content {
-	color: var(--color-content-secondary);
-}
-
-// ── Image ─────────────────────────────────────────────────────
-.stacked-cards__image {
-	border-radius: var(--space-s);
-	overflow: hidden;
-	aspect-ratio: 1;
-
-	@media (min-width: bp.$bp-md) {
-		aspect-ratio: 4 / 4.2;
-	}
-}
-
-.stacked-cards__img {
-	display: block;
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
+	--stack-horizontal-alignment: flex-start;
+	padding-inline: var(--space-s-xl);
+	padding-block: var(--space-xl);
+    justify-content: center;
 }

@@ -71,6 +71,7 @@
 	&__marquee-label {
 		text-align: center;
 		text-transform: uppercase;
+        font-family: var(--font-monospace-family);
 		letter-spacing: var(--kerning-caps);
 		color: var(--color-content-unchanged);
 		opacity: 0.6;

@@ -20,6 +20,7 @@ import { applyThemes } from './color-theme.js';
 import { initScroll, destroyScroll } from './scroll.js';
 import { initMarquee, destroyMarquee } from './marquee.js';
 import { syncHeader } from './header.js';
+import { initFooter, destroyFooter } from './footer.js';
 import { initStackedCards, destroyStackedCards } from './stacked-cards.js';
 
 export function initTransitions() {
@@ -44,6 +45,7 @@ export function initTransitions() {
 	swup.hooks.on( 'visit:start', () => {
 		destroyMarquee();
 		destroyStackedCards();
+		destroyFooter();
 		destroyScroll();
 	} );
 
@@ -74,6 +76,7 @@ export function initTransitions() {
 	swup.hooks.on( 'page:view', () => {
 		initScroll();
 		initMarquee();
+		initFooter();
 		initStackedCards();
 		syncHeader();
 	} );
