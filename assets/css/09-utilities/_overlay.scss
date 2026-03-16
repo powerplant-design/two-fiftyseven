@@ -7,7 +7,7 @@ Configuration:
 =================================================================== */
 
 .overlay {
-	--_linear-color-stop: color-mix(in oklab, var(--overlay-color, black) var(--overlay-color-opacity, 50%), transparent);
+	--_linear-color-stop: color-mix(in oklab, var(--overlay-color, black) var(--overlay-color-opacity, 60%), transparent);
 	border-image-source: linear-gradient(var(--_linear-color-stop), var(--_linear-color-stop));
 	border-image-slice: fill 1;
 }

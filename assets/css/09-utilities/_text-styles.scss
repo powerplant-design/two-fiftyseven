@@ -72,6 +72,16 @@ Text Styles
 	letter-spacing: var(--text-s-kerning);
 }
 
+.text-xs {
+	font-family: var(--text-xs-family);
+	font-size: var(--text-xs-size);
+	font-weight: var(--text-xs-weight);
+	font-feature-settings: var(--text-xs-features);
+	line-height: var(--text-xs-leading);
+	text-transform: var(--text-xs-transform);
+	letter-spacing: var(--text-xs-kerning);
+}
+
 .text-monospace {
 	font-family: var(--font-monospace-family);
 	font-weight: var(--font-monospace-weight);

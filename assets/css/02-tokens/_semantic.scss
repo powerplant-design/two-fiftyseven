@@ -112,4 +112,13 @@ html {
 	--text-s-leading: var(--leading-slim);
 	--text-s-kerning: var(--kerning-regular);
 	--text-s-transform: none;
+
+	/* XS — extra small text, body font */
+	--text-xs-family: var(--font-body-family);
+	--text-xs-features: normal;
+	--text-xs-weight: var(--font-body-weight-normal);
+	--text-xs-size: var(--step--2);
+	--text-xs-leading: var(--leading-slim);
+	--text-xs-kerning: var(--kerning-regular);
+	--text-xs-transform: none;
 }

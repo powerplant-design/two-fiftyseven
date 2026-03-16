@@ -1,0 +1,125 @@
+{
+	"key": "group_two57_block_testimonial",
+	"title": "Testimonial Block",
+	"fields": [
+		{
+			"key": "field_two57_testimonial_quote",
+			"label": "Quote",
+			"name": "testimonial_quote",
+			"aria-label": "",
+			"type": "textarea",
+			"instructions": "The quote text. Use line breaks for typographic control.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": "",
+			"placeholder": "",
+			"maxlength": "",
+			"rows": 4,
+			"new_lines": "br"
+		},
+		{
+			"key": "field_two57_testimonial_name",
+			"label": "Person Name",
+			"name": "testimonial_name",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "33%", "class": "", "id": "" },
+			"default_value": "",
+			"placeholder": "e.g. Jane Smith"
+		},
+		{
+			"key": "field_two57_testimonial_role",
+			"label": "Person Role",
+			"name": "testimonial_role",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "33%", "class": "", "id": "" },
+			"default_value": "",
+			"placeholder": "e.g. Design Director"
+		},
+		{
+			"key": "field_two57_testimonial_organisation",
+			"label": "Organisation",
+			"name": "testimonial_organisation",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "34%", "class": "", "id": "" },
+			"default_value": "",
+			"placeholder": "e.g. Acme Studio"
+		},
+		{
+			"key": "field_two57_testimonial_image",
+			"label": "Decorative Image",
+			"name": "testimonial_image",
+			"aria-label": "",
+			"type": "image",
+			"instructions": "Optional background graphic (ink splat, etc.). Renders behind the quote, aria-hidden.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"return_format": "array",
+			"library": "all",
+			"min_width": "",
+			"min_height": "",
+			"min_size": "",
+			"max_width": "",
+			"max_height": "",
+			"max_size": "",
+			"mime_types": "",
+			"preview_size": "medium"
+		},
+		{
+			"key": "field_two57_testimonial_colour_space",
+			"label": "Colour Space",
+			"name": "testimonial_colour_space",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Override the colour palette for this block. Leave blank to inherit from the page.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"choices": {
+				"neutral": "Neutral",
+				"maroon": "Maroon",
+				"forest": "Forest",
+				"purple": "Purple"
+			},
+			"default_value": "",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 1,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": "Inherit from page"
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/testimonial"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Controls the fields for the 257 Testimonial block.",
+	"show_in_rest": 0,
+	"modified": 1773705600
+}

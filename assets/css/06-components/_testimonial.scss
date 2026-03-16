@@ -1,0 +1,71 @@
+@use '../02-tokens/breakpoints' as bp;
+
+.testimonial {
+	position: relative;
+	padding-block: var(--space-xl-3xl);
+    min-height: 80svh;
+	overflow: clip;
+    display: flex;
+    align-items: center;
+    
+    @media (max-width: #{bp.$bp-sm}) {
+        // transform: rotate(90deg);
+        min-height: 50vw;
+    }
+}
+
+/* Decorative SVG — rendered inline so fill/stroke resolve to currentColor.
+   Set color here to control the SVG colour via the active colour space token. */
+.testimonial__media {
+	position: absolute;
+	inset: 1svw 1svh;
+
+	pointer-events: none;
+	color: var(--color-content-secondary-inverse);
+    
+    @media (max-width: #{bp.$bp-sm}) {
+        // transform: rotate(90deg);
+        inset: -25svw;
+	}
+    
+	svg {
+        border-radius: var(--space-xl-3xl);
+        overflow: hidden;
+		block-size: 100%;
+		inline-size: 100%;
+	}
+}
+
+/* Text content — centred via .wrapper, sits above the media layer */
+.testimonial__inner {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-s-xl);
+}
+
+.testimonial__quote {
+	margin: 0;
+	text-align: center;
+	color: var(--color-content-primary);
+}
+
+.testimonial__attribution {
+	margin: 0;
+	text-align: center;
+	gap: var(--space-2xs-2xl);
+	display: flex;
+	justify-content: center;
+
+	@media (max-width: #{bp.$bp-sm}) {
+		flex-direction: column;
+		align-items: center;
+        font-size: var(--text-s-size);
+	}
+}
+
+.testimonial__sep {
+	@media (max-width: #{bp.$bp-sm}) {
+		display: none;
+    }
+}

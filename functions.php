@@ -195,6 +195,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'testimonial',
+		'title'           => __( '257 Testimonial', 'two-fiftyseven' ),
+		'description'     => __( 'A large pull-quote with optional decorative background image, colour space override, and attribution line.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/testimonial/block.php',
+		'category'        => 'text',
+		'icon'            => 'format-quote',
+		'keywords'        => [ 'testimonial', 'quote', 'pullquote', 'review' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 
