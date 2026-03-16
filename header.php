@@ -6,7 +6,7 @@
 	<script>/* no-FOUC: set data-theme before CSS paints */(function(){var e=document.documentElement,s=e.getAttribute('data-color-space')||'neutral',stored=localStorage.getItem('color-mode'),d=stored?stored==='dark':window.matchMedia('(prefers-color-scheme:dark)').matches;e.setAttribute('data-theme',s+(d?'-dark':'-light'));})();</script>
 	<?php wp_head(); ?>
 </head>
-<body <?php body_class(); ?>>
+<body id="swup" <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
 <?php
@@ -57,4 +57,3 @@ $has_hero = $current_post_id && (
 </header>
 
 <main class="site-main">
-	<div id="swup">

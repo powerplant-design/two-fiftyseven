@@ -42,26 +42,26 @@ if ( ! empty( $icons ) ) {
 }
 ?>
 
-<section class="hero-page"<?php echo $bg_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?>>
+<section class="hero-page" data-block="full"<?php echo $bg_style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?>>
 
 	<div class="hero-page__backdrop | overlay" aria-hidden="true"></div>
 
-	<div class="hero-page__inner | stack">
+	<div class="hero-page__inner wrapper stack">
     
     <?php if ( $headline ) : ?>
         <h1 class="hero-page__headline text-3xl"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
 		<?php elseif ( $is_preview ) : ?>
-			<p style="color:white;opacity:0.5;text-align:center;">Add a headline in the block settings →</p>
+				<p style="color:white;opacity:0.5;text-align:center;">Add a headline in the block settings →</p>
             <?php endif; ?>
             
             <?php if ( $subtitle ) : ?>
                 <h2 class="hero-page__subtitle text-xl"><?php echo wp_kses( $subtitle, [ 'br' => [], 'strong' => [], 'em' => [] ] ); ?></h2>
-                <?php endif; ?>
+            <?php endif; ?>
                 
             </div>
 
 	<?php if ( $marquee_icons ) : ?>
-		<div class="hero-page__marquee-wrap">
+		<div class="hero-page__marquee-wrap | stack"">
 
 			<?php if ( $marquee_label ) : ?>
 				<p class="hero-page__marquee-label"><?php echo esc_html( $marquee_label ); ?></p>

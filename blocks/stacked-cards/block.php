@@ -23,7 +23,7 @@
 $items = get_field( 'stacked_cards_items' ) ?: [];
 ?>
 
-<div class="stacked-cards" data-js="stacked-cards" data-card-count="<?php echo esc_attr( count( $items ) ); ?>">
+<section class="stacked-cards" data-js="stacked-cards" data-card-count="<?php echo esc_attr( count( $items ) ); ?>">
 
 	<?php if ( empty( $items ) && $is_preview ) : ?>
 		<p style="padding:2rem;opacity:0.5;text-align:center;">Add cards in the block settings &rarr;</p>
@@ -103,4 +103,4 @@ $items = get_field( 'stacked_cards_items' ) ?: [];
 
 	</div><!-- /.stacked-cards__track -->
 
-</div><!-- /.stacked-cards -->
+</section><!-- /.stacked-cards -->

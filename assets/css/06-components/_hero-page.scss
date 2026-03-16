@@ -19,7 +19,7 @@
 	background-size: cover;
 	background-position: center;
 	background-color: var(--color-neutral-600); // fallback when no image
-	background-attachment: fixed;
+	// background-attachment: fixed;
 
     overflow: hidden; // clip background-attachment: fixed to the hero area (mostly for mobile Safari, which doesn't support background-attachment: local)
 
@@ -35,9 +35,8 @@
 	&__inner {
 		position: relative;
 		z-index: 1;
-		width: 100%;
-		min-width: 0;
-		padding-block: var(--space-3xl);
+		padding-block-start: var(--space-3xl);
+		padding-block-end: var(--space-xl);
 		padding-inline: var(--global-padding-inline, 1rem);
         justify-content: center;
 		flex: 1;
@@ -63,7 +62,7 @@
 	&__marquee-wrap {
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-s);
+		// gap: var(--space-s);
 		padding-block-end: var(--space-xl);
 	}
 

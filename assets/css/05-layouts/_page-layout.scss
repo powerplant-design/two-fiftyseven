@@ -1,0 +1,36 @@
+/* ===================================================================
+Title:       Page Layout
+Description: A full-width CSS grid that provides a bounded central column
+             flanked by elastic gutters. All direct children default to the
+             central column; children with [data-block="full"] span the
+             entire grid from edge to edge.
+
+Grid columns:
+  1. Left gutter  — minmax(var(--global-padding-inline), 1fr)
+  2. Central      — minmax(0, var(--layout-wide-size))
+  3. Right gutter — minmax(var(--global-padding-inline), 1fr)
+
+Usage:
+  class="page-layout"                   → wrapper element
+  [data-block="full"] on a child        → full bleed (columns 1 / -1)
+  (children without the attribute)      → central column (column 2)
+=================================================================== */
+
+.page-layout {
+	display: grid;
+	grid-template-columns:
+		minmax(var(--global-padding-inline), 1fr)
+		minmax(0, var(--layout-wide-size))
+		minmax(var(--global-padding-inline), 1fr);
+	row-gap: var(--block-gap);
+
+	/* Default: all children sit in the central column. */
+	> * {
+		grid-column: 2;
+	}
+
+	/* Full-bleed: spans all three columns edge to edge. */
+	> [data-block="full"] {
+		grid-column: 1 / -1;
+	}
+}
