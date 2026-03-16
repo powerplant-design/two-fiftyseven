@@ -1,0 +1,142 @@
+@use '../02-tokens/breakpoints' as bp;
+
+
+/* ===================================================================
+Post Layout
+Description: A two-column grid for single post pages. The left sidebar
+             is sticky while the right content column scrolls.
+
+Columns:
+  Left  — 2/5 of the central column width (sidebar)
+  Right — 3/5 of the central column width (content)
+
+Usage:
+  class="post-layout"            → wrapper (sits in central column of .page-layout)
+  class="post-layout__sidebar"   → sticky left panel
+  class="post-layout__content"   → scrolling right panel
+=================================================================== */
+
+.post-layout {
+	display: grid;
+	grid-template-columns: 1fr 2fr;
+	gap: var(--space-xl);
+	align-items: start;
+
+	@media (max-width: #{bp.$bp-md}) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.post-layout__sidebar {
+	position: sticky;
+	top: var(--space-3xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-m);
+
+	@media (max-width: #{bp.$bp-md}) {
+		position: static;
+	}
+}
+
+
+/* ===================================================================
+Post Hero
+---
+Full-width hero area at the top of single post pages.
+Without a featured image: the h1 title sits alone.
+With a featured image:    image on the left (2/5), title on the right (3/5).
+=================================================================== */
+
+.post-hero {
+	padding-block-start: var(--space-4xl);
+	padding-block-end: var(--space-xl-3xl);
+
+	&--with-image {
+		display: flex;
+		align-items: center;
+		gap: var(--space-l);
+
+		@media (max-width: #{bp.$bp-sm}) {
+			flex-direction: column;
+			align-items: stretch;
+		}
+	}
+}
+
+.post-hero__image {
+	flex: 0 0 40%;
+
+	img {
+		display: block;
+		inline-size: 100%;
+		block-size: auto;
+		aspect-ratio: 297 / 210; // A4 landscape
+		object-fit: cover;
+		border-radius: var(--corner-radius-m);
+	}
+
+	&--portrait img {
+		aspect-ratio: 210 / 297; // A4 portrait
+	}
+}
+
+.post-hero__title {
+	flex: 1;
+}
+
+/* ===================================================================
+Post Layout — Sidebar Elements
+---
+Visual styles for the sticky sidebar that lives inside .post-layout__sidebar.
+=================================================================== */
+
+/* Site logo — colour inherits from the active colour-space token,
+   same mechanism as the testimonial decorative SVG. */
+.post-layout__logo {
+	color: var(--color-content-primary-inverse);
+
+	svg {
+		max-inline-size: 10rem;
+		block-size: auto;
+	}
+}
+
+.post-layout__meta {
+	display: flex;
+	flex-direction: column;
+	color: var(--color-content-secondary);
+}
+
+.post-layout__meta-label {
+	color: var(--color-content-primary);
+	font-weight: var(--font-body-weight-medium);
+}
+
+.post-layout__links {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+.post-layout__content {
+	@media (min-width: #{bp.$bp-sm}) {
+		font-size: var(--text-l-size);
+	}
+}
+
+.post-layout__adjacent {
+	border-block-start: var(--border);
+	padding-block-start: var(--space-m);
+	align-items: start;
+}
+
+.post-layout__adjacent-item {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3xs);
+
+	&--next {
+		text-align: end;
+	}
+}

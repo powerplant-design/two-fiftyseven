@@ -1,0 +1,101 @@
+{
+	"key": "group_two57_post_options",
+	"title": "Post Options",
+	"fields": [
+		{
+			"key": "field_two57_show_featured_image",
+			"label": "Featured Image",
+			"name": "show_featured_image",
+			"aria-label": "",
+			"type": "true_false",
+			"instructions": "Show or hide the featured image in the post hero.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"message": "",
+			"default_value": 1,
+			"ui": 1,
+			"ui_on_text": "Show",
+			"ui_off_text": "Hide"
+		},
+		{
+			"key": "field_two57_image_orientation",
+			"label": "Image Orientation",
+			"name": "image_orientation",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Set the aspect ratio of the featured image.",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_show_featured_image",
+						"operator": "==",
+						"value": "1"
+					}
+				]
+			],
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"choices": {
+				"landscape": "Landscape",
+				"portrait": "Portrait"
+			},
+			"default_value": "landscape",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 0,
+			"ui": 0,
+			"ajax": 0
+		},
+		{
+			"key": "field_two57_post_links",
+			"label": "Links",
+			"name": "post_links",
+			"aria-label": "",
+			"type": "repeater",
+			"instructions": "External links shown in the sidebar (e.g. client website, award, press).",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"layout": "block",
+			"pagination": 0,
+			"min": 0,
+			"max": 0,
+			"collapsed": "",
+			"button_label": "Add Link",
+			"sub_fields": [
+				{
+					"key": "field_two57_post_link_item",
+					"label": "Link",
+					"name": "link",
+					"aria-label": "",
+					"type": "link",
+					"instructions": "",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "", "class": "", "id": "" },
+					"return_format": "array"
+				}
+			]
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "post"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Options for single post pages: featured image toggle and sidebar links.",
+	"show_in_rest": 0,
+	"modified": 1742169600
+}

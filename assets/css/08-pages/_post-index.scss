@@ -1,0 +1,131 @@
+@use '../02-tokens/breakpoints' as bp;
+
+/* ===================================================================
+Post Index
+Description: Card grid for the posts index page (home.php).
+             Title area reuses the same top padding rhythm as single.php.
+=================================================================== */
+
+// ── Page title ───────────────────────────────────────────────────
+
+.post-index-header {
+	padding-block-start: var(--space-5xl);
+	padding-block-end: var(--space-xl);
+}
+
+// ── Card grid ────────────────────────────────────────────────────
+
+// .post-index {
+// 	display: grid;
+// 	grid-template-columns: repeat(3, 1fr);
+// 	gap: var(--space-l);
+
+// 	@media (max-width: #{bp.$bp-md}) {
+// 		grid-template-columns: repeat(2, 1fr);
+// 	}
+
+// 	@media (max-width: #{bp.$bp-sm}) {
+// 		grid-template-columns: 1fr;
+// 	}
+// }
+
+.post-index__item {
+	background-color: var(--color-surface-secondary);
+	border-radius: var(--corner-radius-3xl);
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	position: relative; // stacking context for stretched link
+    transition: transform 0.3s ease-out, box-shadow 0.3s ease;
+    box-shadow: 0 0 0 color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
+
+	&:nth-child(even) {
+		@media (min-width: #{bp.$bp-sm}) {
+			flex-direction: column-reverse;
+		}
+	}
+
+	&:hover {
+        transform: translateY(-1%);
+        box-shadow: 0 15px 25px color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
+	}
+
+	&:has(.post-index__link:focus-visible) {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 3px;
+	}
+}
+
+// ── Featured image ───────────────────────────────────────────────
+
+.post-index__image {
+    --frame-aspect-ratio: 16 / 9;
+}
+
+// ── Card body ────────────────────────────────────────────────────
+
+.post-index__body {
+    --block-gap: var(--space-xs);
+	padding: var(--space-m) var(--space-xl) var(--space-l) var(--space-m);
+}
+
+.post-index__date {
+	// font-size: var(--step--1);
+	color: var(--color-content-secondary);
+}
+
+.post-index__link {
+	text-decoration: none;
+	color: var(--color-content-primary);
+
+	// Stretch to cover the entire card.
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
+
+	&:focus-visible,
+	&:focus-visible::after {
+		outline: none; // focus ring shown on the card via :has() above
+	}
+}
+
+.post-index__excerpt {
+	color: var(--color-content-secondary);
+}
+
+// ── Pagination ───────────────────────────────────────────────────
+
+.nav-links {
+	display: flex;
+	justify-content: center;
+	gap: var(--space-s);
+	padding-block: var(--space-xl);
+	flex-wrap: wrap;
+
+	.page-numbers {
+		padding: var(--space-3xs) var(--space-xs);
+		border-radius: var(--corner-radius-s);
+		color: var(--color-content-secondary);
+		text-decoration: none;
+		font-size: var(--step--1);
+
+		&:hover,
+		&:focus-visible {
+			color: var(--color-content-primary);
+		}
+
+		&.current {
+			background-color: var(--color-surface-secondary);
+			color: var(--color-content-primary);
+		}
+	}
+}
+
+// ── Empty state ──────────────────────────────────────────────────
+
+.post-index__empty {
+	padding-block: var(--space-xl);
+	color: var(--color-content-secondary);
+}

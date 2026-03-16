@@ -70,6 +70,7 @@
 	&:hover {
 		color: var(--color-link-hover);
 		text-decoration: underline;
+		text-underline-offset: 3px;
 		filter: none;
 	}
 }

@@ -6,10 +6,24 @@
  * JS then combines this with the OS dark/light preference to produce data-theme.
  */
 function two_fiftyseven_get_colour_space(): string {
-	if ( is_singular() && function_exists( 'get_field' ) ) {
-		$space = get_field( 'colour_space' );
-		if ( $space ) {
-			return sanitize_key( $space );
+	if ( function_exists( 'get_field' ) ) {
+		// Singular pages: read directly from the current post.
+		if ( is_singular() ) {
+			$space = get_field( 'colour_space' );
+			if ( $space ) {
+				return sanitize_key( $space );
+			}
+		}
+
+		// Posts index (home.php): read from the Page assigned as the posts page.
+		if ( is_home() ) {
+			$posts_page_id = (int) get_option( 'page_for_posts' );
+			if ( $posts_page_id ) {
+				$space = get_field( 'colour_space', $posts_page_id );
+				if ( $space ) {
+					return sanitize_key( $space );
+				}
+			}
 		}
 	}
 
@@ -224,6 +238,16 @@ add_action( 'init', function (): void {
 	] );
 } );
 
+/**
+ * Ensure the posts index always shows newest posts first.
+ */
+add_action( 'pre_get_posts', function ( WP_Query $query ): void {
+	if ( $query->is_home() && $query->is_main_query() ) {
+		$query->set( 'orderby', 'date' );
+		$query->set( 'order', 'DESC' );
+	}
+} );
+
 
 /**
  * Returns inline SVG markup for a media attachment.
@@ -262,3 +286,35 @@ function two_fiftyseven_get_inline_svg( int $attachment_id ): string {
 
 	return $content;
 }
+
+/**
+ * Serve individual posts under the /korero/ URL prefix.
+ *
+ * post_link — prepends /korero/ to generated post URLs so get_permalink()
+ *             returns https://example.com/korero/post-slug/.
+ *
+ * init      — registers a rewrite rule (at top priority) so WordPress
+ *             correctly routes /korero/post-slug/ back to that post.
+ *
+ * After adding these hooks, visit Settings → Permalinks and click Save to
+ * flush the rewrite rule cache.
+ */
+add_filter( 'post_link', function ( string $url ): string {
+	// Only rewrite pretty permalink URLs (not ?p=123 fallbacks).
+	if ( str_contains( $url, '?p=' ) ) {
+		return $url;
+	}
+	return str_replace(
+		trailingslashit( home_url() ),
+		trailingslashit( home_url() ) . 'korero/',
+		$url
+	);
+} );
+
+add_action( 'init', function (): void {
+	add_rewrite_rule(
+		'korero/([^/]+)/?$',
+		'index.php?name=$matches[1]',
+		'top'
+	);
+}, 20 );

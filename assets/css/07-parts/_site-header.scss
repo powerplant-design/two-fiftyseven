@@ -55,8 +55,14 @@
 		font-size: var(--text-l-size);
 	}
 
-	// No-hero modifier on the header itself — switches all relevant children.
+	// No-hero modifier — backdrop uses the page surface colour (light/dark aware)
+	// and is always visible. Logo and toggle colour follow content-primary.
 	&--no-hero {
+		&::before {
+			background: linear-gradient(to bottom, var(--color-surface-primary) 0%, transparent 100%);
+			opacity: 1;
+		}
+
 		.site-logo,
 		.color-mode-toggle {
 			color: var(--color-content-primary);
