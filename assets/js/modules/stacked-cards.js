@@ -23,7 +23,6 @@ let wrappers       = [];
 let lenisInstance  = null;
 let scrollListener = null;
 let tabController   = null; // AbortController for tab click listeners
-let snappedWrappers = new Set(); // wrappers already snapped on entry
 
 function updateWrapper( wrapper ) {
 	const cards = Array.from( wrapper.querySelectorAll( CARD_SELECTOR ) );
@@ -59,28 +58,6 @@ function updateWrapper( wrapper ) {
 
 function onScroll() {
 	wrappers.forEach( updateWrapper );
-
-	wrappers.forEach( ( wrapper ) => {
-		const top = wrapper.getBoundingClientRect().top;
-
-		// Reset when the wrapper top has moved back above the snap zone,
-		// so it can fire again on the next downward pass.
-		if ( top > 500 ) {
-			snappedWrappers.delete( wrapper );
-			return;
-		}
-
-		// Snap the first time the top edge enters within 500px of the viewport top.
-		if ( snappedWrappers.has( wrapper ) ) return;
-		if ( top <= 0 || top > 500 ) return;
-		snappedWrappers.add( wrapper );
-		const snapY = wrapper.getBoundingClientRect().top + window.scrollY;
-		lenisInstance.scrollTo( snapY, {
-			duration: 0.6, // 2x slower
-			lock: true,
-			easing: (t) => 1 - Math.pow(1 - t, 2) // easeOutQuad
-		} );
-	} );
 }
 
 /**
@@ -149,8 +126,6 @@ export function destroyStackedCards() {
 
 	tabController?.abort();
 	tabController = null;
-
-	snappedWrappers.clear();
 
 	// Clear inline styles and runway height so re-init starts clean.
 	wrappers.forEach( ( wrapper ) => {

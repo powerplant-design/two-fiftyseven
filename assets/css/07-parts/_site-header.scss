@@ -58,12 +58,12 @@
 		align-items: center;
 	}
 
-	// Right zone: secondary nav + toggle, flush right with a gap between them.
+	// Right zone: secondary nav + toggle, flush right.
 	.site-header__end {
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		gap: var(--space-s);
+		gap: 0;
 	}
 
 	// Nav pills — items in each UL join into one long pill shape.
@@ -106,7 +106,7 @@
 	.color-mode-toggle {
 		border: none;
 		background: transparent;
-		color: var(--color-content-unchanged);
+		// color: var(--color-content-unchanged);
 		padding-inline: 0.5em;
 		aspect-ratio: 1;
 		min-width: 2.5em;
