@@ -1,14 +1,14 @@
 {
-	"key": "group_two57_page_colour",
+	"key": "group_two57_organisation_colour",
 	"title": "Colour Space",
 	"fields": [
 		{
-			"key": "field_two57_colour_space",
+			"key": "field_two57_organisation_post_colour_space",
 			"label": "Colour Space",
 			"name": "colour_space",
 			"aria-label": "",
 			"type": "select",
-			"instructions": "Sets the colour palette used across this post or page.",
+			"instructions": "Sets the colour palette used across this organisation page.",
 			"required": 0,
 			"conditional_logic": 0,
 			"wrapper": {
@@ -22,7 +22,7 @@
 				"forest": "Forest",
 				"purple": "Purple"
 			},
-			"default_value": "neutral",
+			"default_value": "forest",
 			"return_format": "value",
 			"multiple": 0,
 			"allow_null": 0,
@@ -36,21 +36,7 @@
 			{
 				"param": "post_type",
 				"operator": "==",
-				"value": "post"
-			}
-		],
-		[
-			{
-				"param": "post_type",
-				"operator": "==",
-				"value": "page"
-			}
-		],
-		[
-			{
-				"param": "post_type",
-				"operator": "==",
-				"value": "media_item"
+				"value": "organisation"
 			}
 		]
 	],
@@ -61,7 +47,7 @@
 	"instruction_placement": "label",
 	"hide_on_screen": "",
 	"active": true,
-	"description": "Sets the page-level colour space. Light/dark mode follows the visitor\u2019s OS preference.",
+	"description": "Sets the colour space for organisation posts. Defaults to Forest.",
 	"show_in_rest": 0,
 	"modified": 1772496000
 }

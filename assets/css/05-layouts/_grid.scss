@@ -52,6 +52,6 @@ Variants
 
 /* Three column grid layout */
 .grid[data-grid-layout="thirds"] {
-	--grid-placement: auto-fill;
+	--grid-placement: auto-fit;
 	--grid-item-min-size: clamp(16rem, 33%, 20rem);
 }

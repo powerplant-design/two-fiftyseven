@@ -1,9 +1,9 @@
 {
-	"key": "group_two57_post_options",
+	"key": "group_two57_person_post_options",
 	"title": "Post Options",
 	"fields": [
 		{
-			"key": "field_two57_show_featured_image",
+			"key": "field_two57_person_show_featured_image",
 			"label": "Featured Image",
 			"name": "show_featured_image",
 			"aria-label": "",
@@ -19,7 +19,7 @@
 			"ui_off_text": "Hide"
 		},
 		{
-			"key": "field_two57_image_orientation",
+			"key": "field_two57_person_image_orientation",
 			"label": "Image Orientation",
 			"name": "image_orientation",
 			"aria-label": "",
@@ -29,7 +29,7 @@
 			"conditional_logic": [
 				[
 					{
-						"field": "field_two57_show_featured_image",
+						"field": "field_two57_person_show_featured_image",
 						"operator": "==",
 						"value": "1"
 					}
@@ -40,7 +40,7 @@
 				"landscape": "Landscape",
 				"portrait": "Portrait"
 			},
-			"default_value": "landscape",
+			"default_value": "portrait",
 			"return_format": "value",
 			"multiple": 0,
 			"allow_null": 0,
@@ -48,12 +48,12 @@
 			"ajax": 0
 		},
 		{
-			"key": "field_two57_post_links",
+			"key": "field_two57_person_post_links",
 			"label": "Links",
 			"name": "post_links",
 			"aria-label": "",
 			"type": "repeater",
-			"instructions": "External links shown in the sidebar (e.g. client website, award, press).",
+			"instructions": "External links shown in the sidebar (e.g. website, LinkedIn, social).",
 			"required": 0,
 			"conditional_logic": 0,
 			"wrapper": { "width": "", "class": "", "id": "" },
@@ -65,7 +65,7 @@
 			"button_label": "Add Link",
 			"sub_fields": [
 				{
-					"key": "field_two57_post_link_item",
+					"key": "field_two57_person_post_link_item",
 					"label": "Link",
 					"name": "link",
 					"aria-label": "",
@@ -84,21 +84,7 @@
 			{
 				"param": "post_type",
 				"operator": "==",
-				"value": "post"
-			}
-		],
-		[
-			{
-				"param": "post_type",
-				"operator": "==",
-				"value": "organisation"
-			}
-		],
-		[
-			{
-				"param": "post_type",
-				"operator": "==",
-				"value": "media_item"
+				"value": "person"
 			}
 		]
 	],
@@ -109,7 +95,7 @@
 	"instruction_placement": "label",
 	"hide_on_screen": "",
 	"active": true,
-	"description": "Options for single post pages: featured image toggle and sidebar links.",
+	"description": "Options for person posts. Image orientation defaults to Portrait.",
 	"show_in_rest": 0,
-	"modified": 1742169600
+	"modified": 1772496000
 }

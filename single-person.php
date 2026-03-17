@@ -1,17 +1,15 @@
 <?php
 /**
- * Single Post Template
+ * Single Person Template
  *
- * Renders a single post with:
- *   - A hero zone: post title (h1) + optional featured image (toggle)
- *   - A two-column post layout:
- *       Left  (2/5) — sticky sidebar: posted/updated dates, author, external links, back link
- *       Right (3/5) — scrolling rich post content + adjacent-post navigation
+ * Renders a single Person post with hero, sidebar (brand logo, meta, links,
+ * back-to-archive), rich content, and adjacent-post navigation.
  *
- * ACF fields (group_two57_post_options):
- *   show_featured_image — true_false; shows/hides the featured image in the hero
- *   image_orientation   — select; 'landscape' or 'portrait'
- *   post_links          — repeater of link fields ({ url, title, target })
+ * ACF fields:
+ *   show_featured_image — true_false (group_two57_post_options)
+ *   image_orientation   — select, 'landscape'|'portrait' (group_two57_post_options)
+ *   post_links          — repeater of link fields (group_two57_post_options)
+ *   brand_logo          — image ID, SVG (group_two57_cpt_brand_logo)
  */
 
 get_header();
@@ -22,6 +20,8 @@ while ( have_posts() ) :
 	$show_featured_image = get_field( 'show_featured_image' ) !== false;
 	$image_orientation   = get_field( 'image_orientation' ) ?: 'landscape';
 	$post_links          = get_field( 'post_links' ) ?: [];
+	$logo_id             = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo' ) : 0;
+	$logo_svg            = $logo_id ? two_fiftyseven_get_inline_svg( $logo_id ) : '';
 ?>
 
 <div class="page-layout">
@@ -35,6 +35,10 @@ while ( have_posts() ) :
 
 		<aside class="post-layout__sidebar">
 
+			<?php get_template_part( 'template-parts/post-sidebar-logo', null, [
+				'logo_svg' => $logo_svg,
+			] ); ?>
+
 			<?php get_template_part( 'template-parts/post-sidebar-meta' ); ?>
 
 			<?php get_template_part( 'template-parts/post-sidebar-links', null, [
@@ -42,8 +46,8 @@ while ( have_posts() ) :
 			] ); ?>
 
 			<?php get_template_part( 'template-parts/post-sidebar-back', null, [
-				'back_href'  => get_permalink( get_option( 'page_for_posts' ) ),
-				'back_label' => 'Kōrero',
+				'back_href'  => get_post_type_archive_link( 'person' ),
+				'back_label' => __( 'People', 'two-fiftyseven' ),
 			] ); ?>
 
 		</aside>

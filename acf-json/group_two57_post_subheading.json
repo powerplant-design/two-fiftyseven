@@ -1,0 +1,62 @@
+{
+	"key": "group_two57_post_subheading",
+	"title": "Subheading",
+	"fields": [
+		{
+			"key": "field_two57_post_subheading",
+			"label": "Subheading",
+			"name": "post_subheading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Optional subtitle displayed below the post title in the hero.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": "",
+			"placeholder": "",
+			"prepend": "",
+			"append": "",
+			"maxlength": ""
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "post"
+			}
+		],
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "organisation"
+			}
+		],
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "person"
+			}
+		],
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "media_item"
+			}
+		]
+	],
+	"menu_order": -1,
+	"position": "side",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Optional subheading shown below the post title in the hero zone.",
+	"show_in_rest": 0,
+	"modified": 1772496000
+}

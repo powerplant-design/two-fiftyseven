@@ -1,0 +1,60 @@
+{
+	"key": "group_two57_cpt_brand_logo",
+	"title": "Brand Logo",
+	"fields": [
+		{
+			"key": "field_two57_brand_logo",
+			"label": "Brand Logo",
+			"name": "brand_logo",
+			"aria-label": "",
+			"type": "image",
+			"instructions": "Upload an SVG logo for this brand. Displayed in the post sidebar.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"return_format": "id",
+			"preview_size": "medium",
+			"library": "all",
+			"min_width": "",
+			"min_height": "",
+			"min_size": "",
+			"max_width": "",
+			"max_height": "",
+			"max_size": "",
+			"mime_types": "svg"
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "organisation"
+			}
+		],
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "person"
+			}
+		],
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "media_item"
+			}
+		]
+	],
+	"menu_order": 1,
+	"position": "side",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "SVG logo for CPT posts, displayed in the post sidebar.",
+	"show_in_rest": 0,
+	"modified": 1772496000
+}

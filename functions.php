@@ -25,6 +25,21 @@ function two_fiftyseven_get_colour_space(): string {
 				}
 			}
 		}
+
+		// CPT archives: read colour space from ACF Options page.
+		$cpt_archive_fields = [
+			'organisation' => 'organisation_colour_space',
+			'person'       => 'person_colour_space',
+			'media_item'   => 'media_item_colour_space',
+		];
+		foreach ( $cpt_archive_fields as $post_type => $option_field ) {
+			if ( is_post_type_archive( $post_type ) ) {
+				$space = get_field( $option_field, 'option' );
+				if ( $space ) {
+					return sanitize_key( $space );
+				}
+			}
+		}
 	}
 
 	return 'neutral';
@@ -239,14 +254,57 @@ add_action( 'init', function (): void {
 } );
 
 /**
- * Ensure the posts index always shows newest posts first.
+ * Ordering for the posts index and CPT archives.
+ * People archive: alphabetical by title.
+ * Everything else: newest first.
  */
 add_action( 'pre_get_posts', function ( WP_Query $query ): void {
-	if ( $query->is_home() && $query->is_main_query() ) {
+	if ( ! $query->is_main_query() ) {
+		return;
+	}
+	if ( $query->is_post_type_archive( [ 'person', 'organisation' ] ) ) {
+		$query->set( 'orderby', 'title' );
+		$query->set( 'order', 'ASC' );
+	} elseif ( $query->is_home() || $query->is_post_type_archive( 'media_item' ) ) {
 		$query->set( 'orderby', 'date' );
 		$query->set( 'order', 'DESC' );
 	}
 } );
+
+
+/**
+ * Override adjacent-post navigation to use alphabetical (title) order for
+ * post types whose archives are ordered alphabetically.
+ *
+ * WordPress's get_previous_post() / get_next_post() always navigate by date.
+ * These four filters swap the WHERE and ORDER BY clauses to use post_title
+ * instead, so ← / → on a single person or organisation post follows A–Z order.
+ */
+function two_fiftyseven_adjacent_post_where_by_title( string $where, bool $in_same_term, $excluded_terms, string $taxonomy, WP_Post $post ): string {
+	if ( ! in_array( $post->post_type, [ 'person', 'organisation' ], true ) ) {
+		return $where;
+	}
+	global $wpdb;
+	$op    = str_contains( current_filter(), 'previous' ) ? '<' : '>';
+	$where = $wpdb->prepare(
+		"WHERE p.post_title {$op} %s AND p.post_type = %s AND p.post_status = 'publish'",
+		$post->post_title,
+		$post->post_type
+	);
+	return $where;
+}
+
+function two_fiftyseven_adjacent_post_sort_by_title( string $order_by, WP_Post $post, string $order ): string {
+	if ( ! in_array( $post->post_type, [ 'person', 'organisation' ], true ) ) {
+		return $order_by;
+	}
+	return "ORDER BY p.post_title {$order} LIMIT 1";
+}
+
+add_filter( 'get_previous_post_where', 'two_fiftyseven_adjacent_post_where_by_title', 10, 5 );
+add_filter( 'get_next_post_where',     'two_fiftyseven_adjacent_post_where_by_title', 10, 5 );
+add_filter( 'get_previous_post_sort',  'two_fiftyseven_adjacent_post_sort_by_title',  10, 3 );
+add_filter( 'get_next_post_sort',      'two_fiftyseven_adjacent_post_sort_by_title',  10, 3 );
 
 
 /**
@@ -318,3 +376,84 @@ add_action( 'init', function (): void {
 		'top'
 	);
 }, 20 );
+
+
+/**
+ * Register custom post types: Organisation, Person, Media Item.
+ *
+ * After adding these, visit Settings → Permalinks and click Save to flush
+ * the rewrite rule cache so archive and single URLs resolve correctly.
+ */
+add_action( 'init', function (): void {
+	register_post_type( 'organisation', [
+		'labels' => [
+			'name'          => __( 'Organisations', 'two-fiftyseven' ),
+			'singular_name' => __( 'Organisation', 'two-fiftyseven' ),
+			'add_new_item'  => __( 'Add New Organisation', 'two-fiftyseven' ),
+			'edit_item'     => __( 'Edit Organisation', 'two-fiftyseven' ),
+			'view_item'     => __( 'View Organisation', 'two-fiftyseven' ),
+			'search_items'  => __( 'Search Organisations', 'two-fiftyseven' ),
+			'not_found'     => __( 'No organisations found.', 'two-fiftyseven' ),
+		],
+		'public'       => true,
+		'has_archive'  => 'organisations',
+		'rewrite'      => [ 'slug' => 'organisation' ],
+		'supports'     => [ 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ],
+		'show_in_rest' => true,
+		'menu_icon'    => 'dashicons-portfolio',
+	] );
+
+	register_post_type( 'person', [
+		'labels' => [
+			'name'          => __( 'People', 'two-fiftyseven' ),
+			'singular_name' => __( 'Person', 'two-fiftyseven' ),
+			'add_new_item'  => __( 'Add New Person', 'two-fiftyseven' ),
+			'edit_item'     => __( 'Edit Person', 'two-fiftyseven' ),
+			'view_item'     => __( 'View Person', 'two-fiftyseven' ),
+			'search_items'  => __( 'Search People', 'two-fiftyseven' ),
+			'not_found'     => __( 'No people found.', 'two-fiftyseven' ),
+		],
+		'public'       => true,
+		'has_archive'  => 'people',
+		'rewrite'      => [ 'slug' => 'people' ],
+		'supports'     => [ 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ],
+		'show_in_rest' => true,
+		'menu_icon'    => 'dashicons-admin-users',
+	] );
+
+	register_post_type( 'media_item', [
+		'labels' => [
+			'name'          => __( 'Media', 'two-fiftyseven' ),
+			'singular_name' => __( 'Media Item', 'two-fiftyseven' ),
+			'add_new_item'  => __( 'Add New Media Item', 'two-fiftyseven' ),
+			'edit_item'     => __( 'Edit Media Item', 'two-fiftyseven' ),
+			'view_item'     => __( 'View Media Item', 'two-fiftyseven' ),
+			'search_items'  => __( 'Search Media', 'two-fiftyseven' ),
+			'not_found'     => __( 'No media items found.', 'two-fiftyseven' ),
+		],
+		'public'       => true,
+		'has_archive'  => 'media',
+		'rewrite'      => [ 'slug' => 'media' ],
+		'supports'     => [ 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ],
+		'show_in_rest' => true,
+		'menu_icon'    => 'dashicons-format-video',
+	] );
+}, 0 );
+
+
+/**
+ * Register ACF Options page for per-archive colour space settings.
+ */
+add_action( 'acf/init', function (): void {
+	if ( ! function_exists( 'acf_add_options_page' ) ) {
+		return;
+	}
+	acf_add_options_page( [
+		'page_title'  => __( 'Archive Settings', 'two-fiftyseven' ),
+		'menu_title'  => __( 'Archive Settings', 'two-fiftyseven' ),
+		'menu_slug'   => 'archive-settings',
+		'capability'  => 'manage_options',
+		'parent_slug' => '',
+		'autoload'    => false,
+	] );
+} );
