@@ -49,19 +49,13 @@ Usage:
 	overflow: hidden;
 	pointer-events: none;
 	color: var(--color-surface-secondary);
-	mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
-	-webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+	mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
+	-webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
 
 	svg {
 		fill: currentColor;
 		width: 100%;
 		height: auto;
 		display: block;
-        
-		@media (max-width: #{bp.$bp-sm - 1px}) {
-			transform: rotate(90deg);
-			transform-origin: center center;
-		}
-
 	}
 }

@@ -7,7 +7,7 @@
 	min-block-size: 90svh;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	align-items: stretch;
 	overflow: hidden;
 	border-end-start-radius: var(--space-xl-3xl);
 	border-end-end-radius: var(--space-xl-3xl);
@@ -37,10 +37,17 @@
 		box-sizing: border-box; // .wrapper uses content-box; override so padding-inline doesn't add to 100%
 		width: 100%;
 		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		flex: 1; // fill the hero's flex column
 	}
 
 	// ── Headline ──────────────────────────────────────────────
 	&__headline {
+		flex: 1; // take all space above the panel
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		text-align: center;
 		color: var(--color-content-unchanged);
 		text-wrap: balance;

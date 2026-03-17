@@ -6,7 +6,7 @@
 	<script>/* no-FOUC: set data-theme before CSS paints */(function(){var e=document.documentElement,s=e.getAttribute('data-color-space')||'neutral',stored=localStorage.getItem('color-mode'),d=stored?stored==='dark':window.matchMedia('(prefers-color-scheme:dark)').matches;e.setAttribute('data-theme',s+(d?'-dark':'-light'));})();</script>
 	<?php wp_head(); ?>
 </head>
-<body id="swup" <?php body_class(); ?>>
+<body <?php body_class(); ?>>
 <?php wp_body_open(); ?>
 
 <?php
@@ -23,8 +23,8 @@ $has_hero = $current_post_id && (
 ?>
 
 <header class="site-header<?php echo $has_hero ? '' : ' site-header--no-hero'; ?>">
-	<div class="wrapper repel | w-full">
-		<nav class="site-nav">
+	<div class="wrapper | w-full">
+		<nav class="site-nav site-nav--primary" aria-label="<?php esc_attr_e( 'Primary', 'two-fiftyseven' ); ?>">
 			<?php
 			wp_nav_menu( [
 				'theme_location' => 'primary',
@@ -44,17 +44,29 @@ $has_hero = $current_post_id && (
 			}
 			?>
 		</a>
-		<button
-			class="btn color-mode-toggle"
-			data-js="color-mode-toggle"
-			aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
-			aria-pressed="false"
-			type="button"
-		>
-			<span data-mode-label></span>
-		</button>
+		<div class="site-header__end">
+			<nav class="site-nav site-nav--secondary" aria-label="<?php esc_attr_e( 'Secondary', 'two-fiftyseven' ); ?>">
+				<?php
+				wp_nav_menu( [
+					'theme_location' => 'secondary',
+					'menu_class'     => 'nav-menu cluster',
+					'fallback_cb'    => false,
+				] );
+				?>
+			</nav>
+			<button
+				class="btn color-mode-toggle"
+				data-js="color-mode-toggle"
+				aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
+				aria-pressed="false"
+				type="button"
+			>
+				<span data-mode-label></span>
+			</button>
+		</div>
 	</div>
 </header>
 
+<div id="swup">
 <main class="site-main">
 	<?php get_template_part( 'template-parts/page-layout-bg' ); ?>

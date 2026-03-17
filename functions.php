@@ -56,7 +56,8 @@ function two_fiftyseven_setup(): void {
 	add_theme_support( 'align-wide' );
 
 	register_nav_menus( [
-		'primary' => __( 'Primary Navigation', 'two-fiftyseven' ),
+		'primary'   => __( 'Primary Navigation', 'two-fiftyseven' ),
+		'secondary' => __( 'Secondary Navigation', 'two-fiftyseven' ),
 	] );
 
 	load_theme_textdomain( 'two-fiftyseven', get_template_directory() . '/languages' );

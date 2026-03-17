@@ -48,8 +48,11 @@ if ( ! empty( $icons ) ) {
 
 	<div class="hero-page__inner wrapper stack">
     
-    <?php if ( $headline ) : ?>
-        <h1 class="hero-page__headline text-3xl"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
+    <?php if ( $headline ) :
+		// Short headlines (< 25 chars) get one step up on the type scale.
+		$headline_size = mb_strlen( wp_strip_all_tags( $headline ) ) < 25 ? 'text-4xl' : 'text-3xl';
+	?>
+        <h1 class="hero-page__headline <?php echo esc_attr( $headline_size ); ?>"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
 		<?php elseif ( $is_preview ) : ?>
 				<p style="color:white;opacity:0.5;text-align:center;">Add a headline in the block settings →</p>
             <?php endif; ?>

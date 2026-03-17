@@ -20,6 +20,7 @@
 	</div>
 
 </footer>
+</div><!-- /#swup -->
 
 <?php wp_footer(); ?>
 </body>
