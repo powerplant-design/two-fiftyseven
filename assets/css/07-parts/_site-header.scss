@@ -60,7 +60,6 @@
 	&--no-hero {
 		&::before {
 			background: linear-gradient(to bottom, var(--color-surface-primary) 0%, transparent 100%);
-			opacity: 1;
 		}
 
 		.site-logo,

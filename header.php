@@ -57,3 +57,4 @@ $has_hero = $current_post_id && (
 </header>
 
 <main class="site-main">
+	<?php get_template_part( 'template-parts/page-layout-bg' ); ?>

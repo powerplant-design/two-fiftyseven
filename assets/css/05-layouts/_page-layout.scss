@@ -19,6 +19,8 @@ Usage:
 =================================================================== */
 
 .page-layout {
+	position: relative;
+	isolation: isolate;
 	display: grid;
 	grid-template-columns:
 		minmax(var(--global-padding-inline), 1fr)
@@ -34,5 +36,32 @@ Usage:
 	/* Full-bleed: spans all three columns edge to edge. */
 	> [data-block="full"] {
 		grid-column: 1 / -1;
+	}
+}
+
+.page-layout__bg {
+	position: fixed;
+	top: 0;
+    left: 0;
+    right: 0;
+	grid-column: 1 / -1;
+	z-index: -1;
+	overflow: hidden;
+	pointer-events: none;
+	color: var(--color-surface-secondary);
+	mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+	-webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+
+	svg {
+		fill: currentColor;
+		width: 100%;
+		height: auto;
+		display: block;
+        
+		@media (max-width: #{bp.$bp-sm - 1px}) {
+			transform: rotate(90deg);
+			transform-origin: center center;
+		}
+
 	}
 }
