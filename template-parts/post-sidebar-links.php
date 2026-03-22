@@ -22,7 +22,7 @@ if ( ! $post_links ) {
 			$target = ! empty( $link['target'] ) ? $link['target'] : '';
 		?>
 			<li>
-				<a href="<?php echo esc_url( $link['url'] ); ?>"
+				<a class="btn" data-type="text" href="<?php echo esc_url( $link['url'] ); ?>"
 					<?php if ( $target ) : ?>target="<?php echo esc_attr( $target ); ?>" rel="noopener noreferrer"<?php endif; ?>>
 					<?php echo esc_html( $link['title'] ?: $link['url'] ); ?>
 				</a>

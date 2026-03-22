@@ -1,0 +1,76 @@
+// ============================================================
+// 257 Case Studies Block
+// ============================================================
+
+.case-studies {
+	padding-block: var(--space-xl-3xl);
+
+	&__inner {
+		--stack-gap: var(--space-xl);
+	}
+
+	&__heading {
+		text-align: center;
+	}
+
+	&__cards {
+		padding-inline: 0;
+		list-style: none;
+	}
+
+	&__card {
+		background-color: var(--color-surface-secondary);
+		border-radius: var(--space-l);
+		overflow: hidden;
+		opacity: 0;
+		transform: translateY(3rem);
+		transition:
+			opacity 0.4s ease-out var(--delay),
+			transform 0.8s ease-out var(--delay),
+			box-shadow 0.3s ease;
+
+		&.is-inview {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	&__card-link {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-m);
+		padding: var(--space-l);
+		text-decoration: none;
+		color: inherit;
+		min-block-size: 100%;
+	}
+
+	&__card:hover {
+		box-shadow: 0 0 45px var(--color-surface-secondary);
+	}
+
+	&__logo {
+        aspect-ratio: 1 / 0.8;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--color-content-primary);
+		min-block-size: clamp(var(--space-l), 9vw, var(--space-3xl));
+
+		svg,
+		img {
+			block-size: var(--space-3xl);
+			inline-size: auto;
+			max-inline-size: 65%;
+		}
+	}
+
+	&__card-title {
+        display: none;
+	}
+
+	&__cta {
+		display: flex;
+		justify-content: center;
+	}
+}

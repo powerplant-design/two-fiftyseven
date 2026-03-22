@@ -103,18 +103,34 @@
 	}
 
 	// Light/dark toggle — sits alongside the secondary nav, visually distinct.
-	.color-mode-toggle {
-		border: none;
-		background: transparent;
-		// color: var(--color-content-unchanged);
-		padding-inline: 0.5em;
-		aspect-ratio: 1;
-		min-width: 2.5em;
+	// Secondary nav + toggle: flex row — toggle is the right end-cap of the pill.
+	.site-nav--secondary {
 		display: flex;
 		align-items: center;
-		justify-content: center;
+
+		// The last nav item is no longer the rightmost — remove its right end-cap.
+		.nav-menu li:last-child a {
+			border-radius: 0;
+		}
+	}
+
+	// Light/dark toggle — right end-cap of the secondary nav pill.
+	.color-mode-toggle {
+		border: none;
+		background: var(--color-surface-secondary);
+		color: var(--color-content-primary);
+		padding: 0.35em 1em;
+		min-width: 58px;
+		border-radius: 0 999px 999px 0;
+		display: block;
 		cursor: pointer;
 		font-size: var(--text-base-size);
+		line-height: 1;
+		font-family: inherit;
+
+		&:hover {
+			background: var(--color-surface-primary);
+		}
 	}
 
 	// No-hero modifier — backdrop uses the page surface colour (light/dark aware)
@@ -127,6 +143,11 @@
 		// Hide link items but keep the dark/light toggle button.
 		.site-nav--secondary .nav-menu li:has(a) {
 			display: none;
+		}
+
+		// With nav links hidden, toggle should be a standalone full pill.
+		.site-nav--secondary .color-mode-toggle {
+			border-radius: 999px;
 		}
 	}
 

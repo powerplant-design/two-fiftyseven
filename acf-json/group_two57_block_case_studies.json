@@ -1,0 +1,72 @@
+{
+	"key": "group_two57_block_case_studies",
+	"title": "257 Case Studies Block",
+	"fields": [
+		{
+			"key": "field_two57_case_studies_heading",
+			"label": "Heading",
+			"name": "case_studies_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Section heading shown above the cards.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"default_value": "Case Studies",
+			"maxlength": "",
+			"placeholder": "Case Studies"
+		},
+		{
+			"key": "field_two57_case_studies_items",
+			"label": "Organisation Cards",
+			"name": "case_studies_items",
+			"aria-label": "",
+			"type": "relationship",
+			"instructions": "Select exactly 3 Organisation posts. Drag items to reorder card positions.",
+			"required": 1,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"post_type": [ "organisation" ],
+			"post_status": [ "publish" ],
+			"taxonomy": "",
+			"filters": [ "search" ],
+			"return_format": "id",
+			"min": 3,
+			"max": 3,
+			"elements": [ "featured_image" ],
+			"bidirectional": 0,
+			"bidirectional_target": []
+		},
+		{
+			"key": "field_two57_case_studies_archive_link",
+			"label": "Archive Button Link",
+			"name": "case_studies_archive_link",
+			"aria-label": "",
+			"type": "link",
+			"instructions": "Used for the secondary button below the cards. Link title becomes the button label.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"return_format": "array"
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/case-studies"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Controls the heading, selected organisations, and archive CTA for the 257 Case Studies block.",
+	"show_in_rest": 0,
+	"modified": 1774224000
+}

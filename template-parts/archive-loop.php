@@ -8,7 +8,12 @@
 
 if ( have_posts() ) : ?>
 
-	<div class="post-index | grid" data-grid-layout="halves">
+	<?php
+		$post_type = get_post_type();
+		$grid_layout = in_array( $post_type, [ 'person', 'organisation', 'media_item' ], true ) ? 'halves' : 'thirds';
+	?>
+
+	<div class="post-index | grid" data-grid-layout="<?php echo esc_attr( $grid_layout ); ?>">
 		<?php while ( have_posts() ) : the_post();
 			$card_space    = function_exists( 'get_field' ) ? ( get_field( 'colour_space', get_the_ID() ) ?: 'neutral' ) : 'neutral';
 			$post_type     = get_post_type();

@@ -47,7 +47,7 @@ Variants
 /* A split 50/50 layout */
 .grid[data-grid-layout="halves"] {
 	--grid-placement: auto-fit;
-	--grid-item-min-size: clamp(16rem, 50vi, 20rem);
+	--grid-item-min-size: clamp(24rem, 50%, 28rem);
 }
 
 /* Three column grid layout */

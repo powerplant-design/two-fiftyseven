@@ -53,16 +53,16 @@ $has_hero = $current_post_id && (
 					'fallback_cb'    => false,
 				] );
 				?>
+				<button
+					class="color-mode-toggle"
+					data-js="color-mode-toggle"
+					aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
+					aria-pressed="false"
+					type="button"
+				>
+					<span data-mode-label></span>
+				</button>
 			</nav>
-			<button
-				class="btn color-mode-toggle"
-				data-js="color-mode-toggle"
-				aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
-				aria-pressed="false"
-				type="button"
-			>
-				<span data-mode-label></span>
-			</button>
 		</div>
 	</div>
 </header>

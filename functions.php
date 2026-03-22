@@ -240,6 +240,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'case-studies',
+		'title'           => __( '257 Case Studies', 'two-fiftyseven' ),
+		'description'     => __( 'Three selected Organisation cards with editable heading and archive CTA.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/case-studies/block.php',
+		'category'        => 'layout',
+		'icon'            => 'screenoptions',
+		'keywords'        => [ 'case', 'studies', 'organisation', 'cards' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 

@@ -20,7 +20,7 @@ $title_class = mb_strlen( get_the_title() ) < 28 ? 'post-hero__title' : 'post-he
 	<?php if ( $subheading ) : ?>
 		<div class="post-hero__heading-group | stack">
 			<h1 class="<?php echo esc_attr( $title_class ); ?>"><?php the_title(); ?></h1>
-			<p class="post-hero__subheading | text-xl"><?php echo esc_html( $subheading ); ?></p>
+			<p class="post-hero__subheading | text-xl text-balance"><?php echo esc_html( $subheading ); ?></p>
 		</div>
 	<?php else : ?>
 		<h1 class="<?php echo esc_attr( $title_class ); ?>"><?php the_title(); ?></h1>
