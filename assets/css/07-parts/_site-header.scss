@@ -102,6 +102,10 @@
 		}
 	}
 
+	.menu-primary-navigation-container {
+		--list-indent: 0;
+	}
+
 	// Light/dark toggle — sits alongside the secondary nav, visually distinct.
 	// Secondary nav + toggle: flex row — toggle is the right end-cap of the pill.
 	.site-nav--secondary {

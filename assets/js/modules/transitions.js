@@ -23,6 +23,12 @@ import { syncHeader } from './header.js';
 import { initFooter, destroyFooter } from './footer.js';
 import { initStackedCards, destroyStackedCards } from './stacked-cards.js';
 
+function resetCaseStudyRevealState() {
+	document.querySelectorAll( '.case-studies__card.is-inview' ).forEach( ( card ) => {
+		card.classList.remove( 'is-inview' );
+	} );
+}
+
 export function initTransitions() {
 	const swup = new Swup( {
 		containers: [ '#swup' ],
@@ -55,6 +61,10 @@ export function initTransitions() {
 	//    otherwise applyThemes() reads the stale value from the previous page.
 	//    Also sync the logo hero/no-hero class from the incoming page's header.
 	swup.hooks.on( 'content:replace', ( visit ) => {
+		// Swup cache can preserve runtime classes from a previous visit.
+		// Clear reveal state so Locomotive can add .is-inview again on this view.
+		resetCaseStudyRevealState();
+
 		const incomingSpace = visit.to.document?.documentElement?.getAttribute( 'data-color-space' );
 		if ( incomingSpace ) {
 			document.documentElement.setAttribute( 'data-color-space', incomingSpace );
