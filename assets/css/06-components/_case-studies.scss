@@ -29,6 +29,15 @@
 			transform 0.8s ease-out var(--delay),
 			box-shadow 0.3s ease;
 
+		a {
+			gap: var(--space-m);
+			padding: var(--space-l);
+		}
+
+		&:hover {
+			box-shadow: 0 0 45px var(--color-surface-secondary);
+		}
+
 		&.is-inview {
 			opacity: 1;
 			transform: translateY(0);
@@ -36,21 +45,11 @@
 	}
 
 	&__card-link {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-m);
-		padding: var(--space-l);
-		text-decoration: none;
-		color: inherit;
 		min-block-size: 100%;
 	}
 
-	&__card:hover {
-		box-shadow: 0 0 45px var(--color-surface-secondary);
-	}
-
 	&__logo {
-        aspect-ratio: 1 / 0.8;
+		aspect-ratio: 1 / 0.8;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -66,7 +65,11 @@
 	}
 
 	&__card-title {
-        display: none;
+		display: none;
+	}
+
+	&__card-subheading {
+		color: var(--color-content-primary);
 	}
 
 	&__cta {

@@ -63,29 +63,6 @@
 			"placeholder": ""
 		},
 		{
-			"key": "field_two57_hero_panel_mode",
-			"label": "Panel Mode",
-			"name": "hero_panel_mode",
-			"aria-label": "",
-			"type": "select",
-			"instructions": "Auto follows OS preference. Light or Dark forces a mode regardless of OS.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"choices": {
-				"auto": "Auto \u2014 follows OS preference",
-				"light": "Always Light",
-				"dark": "Always Dark"
-			},
-			"default_value": "dark",
-			"return_format": "value",
-			"multiple": 0,
-			"allow_null": 0,
-			"ui": 0,
-			"ajax": 0,
-			"placeholder": ""
-		},
-		{
 			"key": "field_two57_hero_cards",
 			"label": "Cards",
 			"name": "hero_cards",

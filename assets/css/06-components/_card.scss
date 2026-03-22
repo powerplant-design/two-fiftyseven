@@ -1,12 +1,14 @@
 .cards {
-    padding-inline: var(--space-m);
+    padding-inline: var(--space-s-xl);
 }
 
 .card {
+    color: var(--color-content-primary);
     background-color: var(--color-surface-secondary);
     border-radius: var(--space-m);
-
+    
     a {
+        border-radius: var(--space-m);
         display: flex;
         flex-direction: column;
         gap: var(--space-s);
@@ -14,21 +16,81 @@
         text-decoration: none;
         color: inherit;
         block-size: 100%;
+        transition: background-color 220ms ease, color 220ms ease, box-shadow 220ms ease, outline-color 0.25s ease;
 
-        &:hover,
         &:focus-visible {
             outline: 2px solid var(--color-border-primary);
             outline-offset: -2px;
-            border-radius: var(--space-s);
+            // border-radius: var(--space-s);
         }
-    }        
+    }
 
-    &-title {
-        font-size: var(--step-2);
-        color: var(--color-content-primary);
+    &--working a:hover,
+    &--working a:focus-visible {
+        color: var(--color-content-inverse);
+        background-color: var(--color-forest-500);
+    }
+
+    &--meetings a:hover,
+    &--meetings a:focus-visible {
+        color: var(--color-content-inverse);
+        background-color: var(--color-maroon-500);
+    }
+
+    &--events a:hover,
+    &--events a:focus-visible {
+        color: var(--color-content-inverse);
+        background-color: var(--color-purple-500);
+    }
+
+    // Home hero uses softer tints in light mode and richer hues in dark mode.
+    .hero-home__panel[data-theme$='-light'] &--working a:hover,
+    .hero-home__panel[data-theme$='-light'] &--working a:focus-visible {
+        color: var(--color-forest-600);
+        background-color: var(--color-forest-300);
+    }
+
+    .hero-home__panel[data-theme$='-light'] &--meetings a:hover,
+    .hero-home__panel[data-theme$='-light'] &--meetings a:focus-visible {
+        color: var(--color-maroon-600);
+        background-color: var(--color-maroon-200);
+    }
+
+    .hero-home__panel[data-theme$='-light'] &--events a:hover,
+    .hero-home__panel[data-theme$='-light'] &--events a:focus-visible {
+        color: var(--color-purple-600);
+        background-color: var(--color-purple-200);
+    }
+
+    .hero-home__panel[data-theme$='-dark'] &--working a:hover,
+    .hero-home__panel[data-theme$='-dark'] &--working a:focus-visible {
+        color: var(--color-forest-100);
+        background-color: var(--color-forest-600);
+    }
+
+    .hero-home__panel[data-theme$='-dark'] &--meetings a:hover,
+    .hero-home__panel[data-theme$='-dark'] &--meetings a:focus-visible {
+        color: var(--color-maroon-100);
+        background-color: var(--color-maroon-600);
+    }
+
+    .hero-home__panel[data-theme$='-dark'] &--events a:hover,
+    .hero-home__panel[data-theme$='-dark'] &--events a:focus-visible {
+        color: var(--color-purple-100);
+        background-color: var(--color-purple-600);
+    }
+
+    &--working a:hover .card-desc,
+    &--working a:focus-visible .card-desc,
+    &--meetings a:hover .card-desc,
+    &--meetings a:focus-visible .card-desc,
+    &--events a:hover .card-desc,
+    &--events a:focus-visible .card-desc {
+        color: inherit;
     }
     
     &-desc {
         color: var(--color-content-secondary);
+        transition: color 220ms ease;
     }
 }

@@ -55,7 +55,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 		<?php endif; ?>
 
 		<?php if ( $items ) : ?>
-			<ul class="case-studies__cards | grid" data-grid-layout="thirds">
+			<ul class="case-studies__cards | grid cards" data-grid-layout="thirds">
 				<?php foreach ( $items as $index => $item ) :
 					$item_id       = (int) $item->ID;
 					$item_title    = get_the_title( $item_id );
@@ -65,7 +65,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 					$brand_logo    = $brand_logo_id ? two_fiftyseven_get_inline_svg( $brand_logo_id ) : '';
 					$delay_ms      = $index * 300; // 0ms, 200ms, 400ms
 				?>
-					<li class="case-studies__card" data-scroll style="--delay: <?php echo $delay_ms; ?>ms">
+					<li class="case-studies__card | card" data-scroll style="--delay: <?php echo $delay_ms; ?>ms">
 						<a class="case-studies__card-link" href="<?php echo esc_url( $item_link ); ?>">
 							<?php if ( $brand_logo ) : ?>
 								<div class="case-studies__logo" aria-hidden="true">
@@ -74,11 +74,11 @@ if ( ! empty( $archive_link['url'] ) ) {
 							<?php endif; ?>
 
 							<?php if ( $item_title ) : ?>
-								<h3 class="case-studies__card-title"><?php echo esc_html( $item_title ); ?></h3>
+								<h3 class="case-studies__card-title | card-title"><?php echo esc_html( $item_title ); ?></h3>
 							<?php endif; ?>
 
 							<?php if ( $item_subhead ) : ?>
-								<p class="case-studies__card-subheading text-l"><?php echo esc_html( $item_subhead ); ?></p>
+								<p class="case-studies__card-subheading card-desc text-l"><?php echo esc_html( $item_subhead ); ?></p>
 							<?php endif; ?>
 						</a>
 					</li>

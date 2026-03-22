@@ -11,9 +11,9 @@
 	overflow: hidden;
 	border-end-start-radius: var(--space-xl-3xl);
 	border-end-end-radius: var(--space-xl-3xl);
-	border-block-end: var(--border);
-	border-block-end-width: var(--border-width-medium);
-    padding-block: var(--space-3xl);
+	// border-block-end: var(--border);
+	// border-block-end-width: var(--border-width-medium);
+    padding-block: var(--space-xl);
 
 	// Background image via CSS custom property set inline by PHP.
 	background-image: var(--hero-bg, none);
@@ -55,37 +55,34 @@
 
 	// ── Panel (the rounded colour card) ───────────────────────
 	&__panel {
-        --stack-gap : var(--space-xl);
+        --stack-gap : var(--space-m);
 		backdrop-filter: blur(20px);
 		border-radius: var(--space-xl);
 		overflow: hidden;
-		padding-block-start: var(--space-s-xl);
-		padding-block-end: var(--space-xl);
+		padding-block: var(--space-l);
 
 		// Glassy gradient border: bright highlight at top, fades to near-transparent at bottom.
-		border: 1px solid transparent;
-		background-image:
-			linear-gradient(
-				color-mix(in srgb, var(--color-surface-primary, transparent) 80%, transparent),
-				color-mix(in srgb, var(--color-surface-primary, transparent) 10%, transparent)
-			),
-			linear-gradient(
-				to bottom right,
-				hsl(0 0% 100% / 0.35) 0%,
-				hsl(0 0% 100% / 0.10) 40%,
-				hsl(0 0% 0%   / 0.15) 100%
-			);
-		background-origin: padding-box, border-box;
-		background-clip: padding-box, border-box;
+		// border: 1px solid transparent;
+		// background-image:
+		// 	linear-gradient(
+		// 		color-mix(in srgb, var(--color-surface-primary, transparent) 80%, transparent),
+		// 		color-mix(in srgb, var(--color-surface-primary, transparent) 10%, transparent)
+		// 	),
+		// 	linear-gradient(
+		// 		to bottom right,
+		// 		hsl(0 0% 100% / 0.35) 0%,
+		// 		hsl(0 0% 100% / 0.10) 40%,
+		// 		hsl(0 0% 0%   / 0.15) 100%
+		// 	);
+		// background-origin: padding-box, border-box;
+		// background-clip: padding-box, border-box;
 	}
 
 	// ── "Need space for" eyebrow ──────────────────────────────
-	// &__eyebrow {
-	// 	color: var(--color-content-secondary);
-	// 	text-align: center;
-	// 	text-transform: uppercase;
-	// 	font-size: var(--step--1);
-	// }
+	&__eyebrow {
+		color: var(--color-content-unchanged);
+		text-align: center;
+	}
 
 	// ── Cards grid ────────────────────────────────────────────
 	// &__cards {
@@ -116,7 +113,7 @@
 		display: flex;
 		align-items: center;
 		// SVGs rendered inline inherit this as currentColor.
-		color: var(--color-content-primary);
+		color: var(--color-content-unchanged);
 
 		svg,
 		img {

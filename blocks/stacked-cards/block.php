@@ -59,7 +59,7 @@ $items = get_field( 'stacked_cards_items' ) ?: [];
 					<?php endif; ?>
 
 					<?php if ( $content ) : ?>
-						<div class="stacked-cards__content | stack">
+						<div class="stacked-cards__content | stack text-l">
 							<?php echo wp_kses_post( $content ); ?>
 						</div>
 					<?php endif; ?>

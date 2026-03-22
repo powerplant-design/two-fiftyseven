@@ -11,7 +11,6 @@
  *   hero_headline           — display heading (textarea, supports <br>)
  *   hero_background_image   — background image (array)
  *   hero_panel_colour_space — colour palette for the panel (select)
- *   hero_panel_mode         — light / dark / auto mode for the panel (select)
  *   hero_cards              — repeater: card_title, card_description, card_link
  *   hero_marquee_icons      — repeater: icon_image (array)
  *
@@ -24,22 +23,15 @@
 $headline    = get_field( 'hero_headline' );
 $bg_image    = get_field( 'hero_background_image' );
 $panel_space = get_field( 'hero_panel_colour_space' ) ?: 'forest';
-$panel_mode  = get_field( 'hero_panel_mode' ) ?: 'dark';
 $cards       = get_field( 'hero_cards' ) ?: [];
 $icons       = get_field( 'hero_marquee_icons' ) ?: [];
 
 // Sanitise against allowed values.
 $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
-$allowed_modes  = [ 'auto', 'light', 'dark' ];
 if ( ! in_array( $panel_space, $allowed_spaces, true ) ) { $panel_space = 'forest'; }
-if ( ! in_array( $panel_mode, $allowed_modes, true ) )   { $panel_mode  = 'dark'; }
 
 // Build panel data attributes.
 $panel_data = 'data-color-space="' . esc_attr( $panel_space ) . '"';
-if ( 'auto' !== $panel_mode ) {
-	$panel_data .= ' data-color-mode="' . esc_attr( $panel_mode ) . '"';
-	$panel_data .= ' data-theme="' . esc_attr( $panel_space . '-' . $panel_mode ) . '"';
-}
 
 // Background image inline CSS custom property.
 $bg_style = '';
@@ -58,14 +50,14 @@ $marquee_icons = ! empty( $icons ) ? array_merge( $icons, $icons ) : [];
 	<div class="hero-home__inner | wrapper stack">
 
 		<?php if ( $headline ) : ?>
-			<h1 class="hero-home__headline text-3xl"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
+			<h1 class="hero-home__headline text-4xl"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
 		<?php elseif ( $is_preview ) : ?>
 			<p class="hero-home__preview-hint" style="color:white;opacity:0.5;text-align:center;">Add a headline in the block settings →</p>
 		<?php endif; ?>
 
 		<div class="hero-home__panel | stack" <?php echo $panel_data; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?>>
 
-			<!-- <p class="hero-home__eyebrow">Need space for</p> -->
+			<p class="hero-home__eyebrow | text-monospace text-s">Need space for</p>
 
 			<?php if ( $cards ) : ?>
 				<ul class="hero-home__cards | grid cards" data-grid-layout="thirds">
@@ -73,14 +65,25 @@ $marquee_icons = ! empty( $icons ) ? array_merge( $icons, $icons ) : [];
 						$link        = $card['card_link'] ?? [];
 						$url         = ! empty( $link['url'] )    ? $link['url']    : '#';
 						$link_target = ! empty( $link['target'] ) ? $link['target'] : '';
+						$title_raw   = $card['card_title'] ?? '';
+						$title_slug  = sanitize_title( $title_raw );
+						$card_type   = 'default';
+
+						if ( str_contains( $title_slug, 'work' ) ) {
+							$card_type = 'working';
+						} elseif ( str_contains( $title_slug, 'meeting' ) ) {
+							$card_type = 'meetings';
+						} elseif ( str_contains( $title_slug, 'event' ) ) {
+							$card_type = 'events';
+						}
 					?>
-					<li class="hero-home__card | card">
+					<li class="hero-home__card | card card--<?php echo esc_attr( $card_type ); ?>">
 						<a
 							href="<?php echo esc_url( $url ); ?>"
 							<?php if ( $link_target ) : ?>target="<?php echo esc_attr( $link_target ); ?>" rel="noopener noreferrer"<?php endif; ?>
 						>
 							<?php if ( ! empty( $card['card_title'] ) ) : ?>
-								<h2 class="hero-home__card-title | card-title"><?php echo esc_html( $card['card_title'] ); ?></h2>
+								<h2 class="hero-home__card-title | card-title text-xl"><?php echo esc_html( $card['card_title'] ); ?></h2>
 							<?php endif; ?>
 							<?php if ( ! empty( $card['card_description'] ) ) : ?>
 								<p class="hero-home__card-desc | card-desc"><?php echo esc_html( $card['card_description'] ); ?></p>
