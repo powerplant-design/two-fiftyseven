@@ -117,3 +117,14 @@
 	padding-block: var(--space-xl);
     justify-content: center;
 }
+
+.stacked-cards__content {
+	ul {
+		padding-left: var(--space-m);
+		list-style-type: "/  ";
+	}
+
+	li:not(:last-child) {
+		margin-bottom: var(--space-xs);
+	}
+}

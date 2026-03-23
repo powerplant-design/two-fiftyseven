@@ -24,7 +24,7 @@ $id_prefix = 'faq-' . sanitize_html_class( $block['id'] ?? uniqid( 'faq-', true 
 ?>
 
 <section class="faq | block">
-	<div class="faq__inner | wrapper">
+	<div class="faq__inner">
 
 		<div class="faq__label | text-monospace">
 			<?php echo esc_html( $label ); ?>

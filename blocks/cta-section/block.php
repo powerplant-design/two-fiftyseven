@@ -51,7 +51,7 @@ $link_tgt  = ! empty( $link['target'] ) ? $link['target'] : '';
 ?>
 
 <section class="cta-section | block">
-	<div class="cta-section__inner wrapper">
+	<div class="cta-section__inner">
 		<div class="cta-section__panel">
 
 		<?php if ( $bg_svg ) : ?>

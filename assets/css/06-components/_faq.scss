@@ -124,6 +124,12 @@
 
 	&__answer {
 		padding-block-end: var(--space-m);
+
+        ul {
+            padding-inline-start: var(--space-m);
+            margin-block-end: var(--block-gap);
+            list-style-type: "/  ";
+        }
 	}
 
 	&__answer-cta {

@@ -49,7 +49,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 ?>
 
 <section class="case-studies | block">
-	<div class="case-studies__inner | wrapper stack">
+	<div class="case-studies__inner | stack">
 		<?php if ( $heading ) : ?>
 			<h2 class="case-studies__heading | text-2xl"><?php echo esc_html( $heading ); ?></h2>
 		<?php endif; ?>

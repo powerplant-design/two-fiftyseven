@@ -24,12 +24,10 @@
 	color: var(--color-content-secondary-inverse);
     
     @media (max-width: #{bp.$bp-sm}) {
-        // transform: rotate(90deg);
         inset: -25svw;
 	}
     
 	svg {
-        border-radius: var(--space-xl-3xl);
         overflow: hidden;
 		block-size: 100%;
 		inline-size: 100%;
