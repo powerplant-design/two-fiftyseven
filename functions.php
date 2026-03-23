@@ -272,6 +272,21 @@ add_action( 'acf/init', function (): void {
 	] );
 
 	acf_register_block_type( [
+		'name'            => 'post-header',
+		'title'           => __( '257 Post Header', 'two-fiftyseven' ),
+		'description'     => __( 'Centered archive-style page heading (h1).', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/post-header/block.php',
+		'category'        => 'text',
+		'icon'            => 'heading',
+		'keywords'        => [ 'post', 'header', 'title', 'heading', 'archive' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
 		'name'            => 'faq',
 		'title'           => __( '257 FAQ', 'two-fiftyseven' ),
 		'description'     => __( 'Accordion-style FAQ panel with an optional eyebrow label and repeater of question/answer items.', 'two-fiftyseven' ),

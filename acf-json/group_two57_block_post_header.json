@@ -1,0 +1,43 @@
+{
+	"key": "group_two57_block_post_header",
+	"title": "257 Post Header Block",
+	"fields": [
+		{
+			"key": "field_two57_post_header_title",
+			"label": "Heading",
+			"name": "post_header_title",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Centered page heading shown as an h1.",
+			"required": 1,
+			"conditional_logic": 0,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"default_value": "Get in touch",
+			"maxlength": "",
+			"placeholder": "Get in touch"
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/post-header"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Centered archive-style h1 header block.",
+	"show_in_rest": 0,
+	"modified": 1774224000
+}
