@@ -4,13 +4,15 @@
 
 .cta-section {
 	padding-block: var(--space-xl-3xl);
-    
-	&__inner {
-		box-sizing: border-box; // .wrapper uses content-box; override so padding doesn't add to max-inline-size
-        background-color: var(--color-surface-secondary);
+
+
+	&__panel {
+		box-sizing: border-box;
+		width: 100%;
+		background-color: var(--color-surface-secondary);
 		position: relative;
 		overflow: hidden;
-		border-radius: var(--space-2xl);
+		border-radius: var(--space-s-xl);
 		padding: var(--space-xl-3xl);
         
 		&:has(.btn:hover) .cta-section__bg,
@@ -18,7 +20,7 @@
             opacity: 1;
 		}
 	}
-
+    
 	&__bg {
 		position: absolute;
 		inset: 0;

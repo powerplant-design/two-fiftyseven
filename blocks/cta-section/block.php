@@ -52,6 +52,7 @@ $link_tgt  = ! empty( $link['target'] ) ? $link['target'] : '';
 
 <section class="cta-section | block">
 	<div class="cta-section__inner wrapper">
+		<div class="cta-section__panel">
 
 		<?php if ( $bg_svg ) : ?>
 			<div class="cta-section__bg <?php echo 'cover' === $svg_fit ? 'svg-cover' : 'svg-contain'; ?>"<?php echo 'contain' === $svg_fit ? ' style="padding: var(--space-l);"' : ''; ?> aria-hidden="true">
@@ -78,6 +79,7 @@ $link_tgt  = ! empty( $link['target'] ) ? $link['target'] : '';
 			<?php elseif ( $is_preview ) : ?>
 				<p class="cta-section__preview-hint">Add a primary button link in the block settings.</p>
 			<?php endif; ?>
+		</div>
 		</div>
 	</div>
 </section>

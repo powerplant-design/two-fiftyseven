@@ -31,6 +31,15 @@
         background-color: var(--color-forest-500);
     }
 
+    // Hero-home idle states: keep meetings/events in their own colour families.
+    .hero-home__panel &--meetings a {
+        background-color: var(--color-maroon-400);
+    }
+
+    .hero-home__panel &--events a {
+        background-color: var(--color-purple-400);
+    }
+
     &--meetings a:hover,
     &--meetings a:focus-visible {
         color: var(--color-content-inverse);
@@ -56,10 +65,18 @@
         background-color: var(--color-maroon-200);
     }
 
+    .hero-home__panel[data-theme$='-light'] &--meetings a {
+        background-color: var(--color-maroon-100);
+    }
+
     .hero-home__panel[data-theme$='-light'] &--events a:hover,
     .hero-home__panel[data-theme$='-light'] &--events a:focus-visible {
         color: var(--color-purple-600);
         background-color: var(--color-purple-200);
+    }
+
+    .hero-home__panel[data-theme$='-light'] &--events a {
+        background-color: var(--color-purple-100);
     }
 
     .hero-home__panel[data-theme$='-dark'] &--working a:hover,
@@ -74,10 +91,18 @@
         background-color: var(--color-maroon-600);
     }
 
+    .hero-home__panel[data-theme$='-dark'] &--meetings a {
+        background-color: var(--color-maroon-500);
+    }
+
     .hero-home__panel[data-theme$='-dark'] &--events a:hover,
     .hero-home__panel[data-theme$='-dark'] &--events a:focus-visible {
         color: var(--color-purple-100);
         background-color: var(--color-purple-600);
+    }
+
+    .hero-home__panel[data-theme$='-dark'] &--events a {
+        background-color: var(--color-purple-500);
     }
 
     &--working a:hover .card-desc,

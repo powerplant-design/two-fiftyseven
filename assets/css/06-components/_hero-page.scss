@@ -10,9 +10,7 @@
 	justify-content: center;
 	overflow: hidden;
 	border-end-start-radius: var(--space-xl-3xl);
-	border-end-end-radius: var(--space-xl-3xl);
-	border-block-end: var(--border);
-	border-block-end-width: var(--border-width-medium);
+	border-end-end-radius: var(--space-xl-3xl);	
 
 	// Background image via CSS custom property set inline by PHP.
 	background-image: var(--hero-bg, none);
@@ -40,6 +38,7 @@
 		padding-inline: var(--global-padding-inline, 1rem);
         justify-content: center;
 		flex: 1;
+		gap: var(--space-xl);
 	}
 
 	// ── Headline ──────────────────────────────────────────────
@@ -69,11 +68,8 @@
 	// ── Eyebrow label ─────────────────────────────────────────
 	&__marquee-label {
 		text-align: center;
-		text-transform: uppercase;
-        font-family: var(--font-monospace-family);
-		letter-spacing: var(--kerning-caps);
 		color: var(--color-content-unchanged);
-		opacity: 0.6;
+		opacity: 0.8;
 	}
 
 	// ── Full-width marquee ────────────────────────────────────

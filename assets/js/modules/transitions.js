@@ -22,6 +22,7 @@ import { initMarquee, destroyMarquee } from './marquee.js';
 import { syncHeader } from './header.js';
 import { initFooter, destroyFooter } from './footer.js';
 import { initStackedCards, destroyStackedCards } from './stacked-cards.js';
+import { initFaq, destroyFaq } from './faq.js';
 
 function resetCaseStudyRevealState() {
 	document.querySelectorAll( '.case-studies__card.is-inview' ).forEach( ( card ) => {
@@ -51,6 +52,7 @@ export function initTransitions() {
 	swup.hooks.on( 'visit:start', () => {
 		destroyMarquee();
 		destroyStackedCards();
+		destroyFaq();
 		destroyFooter();
 		destroyScroll();
 	} );
@@ -88,6 +90,7 @@ export function initTransitions() {
 		initMarquee();
 		initFooter();
 		initStackedCards();
+		initFaq();
 		syncHeader();
 	} );
 }

@@ -1,0 +1,98 @@
+{
+	"key": "group_two57_block_faq",
+	"title": "FAQ Block",
+	"fields": [
+		{
+			"key": "field_two57_faq_heading",
+			"label": "Label",
+			"name": "faq_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Short eyebrow label shown above the panel. Defaults to \"FAQs\".",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "30", "class": "", "id": "" },
+			"default_value": "FAQs",
+			"maxlength": 30,
+			"placeholder": "FAQs"
+		},
+		{
+			"key": "field_two57_faq_items",
+			"label": "FAQ Items",
+			"name": "faq_items",
+			"aria-label": "",
+			"type": "repeater",
+			"instructions": "Add one item per question. Each item expands to show its answer.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"min": 0,
+			"max": 0,
+			"layout": "block",
+			"button_label": "Add FAQ Item",
+			"sub_fields": [
+				{
+					"key": "field_two57_faq_question",
+					"label": "Question",
+					"name": "question",
+					"aria-label": "",
+					"type": "text",
+					"instructions": "The question shown in the accordion trigger.",
+					"required": 1,
+					"conditional_logic": 0,
+					"wrapper": { "width": "", "class": "", "id": "" },
+					"default_value": "",
+					"maxlength": "",
+					"placeholder": "A question about the space I have is..."
+				},
+				{
+					"key": "field_two57_faq_answer",
+					"label": "Answer",
+					"name": "answer",
+					"aria-label": "",
+					"type": "wysiwyg",
+					"instructions": "The answer shown when the item is expanded.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "", "class": "", "id": "" },
+					"default_value": "",
+					"tabs": "all",
+					"toolbar": "basic",
+					"media_upload": 0,
+					"delay": 0
+				},
+				{
+					"key": "field_two57_faq_answer_link",
+					"label": "Secondary Button Link",
+					"name": "answer_link",
+					"aria-label": "",
+					"type": "link",
+					"instructions": "Optional button link shown below the answer.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "", "class": "", "id": "" },
+					"return_format": "array"
+				}
+			]
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/faq"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Accordion-style FAQ panel with an optional eyebrow label and repeater of question/answer items.",
+	"show_in_rest": 0,
+	"modified": 1774310400
+}

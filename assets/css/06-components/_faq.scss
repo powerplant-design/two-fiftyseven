@@ -1,0 +1,139 @@
+// ============================================================
+// FAQ Block
+// ============================================================
+
+.faq {
+	padding-block: var(--space-xl-3xl);
+
+	// ── Label tab ─────────────────────────────────────────────
+	// Matches .stacked-cards__tab exactly: same padding, border, radius, and
+	// negative margin-block-end so the tab and panel share a seamless join.
+	&__label {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		padding-block: var(--space-xs);
+		padding-inline: var(--space-s);
+		background-color: var(--color-surface-secondary);
+		color: var(--color-content-primary);
+		border: var(--border-tertiary);
+		border-block-end: none;
+		border-start-start-radius: var(--space-s);
+		border-start-end-radius: var(--space-s);
+		border-end-start-radius: 0;
+		border-end-end-radius: 0;
+		position: relative;
+		z-index: 1;
+		margin-block-end: -3px;
+        min-width: var(--space-5xl);
+	}
+
+	// ── Panel ────────────────────────────────────────────────
+	// Matches .stacked-cards__panel: border + square top-left to meet the tab.
+	&__panel {
+		box-sizing: border-box;
+		width: 100%;
+		background-color: var(--color-surface-secondary);
+		color: var(--color-content-primary);
+		border: var(--border-tertiary);
+		border-radius: var(--space-s-xl);
+		border-start-start-radius: 0;
+		padding: var(--space-m) var(--space-s-xl);
+	}
+
+	// ── Item list ────────────────────────────────────────────
+	&__list {
+		--list-indent: 0;
+	}
+
+	&__item:not(:first-child) {
+		border-top: var(--border-tertiary)
+	}
+
+	// ── Question trigger ─────────────────────────────────────
+	// &__question-wrap {
+	// 	margin: 0;
+	// 	font-size: inherit;
+	// 	font-weight: inherit;
+	// }
+
+	&__trigger {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+		gap: var(--space-l);
+		width: 100%;
+		padding: var(--space-m) 0;
+		border: none;
+		color: inherit;
+		cursor: pointer;
+
+		&:focus-visible {
+			outline: 2px solid var(--color-border-primary);
+			outline-offset: 2px;
+			border-radius: 2px;
+		}
+	}
+
+	// ── + icon ───────────────────────────────────────────────
+	// Two pseudo-elements form a +. On open, the whole icon rotates 45deg.
+	&__icon {
+		flex-shrink: 0;
+		position: relative;
+		width: 1.25rem;
+		height: 1.25rem;
+		transform: rotate(0deg);
+		transition: transform 300ms ease-in-out;
+
+		&::before,
+		&::after {
+			content: '';
+			position: absolute;
+			inset-inline: 0;
+			top: 50%;
+			height: 2px;
+			background: currentColor;
+			transform: translateY(-50%);
+		}
+
+		// Vertical bar
+		&::after {
+			transform: translateY(-50%) rotate(90deg);
+		}
+	}
+
+	&__item[data-open='true'] &__icon {
+		transform: rotate(45deg);
+	}
+
+	// ── Answer panel (animated with grid trick) ───────────────
+	&__answer-wrapper {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 350ms ease;
+
+		&[aria-hidden='false'] {
+			grid-template-rows: 1fr;
+		}
+	}
+
+	&__answer-inner {
+		overflow: hidden;
+	}
+
+	&__answer {
+		padding-block-end: var(--space-m);
+	}
+
+	&__answer-cta {
+		margin-block-start: var(--space-m);
+	}
+
+	// ── Editor hint ──────────────────────────────────────────
+	&__preview-hint {
+		padding: var(--space-l) 0;
+		opacity: 0.5;
+		text-align: center;
+	}
+}

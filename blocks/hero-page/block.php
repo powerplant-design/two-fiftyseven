@@ -67,7 +67,7 @@ if ( ! empty( $icons ) ) {
 		<div class="hero-page__marquee-wrap | stack"">
 
 			<?php if ( $marquee_label ) : ?>
-				<p class="hero-page__marquee-label"><?php echo esc_html( $marquee_label ); ?></p>
+				<p class="hero-page__marquee-label | text-s text-monospace"><?php echo esc_html( $marquee_label ); ?></p>
 			<?php endif; ?>
 
 			<div class="hero-page__marquee" aria-hidden="true">

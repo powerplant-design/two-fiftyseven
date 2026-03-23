@@ -56,13 +56,13 @@
 	@media (min-width: bp.$bp-md) {
 		margin-inline-start: calc(var(--card-index, 0) * var(--tab-width, 6.25rem));
 	}
-	padding-block: var(--space-2xs);
+	padding-block: var(--space-xs);
 	padding-inline: var(--space-s);
 	background-color: var(--color-surface-secondary);
 	border: var(--border-tertiary);
 	border-block-end: none;
-	border-start-start-radius: var(--space-m);
-	border-start-end-radius: var(--space-m);
+	border-start-start-radius: var(--space-s);
+	border-start-end-radius: var(--space-s);
 	border-end-start-radius: 0;
 	border-end-end-radius: 0;
 	position: relative;

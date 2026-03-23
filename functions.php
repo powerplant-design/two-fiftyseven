@@ -270,6 +270,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'faq',
+		'title'           => __( '257 FAQ', 'two-fiftyseven' ),
+		'description'     => __( 'Accordion-style FAQ panel with an optional eyebrow label and repeater of question/answer items.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/faq/block.php',
+		'category'        => 'text',
+		'icon'            => 'format-chat',
+		'keywords'        => [ 'faq', 'accordion', 'questions', 'answers', 'help' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 

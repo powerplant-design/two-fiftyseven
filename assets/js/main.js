@@ -10,6 +10,7 @@ import { initTransitions }   from './modules/transitions.js';
 import { initFooter }        from './modules/footer.js';
 import { initHeader }        from './modules/header.js';
 import { initStackedCards }  from './modules/stacked-cards.js';
+import { initFaq }           from './modules/faq.js';
 
 initColorTheme();
 initScroll();
@@ -18,3 +19,4 @@ initTransitions();
 initFooter();
 initHeader();
 initStackedCards();
+initFaq();
