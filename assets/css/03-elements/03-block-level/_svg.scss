@@ -54,3 +54,14 @@ a:has(> svg:only-child) {
 a:has(> svg:only-child[style*="width:"]) {
 	inline-size: fit-content;
 }
+
+/* -----------------------------------------------
+Reusable SVG helpers
+----------------------------------------------- */
+
+/* Make an inline SVG fill its parent box (useful for decorative background SVG wrappers). */
+:is(.svg-cover, .svg-contain) > svg {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+}

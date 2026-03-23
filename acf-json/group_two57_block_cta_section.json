@@ -1,0 +1,94 @@
+{
+	"key": "group_two57_block_cta_section",
+	"title": "CTA Section Block",
+	"fields": [
+		{
+			"key": "field_two57_cta_heading",
+			"label": "Heading",
+			"name": "cta_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Large h3 heading shown in the CTA panel.",
+			"required": 1,
+			"conditional_logic": 0,
+			"wrapper": { "width": "60", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "Book a call and lets talk out your need for space."
+		},
+		{
+			"key": "field_two57_cta_link",
+			"label": "Primary Button Link",
+			"name": "cta_link",
+			"aria-label": "",
+			"type": "link",
+			"instructions": "Label and URL for the primary button. Set target to open in a new window.",
+			"required": 1,
+			"conditional_logic": 0,
+			"wrapper": { "width": "40", "class": "", "id": "" },
+			"return_format": "array"
+		},
+		{
+			"key": "field_two57_cta_background_svg",
+			"label": "Background SVG",
+			"name": "cta_background_svg",
+			"aria-label": "",
+			"type": "image",
+			"instructions": "Optional SVG background image that covers the CTA container.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"return_format": "array",
+			"library": "all",
+			"min_width": "",
+			"min_height": "",
+			"min_size": "",
+			"max_width": "",
+			"max_height": "",
+			"max_size": "",
+			"mime_types": "svg",
+			"preview_size": "medium"
+		},
+		{
+			"key": "field_two57_cta_svg_fit",
+			"label": "SVG Fit",
+			"name": "cta_svg_fit",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Optional fit mode for the background SVG.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "25", "class": "", "id": "" },
+			"choices": {
+				"cover": "Cover",
+				"contain": "Contain"
+			},
+			"default_value": "cover",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 0,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": ""
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/cta-section"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Wrapper-contained CTA section with heading, primary link button, and optional SVG background.",
+	"show_in_rest": 0,
+	"modified": 1774310400
+}

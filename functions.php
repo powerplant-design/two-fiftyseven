@@ -255,6 +255,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'cta-section',
+		'title'           => __( '257 CTA Section', 'two-fiftyseven' ),
+		'description'     => __( 'Wrapper-contained CTA with large heading, primary button link, and optional SVG background.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/cta-section/block.php',
+		'category'        => 'layout',
+		'icon'            => 'megaphone',
+		'keywords'        => [ 'cta', 'call to action', 'button', 'banner' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 

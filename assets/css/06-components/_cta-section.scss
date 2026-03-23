@@ -1,0 +1,48 @@
+// ============================================================
+// CTA Section Block
+// ============================================================
+
+.cta-section {
+	padding-block: var(--space-xl-3xl);
+    
+	&__inner {
+		box-sizing: border-box; // .wrapper uses content-box; override so padding doesn't add to max-inline-size
+        background-color: var(--color-surface-secondary);
+		position: relative;
+		overflow: hidden;
+		border-radius: var(--space-2xl);
+		padding: var(--space-xl-3xl);
+        
+		&:has(.btn:hover) .cta-section__bg,
+		&:has(.btn:focus-visible) .cta-section__bg {
+            opacity: 1;
+		}
+	}
+
+	&__bg {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		color: var(--color-surface-primary);
+		opacity: 0.75;
+		overflow: hidden;
+		transition: opacity 220ms ease;
+	}
+
+	&__content {
+		--stack-gap: var(--space-xl);
+        --stack-horizontal-alignment: center;
+		position: relative;
+		z-index: 1;
+	}
+
+	&__heading {
+		color: var(--color-content-primary);
+        text-align: center;
+	}
+
+	&__preview-hint {
+		color: var(--color-content-primary);
+		opacity: 0.75;
+	}
+}
