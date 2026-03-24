@@ -14,7 +14,6 @@
 
 import Swup           from 'swup';
 import SwupHeadPlugin from '@swup/head-plugin';
-import SwupScrollPlugin from '@swup/scroll-plugin';
 import SwupA11yPlugin from '@swup/a11y-plugin';
 import { applyThemes } from './color-theme.js';
 import { initScroll, destroyScroll } from './scroll.js';
@@ -40,9 +39,6 @@ export function initTransitions() {
 			// and without this option SwupHeadPlugin would remove them on each navigation.
 			// In production CSS is a <link> tag so this selector matches nothing harmlessly.
 			new SwupHeadPlugin( { persistTags: 'style[data-vite-dev-id], style[type="text/css"]' } ),
-			// Reset scroll position to top on each navigation.
-			// Disabled during the fade so there's no visible jump.
-			new SwupScrollPlugin( { doScrollingRightAway: false } ),
 			// Announce navigations to screen readers and manage focus.
 			new SwupA11yPlugin(),
 		],
@@ -57,12 +53,13 @@ export function initTransitions() {
 		destroyScroll();
 	} );
 
-	// 2. Colour theme: resolve new page's data-theme while content is at opacity 0.
-	//    <html> persists across Swup navigations so we must manually transfer
-	//    data-color-space from the incoming document before resolving themes —
-	//    otherwise applyThemes() reads the stale value from the previous page.
+	// 2. Fade-out is now complete. Scroll to top while content is invisible,
+	//    then apply colour theme and reset animations before fade-in.
+	//    This prevents repeat animations from firing during the transition.
 	//    Also sync the logo hero/no-hero class from the incoming page's header.
 	swup.hooks.on( 'content:replace', ( visit ) => {
+		window.scrollTo( 0, 0 );
+
 		// Swup cache can preserve runtime classes from a previous visit.
 		// Clear reveal state so Locomotive can add .is-inview again on this view.
 		resetCaseStudyRevealState();

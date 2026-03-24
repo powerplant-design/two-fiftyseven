@@ -292,3 +292,95 @@ localStorage.removeItem('color-mode');
 2. Add two new blocks to `assets/css/02-tokens/_color-themes.scss` — one for `[data-theme="{name}-light"]` and one for `[data-theme="{name}-dark"]`, following the same token structure as the existing eight.
 3. Add `{name}: "Label"` to the `choices` array in both ACF JSON files (`group_two57_page_colour.json` and `group_two57_block_colour.json`), then click **Sync available** in WP Admin → ACF.
 4. Run `npm run build`.
+
+---
+
+## Scroll Animations with Locomotive Scroll v5
+
+We use **Locomotive Scroll v5** (built on [Lenis](https://www.lenis.dev/)) for both smooth scrolling and scroll-triggered reveal animations.
+
+### What it does
+
+- **Smooth scrolling** — Lenis provides buttery-smooth scroll with native scroll bar support and proper inertia handling
+- **Scroll triggers** — Detects when elements enter the viewport and fires animations via the native IntersectionObserver API
+- **Page transitions** — Integrates with Swup for seamless AJAX page swaps
+
+### Configuration
+
+File: `assets/js/modules/scroll.js`
+
+```js
+const locomotiveScroll = new LocomotiveScroll({
+  lenisOptions: {
+    lerp: 0.1,        // Smoothing intensity (0=instant, 1=no damping)
+    duration: 1.2,    // Fallback scroll animation duration (seconds)
+  },
+  triggerRootMargin: '-50% 0px 0px 0px',  // Delay animations until ~50% centered
+});
+```
+
+**`triggerRootMargin` explanation:**
+- Format: `"top right bottom left"` (standard IntersectionObserver API)
+- `-50%` = shrinks the observable area from the top by 50%
+- Result: Elements only gain `.is-inview` class when they're roughly centered on screen
+- Adjust for different timings:
+  - `-40%` — fires earlier (less centered)
+  - `-60%` — fires later (more centered)
+
+### Markup: data-scroll elements
+
+Add `data-scroll` and `--delay` CSS var to elements you want to animate:
+
+```html
+<h2 data-scroll style="--delay: 0ms">Headline</h2>
+<p data-scroll style="--delay: 150ms">Body text</p>
+```
+
+- `data-scroll` — Registers element for viewport detection
+- `style="--delay: Xms"` — Staggered timing (0ms = fires first, 150ms = fires second, etc.)
+- When visible, Locomotive Scroll adds `.is-inview` class automatically
+
+### CSS: Animation pattern
+
+```scss
+.element {
+  opacity: 0;
+  transform: translateY(3rem);
+  transition:
+    opacity 0.4s ease-out var(--delay),
+    transform 0.8s ease-out var(--delay);
+
+  &.is-inview {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+```
+
+All scroll-triggered elements in this theme use this fade-in + slide-up pattern with the `--delay` variable controlling when each element's animation starts.
+
+### Implemented components
+
+| Component | Pattern |
+|---|---|
+| **Case Studies Cards** | Sequential reveals — each card fades in as it hits center (0ms, 300ms, 600ms) |
+| **Testimonials** | Quote appears first (0ms), then attribution (150ms) |
+| **CTA Section** | Heading (0ms), then button (150ms) |
+
+### How Swup integration works
+
+`assets/js/modules/transitions.js` manages the lifecycle:
+
+- **On page enter** — Calls `initScroll()` to attach Locomotive Scroll observersand listeners
+- **During AJAX transition** — Swup handles page swap while Locomotive Scroll stays alive
+- **On page leave** — Calls `destroyScroll()` to clean up observers and reset animation state
+
+This ensures scroll triggers work correctly after every page swap without stale event listeners or memory leaks.
+
+### Key files
+
+| File | Purpose |
+|---|---|
+| `assets/js/modules/scroll.js` | Initializes Locomotive Scroll, manages Lenis smooth scroll |
+| `assets/js/modules/transitions.js` | Swup page lifecycle + scroll observer cleanup |
+| `assets/js/main.js` | Entry point; imports all modules including scroll |

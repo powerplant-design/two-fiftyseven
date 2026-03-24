@@ -23,11 +23,21 @@ let wrappers       = [];
 let lenisInstance  = null;
 let scrollListener = null;
 let tabController   = null; // AbortController for tab click listeners
+let mediaQuery     = null; // MediaQueryList for desktop breakpoint
+let updateMinHeights = null; // Reference to listener for cleanup
 
 function updateWrapper( wrapper ) {
 	const cards = Array.from( wrapper.querySelectorAll( CARD_SELECTOR ) );
 	const count = cards.length;
 	if ( count < 2 ) return; // nothing to animate with only one card
+
+	// Only animate on desktop — mobile uses normal flex layout
+	if ( ! mediaQuery || ! mediaQuery.matches ) {
+		cards.forEach( ( card ) => {
+			card.style.transform = '';
+		} );
+		return;
+	}
 
 	const rect        = wrapper.getBoundingClientRect();
 	const totalRunway = wrapper.offsetHeight - window.innerHeight;
@@ -80,12 +90,25 @@ export function initStackedCards() {
 	wrappers = Array.from( document.querySelectorAll( WRAPPER_SELECTOR ) );
 	if ( ! wrappers.length ) return;
 
-	// Set scroll runway on each wrapper so the sticky track pins long enough.
-	// 60svh per card exit + 1 full viewport to land on the last card.
-	wrappers.forEach( ( wrapper ) => {
-		const count = parseInt( wrapper.dataset.cardCount ?? 1, 10 );
-		wrapper.style.minHeight = `calc( 100svh + ${ count - 1 } * 60svh )`;
-	} );
+	// Set up media query for desktop (768px+)
+	mediaQuery = window.matchMedia( '(min-width: 768px)' );
+
+	// Define update function and store for cleanup
+	updateMinHeights = () => {
+		wrappers.forEach( ( wrapper ) => {
+			const count = parseInt( wrapper.dataset.cardCount ?? 1, 10 );
+			if ( mediaQuery.matches ) {
+				// Desktop: set runway for scroll animation
+				wrapper.style.minHeight = `calc( 100svh + ${ count - 1 } * 60svh )`;
+			} else {
+				// Mobile: normal spacing
+				wrapper.style.minHeight = '';
+			}
+		} );
+	};
+
+	updateMinHeights();
+	mediaQuery.addEventListener( 'change', updateMinHeights );
 
 	// Wire tab click → scroll to next card.
 	tabController = new AbortController();
@@ -126,6 +149,12 @@ export function destroyStackedCards() {
 
 	tabController?.abort();
 	tabController = null;
+
+	// Remove media query listener
+	if ( mediaQuery ) {
+		mediaQuery.removeEventListener( 'change', updateMinHeights );
+		mediaQuery = null;
+	}
 
 	// Clear inline styles and runway height so re-init starts clean.
 	wrappers.forEach( ( wrapper ) => {

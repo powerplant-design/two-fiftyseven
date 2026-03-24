@@ -72,7 +72,7 @@ foreach ( $attrs as $key => $value ) {
 		<?php if ( $quote ) :
 			$quote_class = mb_strlen( wp_strip_all_tags( $quote ) ) < 33 ? 'testimonial__quote text-4xl text-wrap-balance' : 'testimonial__quote text-3xl text-wrap-balance';
 		?>
-			<blockquote class="<?php echo esc_attr( $quote_class ); ?>">
+			<blockquote class="<?php echo esc_attr( $quote_class ); ?>" data-scroll style="--delay: 0ms">
 				<?php echo wp_kses( $quote, [ 'br' => [], 'em' => [], 'strong' => [] ] ); ?>
 			</blockquote>
 		<?php elseif ( $is_preview ) : ?>
@@ -80,7 +80,7 @@ foreach ( $attrs as $key => $value ) {
 		<?php endif; ?>
 
 		<?php if ( $name || $role || $organisation ) : ?>
-			<p class="testimonial__attribution text-monospace text-s">
+			<p class="testimonial__attribution text-monospace text-s" data-scroll style="--delay: 150ms">
 				<?php if ( $name ) : ?>
 					<span class="testimonial__name"><?php echo esc_html( $name ); ?></span>
 				<?php endif; ?>

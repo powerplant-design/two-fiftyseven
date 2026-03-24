@@ -62,7 +62,7 @@ $link_tgt  = ! empty( $link['target'] ) ? $link['target'] : '';
 
 		<div class="cta-section__content stack">
 			<?php if ( $heading ) : ?>
-				<h2 class="cta-section__heading | text-3xl text-balance"><?php echo esc_html( $heading ); ?></h2>
+				<h2 class="cta-section__heading | text-3xl text-balance" data-scroll style="--delay: 0ms"><?php echo esc_html( $heading ); ?></h2>
 			<?php elseif ( $is_preview ) : ?>
 				<p class="cta-section__preview-hint">Add a CTA heading in the block settings.</p>
 			<?php endif; ?>
@@ -71,6 +71,8 @@ $link_tgt  = ! empty( $link['target'] ) ? $link['target'] : '';
 				<a
 					class="btn"
 					data-type="primary"
+					data-scroll
+					style="--delay: 150ms"
 					href="<?php echo esc_url( $link_url ); ?>"
 					<?php if ( $link_tgt ) : ?>target="<?php echo esc_attr( $link_tgt ); ?>" rel="noopener noreferrer"<?php endif; ?>
 				>

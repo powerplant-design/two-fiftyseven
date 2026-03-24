@@ -41,10 +41,34 @@
 	&__heading {
 		color: var(--color-content-primary);
         text-align: center;
+		opacity: 0;
+		transform: translateY(3rem);
+		transition:
+			opacity 0.4s ease-out var(--delay),
+			transform 0.8s ease-out var(--delay);
+
+		&.is-inview {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	&__preview-hint {
 		color: var(--color-content-primary);
 		opacity: 0.75;
+	}
+
+	// Button animation
+	.btn {
+		opacity: 0;
+		transform: translateY(3rem);
+		transition:
+			opacity 0.4s ease-out var(--delay),
+			transform 0.8s ease-out var(--delay);
+
+		&.is-inview {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 }

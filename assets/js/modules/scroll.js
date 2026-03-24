@@ -21,6 +21,12 @@ export function initScroll() {
 			lerp: 0.1,      // inertia factor (0 = instant, 1 = no damping)
 			duration: 1.2,  // fallback duration for programmatic scrolls
 		},
+		// Delay scroll-triggered animations until elements are more centered.
+		// triggerRootMargin format: "top right bottom left" (like CSS)
+		// "-90% 0px 0px 0px" = observer area doesn't start until 90% down the viewport,
+		// so elements trigger very late (near the lower viewport area).
+		triggerRootMargin: '-60% 0px 0px 0px',
+		repeat: true,  // Remove/add is-inview on exit/enter so animations can replay
 	} );
 }
 
