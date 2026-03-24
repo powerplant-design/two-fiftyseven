@@ -113,6 +113,70 @@ The manifest at `assets/dist/.vite/manifest.json` is committed to version contro
 
 ---
 
+## Kinsta Launch Runbook (DevKinsta -> Kinsta)
+
+This is the recommended pre-launch order for this project:
+
+1. Update WordPress core to latest (first)
+2. Upgrade PHP to 8.3 (second)
+3. Validate on Kinsta staging
+4. Promote to production
+
+### Why this order
+
+- Core update first keeps WordPress, plugin, and admin compatibility in sync before changing runtime.
+- PHP update second (to 8.3) gets you onto a security-supported version with strong plugin compatibility.
+
+### Phase 1: Local (DevKinsta)
+
+1. Ensure theme changes are committed.
+2. Run a production asset build:
+
+```bash
+npm run build
+```
+
+3. Verify `assets/dist/.vite/manifest.json` exists and includes `assets/js/main.js`.
+4. In WP Admin, update WordPress core to latest and test:
+  - Front-end pages and navigation
+  - ACF block editing/saving
+  - Forms (WPForms)
+  - Theme JS behavior (transitions, smooth scroll, reveal animations)
+
+### Phase 2: Kinsta Staging
+
+1. Create a staging environment in MyKinsta.
+2. Deploy files/database from local to staging.
+3. Confirm production asset mode is active (no Vite dev server dependency).
+4. Update WordPress core to latest on staging (if needed).
+5. Change PHP version on staging to **8.3**.
+6. Run smoke tests:
+  - Homepage and key templates
+  - Custom blocks: Hero, CTA, Testimonial, Stacked Cards, FAQ
+  - Form submission
+  - Site Health screen
+  - Error logs (no fatal errors)
+
+### Phase 3: Production
+
+1. Schedule a low-traffic launch window.
+2. Create a fresh production backup in MyKinsta.
+3. Deploy the already-tested staging state.
+4. Ensure production is on:
+  - Latest WordPress core
+  - PHP 8.3
+5. Re-test critical journeys and monitor logs for 24-48 hours.
+
+### Rollback
+
+If a critical issue appears after launch:
+
+1. Restore the pre-launch backup in MyKinsta.
+2. Revert the last deployment commit.
+3. Re-open staging, fix, and re-run the checklist.
+
+---
+
 ## Advanced Custom Fields (ACF)
 
 Field groups are version-controlled via **ACF JSON**. When you save a field group in wp-admin, ACF automatically writes a `.json` file to `acf-json/`. Commit that file and the fields will be available on any environment that has the theme deployed.
