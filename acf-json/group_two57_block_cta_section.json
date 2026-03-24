@@ -3,6 +3,44 @@
 	"title": "CTA Section Block",
 	"fields": [
 		{
+			"key": "field_two57_cta_label",
+			"label": "Label",
+			"name": "cta_label",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Optional small label displayed above the heading.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "40", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "Optional label"
+		},
+		{
+			"key": "field_two57_cta_colour_space",
+			"label": "Colour Space Override",
+			"name": "cta_colour_space",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Optional. Leave empty to inherit the page or section theme.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "40", "class": "", "id": "" },
+			"choices": {
+				"neutral": "Neutral",
+				"maroon": "Maroon",
+				"forest": "Forest",
+				"purple": "Purple"
+			},
+			"default_value": "",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 1,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": ""
+		},
+		{
 			"key": "field_two57_cta_heading",
 			"label": "Heading",
 			"name": "cta_heading",
@@ -90,5 +128,5 @@
 	"active": true,
 	"description": "Wrapper-contained CTA section with heading, primary link button, and optional SVG background.",
 	"show_in_rest": 0,
-	"modified": 1774310400
+	"modified": 1774396800
 }

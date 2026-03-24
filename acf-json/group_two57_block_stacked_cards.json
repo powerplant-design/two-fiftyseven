@@ -46,6 +46,30 @@
 					"placeholder": ""
 				},
 				{
+					"key": "field_two57_stacked_cards_colour_space",
+					"label": "Colour Space Override",
+					"name": "colour_space",
+					"aria-label": "",
+					"type": "select",
+					"instructions": "Optional. Leave empty to inherit the page or section theme.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "50%", "class": "", "id": "" },
+					"choices": {
+						"neutral": "Neutral",
+						"maroon": "Maroon",
+						"forest": "Forest",
+						"purple": "Purple"
+					},
+					"default_value": "",
+					"return_format": "value",
+					"multiple": 0,
+					"allow_null": 1,
+					"ui": 0,
+					"ajax": 0,
+					"placeholder": ""
+				},
+				{
 					"key": "field_two57_stacked_cards_content",
 					"label": "Content",
 					"name": "content",
@@ -115,5 +139,5 @@
 	"active": true,
 	"description": "Controls the cards in the Stacked Cards block.",
 	"show_in_rest": 0,
-	"modified": 1741564800
+	"modified": 1774310400
 }

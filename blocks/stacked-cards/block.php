@@ -10,6 +10,7 @@
  *   stacked_cards_items — repeater:
  *     tab_label  — short label shown on the card tab (text)
  *     heading    — card heading (text)
+ *     colour_space — optional colour space override (select)
  *     content    — rich text body (wysiwyg)
  *     button     — optional CTA (link)
  *     image      — card image (image, array)
@@ -20,10 +21,12 @@
  * @var int    $post_id    The current post/page ID.
  */
 
-$items = get_field( 'stacked_cards_items' ) ?: [];
+$items      = get_field( 'stacked_cards_items' ) ?: [];
+$card_count = max( 1, count( $items ) );
+$allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 ?>
 
-<section class="stacked-cards" data-js="stacked-cards" data-card-count="<?php echo esc_attr( count( $items ) ); ?>">
+<section class="stacked-cards" data-js="stacked-cards" data-card-count="<?php echo esc_attr( $card_count ); ?>" style="--card-count: <?php echo esc_attr( $card_count ); ?>;">
 
 	<?php if ( empty( $items ) && $is_preview ) : ?>
 		<p style="padding:2rem;opacity:0.5;text-align:center;">Add cards in the block settings &rarr;</p>
@@ -32,16 +35,22 @@ $items = get_field( 'stacked_cards_items' ) ?: [];
 	<div class="stacked-cards__track" data-js="stacked-cards-track">
 
 	<?php foreach ( $items as $index => $item ) :
-		$heading   = $item['heading']   ?? '';
-		$content   = $item['content']   ?? '';
-		$tab_label = $item['tab_label'] ?? '';
-		$button    = $item['button']    ?? [];
-		$image     = $item['image']     ?? [];
+		$heading              = $item['heading'] ?? '';
+		$content              = $item['content'] ?? '';
+		$tab_label            = $item['tab_label'] ?? '';
+		$button               = $item['button'] ?? [];
+		$image                = $item['image'] ?? [];
+		$colour_space_override = $item['colour_space'] ?? null;
+
+		if ( $colour_space_override && ! in_array( $colour_space_override, $allowed_spaces, true ) ) {
+			$colour_space_override = null;
+		}
 	?>
 		<div
 			class="stacked-cards__item"
 			data-js="stacked-card"
 			data-index="<?php echo esc_attr( $index ); ?>"
+			<?php if ( $colour_space_override ) : ?>data-color-space="<?php echo esc_attr( $colour_space_override ); ?>"<?php endif; ?>
 			style="--card-index: <?php echo esc_attr( $index ); ?>;"
 		>
 			<?php if ( $tab_label ) : ?>

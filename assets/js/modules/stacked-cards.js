@@ -24,7 +24,6 @@ let lenisInstance  = null;
 let scrollListener = null;
 let tabController   = null; // AbortController for tab click listeners
 let mediaQuery     = null; // MediaQueryList for desktop breakpoint
-let updateMinHeights = null; // Reference to listener for cleanup
 
 function updateWrapper( wrapper ) {
 	const cards = Array.from( wrapper.querySelectorAll( CARD_SELECTOR ) );
@@ -93,23 +92,6 @@ export function initStackedCards() {
 	// Set up media query for desktop (768px+)
 	mediaQuery = window.matchMedia( '(min-width: 768px)' );
 
-	// Define update function and store for cleanup
-	updateMinHeights = () => {
-		wrappers.forEach( ( wrapper ) => {
-			const count = parseInt( wrapper.dataset.cardCount ?? 1, 10 );
-			if ( mediaQuery.matches ) {
-				// Desktop: set runway for scroll animation
-				wrapper.style.minHeight = `calc( 100svh + ${ count - 1 } * 60svh )`;
-			} else {
-				// Mobile: normal spacing
-				wrapper.style.minHeight = '';
-			}
-		} );
-	};
-
-	updateMinHeights();
-	mediaQuery.addEventListener( 'change', updateMinHeights );
-
 	// Wire tab click → scroll to next card.
 	tabController = new AbortController();
 	wrappers.forEach( ( wrapper ) => {
@@ -152,13 +134,11 @@ export function destroyStackedCards() {
 
 	// Remove media query listener
 	if ( mediaQuery ) {
-		mediaQuery.removeEventListener( 'change', updateMinHeights );
 		mediaQuery = null;
 	}
 
 	// Clear inline styles and runway height so re-init starts clean.
 	wrappers.forEach( ( wrapper ) => {
-		wrapper.style.minHeight = '';
 		wrapper.querySelectorAll( CARD_SELECTOR ).forEach( ( card ) => {
 			card.style.transform = '';
 		} );

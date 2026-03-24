@@ -8,6 +8,8 @@
  * - Optional SVG background image that covers the container
  *
  * ACF fields:
+ *   cta_label          - optional small label above the heading
+ *   cta_colour_space   - optional colour palette override
  *   cta_heading        - heading text
  *   cta_link           - ACF link field (url/title/target)
  *   cta_background_svg - optional SVG background image
@@ -18,13 +20,20 @@
  * @var int    $post_id    The current post/page ID.
  */
 
-$heading   = get_field( 'cta_heading' );
-$link      = get_field( 'cta_link' ) ?: [];
-$bg_image  = get_field( 'cta_background_svg' );
-$svg_fit   = get_field( 'cta_svg_fit' );
-$svg_fit   = in_array( $svg_fit, [ 'cover', 'contain' ], true ) ? $svg_fit : 'cover';
-$bg_svg_id = (int) ( $bg_image['id'] ?? 0 );
-$bg_svg    = $bg_svg_id ? two_fiftyseven_get_inline_svg( $bg_svg_id ) : '';
+$label                 = trim( (string) get_field( 'cta_label' ) );
+$heading               = get_field( 'cta_heading' );
+$link                  = get_field( 'cta_link' ) ?: [];
+$bg_image              = get_field( 'cta_background_svg' );
+$svg_fit               = get_field( 'cta_svg_fit' );
+$colour_space_override = get_field( 'cta_colour_space' ) ?: null;
+$svg_fit               = in_array( $svg_fit, [ 'cover', 'contain' ], true ) ? $svg_fit : 'cover';
+$bg_svg_id             = (int) ( $bg_image['id'] ?? 0 );
+$bg_svg                = $bg_svg_id ? two_fiftyseven_get_inline_svg( $bg_svg_id ) : '';
+
+$allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
+if ( $colour_space_override && ! in_array( $colour_space_override, $allowed_spaces, true ) ) {
+	$colour_space_override = null;
+}
 
 // Force decorative background SVGs to behave like cover/contain from block settings.
 if ( $bg_svg ) {
@@ -48,9 +57,26 @@ if ( $bg_svg ) {
 $link_url  = ! empty( $link['url'] ) ? $link['url'] : '';
 $link_text = ! empty( $link['title'] ) ? $link['title'] : __( 'Contact', 'two-fiftyseven' );
 $link_tgt  = ! empty( $link['target'] ) ? $link['target'] : '';
+
+// Keep reveal timing consistent when the optional label is present.
+$heading_delay = $label ? '150ms' : '0ms';
+$button_delay  = $label ? '300ms' : '150ms';
+
+$attrs = [
+	'class' => 'cta-section | block',
+];
+
+if ( $colour_space_override ) {
+	$attrs['data-color-space'] = $colour_space_override;
+}
+
+$attr_string = '';
+foreach ( $attrs as $key => $value ) {
+	$attr_string .= ' ' . esc_attr( $key ) . '="' . esc_attr( $value ) . '"';
+}
 ?>
 
-<section class="cta-section | block">
+<section<?php echo $attr_string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?>>
 	<div class="cta-section__inner">
 		<div class="cta-section__panel">
 
@@ -61,8 +87,12 @@ $link_tgt  = ! empty( $link['target'] ) ? $link['target'] : '';
 		<?php endif; ?>
 
 		<div class="cta-section__content stack">
+			<?php if ( $label ) : ?>
+				<p class="cta-section__label | text-monospace text-s" data-scroll style="--delay: 0ms"><?php echo esc_html( $label ); ?></p>
+			<?php endif; ?>
+
 			<?php if ( $heading ) : ?>
-				<h2 class="cta-section__heading | text-3xl text-balance" data-scroll style="--delay: 0ms"><?php echo esc_html( $heading ); ?></h2>
+				<h2 class="cta-section__heading | text-3xl text-balance" data-scroll style="--delay: <?php echo esc_attr( $heading_delay ); ?>"><?php echo esc_html( $heading ); ?></h2>
 			<?php elseif ( $is_preview ) : ?>
 				<p class="cta-section__preview-hint">Add a CTA heading in the block settings.</p>
 			<?php endif; ?>
@@ -72,7 +102,7 @@ $link_tgt  = ! empty( $link['target'] ) ? $link['target'] : '';
 					class="btn"
 					data-type="primary"
 					data-scroll
-					style="--delay: 150ms"
+					style="--delay: <?php echo esc_attr( $button_delay ); ?>"
 					href="<?php echo esc_url( $link_url ); ?>"
 					<?php if ( $link_tgt ) : ?>target="<?php echo esc_attr( $link_tgt ); ?>" rel="noopener noreferrer"<?php endif; ?>
 				>

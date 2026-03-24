@@ -3,12 +3,13 @@
 // ============================================================
 @use '../02-tokens/breakpoints' as bp;
 
-// ── Outer wrapper — height set by JS for scroll runway ───────
+// ── Outer wrapper — runway reserved in CSS before JS enhances ─
 .stacked-cards {
 	--tab-width: var(--space-5xl); // 100px — each tab is this wide
 	margin-block-start: var(--space-2xl);
 
 	@media (min-width: bp.$bp-md) {
+		min-height: calc(100svh + (var(--card-count, 1) - 1) * 60svh);
 		margin-block-start: 0;
 	}
 }
@@ -77,7 +78,6 @@
 		transition: background-color 0.2s ease;
 
 		&:hover {
-			// color: var(--color-content-primary);
             background-color: var(--color-surface-primary);
 		}
 	}

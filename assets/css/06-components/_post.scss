@@ -49,7 +49,7 @@ With a featured image:    image on the left (2/5), title on the right (3/5).
 =================================================================== */
 
 .post-hero {
-	padding-block-start: var(--space-4xl);
+	padding-block-start: var(--space-6xl);
 	padding-block-end: var(--space-xl-3xl);
 
 	&--with-image {
@@ -71,7 +71,7 @@ With a featured image:    image on the left (2/5), title on the right (3/5).
 		display: block;
 		inline-size: 100%;
 		block-size: auto;
-		aspect-ratio: 297 / 210; // A4 landscape
+		aspect-ratio: 16 / 9; // A4 landscape
 		object-fit: cover;
 		border-radius: var(--corner-radius-m);
 	}

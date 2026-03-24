@@ -38,6 +38,22 @@
 		z-index: 1;
 	}
 
+	&__label {
+		// margin: 0;
+		text-align: center;
+		color: var(--color-content-secondary);
+		opacity: 0;
+		transform: translateY(3rem);
+		transition:
+			opacity 0.4s ease-out var(--delay),
+			transform 0.8s ease-out var(--delay);
+
+		&.is-inview {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
 	&__heading {
 		color: var(--color-content-primary);
         text-align: center;
