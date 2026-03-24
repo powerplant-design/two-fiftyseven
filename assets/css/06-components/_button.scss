@@ -20,38 +20,12 @@
 @mixin btn-primary {
 	color: var(--color-btn-primary-text);
 	background-color: var(--color-btn-primary-bg);
-	background-image:
-		linear-gradient(
-			var(--color-btn-primary-bg),
-			var(--color-btn-primary-bg)
-		),
-		linear-gradient(
-			156.52deg,
-			hsl(0 0% 100% / 0.22) 2%,
-			hsl(0 0% 100% / 0.00) 40%,
-			hsl(0 0% 100% / 0.00) 54%,
-			hsl(0 0% 100% / 0.06) 93%
-		);
-	background-origin: padding-box, border-box;
-	background-clip: padding-box, border-box;
 }
 
 @mixin btn-secondary {
 	color: var(--color-btn-secondary-text);
 	border-color: var(--color-btn-secondary-text);
 	background-color: color-mix(in srgb, var(--color-btn-secondary-bg) 20%, transparent);
-	background-image:
-		linear-gradient(
-			color-mix(in srgb, var(--color-btn-secondary-bg) 20%, transparent),
-			color-mix(in srgb, var(--color-btn-secondary-bg) 20%, transparent)
-		),
-		linear-gradient(
-			156.52deg,
-			hsl(0 0% 100% / 0.20) 2%,
-			hsl(0 0% 100% / 0.00) 40%,
-			hsl(0 0% 100% / 0.00) 54%,
-			hsl(0 0% 100% / 0.05) 93%
-		);
 	background-origin: padding-box, border-box;
 	background-clip: padding-box, border-box;
 	backdrop-filter: blur(30px);
@@ -88,7 +62,7 @@
 	font-family: var(--font-monospace-family);
     letter-spacing: var(--kerning-caps);
 	text-transform: uppercase;
-	font-size: var(--step--1);
+	font-size: var(--step-0);
 	font-weight: 400;
 	line-height: 1;
 	text-decoration: none;

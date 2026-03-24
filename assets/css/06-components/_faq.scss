@@ -51,12 +51,6 @@
 	}
 
 	// ── Question trigger ─────────────────────────────────────
-	// &__question-wrap {
-	// 	margin: 0;
-	// 	font-size: inherit;
-	// 	font-weight: inherit;
-	// }
-
 	&__trigger {
         display: flex;
         justify-content: space-between;
@@ -81,8 +75,8 @@
 	&__icon {
 		flex-shrink: 0;
 		position: relative;
-		width: 1.25rem;
-		height: 1.25rem;
+		width: var(--space-s-xl);
+		height: var(--space-s-xl);
 		transform: rotate(0deg);
 		transition: transform 300ms ease-in-out;
 
@@ -97,14 +91,13 @@
 			transform: translateY(-50%);
 		}
 
-		// Vertical bar
 		&::after {
 			transform: translateY(-50%) rotate(90deg);
 		}
 	}
 
 	&__item[data-open='true'] &__icon {
-		transform: rotate(45deg);
+		transform: rotate(-45deg);
 	}
 
 	// ── Answer panel (animated with grid trick) ───────────────
@@ -130,10 +123,6 @@
             margin-block-end: var(--block-gap);
             list-style-type: "/  ";
         }
-	}
-
-	&__answer-cta {
-		margin-block-start: var(--space-m);
 	}
 
 	// ── Editor hint ──────────────────────────────────────────

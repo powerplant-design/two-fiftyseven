@@ -15,12 +15,14 @@ Reusable WPForms styling that:
 	--wpforms-label-color: var(--color-content-primary);
 	--wpforms-help-color: var(--color-content-secondary);
 	--wpforms-input-radius: var(--corner-radius-2xl);
-	--wpforms-control-text-color: var(--color-neutral-600);
-	--wpforms-control-bg-color: var(--color-neutral-100);
+	--wpforms-control-text-color: var(--color-content-primary);
+	--wpforms-control-bg-color: var(--color-surface-secondary);
 	--wpforms-control-border-color: var(--color-neutral-300);
 	--wpforms-control-placeholder-color: var(--color-neutral-400);
 	--wpforms-control-padding-block: var(--space-m);
 	--wpforms-control-padding-inline: var(--wpforms-control-padding-block);
+	--wpforms-message-text-size: var(--text-l-size);
+	--wpforms-message-text-leading: var(--text-l-leading);
 	--wpforms-text-size: var(--text-l-size);
 	--wpforms-text-leading: var(--text-l-leading);
 	--wpforms-help-size: var(--text-base-size);
@@ -79,7 +81,7 @@ Reusable WPForms styling that:
 		font-size: var(--wpforms-text-size);
 		line-height: var(--wpforms-text-leading);
 		color: var(--wpforms-control-text-color);
-		background-color: var(--wpforms-control-bg-color);
+		background-color: var(--wpforms-control-bg-color) !important;
 		border: var(--border-width-thin) solid var(--wpforms-control-border-color);
 		border-radius: var(--wpforms-input-radius) !important;
 
@@ -93,8 +95,26 @@ Reusable WPForms styling that:
 	}
 
 	textarea {
+		background-color: var(--wpforms-control-bg-color) !important;
+		border: var(--border-width-thin) solid var(--wpforms-control-border-color) !important;
+		font-size: var(--wpforms-message-text-size) !important;
+		line-height: var(--wpforms-message-text-leading) !important;
 		min-block-size: 14em !important;
 		resize: vertical;
+	}
+
+	.wpforms-field-textarea textarea {
+		background-color: var(--wpforms-control-bg-color) !important;
+		border: var(--border-width-thin) solid var(--wpforms-control-border-color) !important;
+		font-size: var(--wpforms-message-text-size) !important;
+		line-height: var(--wpforms-message-text-leading) !important;
+	}
+
+	textarea.wpforms-field-small,
+	textarea.wpforms-field-medium,
+	textarea.wpforms-field-large {
+		font-size: var(--wpforms-message-text-size) !important;
+		line-height: var(--wpforms-message-text-leading) !important;
 	}
 
 	/* WPForms width utility classes can cap controls; force full-width layout. */
@@ -132,6 +152,8 @@ Reusable WPForms styling that:
 
 	.wpforms-submit-container {
 		margin-block-start: var(--space-l);
+		display: flex;
+		justify-content: center;
 	}
 
 	button[type="submit"],
@@ -154,7 +176,8 @@ Reusable WPForms styling that:
 		text-transform: uppercase;
 		text-decoration: none;
 		text-decoration-color: transparent;
-		color: var(--color-btn-primary-text);
+		color: var(--color-btn-primary-text) !important;
+		-webkit-text-fill-color: var(--color-btn-primary-text);
 		background-color: var(--color-btn-primary-bg);
 		background-image:
 			linear-gradient(
@@ -176,14 +199,62 @@ Reusable WPForms styling that:
 			filter 0.2s ease;
 
 		&:hover {
+			color: var(--color-btn-primary-text) !important;
+			-webkit-text-fill-color: var(--color-btn-primary-text);
+			background-color: var(--color-btn-primary-bg) !important;
+			background-image:
+				linear-gradient(
+					var(--color-btn-primary-bg),
+					var(--color-btn-primary-bg)
+				),
+				linear-gradient(
+					156.52deg,
+					hsl(0 0% 100% / 0.22) 2%,
+					hsl(0 0% 100% / 0.00) 40%,
+					hsl(0 0% 100% / 0.00) 54%,
+					hsl(0 0% 100% / 0.06) 93%
+				) !important;
+			border-color: transparent !important;
 			filter: brightness(1.15);
 		}
 
 		&:active {
+			color: var(--color-btn-primary-text) !important;
+			-webkit-text-fill-color: var(--color-btn-primary-text);
+			background-color: var(--color-btn-primary-bg) !important;
+			background-image:
+				linear-gradient(
+					var(--color-btn-primary-bg),
+					var(--color-btn-primary-bg)
+				),
+				linear-gradient(
+					156.52deg,
+					hsl(0 0% 100% / 0.22) 2%,
+					hsl(0 0% 100% / 0.00) 40%,
+					hsl(0 0% 100% / 0.00) 54%,
+					hsl(0 0% 100% / 0.06) 93%
+				) !important;
+			border-color: transparent !important;
 			filter: brightness(0.94);
 		}
 
 		&:focus-visible {
+			color: var(--color-btn-primary-text) !important;
+			-webkit-text-fill-color: var(--color-btn-primary-text);
+			background-color: var(--color-btn-primary-bg) !important;
+			background-image:
+				linear-gradient(
+					var(--color-btn-primary-bg),
+					var(--color-btn-primary-bg)
+				),
+				linear-gradient(
+					156.52deg,
+					hsl(0 0% 100% / 0.22) 2%,
+					hsl(0 0% 100% / 0.00) 40%,
+					hsl(0 0% 100% / 0.00) 54%,
+					hsl(0 0% 100% / 0.06) 93%
+				) !important;
+			border-color: transparent !important;
 			outline: 2px solid var(--color-border-button);
 			outline-offset: 3px;
 		}

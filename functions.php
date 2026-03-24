@@ -66,6 +66,32 @@ add_action( 'after_setup_theme', 'two_fiftyseven_setup' );
 
 
 /**
+ * Open custom links in primary/secondary menus in a new tab.
+ */
+add_filter( 'nav_menu_link_attributes', function ( array $atts, $menu_item, $args ): array {
+	$location = isset( $args->theme_location ) ? (string) $args->theme_location : '';
+
+	if ( ! in_array( $location, [ 'primary', 'secondary' ], true ) ) {
+		return $atts;
+	}
+
+	if ( empty( $menu_item->type ) || $menu_item->type !== 'custom' ) {
+		return $atts;
+	}
+
+	$atts['target'] = '_blank';
+
+	$existing_rel = isset( $atts['rel'] ) ? trim( (string) $atts['rel'] ) : '';
+	$rel_tokens   = $existing_rel === '' ? [] : preg_split( '/\s+/', $existing_rel );
+	$rel_tokens[] = 'noopener';
+	$rel_tokens[] = 'noreferrer';
+	$atts['rel']  = implode( ' ', array_unique( array_filter( $rel_tokens ) ) );
+
+	return $atts;
+}, 10, 3 );
+
+
+/**
  * Returns true when running in a local environment.
  * In local: load assets from the Vite dev server.
  * Everywhere else: load from the built manifest in assets/dist/.

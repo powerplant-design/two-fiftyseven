@@ -90,7 +90,8 @@
 	gap: var(--space-s-xl);
 	pointer-events: all; // re-enable for panel contents (buttons, links) on the active card
 	background-color: var(--color-surface-secondary);
-	border: var(--border-tertiary);
+	outline: var(--border-tertiary);
+	margin-inline: 1px;
 	border-radius: var(--space-s-xl);
 	border-start-start-radius: 0; // card 0: tab sits in this corner
 	overflow: hidden;

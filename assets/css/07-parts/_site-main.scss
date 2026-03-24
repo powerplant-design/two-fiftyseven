@@ -12,6 +12,7 @@
 	margin-block-end: var(--footer-height, 20rem);
 	// border-inline-start: var(--border);
 	// border-inline-end: var(--border);
-	border-block-end: var(--border);
-	border-block-end-width: var(--border-width-medium);
+	outline: var(--border-tertiary);
+	// outline-width: var(--border-width-thick);
+	// border-block-end-width: var(--border-width-medium);
 }
