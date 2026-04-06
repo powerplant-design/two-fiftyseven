@@ -177,6 +177,44 @@ If a critical issue appears after launch:
 
 ---
 
+## Ongoing Deployment Workflow
+
+### Pushing staging → live
+
+In MyKinsta → Two-Fiftyseven → **Staging** tab → **"Push to Live"**.
+
+Choose what to push:
+- **Files + database** — for the initial launch only
+- **Files only** — for all subsequent deploys once the client is adding content (avoids overwriting live content)
+
+### Client admin account
+
+Create the client's admin account on **Live** only — not staging. Staging is overwritten each time you push from DevKinsta or promote staging to live.
+
+Steps: WP Admin (live) → Users → Add New → Role: Administrator
+
+Tell the client to add and edit content on live only, never on staging.
+
+### Keeping local in sync with live
+
+Use **Sync → Pull from Kinsta** in DevKinsta and select the Live environment to pull the latest files and database down to local.
+
+**Standard dev cycle:**
+
+```
+1. Pull from Live          — get latest client content locally
+2. npm run dev             — develop with HMR
+3. npm run build           — production build
+4. git commit && git push  — commit manifest + changes
+5. Push to Staging         — via DevKinsta Sync → Push to Kinsta → Staging
+6. Test on staging URL
+7. Push Staging to Live    — MyKinsta → Staging → Push to Live (files only)
+```
+
+**Key rule:** the client adds content on Live; you develop on Local. Pull from Live periodically to stay in sync with their content.
+
+---
+
 ## Advanced Custom Fields (ACF)
 
 Field groups are version-controlled via **ACF JSON**. When you save a field group in wp-admin, ACF automatically writes a `.json` file to `acf-json/`. Commit that file and the fields will be available on any environment that has the theme deployed.
