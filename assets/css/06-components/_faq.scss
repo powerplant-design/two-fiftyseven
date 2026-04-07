@@ -18,8 +18,8 @@
 		color: var(--color-content-primary);
 		border: var(--border-tertiary);
 		border-block-end: none;
-		border-start-start-radius: var(--space-s);
-		border-start-end-radius: var(--space-s);
+		border-start-start-radius: var(--corner-radius-l);
+		border-start-end-radius: var(--corner-radius-l);
 		border-end-start-radius: 0;
 		border-end-end-radius: 0;
 		position: relative;
@@ -36,7 +36,7 @@
 		background-color: var(--color-surface-secondary);
 		color: var(--color-content-primary);
 		border: var(--border-tertiary);
-		border-radius: var(--space-s-xl);
+		border-radius: var(--corner-radius-2xl);
 		border-start-start-radius: 0;
 		padding: var(--space-m) var(--space-s-xl);
 	}

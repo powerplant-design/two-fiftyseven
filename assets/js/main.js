@@ -12,6 +12,7 @@ import { initHeader }        from './modules/header.js';
 import { initStackedCards }  from './modules/stacked-cards.js';
 import { initFaq }           from './modules/faq.js';
 import { initEventsArchive } from './modules/events-archive.js';
+import { initCptArchive }    from './modules/cpt-archive.js';
 
 initColorTheme();
 initScroll();
@@ -22,3 +23,4 @@ initHeader();
 initStackedCards();
 initFaq();
 initEventsArchive();
+initCptArchive();

@@ -28,7 +28,7 @@
 
 	&__card {
 		background-color: var(--color-surface-secondary);
-		border-radius: var(--space-l);
+		border-radius: var(--corner-radius-xl);
 		overflow: hidden;
 		opacity: 0;
 		transform: translateY(3rem);
@@ -42,8 +42,17 @@
 			padding: var(--space-l);
 		}
 
+		&.is-inview {
+			// Override to snappy durations once visible so hover isn't delayed.
+			transition:
+				opacity 0.4s ease-out,
+				transform 0.3s ease-out,
+				box-shadow 0.3s ease;
+		}
+
 		&:hover {
-			box-shadow: 0 0 45px var(--color-surface-secondary);
+			transform: translateY(-1%);
+			box-shadow: 0 15px 25px color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
 		}
 
 		&.is-inview {

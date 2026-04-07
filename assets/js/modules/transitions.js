@@ -23,6 +23,7 @@ import { initFooter, destroyFooter } from './footer.js';
 import { initStackedCards, destroyStackedCards } from './stacked-cards.js';
 import { initFaq, destroyFaq } from './faq.js';
 import { initEventsArchive, destroyEventsArchive } from './events-archive.js';
+import { initCptArchive, destroyCptArchive } from './cpt-archive.js';
 
 function resetScrollRevealState() {
 	document.querySelectorAll( '[data-scroll].is-inview' ).forEach( ( el ) => {
@@ -52,6 +53,7 @@ export function initTransitions() {
 		destroyFaq();
 		destroyFooter();
 		destroyEventsArchive();
+		destroyCptArchive();
 		destroyScroll();
 	} );
 
@@ -89,6 +91,7 @@ export function initTransitions() {
 		initStackedCards();
 		initFaq();
 		initEventsArchive();
+		initCptArchive();
 		syncHeader();
 	} );
 

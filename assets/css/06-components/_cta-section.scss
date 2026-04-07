@@ -12,7 +12,7 @@
 		background-color: var(--color-surface-secondary);
 		position: relative;
 		overflow: hidden;
-		border-radius: var(--space-s-xl);
+		border-radius: var(--corner-radius-2xl);
 		padding: var(--space-xl-3xl);
         
 		&:has(.btn:hover) .cta-section__bg,

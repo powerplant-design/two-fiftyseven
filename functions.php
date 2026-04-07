@@ -164,8 +164,9 @@ function two_fiftyseven_enqueue_assets(): void {
 
 	// Expose admin-ajax URL and nonce for the Events AJAX module.
 	wp_localize_script( 'two-fiftyseven-main', 'two57Ajax', [
-		'url'   => admin_url( 'admin-ajax.php' ),
-		'nonce' => wp_create_nonce( 'two57_events' ),
+		'url'      => admin_url( 'admin-ajax.php' ),
+		'nonce'    => wp_create_nonce( 'two57_events' ),
+		'cptNonce' => wp_create_nonce( 'two57_cpt_archive' ),
 	] );
 }
 add_action( 'wp_enqueue_scripts', 'two_fiftyseven_enqueue_assets' );
@@ -575,6 +576,29 @@ add_action( 'init', function (): void {
 		'show_in_rest' => true,
 		'menu_icon'    => 'dashicons-calendar-alt',
 	] );
+
+	// ── CPT category taxonomies ───────────────────────────────────
+	$cpt_taxonomies = [
+		'person_category'       => [ 'object_type' => 'person',       'slug' => 'person-category',       'singular' => 'Person Category',       'plural' => 'Person Categories' ],
+		'organisation_category' => [ 'object_type' => 'organisation', 'slug' => 'organisation-category', 'singular' => 'Organisation Category', 'plural' => 'Organisation Categories' ],
+		'media_item_category'   => [ 'object_type' => 'media_item',   'slug' => 'media-category',        'singular' => 'Media Category',        'plural' => 'Media Categories' ],
+	];
+
+	foreach ( $cpt_taxonomies as $taxonomy => $config ) {
+		register_taxonomy( $taxonomy, $config['object_type'], [
+			'labels'            => [
+				'name'          => __( $config['plural'],   'two-fiftyseven' ),
+				'singular_name' => __( $config['singular'], 'two-fiftyseven' ),
+				'add_new_item'  => sprintf( __( 'Add New %s', 'two-fiftyseven' ), $config['singular'] ),
+				'edit_item'     => sprintf( __( 'Edit %s', 'two-fiftyseven' ), $config['singular'] ),
+				'search_items'  => sprintf( __( 'Search %s', 'two-fiftyseven' ), $config['plural'] ),
+			],
+			'hierarchical'      => true,
+			'show_admin_column' => true,
+			'show_in_rest'      => true,
+			'rewrite'           => [ 'slug' => $config['slug'] ],
+		] );
+	}
 }, 0 );
 
 
@@ -803,3 +827,94 @@ function two57_events_ajax(): void {
 }
 add_action( 'wp_ajax_two57_events',        'two57_events_ajax' );
 add_action( 'wp_ajax_nopriv_two57_events', 'two57_events_ajax' );
+
+
+/**
+ * ============================================================
+ * CPT Archives — Helper: build WP_Query args with optional category filter.
+ *
+ * @param string $post_type  Whitelisted post type: post|person|organisation|media_item.
+ * @param string $term_slug  Taxonomy term slug to filter by. Empty string = all terms.
+ * @param int    $paged      Pagination page number.
+ * @return array             WP_Query args array.
+ * ============================================================
+ */
+function two57_get_cpt_query_args( string $post_type, string $term_slug, int $paged = 1 ): array {
+	$allowed_types = [ 'post', 'person', 'organisation', 'media_item' ];
+	if ( ! in_array( $post_type, $allowed_types, true ) ) {
+		$post_type = 'post';
+	}
+
+	$taxonomy_map = [
+		'post'         => 'category',
+		'person'       => 'person_category',
+		'organisation' => 'organisation_category',
+		'media_item'   => 'media_item_category',
+	];
+
+	$args = [
+		'post_type'      => $post_type,
+		'post_status'    => 'publish',
+		'posts_per_page' => 12,
+		'paged'          => $paged,
+		'orderby'        => 'date',
+		'order'          => 'DESC',
+	];
+
+	$taxonomy  = $taxonomy_map[ $post_type ] ?? '';
+	$term_slug = sanitize_text_field( $term_slug );
+
+	if ( $taxonomy && $term_slug ) {
+		$args['tax_query'] = [
+			[
+				'taxonomy' => $taxonomy,
+				'field'    => 'slug',
+				'terms'    => $term_slug,
+			],
+		];
+	}
+
+	return $args;
+}
+
+
+/**
+ * ============================================================
+ * CPT Archives — AJAX handler: return card grid HTML.
+ *
+ * Expects POST: action, nonce, post_type, taxonomy, term (slug), paged.
+ * Returns JSON: { success: true, data: { html, totalPages, currentPage } }.
+ * ============================================================
+ */
+function two57_cpt_archive_ajax(): void {
+	check_ajax_referer( 'two57_cpt_archive', 'nonce' );
+
+	$allowed_types = [ 'post', 'person', 'organisation', 'media_item' ];
+	$post_type = isset( $_POST['post_type'] ) && in_array( $_POST['post_type'], $allowed_types, true )
+		? $_POST['post_type']
+		: 'post';
+
+	$term_slug = sanitize_text_field( $_POST['term'] ?? '' );
+	$paged     = max( 1, (int) ( $_POST['paged'] ?? 1 ) );
+
+	$query = new WP_Query( two57_get_cpt_query_args( $post_type, $term_slug, $paged ) );
+
+	ob_start();
+	get_template_part( 'template-parts/cpt-card-grid', null, [
+		'query'        => $query,
+		'post_type'    => $post_type,
+		'current_page' => $paged,
+		'total_pages'  => $query->max_num_pages,
+	] );
+	$html = ob_get_clean();
+
+	wp_reset_postdata();
+
+	wp_send_json_success( [
+		'html'        => (string) $html,
+		'totalPages'  => (int) $query->max_num_pages,
+		'currentPage' => $paged,
+	] );
+}
+add_action( 'wp_ajax_two57_cpt_archive',        'two57_cpt_archive_ajax' );
+add_action( 'wp_ajax_nopriv_two57_cpt_archive', 'two57_cpt_archive_ajax' );

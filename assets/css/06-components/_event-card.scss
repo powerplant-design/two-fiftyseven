@@ -15,9 +15,11 @@
 .event-card {
 	opacity: 0;
 	transform: translateY(2rem);
+	box-shadow: 0 0 0 color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
 	transition:
 		opacity  0.4s ease-out var(--delay, 0ms),
-		transform 0.8s ease-out var(--delay, 0ms);
+		transform 0.8s ease-out var(--delay, 0ms),
+		box-shadow 0.3s ease;
 	border-radius: var(--space-m);
 	overflow: hidden;
 
@@ -25,6 +27,16 @@
 	&.is-inview {
 		opacity: 1;
 		transform: translateY(0);
+		// Override to snappy durations once visible so hover isn't delayed.
+		transition:
+			opacity  0.4s ease-out,
+			transform 0.3s ease-out,
+			box-shadow 0.3s ease;
+	}
+
+	&:hover {
+		transform: translateY(-1%);
+		box-shadow: 0 15px 25px color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
 	}
 }
 
@@ -36,14 +48,8 @@
 	text-decoration: none;
 	color: inherit;
 	block-size: 100%;
-	border-radius: var(--space-m);
+	border-radius: var(--corner-radius-xl);
 	overflow: hidden;
-	transition: filter 0.2s ease;
-
-	&:hover,
-	&:focus-visible {
-		filter: brightness(1.05);
-	}
 
 	&:focus-visible {
 		outline: 4px solid var(--color-border-primary);
@@ -77,7 +83,7 @@
 	text-transform: uppercase;
 	// white-space: nowrap;
 
-	background-color: var(--color-surface-inverse-primary);
+	background-color: var(--color-btn-secondary-text);
 	color: var(--color-content-inverse);
 }
 

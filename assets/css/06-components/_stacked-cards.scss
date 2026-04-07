@@ -62,8 +62,8 @@
 	background-color: var(--color-surface-secondary);
 	border: var(--border-tertiary);
 	border-block-end: none;
-	border-start-start-radius: var(--space-s);
-	border-start-end-radius: var(--space-s);
+	border-start-start-radius: var(--corner-radius-l);
+	border-start-end-radius: var(--corner-radius-l);
 	border-end-start-radius: 0;
 	border-end-end-radius: 0;
 	position: relative;
@@ -92,7 +92,7 @@
 	background-color: var(--color-surface-secondary);
 	outline: var(--border-tertiary);
 	margin-inline: 1px;
-	border-radius: var(--space-s-xl);
+	border-radius: var(--corner-radius-2xl);
 	border-start-start-radius: 0; // card 0: tab sits in this corner
 	overflow: hidden;
 	align-items: center;

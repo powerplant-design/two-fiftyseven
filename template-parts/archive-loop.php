@@ -26,6 +26,28 @@ if ( have_posts() ) : ?>
 			$has_logo       = in_array( $post_type, [ 'organisation', 'media_item' ], true );
 			$brand_logo_id  = ( $has_logo && function_exists( 'get_field' ) ) ? get_field( 'brand_logo' ) : null;
 			$brand_logo_svg = $brand_logo_id ? two_fiftyseven_get_inline_svg( $brand_logo_id ) : '';
+
+			// Badge: map post type to its category taxonomy.
+			$taxonomy_map = [
+				'post'         => 'category',
+				'person'       => 'person_category',
+				'organisation' => 'organisation_category',
+				'media_item'   => 'media_item_category',
+			];
+			$badge_taxonomy = $taxonomy_map[ $post_type ] ?? '';
+			$badge_term     = '';
+			if ( $badge_taxonomy ) {
+				$terms = get_the_terms( get_the_ID(), $badge_taxonomy );
+				if ( $terms && ! is_wp_error( $terms ) ) {
+					// Skip 'uncategorized' — uncategorised posts show no category badge.
+					foreach ( $terms as $t ) {
+						if ( $t->slug !== 'uncategorized' ) {
+							$badge_term = $t->name;
+							break;
+						}
+					}
+				}
+			}
 		?>
 
 			<article class="post-index__item<?php echo $card_modifier; ?>" data-color-space="<?php echo esc_attr( $card_space ); ?>">
@@ -41,9 +63,21 @@ if ( have_posts() ) : ?>
 				<?php endif; ?>
 
 				<div class="post-index__body | stack">
-					<time class="post-index__date text-monospace text-s" datetime="<?php echo esc_attr( get_the_date( 'Y-m-d' ) ); ?>">
-						<?php echo esc_html( get_the_date() ); ?>
-					</time>
+					<?php if ( $post_type === 'post' || $badge_term ) : ?>
+					<div class="post-index__badges">
+						<?php if ( $post_type === 'post' ) : ?>
+							<span class="post-index__badge text-monospace">
+								<?php echo esc_html( get_the_date( 'j M Y' ) ); ?>
+							</span>
+						<?php endif; ?>
+						<?php if ( $badge_term ) : ?>
+							<span class="post-index__badge text-monospace">
+								<?php echo esc_html( $badge_term ); ?>
+							</span>
+						<?php endif; ?>
+					</div>
+					<?php endif; ?>
+
 					<h2 class="post-index__title | text-xl line-clamp-3">
 						<a class="post-index__link" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 					</h2>

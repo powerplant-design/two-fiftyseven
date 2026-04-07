@@ -31,13 +31,20 @@ Description: Card grid for the posts index page (home.php).
 
 .post-index__item {
 	background-color: var(--color-surface-secondary);
-	border-radius: var(--corner-radius-3xl);
+	border-radius: var(--corner-radius-xl);
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
 	position: relative; // stacking context for stretched link
-    transition: transform 0.3s ease-out, box-shadow 0.3s ease;
-    box-shadow: 0 0 0 color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
+	transition: transform 0.3s ease-out, box-shadow 0.3s ease, opacity 0.4s ease-out var(--delay, 0ms);
+	box-shadow: 0 0 0 color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
+	opacity: 0;
+	transform: translateY(1.5rem);
+
+	&.is-visible {
+		opacity: 1;
+		transform: translateY(0);
+	}
 
 	&:nth-child(even) {
 		@media (min-width: #{bp.$bp-sm}) {
@@ -46,8 +53,8 @@ Description: Card grid for the posts index page (home.php).
 	}
 
 	&:hover {
-        transform: translateY(-1%);
-        box-shadow: 0 15px 25px color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
+		transform: translateY(-1%);
+		box-shadow: 0 15px 25px color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
 	}
 
 	&:has(.post-index__link:focus-visible) {
@@ -76,16 +83,17 @@ Description: Card grid for the posts index page (home.php).
 }
 
 // ── Person / Organisation / Media Item cards (horizontal layout) ──
+// Body left, image right: achieved with row-reverse since DOM order is image, body.
 
 .post-index__item--person,
 .post-index__item--organisation,
 .post-index__item--media-item {
-	flex-direction: row;
+	flex-direction: row-reverse;
 
-	// No alternating reverse for person cards — always image-left
+	// Lock to row-reverse for even cards too — no alternating on CPT cards.
 	&:nth-child(even) {
 		@media (min-width: #{bp.$bp-sm}) {
-			flex-direction: row;
+			flex-direction: row-reverse;
 		}
 	}
 
@@ -116,12 +124,7 @@ Description: Card grid for the posts index page (home.php).
 	}
 }
 
-.post-index__item--person,
-.post-index__item--organisation {
-	.post-index__date {
-		display: none;
-	}
-}
+// (date is rendered as a badge for posts only — CPT cards never show a date badge)
 
 // ── Logo card mobile sizing ──────────────────────────────────────
 
@@ -142,9 +145,26 @@ Description: Card grid for the posts index page (home.php).
 	padding: var(--space-m) var(--space-xl) var(--space-l) var(--space-m);
 }
 
-.post-index__date {
-	// font-size: var(--step--1);
-	color: var(--color-content-secondary);
+// ── Badge cluster ────────────────────────────────────────────────
+
+.post-index__badges {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-3xs);
+	align-items: center;
+}
+
+.post-index__badge {
+	display: inline-flex;
+	align-items: center;
+	padding-block: var(--space-3xs);
+	padding-inline: var(--space-xs);
+	border-radius: var(--space-s);
+	font-size: var(--step--1);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	background-color: var(--color-btn-secondary-text);
+	color: var(--color-content-inverse);
 }
 
 .post-index__link {
