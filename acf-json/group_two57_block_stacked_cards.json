@@ -70,6 +70,28 @@
 					"placeholder": ""
 				},
 				{
+					"key": "field_two57_stacked_cards_body_size",
+					"label": "Body Font Size",
+					"name": "body_size",
+					"aria-label": "",
+					"type": "select",
+					"instructions": "Regular uses the base body size; Large uses the larger step-up size (default).",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "50%", "class": "", "id": "" },
+					"choices": {
+						"large": "Large",
+						"regular": "Regular"
+					},
+					"default_value": "large",
+					"return_format": "value",
+					"multiple": 0,
+					"allow_null": 0,
+					"ui": 0,
+					"ajax": 0,
+					"placeholder": ""
+				},
+				{
 					"key": "field_two57_stacked_cards_content",
 					"label": "Content",
 					"name": "content",

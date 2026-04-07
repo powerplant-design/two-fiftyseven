@@ -41,6 +41,7 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 		$button               = $item['button'] ?? [];
 		$image                = $item['image'] ?? [];
 		$colour_space_override = $item['colour_space'] ?? null;
+		$body_size            = ( $item['body_size'] ?? 'large' ) === 'regular' ? 'text-m' : 'text-l';
 
 		if ( $colour_space_override && ! in_array( $colour_space_override, $allowed_spaces, true ) ) {
 			$colour_space_override = null;
@@ -68,7 +69,7 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 					<?php endif; ?>
 
 					<?php if ( $content ) : ?>
-						<div class="stacked-cards__content | stack text-l">
+						<div class="stacked-cards__content | stack <?php echo esc_attr( $body_size ); ?>">
 							<?php echo wp_kses_post( $content ); ?>
 						</div>
 					<?php endif; ?>

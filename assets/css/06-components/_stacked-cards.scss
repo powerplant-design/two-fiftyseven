@@ -60,7 +60,9 @@
 	padding-block: var(--space-xs);
 	padding-inline: var(--space-s);
 	background-color: var(--color-surface-secondary);
-	border: var(--border-tertiary);
+	// border: var(--border-tertiary);
+	// border: none;
+	border: 1px solid var(--color-surface-primary);
 	border-block-end: none;
 	border-start-start-radius: var(--corner-radius-l);
 	border-start-end-radius: var(--corner-radius-l);
@@ -81,41 +83,47 @@
             background-color: var(--color-surface-primary);
 		}
 	}
+
+	@media (max-width: bp.$bp-md) {
+        display: none;
+	}
 }
 
 // ── Panel ─────────────────────────────────────────────────────
 .stacked-cards__panel {
     color: var(--color-content-primary);
     display: grid;
-	gap: var(--space-s-xl);
+	gap: var(--space-m);
 	pointer-events: all; // re-enable for panel contents (buttons, links) on the active card
 	background-color: var(--color-surface-secondary);
-	outline: var(--border-tertiary);
+	// outline: 1px solid var(--color-surface-primary);
+	outline: 1px solid var(--color-surface-primary);
 	margin-inline: 1px;
 	border-radius: var(--corner-radius-2xl);
 	border-start-start-radius: 0; // card 0: tab sits in this corner
 	overflow: hidden;
 	align-items: center;
+	padding: var(--space-m);
 
 	@media (min-width: bp.$bp-md) {
-        grid-template-columns: 3fr 2fr;
+        grid-template-columns: 1fr 1fr;
 		align-items: stretch;
-		height: 70svh;
+		height: 65svh;
 	}
 }
 
 // Cards 1+ have their tab indented on desktop so the top-left corner is free.
 .stacked-cards__item:not(:first-child) .stacked-cards__panel {
 	@media (min-width: bp.$bp-md) {
-		border-start-start-radius: var(--space-s-xl);
+		border-start-start-radius: var(--corner-radius-2xl);
 	}
 }
-
+	
 // ── Body ──────────────────────────────────────────────────────
 .stacked-cards__body {
 	--stack-horizontal-alignment: flex-start;
-	padding-inline: var(--space-s-xl);
-	padding-block: var(--space-xl);
+	padding-inline: var(--space-l);
+	padding-block: var(--space-xs);
     justify-content: center;
 }
 
@@ -128,4 +136,8 @@
 	li:not(:last-child) {
 		margin-bottom: var(--space-xs);
 	}
+}
+
+.stacked-cards__image {
+	border-radius: var(--corner-radius-m);
 }
