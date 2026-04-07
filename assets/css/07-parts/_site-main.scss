@@ -5,8 +5,8 @@
 	position: relative;
 	z-index: 2;
 	background-color: var(--color-surface-primary);
-	border-end-start-radius: var(--space-s-xl);
-	border-end-end-radius: var(--space-s-xl);
+	border-end-start-radius: var(--corner-radius-3xl);
+	border-end-end-radius: var(--corner-radius-3xl);
 	padding-block-end: var(--space-xl-3xl);
 	margin-block-end: var(--footer-height, 20rem);
 	outline: var(--border-tertiary);

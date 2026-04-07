@@ -9,8 +9,8 @@
 	flex-direction: column;
 	justify-content: center;
 	overflow: hidden;
-	border-end-start-radius: var(--space-xl-3xl);
-	border-end-end-radius: var(--space-xl-3xl);	
+	border-end-start-radius: var(--corner-radius-3xl);
+	border-end-end-radius: var(--corner-radius-3xl);	
 
 	// Background image via CSS custom property set inline by PHP.
 	background-image: var(--hero-bg, none);

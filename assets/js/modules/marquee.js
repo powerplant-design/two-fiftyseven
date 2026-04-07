@@ -9,18 +9,12 @@
  * remains as a no-JS / reduced-motion fallback.
  */
 
-import { getScrollInstance } from './scroll.js';
-
 // ── Tuning ────────────────────────────────────────────────────
-const BASE_SPEED   = 0.4;  // px per rAF frame at 60fps (~30 px/s)
-const SCROLL_SCALE = 0.3;  // fraction of scroll delta added to marquee per frame
+const BASE_SPEED = 0.4;  // px per rAF frame at 60fps (~30 px/s)
 // ─────────────────────────────────────────────────────────────
 
-let rafId       = null;
-let tracks      = []; // [{ el, position }]
-let scrollBoost = 0;
-let lastScroll  = null;
-let unsubscribe = null;
+let rafId  = null;
+let tracks = []; // [{ el, position }]
 
 export function initMarquee() {
 	const trackEls = document.querySelectorAll( '[data-js="marquee-track"]' );
@@ -31,28 +25,9 @@ export function initMarquee() {
 		return { el, position: 0 };
 	} );
 
-	const lenis = getScrollInstance()?.lenisInstance;
-	if ( lenis ) {
-		const onScroll = ( { scroll } ) => {
-			if ( lastScroll !== null ) {
-				scrollBoost = Math.abs( scroll - lastScroll ) * SCROLL_SCALE;
-			}
-			lastScroll = scroll;
-		};
-		lenis.on( 'scroll', onScroll );
-		unsubscribe = () => {
-			lenis.off( 'scroll', onScroll );
-			lastScroll  = null;
-			scrollBoost = 0;
-		};
-	}
-
 	function tick() {
-		const boost = scrollBoost;
-		scrollBoost = 0;
-
 		for ( const track of tracks ) {
-			track.position -= BASE_SPEED + boost;
+			track.position -= BASE_SPEED;
 			const half = track.el.scrollWidth / 2;
 			if ( Math.abs( track.position ) >= half ) {
 				track.position += half;
@@ -70,10 +45,6 @@ export function destroyMarquee() {
 	if ( rafId ) {
 		cancelAnimationFrame( rafId );
 		rafId = null;
-	}
-	if ( unsubscribe ) {
-		unsubscribe();
-		unsubscribe = null;
 	}
 	tracks = [];
 }
