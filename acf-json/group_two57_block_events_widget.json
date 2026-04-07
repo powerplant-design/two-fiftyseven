@@ -1,0 +1,113 @@
+{
+	"key": "group_two57_block_events_widget",
+	"title": "257 Events Widget Block",
+	"fields": [
+		{
+			"key": "field_two57_ew_heading",
+			"label": "Heading",
+			"name": "events_widget_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Section heading above the event cards, e.g. \u201cComing up at Two/Fiftyseven\u201d.",
+			"required": 1,
+			"conditional_logic": 0,
+			"wrapper": { "width": "60", "class": "", "id": "" },
+			"default_value": "Coming up at Two/Fiftyseven",
+			"maxlength": "",
+			"placeholder": "Coming up at Two/Fiftyseven"
+		},
+		{
+			"key": "field_two57_ew_count",
+			"label": "Number of Events",
+			"name": "events_widget_count",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "How many event cards to display.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "20", "class": "", "id": "" },
+			"choices": {
+				"2": "2",
+				"4": "4",
+				"6": "6",
+				"8": "8",
+				"10": "10"
+			},
+			"default_value": "6",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 0,
+			"ui": 0,
+			"ajax": 0
+		},
+		{
+			"key": "field_two57_ew_mode",
+			"label": "Selection Mode",
+			"name": "events_widget_selection_mode",
+			"aria-label": "",
+			"type": "radio",
+			"instructions": "Auto pulls in the next upcoming events chronologically. Manual lets you choose specific events.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "20", "class": "", "id": "" },
+			"choices": {
+				"auto": "Auto (upcoming)",
+				"manual": "Manual selection"
+			},
+			"default_value": "auto",
+			"return_format": "value",
+			"allow_null": 0,
+			"other_choice": 0,
+			"layout": "vertical",
+			"save_other_choice": 0
+		},
+		{
+			"key": "field_two57_ew_manual_items",
+			"label": "Events",
+			"name": "events_widget_manual_items",
+			"aria-label": "",
+			"type": "relationship",
+			"instructions": "Select between 2 and 10 events. Drag to reorder. Updates automatically when these events are edited.",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_ew_mode",
+						"operator": "==",
+						"value": "manual"
+					}
+				]
+			],
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"post_type": [ "event" ],
+			"post_status": [ "publish" ],
+			"taxonomy": "",
+			"filters": [ "search" ],
+			"return_format": "id",
+			"min": 2,
+			"max": 10,
+			"elements": [ "featured_image" ],
+			"bidirectional": 0,
+			"bidirectional_target": []
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/events-widget"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Controls heading, card count, and selection mode for the 257 Events Widget block.",
+	"show_in_rest": 0,
+	"modified": 1775520000
+}

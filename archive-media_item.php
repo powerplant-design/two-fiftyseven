@@ -12,7 +12,7 @@ get_header();
 <div class="page-layout">
 
 	<header class="post-index-header text-center">
-		<h1 class="post-index-header__title"><?php post_type_archive_title(); ?></h1>
+		<h1 class="post-index-header__title"><?php echo esc_html( ( function_exists( 'get_field' ) ? get_field( 'media_item_archive_heading', 'option' ) : '' ) ?: post_type_archive_title( false ) ); ?></h1>
 	</header>
 
 	<hr>

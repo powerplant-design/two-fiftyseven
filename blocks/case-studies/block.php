@@ -51,7 +51,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 <section class="case-studies | block">
 	<div class="case-studies__inner | stack">
 		<?php if ( $heading ) : ?>
-			<h2 class="case-studies__heading | text-2xl"><?php echo esc_html( $heading ); ?></h2>
+			<h2 class="case-studies__heading | text-2xl" data-scroll><?php echo esc_html( $heading ); ?></h2>
 		<?php endif; ?>
 
 		<?php if ( $items ) : ?>
@@ -89,7 +89,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 		<?php endif; ?>
 
 		<?php if ( $archive_url ) : ?>
-			<div class="case-studies__cta">
+			<div class="case-studies__cta" data-scroll>
 				<a
 					class="btn"
 					data-type="secondary"

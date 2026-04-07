@@ -1,0 +1,46 @@
+// ============================================================
+// Events Widget Block
+// ============================================================
+
+.events-widget {
+	padding-block: var(--space-2xl);
+}
+
+.events-widget__inner {
+	// Uses .stack layout primitive for vertical rhythm.
+	// Padding comes from the parent .block or .wrapper class if present.
+}
+
+.events-widget__heading {
+	text-align: center;
+	opacity: 0;
+	transform: translateY(1.5rem);
+	transition: opacity 0.4s ease-out, transform 0.8s ease-out;
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.events-widget__cta {
+	display: flex;
+	justify-content: center;
+	padding-block-start: var(--space-s);
+	opacity: 0;
+	transform: translateY(1rem);
+	transition: opacity 0.4s ease-out 0.2s, transform 0.8s ease-out 0.2s;
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.events-widget__preview-hint {
+	padding: var(--space-m);
+	border: 1px dashed var(--color-border-tertiary);
+	border-radius: var(--space-s);
+	text-align: center;
+	color: var(--color-content-secondary);
+}

@@ -12,7 +12,7 @@ if ( ! $post_links ) {
 ?>
 
 <div class="post-layout__links-group">
-	<span class="post-layout__meta-label text-monospace text-s">Links</span>
+	<span class="post-layout__meta-label text-monospace text-s"><?php echo count( $post_links ) === 1 ? esc_html__( 'Link', 'two-fiftyseven' ) : esc_html__( 'Links', 'two-fiftyseven' ); ?></span>
 	<ul class="post-layout__links list-unstyled">
 		<?php foreach ( $post_links as $row ) :
 			$link   = $row['link'] ?? [];

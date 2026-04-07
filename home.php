@@ -14,7 +14,8 @@
 get_header();
 
 // The title comes from the Page assigned as the posts index — not from a post.
-$page_title = get_queried_object()?->post_title ?: __( 'Posts', 'two-fiftyseven' );
+$options_heading = function_exists( 'get_field' ) ? get_field( 'posts_archive_heading', 'option' ) : '';
+$page_title      = $options_heading ?: ( get_queried_object()?->post_title ?: __( 'Posts', 'two-fiftyseven' ) );
 ?>
 
 <div class="page-layout">

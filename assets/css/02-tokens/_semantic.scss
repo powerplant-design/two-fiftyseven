@@ -102,7 +102,7 @@ html {
 	--text-m-features: normal;
 	--text-m-weight: var(--font-body-weight-normal);
 	--text-m-size: var(--step-0);
-	--text-m-leading: var(--leading-slim);
+	--text-m-leading: var(--leading-base);
 	--text-m-kerning: var(--kerning-regular);
 	--text-m-transform: none;
 
@@ -111,7 +111,7 @@ html {
 	--text-s-features: normal;
 	--text-s-weight: var(--font-body-weight-normal);
 	--text-s-size: var(--step--1);
-	--text-s-leading: var(--leading-slim);
+	--text-s-leading: var(--leading-base);
 	--text-s-kerning: var(--kerning-regular);
 	--text-s-transform: none;
 
@@ -120,7 +120,7 @@ html {
 	--text-xs-features: normal;
 	--text-xs-weight: var(--font-body-weight-normal);
 	--text-xs-size: var(--step--2);
-	--text-xs-leading: var(--leading-slim);
+	--text-xs-leading: var(--leading-base);
 	--text-xs-kerning: var(--kerning-regular);
 	--text-xs-transform: none;
 }

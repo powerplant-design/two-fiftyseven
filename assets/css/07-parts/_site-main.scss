@@ -5,14 +5,9 @@
 	position: relative;
 	z-index: 2;
 	background-color: var(--color-surface-primary);
-	border-end-start-radius: var(--space-xl-3xl);
-	border-end-end-radius: var(--space-xl-3xl);
+	border-end-start-radius: var(--space-s-xl);
+	border-end-end-radius: var(--space-s-xl);
 	padding-block-end: var(--space-xl-3xl);
-	// Clearance for fixed footer — height is measured by JS and set as --footer-height.
 	margin-block-end: var(--footer-height, 20rem);
-	// border-inline-start: var(--border);
-	// border-inline-end: var(--border);
 	outline: var(--border-tertiary);
-	// outline-width: var(--border-width-thick);
-	// border-block-end-width: var(--border-width-medium);
 }

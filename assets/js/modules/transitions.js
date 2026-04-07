@@ -5,11 +5,11 @@
  * #swup container, and drives CSS fade animations (see _transitions.scss).
  *
  * Lifecycle integration with Locomotive Scroll and the colour theme engine:
- *   visit:start     → destroy Locomotive before the DOM is modified
- *   content:replace → re-run colour theme engine while content is still invisible
- *                     (data-theme is resolved on the incoming page before the
- *                      fade-in begins, so the background colour cross-fades cleanly)
- *   page:view       → reinit Locomotive on the new page's content
+ *   visit:start      → destroy Locomotive before the DOM is modified
+ *   content:replace  → scroll to top, apply colour theme, reset is-inview state
+ *   page:view        → reinit all non-scroll modules
+ *   animation:in:end → reinit Locomotive after fade-in completes so scroll
+ *                      reveals fire at the correct position, not during the fade
  */
 
 import Swup           from 'swup';
@@ -22,10 +22,11 @@ import { syncHeader } from './header.js';
 import { initFooter, destroyFooter } from './footer.js';
 import { initStackedCards, destroyStackedCards } from './stacked-cards.js';
 import { initFaq, destroyFaq } from './faq.js';
+import { initEventsArchive, destroyEventsArchive } from './events-archive.js';
 
-function resetCaseStudyRevealState() {
-	document.querySelectorAll( '.case-studies__card.is-inview' ).forEach( ( card ) => {
-		card.classList.remove( 'is-inview' );
+function resetScrollRevealState() {
+	document.querySelectorAll( '[data-scroll].is-inview' ).forEach( ( el ) => {
+		el.classList.remove( 'is-inview' );
 	} );
 }
 
@@ -50,6 +51,7 @@ export function initTransitions() {
 		destroyStackedCards();
 		destroyFaq();
 		destroyFooter();
+		destroyEventsArchive();
 		destroyScroll();
 	} );
 
@@ -60,9 +62,8 @@ export function initTransitions() {
 	swup.hooks.on( 'content:replace', ( visit ) => {
 		window.scrollTo( 0, 0 );
 
-		// Swup cache can preserve runtime classes from a previous visit.
-		// Clear reveal state so Locomotive can add .is-inview again on this view.
-		resetCaseStudyRevealState();
+		// Reset all scroll-reveal elements so Locomotive re-triggers them fresh.
+		resetScrollRevealState();
 
 		const incomingSpace = visit.to.document?.documentElement?.getAttribute( 'data-color-space' );
 		if ( incomingSpace ) {
@@ -79,15 +80,22 @@ export function initTransitions() {
 		}
 	} );
 
-	// 3. Reinit Locomotive + marquee once the new content is in the DOM.
-	//    Also sync header scroll state — Swup resets scroll to 0 so the
-	//    --scrolled class should be removed immediately on navigation.
+	// 3. Reinit non-scroll modules as soon as new content is in the DOM.
+	//    initScroll is deferred to animation:in:end so Locomotive doesn't fire
+	//    is-inview triggers while the page is still fading in.
 	swup.hooks.on( 'page:view', () => {
-		initScroll();
 		initMarquee();
 		initFooter();
 		initStackedCards();
 		initFaq();
+		initEventsArchive();
 		syncHeader();
+	} );
+
+	// 4. Init Locomotive only after the fade-in animation completes so that
+	//    scroll-triggered reveals (is-inview) fire at the correct scroll position,
+	//    not while the page is still invisible.
+	swup.hooks.on( 'animation:in:end', () => {
+		initScroll();
 	} );
 }

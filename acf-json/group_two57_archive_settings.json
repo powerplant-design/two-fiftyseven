@@ -3,8 +3,36 @@
 	"title": "Archive Settings",
 	"fields": [
 		{
+			"key": "field_two57_posts_archive_heading",
+			"label": "Posts Archive Heading",
+			"name": "posts_archive_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Override the h1 on the main posts index page. Leave blank to use the assigned Posts Page title.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "e.g. K\u014brero"
+		},
+		{
+			"key": "field_two57_organisation_archive_heading",
+			"label": "Organisations Archive Heading",
+			"name": "organisation_archive_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Override the h1 on the Organisations archive. Leave blank to use the CPT label.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "Organisations"
+		},
+		{
 			"key": "field_two57_organisation_colour_space",
-			"label": "Organisation Archive Colour Space",
+			"label": "Organisations Archive Colour Space",
 			"name": "organisation_colour_space",
 			"aria-label": "",
 			"type": "select",
@@ -25,6 +53,20 @@
 			"ui": 0,
 			"ajax": 0,
 			"placeholder": ""
+		},
+		{
+			"key": "field_two57_person_archive_heading",
+			"label": "People Archive Heading",
+			"name": "person_archive_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Override the h1 on the People archive. Leave blank to use the CPT label.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "People"
 		},
 		{
 			"key": "field_two57_person_colour_space",
@@ -51,6 +93,20 @@
 			"placeholder": ""
 		},
 		{
+			"key": "field_two57_media_item_archive_heading",
+			"label": "Media Archive Heading",
+			"name": "media_item_archive_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Override the h1 on the Media archive. Leave blank to use the CPT label.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "Media"
+		},
+		{
 			"key": "field_two57_media_item_colour_space",
 			"label": "Media Archive Colour Space",
 			"name": "media_item_colour_space",
@@ -67,6 +123,44 @@
 				"purple": "Purple"
 			},
 			"default_value": "neutral",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 0,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": ""
+		},
+		{
+			"key": "field_two57_event_archive_heading",
+			"label": "Events Archive Heading",
+			"name": "event_archive_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Override the h1 on the Events archive. Leave blank to use the default 'Events'.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "Events"
+		},
+		{
+			"key": "field_two57_event_colour_space",
+			"label": "Events Archive Colour Space",
+			"name": "event_colour_space",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Sets the colour palette for the Events archive index.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"choices": {
+				"neutral": "Neutral",
+				"maroon": "Maroon",
+				"forest": "Forest",
+				"purple": "Purple"
+			},
+			"default_value": "purple",
 			"return_format": "value",
 			"multiple": 0,
 			"allow_null": 0,
@@ -91,7 +185,7 @@
 	"instruction_placement": "label",
 	"hide_on_screen": "",
 	"active": true,
-	"description": "Colour space for each CPT archive index page.",
+	"description": "Heading overrides and colour space for each CPT archive index page.",
 	"show_in_rest": 0,
 	"modified": 1772496000
 }

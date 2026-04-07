@@ -45,6 +45,13 @@
 				"operator": "==",
 				"value": "media_item"
 			}
+		],
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "event"
+			}
 		]
 	],
 	"menu_order": 1,

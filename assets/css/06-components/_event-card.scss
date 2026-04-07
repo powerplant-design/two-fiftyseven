@@ -1,0 +1,132 @@
+// ============================================================
+// Event Card
+// ============================================================
+// Two-tone split card: body area + optional image area.
+// Colours inherit from the page colour space via semantic tokens.
+// Animate-in is JS-driven (not scroll-tied): JS adds .is-visible
+// with a staggered --delay per card.
+// ============================================================
+
+@use '../02-tokens/breakpoints' as bp;
+
+// ── Animate-in base state ─────────────────────────────────
+// .is-visible → added by JS (archive: AJAX-loaded cards)
+// .is-inview  → added by Locomotive Scroll (widget: scroll-triggered)
+.event-card {
+	opacity: 0;
+	transform: translateY(2rem);
+	transition:
+		opacity  0.4s ease-out var(--delay, 0ms),
+		transform 0.8s ease-out var(--delay, 0ms);
+	border-radius: var(--space-m);
+	overflow: hidden;
+
+	&.is-visible,
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// ── Link — full-card clickable, flex row ──────────────────
+.event-card__link {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	text-decoration: none;
+	color: inherit;
+	block-size: 100%;
+	border-radius: var(--space-m);
+	overflow: hidden;
+	transition: filter 0.2s ease;
+
+	&:hover,
+	&:focus-visible {
+		filter: brightness(1.05);
+	}
+
+	&:focus-visible {
+		outline: 4px solid var(--color-border-primary);
+		outline-offset: -2px;
+	}
+}
+
+// ── Body — left content column ────────────────────────────
+.event-card__body {
+	flex: 1 1 0;
+	min-width: 0;
+	padding: var(--space-m);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+
+	background-color: var(--color-surface-secondary);
+	color: var(--color-content-primary);
+}
+
+// ── Badge — date/time pill ────────────────────────────────
+.event-card__badge {
+	display: inline-flex;
+	align-self: flex-start;
+	align-items: center;
+	padding-block: var(--space-3xs);
+	padding-inline: var(--space-xs);
+	border-radius: var(--space-s);
+	font-size: var(--step--1);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	// white-space: nowrap;
+
+	background-color: var(--color-surface-inverse-primary);
+	color: var(--color-content-inverse);
+}
+
+// ── Location — offsite label ──────────────────────────────
+.event-card__location {
+	display: block;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+
+	color: var(--color-content-secondary);
+}
+
+// ── Title ─────────────────────────────────────────────────
+// .event-card__title {
+	// font-weight: 700;
+	// line-clamp-3 is a utility class; no extra styles needed here.
+// }
+
+// ── Description ───────────────────────────────────────────
+// .event-card__desc {
+// 	color: var(--color-content-secondary);
+// }
+
+// ── Image — right portrait column ────────────────────────
+.event-card__image {
+	// flex: 0 0 clamp(7rem, 30%, 10rem);
+	max-width: 200px;
+	aspect-ratio: 210 / 297;
+	overflow: hidden;
+	background-color: var(--color-surface-secondary);
+
+	img {
+		inline-size: 100%;
+		block-size: 100%;
+		object-fit: cover;
+		display: block;
+	}
+}
+
+// ── Responsive: stack on very small screens ───────────────
+@media (max-width: #{bp.$bp-sm}) {
+	// .event-card__link {
+	// 	flex-direction: column-reverse;
+	// }
+
+	.event-card__image {
+		display: none;
+		// flex: none;
+		// aspect-ratio: 16 / 9;
+		// inline-size: 100%;
+	}
+}

@@ -11,6 +11,14 @@
 
 	&__heading {
 		text-align: center;
+		opacity: 0;
+		transform: translateY(1.5rem);
+		transition: opacity 0.4s ease-out, transform 0.8s ease-out;
+
+		&.is-inview {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 
 	&__cards {
@@ -75,5 +83,13 @@
 	&__cta {
 		display: flex;
 		justify-content: center;
+		opacity: 0;
+		transform: translateY(1rem);
+		transition: opacity 0.4s ease-out 0.2s, transform 0.8s ease-out 0.2s;
+
+		&.is-inview {
+			opacity: 1;
+			transform: translateY(0);
+		}
 	}
 }

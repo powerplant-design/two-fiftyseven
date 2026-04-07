@@ -1,0 +1,272 @@
+{
+	"key": "group_two57_event_meta",
+	"title": "Event Details",
+	"fields": [
+		{
+			"key": "field_two57_event_subheading",
+			"label": "Subheading",
+			"name": "event_subheading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Short subheading displayed below the event title.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": ""
+		},
+		{
+			"key": "field_two57_event_recurring",
+			"label": "Recurring Event",
+			"name": "event_recurring",
+			"aria-label": "",
+			"type": "true_false",
+			"instructions": "Enable for weekly repeating events (e.g. every Tuesday). Leave off for one-off events with a specific date.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"message": "",
+			"default_value": 0,
+			"ui": 1,
+			"ui_on_text": "Recurring",
+			"ui_off_text": "One-off"
+		},
+		{
+			"key": "field_two57_event_has_passed",
+			"label": "Has Passed",
+			"name": "event_has_passed",
+			"aria-label": "",
+			"type": "true_false",
+			"instructions": "Mark this event as passed to move it to the Past Events archive tab.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"message": "",
+			"default_value": 0,
+			"ui": 1,
+			"ui_on_text": "Passed",
+			"ui_off_text": "Upcoming"
+		},
+		{
+			"key": "field_two57_event_day_of_week",
+			"label": "Day of Week",
+			"name": "event_day_of_week",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Which day does this event recur on? Set once \u2014 the sort order is computed automatically.",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_event_recurring",
+						"operator": "==",
+						"value": "1"
+					}
+				]
+			],
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"choices": {
+				"MON": "Monday",
+				"TUE": "Tuesday",
+				"WED": "Wednesday",
+				"THU": "Thursday",
+				"FRI": "Friday",
+				"SAT": "Saturday",
+				"SUN": "Sunday"
+			},
+			"default_value": "",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 1,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": "Select a day\u2026"
+		},
+		{
+			"key": "field_two57_event_date",
+			"label": "Date",
+			"name": "event_date",
+			"aria-label": "",
+			"type": "date_picker",
+			"instructions": "The date of this event. Displayed as e.g. TUE 21 APR.",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_event_recurring",
+						"operator": "==",
+						"value": "0"
+					}
+				]
+			],
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"display_format": "D j F Y",
+			"return_format": "Ymd",
+			"first_day": 1
+		},
+		{
+			"key": "field_two57_event_time_start",
+			"label": "Start Time",
+			"name": "event_time_start",
+			"aria-label": "",
+			"type": "time_picker",
+			"instructions": "Event start time.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"display_format": "g:i A",
+			"return_format": "H:i"
+		},
+		{
+			"key": "field_two57_event_time_end",
+			"label": "End Time",
+			"name": "event_time_end",
+			"aria-label": "",
+			"type": "time_picker",
+			"instructions": "Event end time (optional).",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"display_format": "g:i A",
+			"return_format": "H:i"
+		},
+		{
+			"key": "field_two57_event_add_to_calendar",
+			"label": "Add to Calendar Link",
+			"name": "event_add_to_calendar",
+			"aria-label": "",
+			"type": "link",
+			"instructions": "Link to an .ics file or external calendar service (Google Calendar, Outlook, etc.).",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"return_format": "array"
+		},
+		{
+			"key": "field_two57_event_location_type",
+			"label": "Location",
+			"name": "event_location_type",
+			"aria-label": "",
+			"type": "radio",
+			"instructions": "If offsite, a location name and map link will appear in the sidebar.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"choices": {
+				"two_fiftyseven": "At Two/Fiftyseven (show nothing)",
+				"offsite": "Offsite location"
+			},
+			"default_value": "two_fiftyseven",
+			"return_format": "value",
+			"allow_null": 0,
+			"other_choice": 0,
+			"layout": "horizontal",
+			"save_other_choice": 0
+		},
+		{
+			"key": "field_two57_event_location_name",
+			"label": "Location Name",
+			"name": "event_location_name",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Name of the offsite venue, e.g. \u201cFaultline\u201d.",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_event_location_type",
+						"operator": "==",
+						"value": "offsite"
+					}
+				]
+			],
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "e.g. Faultline"
+		},
+		{
+			"key": "field_two57_event_location_map_link",
+			"label": "Map Link",
+			"name": "event_location_map_link",
+			"aria-label": "",
+			"type": "link",
+			"instructions": "Google Maps or similar link to the offsite venue.",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_event_location_type",
+						"operator": "==",
+						"value": "offsite"
+					}
+				]
+			],
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"return_format": "array"
+		},
+		{
+			"key": "field_two57_event_cost_type",
+			"label": "Cost",
+			"name": "event_cost_type",
+			"aria-label": "",
+			"type": "radio",
+			"instructions": "",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"choices": {
+				"free": "Free",
+				"paid": "Paid"
+			},
+			"default_value": "free",
+			"return_format": "value",
+			"allow_null": 0,
+			"other_choice": 0,
+			"layout": "horizontal",
+			"save_other_choice": 0
+		},
+		{
+			"key": "field_two57_event_cost_price",
+			"label": "Price",
+			"name": "event_cost_price",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Enter the amount only — the $ symbol is added automatically. e.g. 20",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_event_cost_type",
+						"operator": "==",
+						"value": "paid"
+					}
+				]
+			],
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "20"
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "event"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Event-specific meta fields: schedule, location, cost, and recurrence.",
+	"show_in_rest": 0,
+	"modified": 1775520000
+}

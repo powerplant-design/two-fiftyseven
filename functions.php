@@ -26,6 +26,17 @@ function two_fiftyseven_get_colour_space(): string {
 			}
 		}
 
+		// Event archive: read colour space from ACF Options (default purple).
+		if ( is_post_type_archive( 'event' ) ) {
+			$space = function_exists( 'get_field' ) ? get_field( 'event_colour_space', 'option' ) : '';
+			return sanitize_key( $space ?: 'purple' );
+		}
+
+		// Event singles are always purple.
+		if ( is_singular( 'event' ) ) {
+			return 'purple';
+		}
+
 		// CPT archives: read colour space from ACF Options page.
 		$cpt_archive_fields = [
 			'organisation' => 'organisation_colour_space',
@@ -150,6 +161,12 @@ function two_fiftyseven_enqueue_assets(): void {
 			wp_enqueue_style( 'two-fiftyseven-style', $base_url . $css_file, [], null );
 		}
 	}
+
+	// Expose admin-ajax URL and nonce for the Events AJAX module.
+	wp_localize_script( 'two-fiftyseven-main', 'two57Ajax', [
+		'url'   => admin_url( 'admin-ajax.php' ),
+		'nonce' => wp_create_nonce( 'two57_events' ),
+	] );
 }
 add_action( 'wp_enqueue_scripts', 'two_fiftyseven_enqueue_assets' );
 
@@ -320,6 +337,21 @@ add_action( 'acf/init', function (): void {
 		'category'        => 'text',
 		'icon'            => 'format-chat',
 		'keywords'        => [ 'faq', 'accordion', 'questions', 'answers', 'help' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'events-widget',
+		'title'           => __( '257 Events Widget', 'two-fiftyseven' ),
+		'description'     => __( 'Grid of upcoming event cards with optional manual selection and a “View more” CTA.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/events-widget/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calendar-alt',
+		'keywords'        => [ 'events', 'calendar', 'cards', 'upcoming' ],
 		'mode'            => 'edit',
 		'supports'        => [
 			'innerBlocks' => false,
@@ -525,6 +557,24 @@ add_action( 'init', function (): void {
 		'show_in_rest' => true,
 		'menu_icon'    => 'dashicons-format-video',
 	] );
+
+	register_post_type( 'event', [
+		'labels' => [
+			'name'          => __( 'Events', 'two-fiftyseven' ),
+			'singular_name' => __( 'Event', 'two-fiftyseven' ),
+			'add_new_item'  => __( 'Add New Event', 'two-fiftyseven' ),
+			'edit_item'     => __( 'Edit Event', 'two-fiftyseven' ),
+			'view_item'     => __( 'View Event', 'two-fiftyseven' ),
+			'search_items'  => __( 'Search Events', 'two-fiftyseven' ),
+			'not_found'     => __( 'No events found.', 'two-fiftyseven' ),
+		],
+		'public'       => true,
+		'has_archive'  => 'events',
+		'rewrite'      => [ 'slug' => 'event' ],
+		'supports'     => [ 'title', 'editor', 'thumbnail', 'excerpt', 'custom-fields' ],
+		'show_in_rest' => true,
+		'menu_icon'    => 'dashicons-calendar-alt',
+	] );
 }, 0 );
 
 
@@ -544,3 +594,212 @@ add_action( 'acf/init', function (): void {
 		'autoload'    => false,
 	] );
 } );
+
+
+/**
+ * ============================================================
+ * Events — Helper: compute next weekday date
+ * ============================================================
+ *
+ * @param string $day_abbr  3-letter abbreviation: MON TUE WED THU FRI SAT SUN.
+ * @return string           Ymd-formatted date string, e.g. '20260421'.
+ */
+function two57_next_weekday_ymd( string $day_abbr ): string {
+	$map = [
+		'MON' => 'Monday',
+		'TUE' => 'Tuesday',
+		'WED' => 'Wednesday',
+		'THU' => 'Thursday',
+		'FRI' => 'Friday',
+		'SAT' => 'Saturday',
+		'SUN' => 'Sunday',
+	];
+	$day_name = $map[ strtoupper( trim( $day_abbr ) ) ] ?? 'Monday';
+
+	if ( strtolower( date( 'l' ) ) === strtolower( $day_name ) ) {
+		return date( 'Ymd' );
+	}
+
+	return date( 'Ymd', (int) strtotime( 'next ' . $day_name ) );
+}
+
+
+/**
+ * Events — Helper: format event badge text.
+ *
+ * Recurring:  "MON / 9AM–10AM"  (+ "@ LOCATION" if offsite)
+ * One-off:    "TUE 21 APR / 5.30PM"
+ *
+ * @param int $post_id
+ * @return string
+ */
+function two57_format_event_badge( int $post_id ): string {
+	if ( ! function_exists( 'get_field' ) ) {
+		return '';
+	}
+
+	$recurring     = (bool) get_field( 'event_recurring', $post_id );
+	$time_start    = (string) ( get_field( 'event_time_start', $post_id ) ?: '' );
+	$time_end      = (string) ( get_field( 'event_time_end', $post_id ) ?: '' );
+	$location_type = (string) ( get_field( 'event_location_type', $post_id ) ?: 'two_fiftyseven' );
+	$location_name = (string) ( get_field( 'event_location_name', $post_id ) ?: '' );
+
+	// Format H:i → "9.30AM", "12:00" → "12PM", "9:00" → "9AM".
+	$fmt = static function ( string $t ): string {
+		if ( ! $t ) {
+			return '';
+		}
+		$dt = \DateTime::createFromFormat( 'H:i', $t );
+		if ( ! $dt ) {
+			return $t;
+		}
+		$h = (int) $dt->format( 'g' );
+		$m = $dt->format( 'i' );
+		$a = $dt->format( 'A' );
+		return $m === '00' ? "{$h}{$a}" : "{$h}.{$m}{$a}";
+	};
+
+	$time_str = $fmt( $time_start );
+	if ( $time_end ) {
+		$time_str .= '–' . $fmt( $time_end );
+	}
+
+	$badge = '';
+
+	if ( $recurring ) {
+		$day   = strtoupper( (string) ( get_field( 'event_day_of_week', $post_id ) ?: '' ) );
+		$badge = $day;
+		if ( $time_str ) {
+			$badge .= ' / ' . $time_str;
+		}
+	} else {
+		$raw_date = (string) ( get_field( 'event_date', $post_id ) ?: '' );
+		if ( $raw_date ) {
+			$dt = \DateTime::createFromFormat( 'Ymd', $raw_date );
+			if ( $dt ) {
+				// e.g. "TUE 21 APR" — 3-letter day + day number + 3-letter month.
+				$badge = strtoupper( $dt->format( 'D j M' ) );
+			}
+		}
+		if ( $time_str ) {
+			$badge .= ( $badge ? ' / ' : '' ) . $time_str;
+		}
+	}
+
+	if ( $location_type === 'offsite' && $location_name ) {
+		$badge .= ' @ ' . strtoupper( $location_name );
+	}
+
+	return $badge;
+}
+
+
+/**
+ * Events — Helper: build WP_Query args for upcoming or past events.
+ *
+ * @param string $tab    'upcoming' or 'past'.
+ * @param int    $paged  Pagination page number.
+ * @return array
+ */
+function two57_get_event_query_args( string $tab, int $paged = 1 ): array {
+	$common = [
+		'post_type'      => 'event',
+		'post_status'    => 'publish',
+		'posts_per_page' => 12,
+		'paged'          => $paged,
+		'meta_key'       => 'event_sort_date',
+		'orderby'        => 'meta_value',
+	];
+
+	if ( $tab === 'past' ) {
+		return array_merge( $common, [
+			'order'      => 'DESC',
+			'meta_query' => [
+				[
+					'key'   => 'event_has_passed',
+					'value' => '1',
+				],
+			],
+		] );
+	}
+
+	// Upcoming: exclude passed events; include those with no has_passed meta (new posts).
+	return array_merge( $common, [
+		'order'      => 'ASC',
+		'meta_query' => [
+			'relation' => 'OR',
+			[
+				'key'     => 'event_has_passed',
+				'value'   => '1',
+				'compare' => '!=',
+			],
+			[
+				'key'     => 'event_has_passed',
+				'compare' => 'NOT EXISTS',
+			],
+		],
+	] );
+}
+
+
+/**
+ * Events — Save post hook: compute and store event_sort_date.
+ *
+ * For recurring events: next occurrence of the chosen weekday (Ymd).
+ * For one-off events:   the stored event_date (Ymd).
+ *
+ * This allows WP_Query to orderby meta_value on event_sort_date.
+ */
+add_action( 'acf/save_post', function ( $post_id ): void {
+	if ( get_post_type( $post_id ) !== 'event' ) {
+		return;
+	}
+	if ( ! function_exists( 'get_field' ) ) {
+		return;
+	}
+
+	$recurring = (bool) get_field( 'event_recurring', $post_id );
+
+	if ( $recurring ) {
+		$day_abbr  = (string) ( get_field( 'event_day_of_week', $post_id ) ?: '' );
+		$sort_date = $day_abbr ? two57_next_weekday_ymd( $day_abbr ) : '99991231';
+	} else {
+		$sort_date = (string) ( get_field( 'event_date', $post_id ) ?: '99991231' );
+	}
+
+	update_post_meta( $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
+}, 20 );
+
+
+/**
+ * Events — AJAX handler: return event card grid HTML for tab + page.
+ *
+ * Expects POST: action, nonce, tab (upcoming|past), paged (int).
+ * Returns JSON: { success: true, data: { html, totalPages, currentPage } }.
+ */
+function two57_events_ajax(): void {
+	check_ajax_referer( 'two57_events', 'nonce' );
+
+	$tab   = isset( $_POST['tab'] ) && $_POST['tab'] === 'past' ? 'past' : 'upcoming';
+	$paged = max( 1, (int) ( $_POST['paged'] ?? 1 ) );
+
+	$query = new WP_Query( two57_get_event_query_args( $tab, $paged ) );
+
+	ob_start();
+	get_template_part( 'template-parts/event-card-grid', null, [
+		'query'        => $query,
+		'current_page' => $paged,
+		'total_pages'  => $query->max_num_pages,
+	] );
+	$html = ob_get_clean();
+
+	wp_reset_postdata();
+
+	wp_send_json_success( [
+		'html'        => (string) $html,
+		'totalPages'  => (int) $query->max_num_pages,
+		'currentPage' => $paged,
+	] );
+}
+add_action( 'wp_ajax_two57_events',        'two57_events_ajax' );
+add_action( 'wp_ajax_nopriv_two57_events', 'two57_events_ajax' );
