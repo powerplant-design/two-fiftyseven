@@ -117,7 +117,8 @@ function is_vite_hmr_available(): bool {
 		return (bool) VITE_HMR;
 	}
 
-	return defined( 'WP_ENVIRONMENT_TYPE' ) && WP_ENVIRONMENT_TYPE === 'local';
+	$host = $_SERVER['HTTP_HOST'] ?? '';
+	return str_contains( $host, 'localhost' ) || str_contains( $host, '.local' ) || str_contains( $host, '127.0.0.1' );
 }
 
 

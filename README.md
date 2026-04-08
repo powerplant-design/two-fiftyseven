@@ -179,13 +179,41 @@ If a critical issue appears after launch:
 
 ## Ongoing Deployment Workflow
 
+### How environment detection works
+
+Asset loading is automatic based on hostname — no environment variables or config changes needed:
+
+- `*.local` / `localhost` → Vite dev server (HMR)
+- Anything else (staging, production) → built files from `assets/dist/`
+
+This is handled in `functions.php → is_vite_hmr_available()`. As long as you run `npm run build` before pushing, styles and JS will load correctly on staging and live.
+
+### Standard dev cycle
+
+```
+1. Pull from Live          — DevKinsta → Sync → Pull from Kinsta → Live (files only, or files + db)
+2. npm run dev             — develop with HMR
+3. npm run build           — production build
+4. git commit && git push  — commit built assets + code changes
+5. Push to Staging         — DevKinsta → Sync → Push to Kinsta → Staging (files only)
+6. Test on staging URL
+7. Push Staging to Live    — MyKinsta → Staging → Push to Live (files only)
+```
+
+### Files only vs. files + database
+
+Once the client is adding content on live, always push **files only** — never overwrite the database:
+
+- **Files only** — theme, plugins, `wp-config.php`, uploads → use for all routine deploys
+- **Files + database** — use only for the initial launch, or when migrating a full content rebuild from local
+
+### ACF fields
+
+Field group *definitions* live in `acf-json/` and are tracked in git — they deploy with the theme automatically. Field *values* (content) live in the database and are never touched by a files-only push.
+
 ### Pushing staging → live
 
-In MyKinsta → Two-Fiftyseven → **Staging** tab → **"Push to Live"**.
-
-Choose what to push:
-- **Files + database** — for the initial launch only
-- **Files only** — for all subsequent deploys once the client is adding content (avoids overwriting live content)
+MyKinsta → Two-Fiftyseven → **Staging** tab → **"Push to Live"** → select **Files only**.
 
 ### Client admin account
 
@@ -198,18 +226,6 @@ Tell the client to add and edit content on live only, never on staging.
 ### Keeping local in sync with live
 
 Use **Sync → Pull from Kinsta** in DevKinsta and select the Live environment to pull the latest files and database down to local.
-
-**Standard dev cycle:**
-
-```
-1. Pull from Live          — get latest client content locally
-2. npm run dev             — develop with HMR
-3. npm run build           — production build
-4. git commit && git push  — commit manifest + changes
-5. Push to Staging         — via DevKinsta Sync → Push to Kinsta → Staging
-6. Test on staging URL
-7. Push Staging to Live    — MyKinsta → Staging → Push to Live (files only)
-```
 
 **Key rule:** the client adds content on Live; you develop on Local. Pull from Live periodically to stay in sync with their content.
 
