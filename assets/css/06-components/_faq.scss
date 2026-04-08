@@ -117,6 +117,7 @@
 
 	&__answer {
 		padding-block-end: var(--space-m);
+		max-width: 54ch;
 
         ul {
             padding-inline-start: var(--space-m);

@@ -15,11 +15,9 @@
 .event-card {
 	opacity: 0;
 	transform: translateY(2rem);
-	box-shadow: 0 0 0 color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
 	transition:
 		opacity  0.4s ease-out var(--delay, 0ms),
-		transform 0.8s ease-out var(--delay, 0ms),
-		box-shadow 0.3s ease;
+		transform 0.8s ease-out var(--delay, 0ms);
 	border-radius: var(--space-m);
 	overflow: hidden;
 
@@ -30,13 +28,11 @@
 		// Override to snappy durations once visible so hover isn't delayed.
 		transition:
 			opacity  0.4s ease-out,
-			transform 0.3s ease-out,
-			box-shadow 0.3s ease;
+			transform 0.3s ease-out;
 	}
 
 	&:hover {
-		transform: translateY(-1%);
-		box-shadow: 0 15px 25px color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
+		// hover handled on __body and __image
 	}
 }
 
@@ -50,6 +46,12 @@
 	block-size: 100%;
 	border-radius: var(--corner-radius-xl);
 	overflow: hidden;
+	background-color: var(--color-surface-secondary);
+	transition: background-color var(--transition-speed) ease;
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--color-surface-secondary) 95%, var(--color-content-primary));
+	}
 
 	&:focus-visible {
 		outline: 4px solid var(--color-border-primary);
@@ -66,7 +68,6 @@
 	flex-direction: column;
 	gap: var(--space-xs);
 
-	background-color: var(--color-surface-secondary);
 	color: var(--color-content-primary);
 }
 
@@ -113,14 +114,18 @@
 	max-width: 200px;
 	aspect-ratio: 210 / 297;
 	overflow: hidden;
-	background-color: var(--color-surface-secondary);
 
 	img {
 		inline-size: 100%;
 		block-size: 100%;
 		object-fit: cover;
 		display: block;
+		transition: transform var(--transition-speed) ease-out;
 	}
+}
+
+.event-card:hover .event-card__image img {
+	transform: scale(1.05);
 }
 
 // ── Responsive: stack on very small screens ───────────────

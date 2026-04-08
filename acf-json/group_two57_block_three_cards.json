@@ -1,0 +1,143 @@
+{
+	"key": "group_two57_block_three_cards",
+	"title": "257 Three Cards Block",
+	"fields": [
+		{
+			"key": "field_two57_tc_heading",
+			"label": "Heading",
+			"name": "tc_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Optional. Centred H2 heading displayed above the cards.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "e.g. Our Spaces"
+		},
+		{
+			"key": "field_two57_tc_cards",
+			"label": "Cards",
+			"name": "tc_cards",
+			"aria-label": "",
+			"type": "repeater",
+			"instructions": "Add up to 3 cards. Each card links to a page and uses a background image.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"min": 0,
+			"max": 3,
+			"layout": "block",
+			"button_label": "Add Card",
+			"sub_fields": [
+				{
+					"key": "field_two57_tc_card_title",
+					"label": "Title",
+					"name": "card_title",
+					"aria-label": "",
+					"type": "text",
+					"instructions": "Card heading.",
+					"required": 1,
+					"conditional_logic": 0,
+					"wrapper": { "width": "50%", "class": "", "id": "" },
+					"default_value": "",
+					"maxlength": "",
+					"placeholder": "e.g. Working"
+				},
+				{
+					"key": "field_two57_tc_card_colour_space",
+					"label": "Colour Space",
+					"name": "card_colour_space",
+					"aria-label": "",
+					"type": "select",
+					"instructions": "Colour tint overlaid on the background image.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "50%", "class": "", "id": "" },
+					"choices": {
+						"neutral": "Neutral",
+						"maroon": "Maroon",
+						"forest": "Forest",
+						"purple": "Purple"
+					},
+					"default_value": "neutral",
+					"return_format": "value",
+					"multiple": 0,
+					"allow_null": 0,
+					"ui": 0,
+					"ajax": 0,
+					"placeholder": ""
+				},
+				{
+					"key": "field_two57_tc_card_description",
+					"label": "Description",
+					"name": "card_description",
+					"aria-label": "",
+					"type": "textarea",
+					"instructions": "Optional short description shown below the title.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "50%", "class": "", "id": "" },
+					"default_value": "",
+					"new_lines": "",
+					"maxlength": "",
+					"rows": 2,
+					"placeholder": "Short description of this space type"
+				},
+				{
+					"key": "field_two57_tc_card_link",
+					"label": "Link",
+					"name": "card_link",
+					"aria-label": "",
+					"type": "link",
+					"instructions": "Page this card links to.",
+					"required": 1,
+					"conditional_logic": 0,
+					"wrapper": { "width": "50%", "class": "", "id": "" },
+					"return_format": "array"
+				},
+				{
+					"key": "field_two57_tc_card_image",
+					"label": "Image",
+					"name": "card_image",
+					"aria-label": "",
+					"type": "image",
+					"instructions": "Displayed below the card text. Aim for at least 800×600px.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "", "class": "", "id": "" },
+					"return_format": "array",
+					"library": "all",
+					"min_width": "",
+					"min_height": "",
+					"min_size": "",
+					"max_width": "",
+					"max_height": "",
+					"max_size": "",
+					"mime_types": "",
+					"preview_size": "medium"
+				}
+			]
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/three-cards"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Controls the heading and cards in the 257 Three Cards block.",
+	"show_in_rest": 0,
+	"modified": 1744070400
+}

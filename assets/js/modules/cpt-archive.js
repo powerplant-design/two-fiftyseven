@@ -14,6 +14,8 @@
  * archive-media_item.php.
  */
 
+import { applyThemes } from './color-theme.js';
+
 let _container   = null;
 let _grid        = null;
 let _postType    = '';
@@ -72,6 +74,7 @@ async function fetchPosts( term, paged ) {
 
 		_grid.innerHTML = data.data.html;
 		_grid.removeAttribute( 'aria-busy' );
+		applyThemes();
 		animateCards();
 
 	} catch {

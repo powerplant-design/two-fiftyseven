@@ -35,24 +35,15 @@
 		transition:
 			opacity 0.4s ease-out var(--delay),
 			transform 0.8s ease-out var(--delay),
-			box-shadow 0.3s ease;
+			background-color var(--transition-speed) ease;
 
 		a {
 			gap: var(--space-m);
 			padding: var(--space-l);
 		}
 
-		&.is-inview {
-			// Override to snappy durations once visible so hover isn't delayed.
-			transition:
-				opacity 0.4s ease-out,
-				transform 0.3s ease-out,
-				box-shadow 0.3s ease;
-		}
-
 		&:hover {
-			transform: translateY(-1%);
-			box-shadow: 0 15px 25px color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
+			background-color: color-mix(in srgb, var(--color-surface-secondary) 95%, var(--color-content-primary));
 		}
 
 		&.is-inview {

@@ -100,12 +100,12 @@
 	outline: 1px solid var(--color-surface-primary);
 	margin-inline: 1px;
 	border-radius: var(--corner-radius-2xl);
-	border-start-start-radius: 0; // card 0: tab sits in this corner
 	overflow: hidden;
 	align-items: center;
 	padding: var(--space-m);
-
+	
 	@media (min-width: bp.$bp-md) {
+		border-start-start-radius: 0; // card 0: tab sits in this corner
         grid-template-columns: 1fr 1fr;
 		align-items: stretch;
 		height: 65svh;

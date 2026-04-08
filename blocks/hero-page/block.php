@@ -58,7 +58,7 @@ if ( ! empty( $icons ) ) {
             <?php endif; ?>
             
             <?php if ( $subtitle ) : ?>
-                <h2 class="hero-page__subtitle text-xl"><?php echo wp_kses( $subtitle, [ 'br' => [], 'strong' => [], 'em' => [] ] ); ?></h2>
+                <h2 class="hero-page__subtitle text-l"><?php echo wp_kses( $subtitle, [ 'br' => [], 'strong' => [], 'em' => [] ] ); ?></h2>
             <?php endif; ?>
                 
             </div>

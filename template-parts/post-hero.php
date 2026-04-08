@@ -21,7 +21,7 @@ if ( array_key_exists( 'subheading', $args ?? [] ) ) {
 }
 
 $has_thumb   = $show_featured_image && has_post_thumbnail();
-$title_class = mb_strlen( get_the_title() ) < 28 ? 'post-hero__title text-balance' : 'post-hero__title text-3xl text-balance';
+$title_class = mb_strlen( get_the_title() ) < 28 ? 'post-hero__title' : 'post-hero__title text-3xl';
 ?>
 
 <section class="post-hero<?php echo $has_thumb ? ' post-hero--with-image' : ''; ?>">

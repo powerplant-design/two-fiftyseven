@@ -1,0 +1,94 @@
+// ============================================================
+// Three Cards Block
+// ============================================================
+// Three linked cards in a thirds grid. Each card has a solid
+// colour-space background, text at the top, and an image below.
+// ============================================================
+
+// ── Heading ───────────────────────────────────────────────────
+.three-cards__heading {
+	text-align: center;
+	opacity: 0;
+	transform: translateY(1.5rem);
+	transition: opacity 0.4s ease-out, transform 0.8s ease-out;
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// ── Grid ─────────────────────────────────────────────────────
+.three-cards__grid {
+	--list-indent: 0;
+}
+
+// ── Card ─────────────────────────────────────────────────────
+.three-cards__card {
+	background-color: var(--color-surface-secondary);
+	border-radius: var(--corner-radius-xl);
+	overflow: hidden;
+	opacity: 0;
+	transform: translateY(3rem);
+	transition:
+		opacity 0.4s ease-out var(--delay, 0ms),
+		transform 0.8s ease-out var(--delay, 0ms),
+		background-color var(--transition-speed) ease;
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	transition: background-color var(--transition-speed) ease;
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--color-surface-secondary) 95%, var(--color-content-primary));
+	}
+}
+
+// ── Card link — fills the full card ──────────────────────────
+.three-cards__card-link {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	// padding: var(--space-s);
+	text-decoration: none;
+	color: var(--color-content-primary);
+	block-size: 100%;
+
+	&:hover {
+		color: var(--color-content-primary);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: -2px;
+	}
+}
+
+// ── Card body — text above image ──────────────────────────────
+.three-cards__card-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	padding: 0 var(--space-m) var(--space-m) var(--space-m);
+}
+
+.three-cards__card-desc {
+	color: var(--color-content-secondary);
+}
+
+// ── Card image ────────────────────────────────────────────────
+.three-cards__card-image {
+	// border-radius: var(--corner-radius-s);
+	overflow: hidden;
+	--frame-aspect-ratio: 4 / 3;
+
+	img {
+		transition: transform var(--transition-speed) ease-out;
+	}
+}
+
+.three-cards__card-link:hover .three-cards__card-image img {
+	transform: scale(1.05);
+}

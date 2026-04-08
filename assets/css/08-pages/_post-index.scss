@@ -36,8 +36,7 @@ Description: Card grid for the posts index page (home.php).
 	display: flex;
 	flex-direction: column;
 	position: relative; // stacking context for stretched link
-	transition: transform 0.3s ease-out, box-shadow 0.3s ease, opacity 0.4s ease-out var(--delay, 0ms);
-	box-shadow: 0 0 0 color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
+	transition: transform 0.3s ease-out, background-color var(--transition-speed) ease, opacity 0.4s ease-out var(--delay, 0ms);
 	opacity: 0;
 	transform: translateY(1.5rem);
 
@@ -53,8 +52,7 @@ Description: Card grid for the posts index page (home.php).
 	}
 
 	&:hover {
-		transform: translateY(-1%);
-		box-shadow: 0 15px 25px color-mix(in srgb, var(--color-surface-unchanged) 25%, transparent);
+		background-color: color-mix(in srgb, var(--color-surface-secondary) 95%, var(--color-content-primary));
 	}
 
 	&:has(.post-index__link:focus-visible) {
@@ -67,6 +65,14 @@ Description: Card grid for the posts index page (home.php).
 
 .post-index__image {
     --frame-aspect-ratio: 16 / 9;
+
+	&:not(.post-index__image--logo) img {
+		transition: transform var(--transition-speed) ease-out;
+	}
+}
+
+.post-index__item:hover .post-index__image:not(.post-index__image--logo) img {
+	transform: scale(1.05);
 }
 
 .post-index__image--logo {

@@ -346,6 +346,21 @@ add_action( 'acf/init', function (): void {
 	] );
 
 	acf_register_block_type( [
+		'name'            => 'three-cards',
+		'title'           => __( '257 Three Cards', 'two-fiftyseven' ),
+		'description'     => __( 'Three linked cards with per-card background images and colour space settings, and an optional centred heading.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/three-cards/block.php',
+		'category'        => 'layout',
+		'icon'            => 'grid-view',
+		'keywords'        => [ 'cards', 'grid', 'links', 'spaces', 'three' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
 		'name'            => 'events-widget',
 		'title'           => __( '257 Events Widget', 'two-fiftyseven' ),
 		'description'     => __( 'Grid of upcoming event cards with optional manual selection and a “View more” CTA.', 'two-fiftyseven' ),
