@@ -18,12 +18,12 @@ $initial_query = new WP_Query( two57_get_event_query_args( 'upcoming', 1 ) );
 		<h1 class="post-index-header__title"><?php echo esc_html( ( function_exists( 'get_field' ) ? get_field( 'event_archive_heading', 'option' ) : '' ) ?: __( 'Events', 'two-fiftyseven' ) ); ?></h1>
 	</header>
 
-	<div class="event-archive" data-js="events-archive">
+	<div class="post-archive" data-js="events-archive">
 
-		<div class="event-archive__tabs-row">
-			<div class="event-archive__tabs" role="tablist" aria-label="<?php esc_attr_e( 'Event tabs', 'two-fiftyseven' ); ?>">
+		<div class="post-archive__tabs-row">
+			<div class="post-archive__tabs" role="tablist" aria-label="<?php esc_attr_e( 'Event tabs', 'two-fiftyseven' ); ?>">
 				<button
-					class="event-archive__tab text-monospace"
+					class="post-archive__tab text-monospace"
 					role="tab"
 					data-js="events-tab"
 					data-tab="upcoming"
@@ -32,7 +32,7 @@ $initial_query = new WP_Query( two57_get_event_query_args( 'upcoming', 1 ) );
 					<?php esc_html_e( 'Upcoming', 'two-fiftyseven' ); ?>
 				</button>
 				<button
-					class="event-archive__tab text-monospace"
+					class="post-archive__tab text-monospace"
 					role="tab"
 					data-js="events-tab"
 					data-tab="past"
@@ -41,10 +41,10 @@ $initial_query = new WP_Query( two57_get_event_query_args( 'upcoming', 1 ) );
 					<?php esc_html_e( 'Past', 'two-fiftyseven' ); ?>
 				</button>
 			</div>
-			<hr class="event-archive__rule">
+			<hr class="post-archive__rule">
 		</div>
 
-		<div class="event-archive__grid" id="events-grid" data-js="events-grid" role="tabpanel">
+		<div class="post-archive__grid" id="events-grid" data-js="events-grid" role="tabpanel">
 			<?php get_template_part( 'template-parts/event-card-grid', null, [
 				'query'        => $initial_query,
 				'current_page' => 1,

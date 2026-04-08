@@ -24,27 +24,27 @@ $initial_query = new WP_Query( two57_get_cpt_query_args( $post_type, '', 1 ) );
 		<h1 class="post-index-header__title"><?php echo esc_html( ( function_exists( 'get_field' ) ? get_field( 'organisation_archive_heading', 'option' ) : '' ) ?: post_type_archive_title( false ) ); ?></h1>
 	</header>
 
-	<div class="cpt-archive" data-js="cpt-archive" data-post-type="<?php echo esc_attr( $post_type ); ?>" data-taxonomy="<?php echo esc_attr( $taxonomy ); ?>">
+	<div class="post-archive" data-js="cpt-archive" data-post-type="<?php echo esc_attr( $post_type ); ?>" data-taxonomy="<?php echo esc_attr( $taxonomy ); ?>">
 
 		<?php if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) : ?>
-		<div class="cpt-archive__tabs-row">
-			<div class="cpt-archive__tabs" role="tablist" aria-label="<?php esc_attr_e( 'Filter by category', 'two-fiftyseven' ); ?>">
-				<button class="cpt-archive__tab text-monospace" role="tab" data-js="cpt-tab" data-term="" aria-selected="true">
+		<div class="post-archive__tabs-row">
+			<div class="post-archive__tabs" role="tablist" aria-label="<?php esc_attr_e( 'Filter by category', 'two-fiftyseven' ); ?>">
+				<button class="post-archive__tab text-monospace" role="tab" data-js="cpt-tab" data-term="" aria-selected="true">
 					<?php esc_html_e( 'All', 'two-fiftyseven' ); ?>
 				</button>
 				<?php foreach ( $terms as $term ) : ?>
-				<button class="cpt-archive__tab text-monospace" role="tab" data-js="cpt-tab" data-term="<?php echo esc_attr( $term->slug ); ?>" aria-selected="false">
+				<button class="post-archive__tab text-monospace" role="tab" data-js="cpt-tab" data-term="<?php echo esc_attr( $term->slug ); ?>" aria-selected="false">
 					<?php echo esc_html( $term->name ); ?>
 				</button>
 				<?php endforeach; ?>
 			</div>
-			<hr class="cpt-archive__rule">
+			<hr class="post-archive__rule">
 		</div>
 		<?php else : ?>
 			<hr>
 		<?php endif; ?>
 
-		<div class="cpt-archive__grid" id="cpt-grid" data-js="cpt-grid" role="tabpanel">
+		<div class="post-archive__grid" id="cpt-grid" data-js="cpt-grid" role="tabpanel">
 			<?php get_template_part( 'template-parts/cpt-card-grid', null, [
 				'query'        => $initial_query,
 				'post_type'    => $post_type,

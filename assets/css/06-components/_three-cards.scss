@@ -1,3 +1,5 @@
+@use '../02-tokens/breakpoints' as bp;
+
 // ============================================================
 // Three Cards Block
 // ============================================================
@@ -25,8 +27,10 @@
 
 // ── Card ─────────────────────────────────────────────────────
 .three-cards__card {
-	background-color: var(--color-surface-secondary);
+	// background-color: var(--color-surface-secondary);
 	border-radius: var(--corner-radius-xl);
+	backdrop-filter: blur(4px);
+
 	overflow: hidden;
 	opacity: 0;
 	transform: translateY(3rem);
@@ -39,30 +43,32 @@
 		opacity: 1;
 		transform: translateY(0);
 	}
-	transition: background-color var(--transition-speed) ease;
 
-	&:hover {
-		background-color: color-mix(in srgb, var(--color-surface-secondary) 95%, var(--color-content-primary));
-	}
 }
 
 // ── Card link — fills the full card ──────────────────────────
-.three-cards__card-link {
+.three-cards__card-link {		
+	border-radius: var(--corner-radius-xl);
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-xs);
-	// padding: var(--space-s);
+	padding: var(--space-xs);
 	text-decoration: none;
 	color: var(--color-content-primary);
 	block-size: 100%;
+	transition:
+		background-color var(--transition-speed) ease;
 
 	&:hover {
-		color: var(--color-content-primary);
+		color: var(--color-content-secondary);
+		background-color: var(--color-surface-secondary);
 	}
 
 	&:focus-visible {
+		background-color: var(--color-surface-secondary);
 		outline: 2px solid var(--color-border-primary);
 		outline-offset: -2px;
+
 	}
 }
 
@@ -71,7 +77,8 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-xs);
-	padding: 0 var(--space-m) var(--space-m) var(--space-m);
+	padding: 0 var(--space-xs) var(--space-s);
+
 }
 
 .three-cards__card-desc {
@@ -80,7 +87,7 @@
 
 // ── Card image ────────────────────────────────────────────────
 .three-cards__card-image {
-	// border-radius: var(--corner-radius-s);
+	border-radius: var(--corner-radius-m);
 	overflow: hidden;
 	--frame-aspect-ratio: 4 / 3;
 
@@ -91,4 +98,10 @@
 
 .three-cards__card-link:hover .three-cards__card-image img {
 	transform: scale(1.05);
+}
+
+@media (max-width: #{bp.$bp-sm}) {
+	.three-cards__card-link {
+		background-color: var(--color-surface-secondary);
+	}
 }

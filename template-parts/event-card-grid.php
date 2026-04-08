@@ -15,7 +15,7 @@ $current_page = (int) ( $args['current_page'] ?? 1 );
 $total_pages  = (int) ( $args['total_pages'] ?? 1 );
 
 if ( ! $query instanceof WP_Query || ! $query->have_posts() ) : ?>
-	<p class="event-archive__empty text-monospace"><?php esc_html_e( 'No events found.', 'two-fiftyseven' ); ?></p>
+	<p class="post-archive__empty text-monospace"><?php esc_html_e( 'No events found.', 'two-fiftyseven' ); ?></p>
 <?php return; endif; ?>
 
 <ul class="event-cards | grid" data-grid-layout="halves" role="list">
@@ -34,7 +34,7 @@ if ( ! $query instanceof WP_Query || ! $query->have_posts() ) : ?>
 </ul>
 
 <?php if ( $total_pages > 1 ) : ?>
-<nav class="event-archive__pagination | repel" aria-label="<?php esc_attr_e( 'Events pagination', 'two-fiftyseven' ); ?>">
+<nav class="post-archive__pagination | repel" aria-label="<?php esc_attr_e( 'Events pagination', 'two-fiftyseven' ); ?>">
 
 	<?php if ( $current_page > 1 ) : ?>
 		<button class="btn" data-type="secondary" data-js="events-pager" data-page="<?php echo esc_attr( $current_page - 1 ); ?>">
@@ -44,7 +44,7 @@ if ( ! $query instanceof WP_Query || ! $query->have_posts() ) : ?>
 		<span></span>
 	<?php endif; ?>
 
-	<span class="event-archive__page-count text-monospace text-s">
+	<span class="post-archive__page-count text-monospace text-s">
 		<?php printf(
 			/* translators: 1: current page, 2: total pages */
 			esc_html__( 'Page %1$d of %2$d', 'two-fiftyseven' ),

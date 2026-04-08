@@ -1,26 +1,30 @@
 // ============================================================
-// CPT Archive Page
+// Post Archive — shared tab + grid styles
 // ============================================================
-// Category tab filtering for People, Organisations, Media, and Posts archives.
-// Mirrors the structure of _event-archive.scss.
+// Used by: archive-event.php, archive-person.php,
+//          archive-organisation.php, archive-media_item.php,
+//          home.php (posts index).
 // ============================================================
 
 @use '../02-tokens/breakpoints' as bp;
 
-// ── Tabs row ─────────────────────────────────────────────
+// ── Wrapper ───────────────────────────────────────────────
 
-.cpt-archive {
+.post-archive {
 	display: flex;
 	flex-direction: column;
 	padding-block-end: var(--space-3xl);
 }
 
-.cpt-archive__tabs-row {
+// ── Tabs row ─────────────────────────────────────────────
+
+.post-archive__tabs-row {
 	display: flex;
 	flex-direction: column;
 }
 
-.cpt-archive__tabs {
+.post-archive__tabs {
+	padding-inline-start: var(--space-m);
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -28,8 +32,9 @@
 	align-self: flex-start;
 }
 
-// Tab buttons — same pattern as .event-archive__tab
-.cpt-archive__tab {
+// ── Tab buttons ───────────────────────────────────────────
+
+.post-archive__tab {
 	appearance: none;
 	cursor: pointer;
 	display: inline-flex;
@@ -40,8 +45,8 @@
 	background-color: var(--color-surface-secondary);
 	border: var(--border-tertiary);
 	border-block-end: none;
-	border-start-start-radius: var(--space-s);
-	border-start-end-radius: var(--space-s);
+	border-start-start-radius: var(--corner-radius-l);
+	border-start-end-radius: var(--corner-radius-l);
 	border-end-start-radius: 0;
 	border-end-end-radius: 0;
 	letter-spacing: 0.06em;
@@ -53,6 +58,10 @@
 	z-index: 1;
 	// Overlap the hr below by 1px so selected tab visually bridges onto the rule.
 	margin-block-end: -1px;
+
+	&[aria-selected='false'] {
+		border-block-end: 1px solid var(--color-border-secondary);
+	}
 
 	&:hover {
 		background-color: var(--color-surface-primary);
@@ -67,7 +76,7 @@
 	}
 }
 
-.cpt-archive__rule {
+.post-archive__rule {
 	border: none;
 	border-block-start: var(--border-tertiary);
 	margin: 0;
@@ -75,11 +84,11 @@
 
 // ── Grid ─────────────────────────────────────────────────
 
-.cpt-archive__grid {
+.post-archive__grid {
 	padding: var(--space-m);
 	background-color: var(--color-surface-primary);
-	border-end-start-radius: var(--space-xl);
-	border-end-end-radius: var(--space-xl);
+	border-end-start-radius: var(--corner-radius-3xl);
+	border-end-end-radius: var(--corner-radius-3xl);
 
 	// Keep items in their tracks when fewer than a full row exist.
 	.grid {
@@ -100,7 +109,7 @@
 
 // ── Empty state ───────────────────────────────────────────
 
-.cpt-archive__empty {
+.post-archive__empty {
 	padding-block: var(--space-2xl);
 	text-align: center;
 	color: var(--color-content-secondary);
@@ -108,7 +117,7 @@
 
 // ── Pagination ────────────────────────────────────────────
 
-.cpt-archive__pagination {
+.post-archive__pagination {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
@@ -121,6 +130,6 @@
 	}
 }
 
-.cpt-archive__page-count {
+.post-archive__page-count {
 	color: var(--color-content-secondary);
 }

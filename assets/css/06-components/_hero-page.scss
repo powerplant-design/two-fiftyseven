@@ -1,3 +1,4 @@
+@use '../02-tokens/breakpoints' as bp;
 // ============================================================
 // Hero Page Block
 // ============================================================
@@ -38,23 +39,29 @@
 		padding-inline: var(--global-padding-inline, 1rem);
         justify-content: center;
 		flex: 1;
-		gap: var(--space-xl);
+		gap: var(--space-s);
+		width: 100%;
+
+		@media (max-width: #{bp.$bp-sm}) {
+			width: unset;		
+		}
+
 	}
 
 	// ── Headline ──────────────────────────────────────────────
 	// No text styles set here — inherits from h1 element styles.
 	&__headline {
-		text-align: center;
+		// text-align: center;
 		color: var(--color-content-unchanged);
 		text-wrap: balance;
 	}
 
 	// ── Subtitle ──────────────────────────────────────────────
 	&__subtitle {
-		text-align: center;
+		// text-align: center;
 		color: var(--color-content-unchanged);
-		max-inline-size: 36ch;
-		margin-inline: auto;
+		max-inline-size: 38ch;
+		// margin-inline: auto;
 	}
 
 	// ── Marquee wrapper (label + strip) ───────────────────────

@@ -18,7 +18,7 @@ $current_page = (int) ( $args['current_page'] ?? 1 );
 $total_pages  = (int) ( $args['total_pages'] ?? 1 );
 
 if ( ! $query instanceof WP_Query || ! $query->have_posts() ) : ?>
-	<p class="cpt-archive__empty text-monospace"><?php esc_html_e( 'Nothing found.', 'two-fiftyseven' ); ?></p>
+	<p class="post-archive__empty text-monospace"><?php esc_html_e( 'Nothing found.', 'two-fiftyseven' ); ?></p>
 <?php return; endif;
 
 $grid_layout = in_array( $post_type, [ 'person', 'organisation', 'media_item' ], true ) ? 'halves' : 'thirds';
@@ -108,7 +108,7 @@ $taxonomy_map = [
 </div>
 
 <?php if ( $total_pages > 1 ) : ?>
-<nav class="cpt-archive__pagination | repel" aria-label="<?php esc_attr_e( 'Archive pagination', 'two-fiftyseven' ); ?>">
+<nav class="post-archive__pagination | repel" aria-label="<?php esc_attr_e( 'Archive pagination', 'two-fiftyseven' ); ?>">
 
 	<?php if ( $current_page > 1 ) : ?>
 		<button class="btn" data-type="secondary" data-js="cpt-pager" data-page="<?php echo esc_attr( $current_page - 1 ); ?>">
@@ -118,7 +118,7 @@ $taxonomy_map = [
 		<span></span>
 	<?php endif; ?>
 
-	<span class="cpt-archive__page-count text-monospace text-s">
+	<span class="post-archive__page-count text-monospace text-s">
 		<?php printf(
 			/* translators: 1: current page, 2: total pages */
 			esc_html__( 'Page %1$d of %2$d', 'two-fiftyseven' ),

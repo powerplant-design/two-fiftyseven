@@ -24,7 +24,7 @@
 		inset-inline: 0;
 		top: -2rem; // extend up to cover gap above header
 		bottom: -1rem; // extend down so the fade has room
-		background: linear-gradient(to bottom, var(--color-surface-unchanged) 0%, transparent 100%);
+		// background: linear-gradient(to bottom, var(--color-surface-unchanged) 0%, transparent 100%);
 		backdrop-filter: blur(18px);
 		-webkit-backdrop-filter: blur(18px);
 		mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
@@ -41,7 +41,7 @@
 
 	.site-logo {
 		color: var(--color-content-unchanged);
-		transition: none; // prevent _links.scss transition layer from overriding
+		transition: color 0.3s ease;
 
 		svg {
 			display: block;
@@ -166,6 +166,13 @@
 
 		.nav-menu a,
 		.nav-menu button {
+			color: var(--color-content-primary);
+		}
+	}
+
+	// On hero pages, once scrolled past the hero, switch to dark logo colours.
+	&--past-hero {
+		.site-logo {
 			color: var(--color-content-primary);
 		}
 	}

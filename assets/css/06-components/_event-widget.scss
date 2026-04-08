@@ -6,11 +6,6 @@
 	padding-block: var(--space-2xl);
 }
 
-.events-widget__inner {
-	// Uses .stack layout primitive for vertical rhythm.
-	// Padding comes from the parent .block or .wrapper class if present.
-}
-
 .events-widget__heading {
 	text-align: center;
 	opacity: 0;

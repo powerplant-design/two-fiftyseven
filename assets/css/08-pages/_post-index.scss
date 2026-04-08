@@ -15,30 +15,18 @@ Description: Card grid for the posts index page (home.php).
 
 // ── Card grid ────────────────────────────────────────────────────
 
-// .post-index {
-// 	display: grid;
-// 	grid-template-columns: repeat(3, 1fr);
-// 	gap: var(--space-l);
-
-// 	@media (max-width: #{bp.$bp-md}) {
-// 		grid-template-columns: repeat(2, 1fr);
-// 	}
-
-// 	@media (max-width: #{bp.$bp-sm}) {
-// 		grid-template-columns: 1fr;
-// 	}
-// }
-
 .post-index__item {
 	background-color: var(--color-surface-secondary);
 	border-radius: var(--corner-radius-xl);
 	overflow: hidden;
+	padding: var(--space-xs);
 	display: flex;
 	flex-direction: column;
 	position: relative; // stacking context for stretched link
 	transition: transform 0.3s ease-out, background-color var(--transition-speed) ease, opacity 0.4s ease-out var(--delay, 0ms);
 	opacity: 0;
 	transform: translateY(1.5rem);
+	gap: var(--space-s);
 
 	&.is-visible {
 		opacity: 1;
@@ -64,6 +52,7 @@ Description: Card grid for the posts index page (home.php).
 // ── Featured image ───────────────────────────────────────────────
 
 .post-index__image {
+	border-radius: var(--corner-radius-m);
     --frame-aspect-ratio: 16 / 9;
 
 	&:not(.post-index__image--logo) img {
@@ -148,7 +137,7 @@ Description: Card grid for the posts index page (home.php).
 
 .post-index__body {
     --block-gap: var(--space-xs);
-	padding: var(--space-m) var(--space-xl) var(--space-l) var(--space-m);
+	padding: var(--space-xs) var(--space-s) var(--space-xs) var(--space-xs);
 }
 
 // ── Badge cluster ────────────────────────────────────────────────

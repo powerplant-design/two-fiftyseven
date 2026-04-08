@@ -36,19 +36,18 @@ $has_thumb     = has_post_thumbnail( $post_id );
 				<span class="event-card__badge text-monospace"><?php echo esc_html( $badge ); ?></span>
 			<?php endif; ?>
 
-			<!-- <?php if ( $location_type === 'offsite' && $location_name ) : ?>
-				<span class="event-card__location text-monospace text-s"><?php echo esc_html( $location_name ); ?></span>
-			<?php endif; ?> -->
+            <div class="event-card__copy">
 
-			<?php if ( $title ) :
+                <?php if ( $title ) :
 				$title_size = mb_strlen( $title ) > 34 ? 'text-l' : 'text-xl';
-			?>
+                ?>
 				<h2 class="event-card__title | <?php echo esc_attr( $title_size ); ?> text-balance line-clamp-2"><?php echo esc_html( $title ); ?></h2>
-			<?php endif; ?>
-
-			<?php if ( $excerpt ) : ?>
-				<p class="event-card__desc | text-m line-clamp-3"><?php echo esc_html( $excerpt ); ?></p>
-			<?php endif; ?>
+                <?php endif; ?>
+                
+                <?php if ( $excerpt ) : ?>
+                    <p class="event-card__desc | text-m line-clamp-3"><?php echo esc_html( $excerpt ); ?></p>
+                    <?php endif; ?>
+            </div>
 
 		</div>
 
