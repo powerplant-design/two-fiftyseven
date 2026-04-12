@@ -65,7 +65,7 @@ With a featured image:    image on the left (2/5), title on the right (3/5).
 }
 
 .post-hero__image {
-	flex: 0 0 30%;
+	flex: 0 0 40%;
 
 	img {
 		display: block;
@@ -76,14 +76,19 @@ With a featured image:    image on the left (2/5), title on the right (3/5).
 		border-radius: var(--corner-radius-m);
 	}
 
-	&--portrait img {
-		aspect-ratio: 210 / 297; // A4 portrait
+	&--portrait {
+		flex: 0 0 30%;
+
+		img {
+			aspect-ratio: 210 / 297; // A4 portrait
+		}
 	}
 }
 
 .post-hero__title,
 .post-hero__heading-group {
 	flex: 1;
+	text-wrap: balance;
 }
 
 /* ===================================================================
