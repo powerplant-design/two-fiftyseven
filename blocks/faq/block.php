@@ -50,7 +50,7 @@ $id_prefix = 'faq-' . sanitize_html_class( $block['id'] ?? uniqid( 'faq-', true 
 									aria-expanded="false"
 									aria-controls="<?php echo esc_attr( $answer_id ); ?>"
 								>
-									<span class="faq__question | text-l font-bold"><?php echo esc_html( $question ); ?></span>
+									<span class="faq__question | text-m-l font-bold"><?php echo esc_html( $question ); ?></span>
 									<span class="faq__icon" aria-hidden="true"></span>
 								</button>
 							</h3>
@@ -62,7 +62,7 @@ $id_prefix = 'faq-' . sanitize_html_class( $block['id'] ?? uniqid( 'faq-', true 
 								role="region"
 							>
 								<div class="faq__answer-inner">
-									<div class="faq__answer | prose text-l">
+									<div class="faq__answer | prose text-m-l">
 										<?php echo wp_kses_post( $answer ); ?>
 
 										<?php if ( $link_url ) : ?>

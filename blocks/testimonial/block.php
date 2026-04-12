@@ -11,7 +11,9 @@
  *   testimonial_role         — person role / title (text)
  *   testimonial_organisation — organisation name (text)
  *   testimonial_image        — decorative background image (array)
- *   testimonial_colour_space — colour palette override; null = inherit from page (select, allow_null)
+ *   testimonial_colour_space        — colour palette override; null = inherit from page (select, allow_null)
+ *   testimonial_person_post         — optional Person post to link the name to (post ID)
+ *   testimonial_organisation_post   — optional Organisation post to link the org name to (post ID)
  *
  * @var array  $block      Block settings and attributes from ACF.
  * @var string $content    Rendered inner blocks HTML (unused).
@@ -19,12 +21,16 @@
  * @var int    $post_id    The current post/page ID.
  */
 
-$quote                 = get_field( 'testimonial_quote' );
-$name                  = get_field( 'testimonial_name' );
-$role                  = get_field( 'testimonial_role' );
-$organisation          = get_field( 'testimonial_organisation' );
-$image                 = get_field( 'testimonial_image' );
-$colour_space_override = get_field( 'testimonial_colour_space' ) ?: null;
+$quote                    = get_field( 'testimonial_quote' );
+$name                     = get_field( 'testimonial_name' );
+$role                     = get_field( 'testimonial_role' );
+$organisation             = get_field( 'testimonial_organisation' );
+$image                    = get_field( 'testimonial_image' );
+$colour_space_override    = get_field( 'testimonial_colour_space' ) ?: null;
+$person_post_id           = get_field( 'testimonial_person_post' );
+$organisation_post_id     = get_field( 'testimonial_organisation_post' );
+$person_url               = $person_post_id ? get_permalink( (int) $person_post_id ) : null;
+$organisation_url         = $organisation_post_id ? get_permalink( (int) $organisation_post_id ) : null;
 
 // Sanitise against allowed spaces.
 $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
@@ -58,7 +64,7 @@ foreach ( $attrs as $key => $value ) {
 	$inline_svg = ! empty( $image['id'] ) ? two_fiftyseven_get_inline_svg( (int) $image['id'] ) : '';
 	if ( $inline_svg || ! empty( $image['url'] ) ) :
 	?>
-		<div class="testimonial__media" aria-hidden="true">
+		<div class="testimonial__media" aria-hidden="true" data-scroll data-scroll-speed="-0.45">
 			<?php if ( $inline_svg ) : ?>
 				<?php echo $inline_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized in two_fiftyseven_get_inline_svg ?>
 			<?php else : ?>
@@ -72,7 +78,7 @@ foreach ( $attrs as $key => $value ) {
 		<?php if ( $quote ) :
 			$quote_class = mb_strlen( wp_strip_all_tags( $quote ) ) < 33 ? 'testimonial__quote text-4xl text-wrap-balance' : 'testimonial__quote text-3xl text-wrap-balance';
 		?>
-			<blockquote class="<?php echo esc_attr( $quote_class ); ?>" data-scroll style="--delay: 0ms">
+			<blockquote class="<?php echo esc_attr( $quote_class ); ?>" data-scroll data-scroll-repeat style="--delay: 0ms">
 				<?php echo wp_kses( $quote, [ 'br' => [], 'em' => [], 'strong' => [] ] ); ?>
 			</blockquote>
 		<?php elseif ( $is_preview ) : ?>
@@ -80,17 +86,29 @@ foreach ( $attrs as $key => $value ) {
 		<?php endif; ?>
 
 		<?php if ( $name || $role || $organisation ) : ?>
-			<p class="testimonial__attribution text-monospace text-s" data-scroll style="--delay: 150ms">
+			<p class="testimonial__attribution text-monospace text-s" data-scroll data-scroll-repeat>
 				<?php if ( $name ) : ?>
-					<span class="testimonial__name"><?php echo esc_html( $name ); ?></span>
+					<span class="testimonial__name" style="--delay: 150ms">
+						<?php if ( $person_url ) : ?>
+							<a href="<?php echo esc_url( $person_url ); ?>"><?php echo esc_html( $name ); ?></a>
+						<?php else : ?>
+							<?php echo esc_html( $name ); ?>
+						<?php endif; ?>
+					</span>
 				<?php endif; ?>
 				<?php if ( $role ) : ?>
-					<span class="testimonial__sep" aria-hidden="true"> / </span>
-					<span class="testimonial__role"><?php echo esc_html( $role ); ?></span>
+					<span class="testimonial__sep" aria-hidden="true" style="--delay: 190ms"> / </span>
+					<span class="testimonial__role" style="--delay: 230ms"><?php echo esc_html( $role ); ?></span>
 				<?php endif; ?>
 				<?php if ( $organisation ) : ?>
-					<span class="testimonial__sep" aria-hidden="true"> / </span>
-					<span class="testimonial__org"><?php echo esc_html( $organisation ); ?></span>
+					<span class="testimonial__sep" aria-hidden="true" style="--delay: 270ms"> / </span>
+					<span class="testimonial__org" style="--delay: 310ms">
+						<?php if ( $organisation_url ) : ?>
+							<a href="<?php echo esc_url( $organisation_url ); ?>"><?php echo esc_html( $organisation ); ?></a>
+						<?php else : ?>
+							<?php echo esc_html( $organisation ); ?>
+						<?php endif; ?>
+					</span>
 				<?php endif; ?>
 			</p>
 		<?php endif; ?>

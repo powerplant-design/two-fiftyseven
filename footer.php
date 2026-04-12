@@ -16,12 +16,16 @@
 			}
 			?>
 		</a>
-		<p>&copy; <?php echo esc_html( date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?></p>
+		<div class="site-footer__links repel">
+			<p>&copy; <?php echo esc_html( date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?></p>
+			<a href="/privacy-policy/" >Privacy Policy</a>
+			<a href="https://powerplant.design" target="_blank" rel="noopener">Site 💚 Power Plant</a>
+		</div>
 	</div>
 
 </footer>
 </div><!-- /#swup -->
 
-<?php wp_footer(); ?>
+<?php wp_footer(); ?> 
 </body>
 </html>

@@ -48,7 +48,7 @@ if ( $mode === 'manual' ) {
 	<div class="events-widget__inner | stack">
 
 		<?php if ( $heading ) : ?>
-			<h2 class="events-widget__heading | text-2xl" data-scroll><?php echo esc_html( $heading ); ?></h2>
+			<h2 class="events-widget__heading | text-2xl" data-scroll data-scroll-repeat><?php echo esc_html( $heading ); ?></h2>
 		<?php endif; ?>
 
 		<?php if ( $items ) : ?>
@@ -77,7 +77,7 @@ if ( $mode === 'manual' ) {
 
 		<?php endif; ?>
 
-		<div class="events-widget__cta" data-scroll>
+		<div class="events-widget__cta" data-scroll data-scroll-repeat>
 			<a class="btn" data-type="secondary" href="<?php echo esc_url( home_url( '/events' ) ); ?>">
 				<?php esc_html_e( 'View more events', 'two-fiftyseven' ); ?>
 			</a>

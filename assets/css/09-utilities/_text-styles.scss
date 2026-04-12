@@ -52,6 +52,16 @@ Text Styles
 	letter-spacing: var(--text-l-kerning);
 }
 
+.text-m-l {
+	font-family: var(--text-m-l-family);
+	font-size: var(--text-m-l-size);
+	font-weight: var(--text-m-l-weight);
+	font-feature-settings: var(--text-m-l-features);
+	line-height: var(--text-m-l-leading);
+	text-transform: var(--text-m-l-transform);
+	letter-spacing: var(--text-m-l-kerning);
+}
+
 .text-m {
 	font-family: var(--text-m-family);
 	font-size: var(--text-m-size);

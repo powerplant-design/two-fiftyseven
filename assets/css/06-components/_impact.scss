@@ -1,0 +1,143 @@
+@use '../02-tokens/breakpoints' as bp;
+
+/* ===================================================================
+Impact Block
+Description: Full-bleed stats display. Large number + label pairs that
+             are scaled by JS to fill the container width. The longest
+             row determines the font size used for all rows.
+
+Markup:
+  <section class="impact" data-block="full" data-js="impact">
+    <div class="impact__media">…background SVG…</div>
+    <p class="impact__heading">Impact 2025</p>
+    <ul class="impact__rows" data-js="impact-rows">
+      <li class="impact__row" data-js="impact-row" data-scroll style="--delay: Xms">
+        <span class="impact__number">218</span>
+        <span class="impact__label">Events</span>
+      </li>
+    </ul>
+    <div class="impact__cta">…button…</div>
+  </section>
+=================================================================== */
+
+.impact {
+	position: relative;
+	// overflow: clip;
+	padding-block: var(--space-6xl);
+	padding-inline: var(--space-s-xl);
+		@media (max-width: #{bp.$bp-sm}) {
+			overflow: clip;
+		}
+}
+
+/* Decorative background — same pattern as .testimonial__media.
+   Extends 40svh above and below the section to absorb the parallax
+   translation applied by data-scroll-speed — without this extra space
+   the SVG gets clipped by overflow:clip before it enters view. */
+.impact__media {
+	position: absolute;
+	inset: -40svh 0;
+	pointer-events: none;
+	color: var(--color-content-secondary-inverse);
+
+	@media (max-width: #{bp.$bp-sm}) {
+		inset: -50svw;
+		rotate: 90deg;
+		transform: none !important; /* disable Locomotive parallax — parent has overflow:clip */
+	}
+
+	svg,
+	img {
+		block-size: 100%;
+		inline-size: 100%;
+		object-fit: cover;
+	}
+}
+
+/* Small label above the stats */
+.impact__heading {
+	position: relative;
+	margin-block-end: var(--space-s);
+	font-weight: var(--font-body-weight-medium);
+	opacity: 0;
+	transform: translateY(1.5rem);
+	transition:
+		opacity 0.4s ease-out var(--delay, 0ms),
+		transform 0.8s ease-out var(--delay, 0ms);
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Stat rows list */
+.impact__rows {
+	position: relative;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+
+	/* Fallback size — JS overrides this with a calculated value */
+	font-size: clamp(3rem, 10vw, 8rem);
+	line-height: 1;
+}
+
+/* Individual stat row */
+.impact__row {
+	display: flex;
+	align-items: baseline;
+	gap: 0.25em;
+	white-space: nowrap;
+
+	@media (max-width: #{bp.$bp-sm}) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0;
+	}
+}
+
+.impact__number,
+.impact__label {
+	font-family: var(--font-body-family);
+	font-weight: 700;
+	line-height: 0.9;
+	text-transform: uppercase;
+	opacity: 0;
+	transform: translateY(2rem);
+	transition:
+		opacity 0.4s ease-out,
+		transform 0.8s ease-out;
+}
+
+.impact__number {
+	transition-delay: var(--delay, 0ms);
+}
+
+.impact__label {
+	transition-delay: calc(var(--delay, 0ms) + 80ms);
+}
+
+.impact__row.is-inview .impact__number,
+.impact__row.is-inview .impact__label {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+/* CTA button below the stats */
+.impact__cta {
+	display: flex;
+	justify-content: center;
+	position: relative;
+	padding-block-start: var(--space-xl);
+	opacity: 0;
+	transform: translateY(1.5rem);
+	transition:
+		opacity 0.4s ease-out var(--delay, 0ms),
+		transform 0.8s ease-out var(--delay, 0ms);
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

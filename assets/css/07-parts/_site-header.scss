@@ -23,7 +23,7 @@
 		position: absolute;
 		inset-inline: 0;
 		top: -2rem; // extend up to cover gap above header
-		bottom: -1rem; // extend down so the fade has room
+		bottom: -0.5rem; // extend down so the fade has room
 		// background: linear-gradient(to bottom, var(--color-surface-unchanged) 0%, transparent 100%);
 		backdrop-filter: blur(18px);
 		-webkit-backdrop-filter: blur(18px);

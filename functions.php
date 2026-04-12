@@ -375,7 +375,20 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
-} );
+	acf_register_block_type( [
+		'name'            => 'impact',
+		'title'           => __( '257 Impact', 'two-fiftyseven' ),
+		'description'     => __( 'Full-bleed impact stats block. Each item is a number + label pair that scales to fill the screen width.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/impact/block.php',
+		'category'        => 'layout',
+		'icon'            => 'chart-bar',
+		'keywords'        => [ 'impact', 'stats', 'numbers', 'data' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );} );
 
 
 /**

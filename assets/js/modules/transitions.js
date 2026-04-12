@@ -24,6 +24,7 @@ import { initStackedCards, destroyStackedCards } from './stacked-cards.js';
 import { initFaq, destroyFaq } from './faq.js';
 import { initEventsArchive, destroyEventsArchive } from './events-archive.js';
 import { initCptArchive, destroyCptArchive } from './cpt-archive.js';
+import { initImpact, destroyImpact } from './impact.js';
 
 function resetScrollRevealState() {
 	document.querySelectorAll( '[data-scroll].is-inview' ).forEach( ( el ) => {
@@ -54,6 +55,7 @@ export function initTransitions() {
 		destroyFooter();
 		destroyEventsArchive();
 		destroyCptArchive();
+		destroyImpact();
 		destroyScroll();
 	} );
 
@@ -92,6 +94,7 @@ export function initTransitions() {
 		initFaq();
 		initEventsArchive();
 		initCptArchive();
+		initImpact();
 		syncHeader();
 	} );
 

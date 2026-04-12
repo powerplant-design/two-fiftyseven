@@ -27,7 +27,7 @@ $location_name = function_exists( 'get_field' ) ? (string) ( get_field( 'event_l
 $has_thumb     = has_post_thumbnail( $post_id );
 ?>
 
-<article class="event-card" <?php if ( $scroll_reveal ) : ?>data-scroll<?php endif; ?> style="--delay: <?php echo esc_attr( $delay_ms ); ?>ms">
+<article class="event-card" <?php if ( $scroll_reveal ) : ?>data-scroll data-scroll-repeat<?php endif; ?> style="--delay: <?php echo esc_attr( $delay_ms ); ?>ms">
 	<a class="event-card__link" href="<?php echo esc_url( $permalink ); ?>">
 
 		<div class="event-card__body | stack">

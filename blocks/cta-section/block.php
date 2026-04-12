@@ -88,11 +88,11 @@ foreach ( $attrs as $key => $value ) {
 
 		<div class="cta-section__content stack">
 			<?php if ( $label ) : ?>
-				<p class="cta-section__label | text-monospace text-s" data-scroll style="--delay: 0ms"><?php echo esc_html( $label ); ?></p>
+				<p class="cta-section__label | text-monospace text-s" data-scroll data-scroll-repeat style="--delay: 0ms"><?php echo esc_html( $label ); ?></p>
 			<?php endif; ?>
 
 			<?php if ( $heading ) : ?>
-				<h2 class="cta-section__heading | text-3xl text-balance" data-scroll style="--delay: <?php echo esc_attr( $heading_delay ); ?>"><?php echo esc_html( $heading ); ?></h2>
+				<h2 class="cta-section__heading | text-3xl text-balance" data-scroll data-scroll-repeat style="--delay: <?php echo esc_attr( $heading_delay ); ?>"><?php echo esc_html( $heading ); ?></h2>
 			<?php elseif ( $is_preview ) : ?>
 				<p class="cta-section__preview-hint">Add a CTA heading in the block settings.</p>
 			<?php endif; ?>
@@ -102,6 +102,7 @@ foreach ( $attrs as $key => $value ) {
 					class="btn"
 					data-type="primary"
 					data-scroll
+					data-scroll-repeat
 					style="--delay: <?php echo esc_attr( $button_delay ); ?>"
 					href="<?php echo esc_url( $link_url ); ?>"
 					<?php if ( $link_tgt ) : ?>target="<?php echo esc_attr( $link_tgt ); ?>" rel="noopener noreferrer"<?php endif; ?>

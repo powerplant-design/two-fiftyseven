@@ -1,3 +1,4 @@
+@use '../02-tokens/breakpoints' as bp;
 /* Site footer */
 
 .site-footer {
@@ -5,11 +6,15 @@
 	inset-inline: 0;
 	bottom: 0;
 	z-index: 1;
-	padding-block: var(--space-2xl, 4rem);
-	// border-block-start: var(--border);
+	padding-block-start: var(--space-2xl);
+	padding-block-end: var(--space-l);
 	font-size: var(--text-s-size, 0.875rem);
 	color: var(--color-content-unchanged);
     background-color: var(--color-surface-unchanged);
+	
+	a {
+		color: var(--color-content-unchanged);
+	}
 
 	&__logo {
 		display: block;
@@ -22,6 +27,12 @@
 			display: block;
 			width: 100%;
 			height: auto;
+		}
+	}
+
+	@media (max-width: #{bp.$bp-sm}) {
+		.site-footer__links {
+			--repel-horizontal-alignment: center;
 		}
 	}
 }

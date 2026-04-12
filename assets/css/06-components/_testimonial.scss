@@ -1,14 +1,15 @@
 @use '../02-tokens/breakpoints' as bp;
+@use 'button';
 
 .testimonial {
 	position: relative;
 	padding-block: var(--space-xl-3xl);
     min-height: 80svh;
-	overflow: clip;
     display: flex;
     align-items: center;
     
     @media (max-width: #{bp.$bp-sm}) {
+		overflow: clip;
         // transform: rotate(90deg);
         min-height: 50vw;
     }
@@ -18,13 +19,14 @@
    Set color here to control the SVG colour via the active colour space token. */
 .testimonial__media {
 	position: absolute;
-	inset: 1svw 1svh;
+	inset: -40svh 1svw;
 
 	pointer-events: none;
 	color: var(--color-content-secondary-inverse);
     
     @media (max-width: #{bp.$bp-sm}) {
         inset: -25svw;
+        transform: none !important; /* disable Locomotive parallax — parent has overflow:clip */
 	}
     
 	svg {
@@ -64,16 +66,6 @@
 	gap: var(--space-2xs-2xl);
 	display: flex;
 	justify-content: center;
-	opacity: 0;
-	transform: translateY(3rem);
-	transition:
-		opacity 0.4s ease-out var(--delay),
-		transform 0.8s ease-out var(--delay);
-
-	&.is-inview {
-		opacity: 1;
-		transform: translateY(0);
-	}
 
 	@media (max-width: #{bp.$bp-sm}) {
 		flex-direction: column;
@@ -86,4 +78,35 @@
 	@media (max-width: #{bp.$bp-sm}) {
 		display: none;
     }
+}
+
+// Staggered reveal on individual attribution spans.
+.testimonial__name,
+.testimonial__role,
+.testimonial__org,
+.testimonial__sep {
+	opacity: 0;
+	transform: translateY(1rem);
+	transition:
+		opacity 0.4s ease-out var(--delay, 150ms),
+		transform 0.6s ease-out var(--delay, 150ms);
+}
+
+.testimonial__attribution.is-inview {
+	.testimonial__name,
+	.testimonial__role,
+	.testimonial__org,
+	.testimonial__sep {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.testimonial__name a,
+.testimonial__org a {
+	@include button.btn-text;
+	font-family: inherit;
+	font-size: inherit;
+	letter-spacing: inherit;
+	text-transform: inherit;
 }

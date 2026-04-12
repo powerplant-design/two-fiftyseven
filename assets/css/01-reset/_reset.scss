@@ -124,6 +124,8 @@ Make 'body' at least as tall as the viewport height (requires 'html { block-size
 
 body {
 	min-block-size: 100svb;
+	overflow-x: hidden;
+	// margin-inline-end: -1px;
 }
 
 /*

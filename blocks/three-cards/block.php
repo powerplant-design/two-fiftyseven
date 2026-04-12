@@ -31,7 +31,7 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 	<div class="three-cards__inner | stack">
 
 		<?php if ( $heading ) : ?>
-			<h2 class="three-cards__heading | text-2xl" data-scroll><?php echo esc_html( $heading ); ?></h2>
+			<h2 class="three-cards__heading | text-2xl" data-scroll data-scroll-repeat><?php echo esc_html( $heading ); ?></h2>
 		<?php elseif ( $is_preview ) : ?>
 			<p style="opacity:0.5;text-align:center;padding:1rem;">Add a heading in the block settings →</p>
 		<?php endif; ?>
@@ -55,6 +55,7 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 						class="three-cards__card"
 						data-color-space="<?php echo esc_attr( $space ); ?>"
 						data-scroll
+						data-scroll-repeat
 						style="--delay: <?php echo $delay_ms; ?>ms"
 					>
 						<a

@@ -27,7 +27,6 @@ export function initScroll() {
 		// must travel that far above the viewport's bottom edge before triggering.
 		// e.g. '-25% 0px' → trigger fires when element's top reaches 75% from top (25% from bottom).
 		triggerRootMargin: '0px 0px -20% 0px',
-		repeat: true,  // Remove/add is-inview on exit/enter so animations can replay
 	} );
 }
 

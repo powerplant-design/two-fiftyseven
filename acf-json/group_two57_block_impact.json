@@ -1,0 +1,115 @@
+{
+	"key": "group_two57_block_impact",
+	"title": "Impact Block",
+	"fields": [
+		{
+			"key": "field_two57_impact_heading",
+			"label": "Heading",
+			"name": "impact_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Optional small heading above the stats, e.g. \"Impact 2025\".",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "e.g. Impact 2025"
+		},
+		{
+			"key": "field_two57_impact_items",
+			"label": "Stats",
+			"name": "impact_items",
+			"aria-label": "",
+			"type": "repeater",
+			"instructions": "Add one item per stat row. Each row displays a number (can include symbols like $, %) and a label.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"min": 1,
+			"max": 8,
+			"layout": "table",
+			"button_label": "Add Stat",
+			"sub_fields": [
+				{
+					"key": "field_two57_impact_number",
+					"label": "Number",
+					"name": "impact_number",
+					"aria-label": "",
+					"type": "text",
+					"instructions": "The stat value, e.g. \"218\", \"22,000\", \"$115,000\".",
+					"required": 1,
+					"conditional_logic": 0,
+					"wrapper": { "width": "40%", "class": "", "id": "" },
+					"default_value": "",
+					"maxlength": "",
+					"placeholder": "e.g. 22,000"
+				},
+				{
+					"key": "field_two57_impact_label",
+					"label": "Label",
+					"name": "impact_label",
+					"aria-label": "",
+					"type": "text",
+					"instructions": "The unit or descriptor, e.g. \"Events\", \"Visits\", \"Donated\".",
+					"required": 1,
+					"conditional_logic": 0,
+					"wrapper": { "width": "60%", "class": "", "id": "" },
+					"default_value": "",
+					"maxlength": "",
+					"placeholder": "e.g. Visits"
+				}
+			]
+		},
+		{
+			"key": "field_two57_impact_bg_image",
+			"label": "Background Image",
+			"name": "impact_bg_image",
+			"aria-label": "",
+			"type": "image",
+			"instructions": "Optional decorative SVG or image rendered behind the stats. Upload an SVG for best results — it will be inlined so it inherits the theme colour.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"return_format": "array",
+			"library": "all",
+			"min_width": "",
+			"min_height": "",
+			"min_size": "",
+			"max_width": "",
+			"max_height": "",
+			"max_size": "",
+			"mime_types": ""
+		},
+		{
+			"key": "field_two57_impact_link",
+			"label": "CTA Button",
+			"name": "impact_link",
+			"aria-label": "",
+			"type": "link",
+			"instructions": "Optional primary call-to-action button below the stats.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"return_format": "array"
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/impact"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Fields for the 257 Impact full-bleed stats block.",
+	"modified": 1744502400
+}

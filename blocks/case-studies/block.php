@@ -51,7 +51,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 <section class="case-studies | block">
 	<div class="case-studies__inner | stack">
 		<?php if ( $heading ) : ?>
-			<h2 class="case-studies__heading | text-2xl" data-scroll><?php echo esc_html( $heading ); ?></h2>
+			<h2 class="case-studies__heading | text-2xl" data-scroll data-scroll-repeat><?php echo esc_html( $heading ); ?></h2>
 		<?php endif; ?>
 
 		<?php if ( $items ) : ?>
@@ -65,7 +65,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 					$brand_logo    = $brand_logo_id ? two_fiftyseven_get_inline_svg( $brand_logo_id ) : '';
 					$delay_ms      = $index * 300; // 0ms, 200ms, 400ms
 				?>
-					<li class="case-studies__card | card" data-scroll style="--delay: <?php echo $delay_ms; ?>ms">
+					<li class="case-studies__card | card" data-scroll data-scroll-repeat style="--delay: <?php echo $delay_ms; ?>ms">
 						<a class="case-studies__card-link" href="<?php echo esc_url( $item_link ); ?>">
 							<?php if ( $brand_logo ) : ?>
 								<div class="case-studies__logo" aria-hidden="true">
@@ -89,7 +89,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 		<?php endif; ?>
 
 		<?php if ( $archive_url ) : ?>
-			<div class="case-studies__cta" data-scroll>
+			<div class="case-studies__cta" data-scroll data-scroll-repeat>
 				<a
 					class="btn"
 					data-type="secondary"

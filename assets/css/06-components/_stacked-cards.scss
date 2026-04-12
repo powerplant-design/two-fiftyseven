@@ -99,12 +99,13 @@
 	// outline: 1px solid var(--color-surface-primary);
 	outline: 1px solid var(--color-surface-primary);
 	margin-inline: 1px;
-	border-radius: var(--corner-radius-2xl);
+	border-radius: var(--corner-radius-xl);
 	overflow: hidden;
 	align-items: center;
-	padding: var(--space-m);
+	padding: var(--space-s);
 	
 	@media (min-width: bp.$bp-md) {
+		padding: var(--space-m);
 		border-start-start-radius: 0; // card 0: tab sits in this corner
         grid-template-columns: 1fr 1fr;
 		align-items: stretch;
@@ -115,16 +116,21 @@
 // Cards 1+ have their tab indented on desktop so the top-left corner is free.
 .stacked-cards__item:not(:first-child) .stacked-cards__panel {
 	@media (min-width: bp.$bp-md) {
-		border-start-start-radius: var(--corner-radius-2xl);
+		border-start-start-radius: var(--corner-radius-xl);
 	}
 }
-	
+
 // ── Body ──────────────────────────────────────────────────────
 .stacked-cards__body {
 	--stack-horizontal-alignment: flex-start;
 	padding-inline: var(--space-l);
 	padding-block: var(--space-xs);
     justify-content: center;
+
+	@media (max-width: bp.$bp-md) {
+		padding-inline: var(--space-xs);
+		padding-block: var(--space-xs);
+	}
 }
 
 .stacked-cards__content {

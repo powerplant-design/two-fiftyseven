@@ -14,6 +14,8 @@
 // .is-inview  → added by Locomotive Scroll (widget: scroll-triggered)
 .event-cards {
 	--list-indent: 0;
+	--grid-gap-columns: var(--space-xs);
+	--grid-gap-rows: var(--space-s);
 }
 
 .event-card {
@@ -35,7 +37,7 @@
 
 // ── Link — full-card clickable, flex row ──────────────────
 .event-card__link {
-	padding: var(--space-xs);
+	padding: var(--space-s);
 	gap: var(--space-xs);
 	display: flex;
 	flex-direction: row;
