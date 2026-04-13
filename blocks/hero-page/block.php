@@ -9,11 +9,13 @@
  *   - A full-width icon marquee
  *
  * ACF fields:
- *   page_hero_headline         — display heading (textarea, supports <br>)
- *   page_hero_subtitle         — subtitle paragraph (textarea)
- *   page_hero_background_image — background image (array)
- *   page_hero_marquee_label    — eyebrow text above marquee (e.g. "As used by")
- *   page_hero_marquee_icons    — repeater: icon_image (array)
+ *   page_hero_headline              — display heading (textarea, supports <br>)
+ *   page_hero_subtitle              — subtitle paragraph (textarea)
+ *   page_hero_background_image      — background image (array)
+ *   page_hero_marquee_enabled       — show/hide toggle (true_false, default 1)
+ *   page_hero_marquee_label         — eyebrow text above marquee (e.g. "As used by")
+ *   page_hero_marquee_mode          — "default" (auto by page slug) or "custom" (hand-picked)
+ *   page_hero_marquee_logos         — relationship: post IDs from organisation/person/event CPTs (custom mode only)
  *
  * @var array  $block      Block settings and attributes from ACF.
  * @var string $content    Rendered inner blocks HTML (unused — no inner blocks).
@@ -24,21 +26,16 @@
 $headline      = get_field( 'page_hero_headline' );
 $subtitle      = get_field( 'page_hero_subtitle' );
 $bg_image      = get_field( 'page_hero_background_image' );
-$marquee_label = get_field( 'page_hero_marquee_label' );
-$icons         = get_field( 'page_hero_marquee_icons' ) ?: [];
+// Treat null (field never saved) as enabled — matches the default_value of 1.
+$marquee_enabled_raw = get_field( 'page_hero_marquee_enabled' );
+$marquee_enabled     = null === $marquee_enabled_raw ? true : (bool) $marquee_enabled_raw;
+$marquee_label       = get_field( 'page_hero_marquee_label' );
+$marquee_mode    = get_field( 'page_hero_marquee_mode' ) ?: 'default';
 
 // Background image inline CSS custom property.
 $bg_style = '';
 if ( ! empty( $bg_image['url'] ) ) {
 	$bg_style = ' style="--hero-bg: url(\'' . esc_url( $bg_image['url'] ) . '\')"';
-}
-
-// Repeat icons enough times to fill the marquee strip, then double for seamless loop.
-$marquee_icons = [];
-if ( ! empty( $icons ) ) {
-	$min_passes    = 6;
-	$passes_needed = max( $min_passes, (int) ceil( $min_passes / count( $icons ) ) );
-	$marquee_icons = array_merge( ...array_fill( 0, $passes_needed * 2, $icons ) );
 }
 ?>
 
@@ -52,52 +49,62 @@ if ( ! empty( $icons ) ) {
 		// Short headlines (< 25 chars) get one step up on the type scale.
 		$headline_size = mb_strlen( wp_strip_all_tags( $headline ) ) < 25 ? 'text-4xl' : 'text-3xl';
 	?>
-        <h1 class="hero-page__headline <?php echo esc_attr( $headline_size ); ?>"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
+        <h1 class="hero-page__headline | line-clamp-3 <?php echo esc_attr( $headline_size ); ?>"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
 		<?php elseif ( $is_preview ) : ?>
 				<p style="color:white;opacity:0.5;text-align:center;">Add a headline in the block settings →</p>
             <?php endif; ?>
             
             <?php if ( $subtitle ) : ?>
-                <h2 class="hero-page__subtitle text-m-l"><?php echo wp_kses( $subtitle, [ 'br' => [], 'strong' => [], 'em' => [] ] ); ?></h2>
+                <h2 class="hero-page__subtitle | line-clamp-3 text-m-l"><?php echo wp_kses( $subtitle, [ 'br' => [], 'strong' => [], 'em' => [] ] ); ?></h2>
             <?php endif; ?>
                 
             </div>
 
-	<?php if ( $marquee_icons ) : ?>
-		<div class="hero-page__marquee-wrap | stack"">
+	<?php if ( $marquee_enabled ) :
+		// Build a flat array of SVG attachment IDs from CPTs or manual selection.
+		$attachment_ids = [];
 
-			<?php if ( $marquee_label ) : ?>
-				<p class="hero-page__marquee-label | text-s text-monospace"><?php echo esc_html( $marquee_label ); ?></p>
-			<?php endif; ?>
+		if ( 'custom' === $marquee_mode ) :
+			$selected_post_ids = get_field( 'page_hero_marquee_logos' ) ?: [];
+		else :
+			// Map page slug → CPT post type(s) to query.
+			$page_slug = get_post_field( 'post_name', $post_id );
+			$cpt_map   = [
+				'workspace'   => [ 'organisation' ],
+				'meetings'    => [ 'organisation', 'person' ],
+				'host-events' => [ 'event' ],
+			];
+			$cpt_types = $cpt_map[ $page_slug ] ?? [ 'organisation', 'person', 'event' ];
 
-			<div class="hero-page__marquee" aria-hidden="true">
-				<ul class="hero-page__marquee-track" data-js="marquee-track">
-					<?php foreach ( $marquee_icons as $item ) :
-						$icon          = $item['icon_image'] ?? [];
-						$attachment_id = (int) ( $icon['id'] ?? 0 );
-						if ( empty( $icon['url'] ) ) { continue; }
-						$inline_svg = $attachment_id ? two_fiftyseven_get_inline_svg( $attachment_id ) : '';
-					?>
-						<li class="hero-page__marquee-item">
-							<?php if ( $inline_svg ) : ?>
-								<?php echo $inline_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized on upload ?>
-							<?php else : ?>
-								<img
-									src="<?php echo esc_url( $icon['url'] ); ?>"
-									alt=""
-									width="<?php echo esc_attr( $icon['width'] ?? 48 ); ?>"
-									height="<?php echo esc_attr( $icon['height'] ?? 48 ); ?>"
-									loading="lazy"
-								>
-							<?php endif; ?>
-						</li>
-					<?php endforeach; ?>
-				</ul>
-			</div>
+			$logo_query = new WP_Query( [
+				'post_type'      => $cpt_types,
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'orderby'        => 'date',
+				'order'          => 'ASC',
+				'no_found_rows'  => true,
+			] );
+			$selected_post_ids = $logo_query->posts;
+		endif;
 
-		</div>
-	<?php elseif ( $is_preview ) : ?>
-		<p style="color:white;opacity:0.5;text-align:center;padding:1rem;">Add marquee icons in the block settings →</p>
-	<?php endif; ?>
+		foreach ( $selected_post_ids as $logo_post_id ) :
+			$logo_attachment_id = (int) get_field( 'brand_logo', (int) $logo_post_id );
+			if ( $logo_attachment_id ) :
+				$attachment_ids[] = $logo_attachment_id;
+			endif;
+		endforeach;
+
+		if ( $attachment_ids ) :
+			get_template_part( 'template-parts/logo-marquee', null, [
+				'attachment_ids' => $attachment_ids,
+				'label'          => $marquee_label,
+			] );
+		elseif ( $is_preview ) :
+	?>
+		<p style="color:white;opacity:0.5;text-align:center;padding:1rem;">No logos found &mdash; add a Brand Logo to Organisations, People, or Events &rarr;</p>
+	<?php
+		endif;
+	endif; ?>
 
 </section>

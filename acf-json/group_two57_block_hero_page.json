@@ -54,6 +54,22 @@
 			"preview_size": "medium"
 		},
 		{
+			"key": "field_two57_page_hero_marquee_enabled",
+			"label": "Marquee",
+			"name": "page_hero_marquee_enabled",
+			"aria-label": "",
+			"type": "true_false",
+			"instructions": "Show or hide the logo marquee strip at the bottom of the hero.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"message": "",
+			"default_value": 1,
+			"ui": 1,
+			"ui_on_text": "Show",
+			"ui_off_text": "Hide"
+		},
+		{
 			"key": "field_two57_page_hero_marquee_label",
 			"label": "Marquee Label",
 			"name": "page_hero_marquee_label",
@@ -61,49 +77,82 @@
 			"type": "text",
 			"instructions": "Optional eyebrow text above the marquee strip, e.g. \"As used by\".",
 			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_page_hero_marquee_enabled",
+						"operator": "==",
+						"value": "1"
+					}
+				]
+			],
+			"wrapper": { "width": "50%", "class": "", "id": "" },
 			"default_value": "",
 			"maxlength": "",
 			"placeholder": "As used by"
 		},
 		{
-			"key": "field_two57_page_hero_icons",
-			"label": "Marquee Icons",
-			"name": "page_hero_marquee_icons",
+			"key": "field_two57_page_hero_marquee_mode",
+			"label": "Logo Source",
+			"name": "page_hero_marquee_mode",
 			"aria-label": "",
-			"type": "repeater",
-			"instructions": "SVG or PNG icons that scroll in the full-width marquee strip. Add at least 4 for a smooth loop.",
+			"type": "radio",
+			"instructions": "Default auto-populates logos based on which page this block is on. Custom lets you hand-pick, reorder, and remove logos from any Organisations, People, or Events.",
 			"required": 0,
-			"conditional_logic": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_page_hero_marquee_enabled",
+						"operator": "==",
+						"value": "1"
+					}
+				]
+			],
+			"wrapper": { "width": "50%", "class": "", "id": "" },
+			"choices": {
+				"default": "Default (auto-populate by page)",
+				"custom": "Custom (hand-pick and reorder)"
+			},
+			"default_value": "default",
+			"return_format": "value",
+			"allow_null": 0,
+			"other_choice": 0,
+			"layout": "vertical",
+			"save_other_choice": 0
+		},
+		{
+			"key": "field_two57_page_hero_marquee_logos",
+			"label": "Logos",
+			"name": "page_hero_marquee_logos",
+			"aria-label": "",
+			"type": "relationship",
+			"instructions": "Select logos from Organisations, People, or Events. Drag to reorder. Each post's Brand Logo field is used in the marquee.",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_page_hero_marquee_enabled",
+						"operator": "==",
+						"value": "1"
+					},
+					{
+						"field": "field_two57_page_hero_marquee_mode",
+						"operator": "==",
+						"value": "custom"
+					}
+				]
+			],
 			"wrapper": { "width": "", "class": "", "id": "" },
+			"post_type": [ "organisation", "person", "event" ],
+			"post_status": [ "publish" ],
+			"taxonomy": "",
+			"filters": [ "search" ],
+			"return_format": "id",
 			"min": 0,
 			"max": 0,
-			"layout": "block",
-			"button_label": "Add Icon",
-			"sub_fields": [
-				{
-					"key": "field_two57_page_hero_icon_img",
-					"label": "Icon",
-					"name": "icon_image",
-					"aria-label": "",
-					"type": "image",
-					"instructions": "Upload an SVG or PNG. Recommended size: 80×80px.",
-					"required": 1,
-					"conditional_logic": 0,
-					"wrapper": { "width": "", "class": "", "id": "" },
-					"return_format": "array",
-					"library": "all",
-					"min_width": "",
-					"min_height": "",
-					"min_size": "",
-					"max_width": "",
-					"max_height": "",
-					"max_size": "",
-					"mime_types": "svg, png",
-					"preview_size": "thumbnail"
-				}
-			]
+			"elements": [ "featured_image" ],
+			"bidirectional": 0,
+			"bidirectional_target": []
 		}
 	],
 	"location": [
@@ -122,7 +171,7 @@
 	"instruction_placement": "label",
 	"hide_on_screen": "",
 	"active": true,
-	"description": "Controls the headline, subtitle, background image, and icon marquee for the Hero Page block.",
+	"description": "Controls the headline, subtitle, background image, and logo marquee for the Hero Page block.",
 	"show_in_rest": 0,
-	"modified": 1741478400
+	"modified": 1776124800
 }

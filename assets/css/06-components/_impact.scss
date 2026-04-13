@@ -100,8 +100,9 @@ Markup:
 .impact__number,
 .impact__label {
 	font-family: var(--font-body-family);
-	font-weight: 700;
+	font-weight: 800;
 	line-height: 0.9;
+	letter-spacing: -0.2rem;
 	text-transform: uppercase;
 	opacity: 0;
 	transform: translateY(2rem);
@@ -115,7 +116,7 @@ Markup:
 }
 
 .impact__label {
-	transition-delay: calc(var(--delay, 0ms) + 80ms);
+	transition-delay: calc(var(--delay, 0ms) + 150ms);
 }
 
 .impact__row.is-inview .impact__number,
