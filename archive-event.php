@@ -29,7 +29,7 @@ $initial_query = new WP_Query( two57_get_event_query_args( 'upcoming', 1 ) );
 					data-tab="upcoming"
 					aria-selected="true"
 					aria-controls="events-grid">
-					<?php esc_html_e( 'Upcoming', 'two-fiftyseven' ); ?>
+					<?php esc_html_e( 'Happening', 'two-fiftyseven' ); ?>
 				</button>
 				<button
 					class="post-archive__tab text-monospace"
@@ -38,7 +38,7 @@ $initial_query = new WP_Query( two57_get_event_query_args( 'upcoming', 1 ) );
 					data-tab="past"
 					aria-selected="false"
 					aria-controls="events-grid">
-					<?php esc_html_e( 'Past', 'two-fiftyseven' ); ?>
+					<?php esc_html_e( 'Happened', 'two-fiftyseven' ); ?>
 				</button>
 			</div>
 			<hr class="post-archive__rule">

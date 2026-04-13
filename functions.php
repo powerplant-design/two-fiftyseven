@@ -719,9 +719,20 @@ function two57_format_event_badge( int $post_id ): string {
 
 	$badge = '';
 
+	// Display labels for day abbreviations (stored values → display values).
+	$day_display = [
+		'MON' => 'MON',
+		'TUE' => 'TUES',
+		'WED' => 'WEDS',
+		'THU' => 'THUR',
+		'FRI' => 'FRI',
+		'SAT' => 'SAT',
+		'SUN' => 'SUN',
+	];
+
 	if ( $recurring ) {
 		$day   = strtoupper( (string) ( get_field( 'event_day_of_week', $post_id ) ?: '' ) );
-		$badge = $day;
+		$badge = 'EVERY ' . ( $day_display[ $day ] ?? $day );
 		if ( $time_str ) {
 			$badge .= ' / ' . $time_str;
 		}
@@ -730,8 +741,10 @@ function two57_format_event_badge( int $post_id ): string {
 		if ( $raw_date ) {
 			$dt = \DateTime::createFromFormat( 'Ymd', $raw_date );
 			if ( $dt ) {
-				// e.g. "TUE 21 APR" — 3-letter day + day number + 3-letter month.
-				$badge = strtoupper( $dt->format( 'D j M' ) );
+				// Map PHP's 3-letter day to display label, e.g. "Tue" → "TUES".
+				$php_day     = strtoupper( $dt->format( 'D' ) ); // MON, TUE, WED...
+				$display_day = $day_display[ $php_day ] ?? $php_day;
+				$badge       = $display_day . ' ' . strtoupper( $dt->format( 'j M' ) );
 			}
 		}
 		if ( $time_str ) {
@@ -822,6 +835,105 @@ add_action( 'acf/save_post', function ( $post_id ): void {
 
 	update_post_meta( $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
 }, 20 );
+
+
+/**
+ * Events — Daily cron: refresh event_sort_date for all recurring events.
+ *
+ * Recurring events only get their sort date computed at save time, so after
+ * the stored date passes the event sorts as if it were in the past. This job
+ * runs once a day (midnight WP time) and recalculates each recurring event's
+ * next occurrence date so the archive always shows the correct order.
+ */
+function two57_refresh_recurring_sort_dates(): void {
+	if ( ! function_exists( 'get_field' ) ) {
+		return;
+	}
+
+	$recurring_events = new WP_Query( [
+		'post_type'      => 'event',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+		'no_found_rows'  => true,
+		'meta_query'     => [
+			[
+				'key'   => 'event_recurring',
+				'value' => '1',
+			],
+		],
+	] );
+
+	foreach ( $recurring_events->posts as $post_id ) {
+		$day_abbr  = (string) ( get_field( 'event_day_of_week', (int) $post_id ) ?: '' );
+		$sort_date = $day_abbr ? two57_next_weekday_ymd( $day_abbr ) : '99991231';
+		update_post_meta( (int) $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
+	}
+}
+add_action( 'two57_daily_refresh_events', 'two57_refresh_recurring_sort_dates' );
+
+
+/**
+ * Events — Daily cron: auto-mark one-off events as passed.
+ *
+ * Queries all non-recurring, not-yet-passed events that have an event_date
+ * set in the past (strictly before today). Flips event_has_passed to 1 so
+ * they move to the Past tab without any manual intervention.
+ */
+function two57_auto_mark_events_passed(): void {
+	$today = date( 'Ymd' );
+
+	$due_events = new WP_Query( [
+		'post_type'      => 'event',
+		'post_status'    => 'publish',
+		'posts_per_page' => -1,
+		'fields'         => 'ids',
+		'no_found_rows'  => true,
+		'meta_query'     => [
+			'relation' => 'AND',
+			[
+				'key'   => 'event_recurring',
+				'value' => '1',
+				'compare' => '!=',
+			],
+			[
+				'key'     => 'event_has_passed',
+				'value'   => '1',
+				'compare' => '!=',
+			],
+			[
+				'key'     => 'event_date',
+				'value'   => $today,
+				'compare' => '<',
+				'type'    => 'NUMERIC',
+			],
+		],
+	] );
+
+	foreach ( $due_events->posts as $post_id ) {
+		update_post_meta( (int) $post_id, 'event_has_passed', '1' );
+		// Keep sort_date consistent so the past tab sorts correctly (DESC).
+		$raw_date  = get_post_meta( (int) $post_id, 'event_date', true );
+		$sort_date = $raw_date ?: '00000000';
+		update_post_meta( (int) $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
+	}
+}
+add_action( 'two57_daily_refresh_events', 'two57_auto_mark_events_passed' );
+
+// Schedule the daily job if it isn't already queued.
+add_action( 'init', function (): void {
+	if ( ! wp_next_scheduled( 'two57_daily_refresh_events' ) ) {
+		wp_schedule_event( strtotime( 'midnight' ), 'daily', 'two57_daily_refresh_events' );
+	}
+} );
+
+// Clear the cron on theme switch so no orphaned events remain.
+add_action( 'switch_theme', function (): void {
+	$timestamp = wp_next_scheduled( 'two57_daily_refresh_events' );
+	if ( $timestamp ) {
+		wp_unschedule_event( $timestamp, 'two57_daily_refresh_events' );
+	}
+} );
 
 
 /**

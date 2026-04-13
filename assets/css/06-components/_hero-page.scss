@@ -10,8 +10,8 @@
 	flex-direction: column;
 	justify-content: center;
 	overflow: hidden;
-	border-end-start-radius: var(--corner-radius-3xl);
-	border-end-end-radius: var(--corner-radius-3xl);	
+	border-end-start-radius: var(--corner-radius-xl);
+	border-end-end-radius: var(--corner-radius-xl);	
 
 	// Background image via CSS custom property set inline by PHP.
 	background-image: var(--hero-bg, none);
@@ -37,7 +37,7 @@
 		padding-block-start: var(--space-3xl);
 		padding-block-end: var(--space-xl);
 		padding-inline: var(--global-padding-inline, 1rem);
-        justify-content: center;
+        justify-content: flex-end;
 		flex: 1;
 		gap: var(--space-s);
 		width: 100%;
@@ -49,26 +49,21 @@
 	}
 
 	// ── Headline ──────────────────────────────────────────────
-	// No text styles set here — inherits from h1 element styles.
 	&__headline {
-		// text-align: center;
 		color: var(--color-content-unchanged);
 		text-wrap: balance;
 	}
 
 	// ── Subtitle ──────────────────────────────────────────────
 	&__subtitle {
-		// text-align: center;
 		color: var(--color-content-unchanged);
-		max-inline-size: 38ch;
-		// margin-inline: auto;
+		max-inline-size: 42ch;
 	}
 
 	// ── Marquee wrapper (label + strip) ───────────────────────
 	&__marquee-wrap {
 		display: flex;
 		flex-direction: column;
-		// gap: var(--space-s);
 		padding-block-end: var(--space-xl);
 	}
 
@@ -76,12 +71,21 @@
 	&__marquee-label {
 		text-align: center;
 		color: var(--color-content-unchanged);
-		opacity: 0.8;
+		opacity: 0.75;
 	}
 
 	// ── Full-width marquee ────────────────────────────────────
 	&__marquee {
 		overflow: hidden;
+		margin-inline: var(--space-s-xl);
+		// Fade logos out at both edges using a CSS mask.
+		mask-image: linear-gradient(
+			to right,
+			transparent 0%,
+			black 12%,
+			black 88%,
+			transparent 100%
+		);
 	}
 
 	&__marquee-track {
