@@ -40,11 +40,8 @@
         justify-content: flex-end;
 		flex: 1;
 		gap: var(--space-s);
-		width: 100%;
+		--stack-horizontal-alignment: flex-start;
 
-		@media (max-width: #{bp.$bp-sm}) {
-			width: unset;		
-		}
 
 	}
 
@@ -57,8 +54,10 @@
 	// ── Subtitle ──────────────────────────────────────────────
 	&__subtitle {
 		color: var(--color-content-unchanged);
-		max-inline-size: 42ch;
+		max-inline-size: 48ch;
 	}
+
+
 
 	// ── Marquee wrapper (label + strip) ───────────────────────
 	&__marquee-wrap {

@@ -11,7 +11,11 @@
 			"instructions": "Main display heading. Use Shift+Enter for a line break.",
 			"required": 0,
 			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
 			"default_value": "",
 			"new_lines": "br",
 			"maxlength": "",
@@ -26,11 +30,31 @@
 			"instructions": "Optional supporting paragraph beneath the headline.",
 			"required": 0,
 			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
 			"default_value": "",
 			"new_lines": "br",
 			"maxlength": "",
 			"rows": 3
+		},
+		{
+			"key": "field_two57_page_hero_primary_button",
+			"label": "Primary Button",
+			"name": "page_hero_primary_button",
+			"aria-label": "",
+			"type": "link",
+			"instructions": "Optional CTA button displayed below the subtitle.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": {
+				"width": "40",
+				"class": "",
+				"id": ""
+			},
+			"return_format": "array"
 		},
 		{
 			"key": "field_two57_page_hero_bg_image",
@@ -38,10 +62,14 @@
 			"name": "page_hero_background_image",
 			"aria-label": "",
 			"type": "image",
-			"instructions": "Full-bleed hero background. Aim for at least 1920×1080px.",
+			"instructions": "Full-bleed hero background. Aim for at least 1920\u00d71080px.",
 			"required": 0,
 			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
 			"return_format": "array",
 			"library": "all",
 			"min_width": "",
@@ -62,7 +90,11 @@
 			"instructions": "Show or hide the logo marquee strip at the bottom of the hero.",
 			"required": 0,
 			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
 			"message": "",
 			"default_value": 1,
 			"ui": 1,
@@ -86,7 +118,11 @@
 					}
 				]
 			],
-			"wrapper": { "width": "50%", "class": "", "id": "" },
+			"wrapper": {
+				"width": "50%",
+				"class": "",
+				"id": ""
+			},
 			"default_value": "",
 			"maxlength": "",
 			"placeholder": "As used by"
@@ -108,7 +144,11 @@
 					}
 				]
 			],
-			"wrapper": { "width": "50%", "class": "", "id": "" },
+			"wrapper": {
+				"width": "50%",
+				"class": "",
+				"id": ""
+			},
 			"choices": {
 				"default": "Default (auto-populate by page)",
 				"custom": "Custom (hand-pick and reorder)"
@@ -142,15 +182,29 @@
 					}
 				]
 			],
-			"wrapper": { "width": "", "class": "", "id": "" },
-			"post_type": [ "organisation", "person", "event" ],
-			"post_status": [ "publish" ],
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"post_type": [
+				"organisation",
+				"person",
+				"event"
+			],
+			"post_status": [
+				"publish"
+			],
 			"taxonomy": "",
-			"filters": [ "search" ],
+			"filters": [
+				"search"
+			],
 			"return_format": "id",
 			"min": 0,
 			"max": 0,
-			"elements": [ "featured_image" ],
+			"elements": [
+				"featured_image"
+			],
 			"bidirectional": 0,
 			"bidirectional_target": []
 		}
@@ -173,5 +227,5 @@
 	"active": true,
 	"description": "Controls the headline, subtitle, background image, and logo marquee for the Hero Page block.",
 	"show_in_rest": 0,
-	"modified": 1776124800
+	"modified": 1776278093
 }

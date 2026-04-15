@@ -11,6 +11,7 @@
  * ACF fields:
  *   page_hero_headline              — display heading (textarea, supports <br>)
  *   page_hero_subtitle              — subtitle paragraph (textarea)
+ *   page_hero_primary_button        — optional CTA button (link array)
  *   page_hero_background_image      — background image (array)
  *   page_hero_marquee_enabled       — show/hide toggle (true_false, default 1)
  *   page_hero_marquee_label         — eyebrow text above marquee (e.g. "As used by")
@@ -25,6 +26,7 @@
 
 $headline      = get_field( 'page_hero_headline' );
 $subtitle      = get_field( 'page_hero_subtitle' );
+$primary_button = get_field( 'page_hero_primary_button' );
 $bg_image      = get_field( 'page_hero_background_image' );
 // Treat null (field never saved) as enabled — matches the default_value of 1.
 $marquee_enabled_raw = get_field( 'page_hero_marquee_enabled' );
@@ -50,15 +52,27 @@ if ( ! empty( $bg_image['url'] ) ) {
 		$headline_size = mb_strlen( wp_strip_all_tags( $headline ) ) < 25 ? 'text-4xl' : 'text-3xl';
 	?>
         <h1 class="hero-page__headline | line-clamp-3 <?php echo esc_attr( $headline_size ); ?>"><?php echo wp_kses( $headline, [ 'br' => [] ] ); ?></h1>
-		<?php elseif ( $is_preview ) : ?>
+			<?php elseif ( $is_preview ) : ?>
 				<p style="color:white;opacity:0.5;text-align:center;">Add a headline in the block settings →</p>
             <?php endif; ?>
             
             <?php if ( $subtitle ) : ?>
-                <h2 class="hero-page__subtitle | line-clamp-3 text-m-l"><?php echo wp_kses( $subtitle, [ 'br' => [], 'strong' => [], 'em' => [] ] ); ?></h2>
+                <h2 class="hero-page__subtitle | line-clamp-4 text-m-l"><?php echo wp_kses( $subtitle, [ 'br' => [], 'strong' => [], 'em' => [] ] ); ?></h2>
             <?php endif; ?>
-                
-            </div>
+
+            <?php if ( ! empty( $primary_button['url'] ) ) : ?>
+                <a
+                    class="btn"
+                    data-type="primary"
+                    data-invert
+                    href="<?php echo esc_url( $primary_button['url'] ); ?>"
+                    <?php if ( ! empty( $primary_button['target'] ) ) : ?>target="<?php echo esc_attr( $primary_button['target'] ); ?>" rel="noopener noreferrer"<?php endif; ?>
+                >
+                    <?php echo esc_html( $primary_button['title'] ?: $primary_button['url'] ); ?>
+                </a>
+            <?php endif; ?>
+
+        </div>
 
 	<?php if ( $marquee_enabled ) :
 		// Build a flat array of SVG attachment IDs from CPTs or manual selection.

@@ -22,6 +22,19 @@
 	background-color: var(--color-btn-primary-bg);
 }
 
+@mixin btn-primary-invert {
+	color: var(--color-btn-primary-invert-text);
+	background-color: var(--color-btn-primary-invert-bg);
+}
+
+@mixin btn-secondary-invert {
+	color: var(--color-btn-secondary-bg);
+	border-color: var(--color-btn-secondary-bg);
+	background-color: color-mix(in srgb, var(--color-btn-secondary-text) 20%, transparent);
+	backdrop-filter: blur(30px);
+	-webkit-backdrop-filter: blur(30px);
+}
+
 @mixin btn-secondary {
 	color: var(--color-btn-secondary-text);
 	border-color: var(--color-btn-secondary-text);
@@ -91,6 +104,9 @@
 	&[data-type="primary"]   { @include btn-primary; }
 	&[data-type="secondary"] { @include btn-secondary; }
 	&[data-type="text"]      { @include btn-text; }
+
+	&[data-type="primary"][data-invert]   { @include btn-primary-invert; }
+	&[data-type="secondary"][data-invert] { @include btn-secondary-invert; }
 }
 
 // ── WordPress block button ────────────────────────────────────

@@ -48,6 +48,8 @@ Light (default)
 	/* Button */
 	--color-btn-primary-text: var(--color-purple-100);
 	--color-btn-primary-bg: var(--color-purple-500);
+        --color-btn-primary-invert-bg: var(--color-purple-400);
+        --color-btn-primary-invert-text: var(--color-purple-600);
 	--color-btn-secondary-text: var(--color-purple-500);
 	--color-btn-secondary-bg: var(--color-purple-100);
 
@@ -87,6 +89,8 @@ Dark
 	/* Button */
 	--color-btn-primary-text: var(--color-purple-600);
 	--color-btn-primary-bg: var(--color-purple-400);
+        --color-btn-primary-invert-bg: var(--color-purple-400);
+        --color-btn-primary-invert-text: var(--color-purple-600);
 	--color-btn-secondary-text: var(--color-purple-400);
 	--color-btn-secondary-bg: var(--color-purple-600);
 
@@ -125,6 +129,8 @@ Forest Light
 	/* Button */
 	--color-btn-primary-text: var(--color-forest-100);
 	--color-btn-primary-bg: var(--color-forest-500);
+        --color-btn-primary-invert-bg: var(--color-forest-400);
+        --color-btn-primary-invert-text: var(--color-forest-600);
 	--color-btn-secondary-text: var(--color-forest-500);
 	--color-btn-secondary-bg: var(--color-forest-100);
 
@@ -163,6 +169,8 @@ Forest Dark
 	/* Button */
 	--color-btn-primary-text: var(--color-forest-600);
 	--color-btn-primary-bg: var(--color-forest-400);
+        --color-btn-primary-invert-bg: var(--color-forest-400);
+        --color-btn-primary-invert-text: var(--color-forest-600);
 	--color-btn-secondary-text: var(--color-forest-400);
 	--color-btn-secondary-bg: var(--color-forest-600);
 
@@ -201,6 +209,8 @@ Purple Light
 	/* Button */
 	--color-btn-primary-text: var(--color-purple-100);
 	--color-btn-primary-bg: var(--color-purple-500);
+        --color-btn-primary-invert-bg: var(--color-purple-400);
+        --color-btn-primary-invert-text: var(--color-purple-600);
 	--color-btn-secondary-text: var(--color-purple-500);
 	--color-btn-secondary-bg: var(--color-purple-100);
 
@@ -239,6 +249,8 @@ Purple Dark
 	/* Button */
 	--color-btn-primary-text: var(--color-purple-600);
 	--color-btn-primary-bg: var(--color-purple-400);
+        --color-btn-primary-invert-bg: var(--color-purple-400);
+        --color-btn-primary-invert-text: var(--color-purple-600);
 	--color-btn-secondary-text: var(--color-purple-400);
 	--color-btn-secondary-bg: var(--color-purple-600);
 
@@ -277,6 +289,8 @@ Maroon Light
 	/* Button */
 	--color-btn-primary-text: var(--color-maroon-100);
 	--color-btn-primary-bg: var(--color-maroon-500);
+        --color-btn-primary-invert-bg: var(--color-maroon-400);
+        --color-btn-primary-invert-text: var(--color-maroon-600);
 	--color-btn-secondary-text: var(--color-maroon-500);
 	--color-btn-secondary-bg: var(--color-maroon-100);
 
@@ -315,6 +329,8 @@ Maroon Dark
 	/* Button */
 	--color-btn-primary-text: var(--color-maroon-600);
 	--color-btn-primary-bg: var(--color-maroon-400);
+        --color-btn-primary-invert-bg: var(--color-maroon-400);
+        --color-btn-primary-invert-text: var(--color-maroon-600);
 	--color-btn-secondary-text: var(--color-maroon-400);
 	--color-btn-secondary-bg: var(--color-maroon-600);
 
