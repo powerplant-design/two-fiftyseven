@@ -18,11 +18,10 @@ if ( empty( $attachment_ids ) ) {
 }
 
 // Repeat IDs enough times to visually fill the strip, then double for a seamless
-// CSS loop. With few logos many passes are needed; with many logos just 2 suffices.
-// Formula: ceil(12 / count) gives passes to fill the strip, × 2 for the loop.
-// e.g. 3 logos → 8 passes = 24 items; 10 logos → 4 passes = 40; 50 logos → 2 passes = 100.
+// CSS loop. Each logo+gap ≈ 120px, so we need ~24 items to fill a 2560px screen.
+// Formula: ceil(24 / count) gives passes to fill the strip, × 2 for the loop.
 $count         = count( $attachment_ids );
-$passes_needed = max( 1, (int) ceil( 12 / $count ) );
+$passes_needed = max( 2, (int) ceil( 24 / $count ) );
 $repeated_ids  = array_merge( ...array_fill( 0, $passes_needed * 2, $attachment_ids ) );
 ?>
 

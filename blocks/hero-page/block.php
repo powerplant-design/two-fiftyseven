@@ -109,6 +109,8 @@ if ( ! empty( $bg_image['url'] ) ) {
 			endif;
 		endforeach;
 
+		$attachment_ids = array_values( array_unique( $attachment_ids ) );
+
 		if ( $attachment_ids ) :
 			get_template_part( 'template-parts/logo-marquee', null, [
 				'attachment_ids' => $attachment_ids,
