@@ -669,11 +669,15 @@ function two57_next_weekday_ymd( string $day_abbr ): string {
 	];
 	$day_name = $map[ strtoupper( trim( $day_abbr ) ) ] ?? 'Monday';
 
-	if ( strtolower( date( 'l' ) ) === strtolower( $day_name ) ) {
-		return date( 'Ymd' );
+	$tz  = wp_timezone();
+	$now = new DateTimeImmutable( 'now', $tz );
+
+	if ( strtolower( $now->format( 'l' ) ) === strtolower( $day_name ) ) {
+		return $now->format( 'Ymd' );
 	}
 
-	return date( 'Ymd', (int) strtotime( 'next ' . $day_name ) );
+	$next = new DateTimeImmutable( 'next ' . $day_name, $tz );
+	return $next->format( 'Ymd' );
 }
 
 
@@ -881,7 +885,7 @@ add_action( 'two57_daily_refresh_events', 'two57_refresh_recurring_sort_dates' )
  * they move to the Past tab without any manual intervention.
  */
 function two57_auto_mark_events_passed(): void {
-	$today = date( 'Ymd' );
+	$today = wp_date( 'Ymd' );
 
 	$due_events = new WP_Query( [
 		'post_type'      => 'event',
@@ -892,14 +896,28 @@ function two57_auto_mark_events_passed(): void {
 		'meta_query'     => [
 			'relation' => 'AND',
 			[
-				'key'   => 'event_recurring',
-				'value' => '1',
-				'compare' => '!=',
+				'relation' => 'OR',
+				[
+					'key'     => 'event_recurring',
+					'value'   => '1',
+					'compare' => '!=',
+				],
+				[
+					'key'     => 'event_recurring',
+					'compare' => 'NOT EXISTS',
+				],
 			],
 			[
-				'key'     => 'event_has_passed',
-				'value'   => '1',
-				'compare' => '!=',
+				'relation' => 'OR',
+				[
+					'key'     => 'event_has_passed',
+					'value'   => '1',
+					'compare' => '!=',
+				],
+				[
+					'key'     => 'event_has_passed',
+					'compare' => 'NOT EXISTS',
+				],
 			],
 			[
 				'key'     => 'event_date',

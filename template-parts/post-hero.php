@@ -31,7 +31,7 @@ $title_class = mb_strlen( get_the_title() ) < 28 ? 'post-hero__title' : 'post-he
 			<p class="post-hero__subheading | text-xl text-balance"><?php echo esc_html( $subheading ); ?></p>
 		</div>
 	<?php else : ?>
-		<h1 class="<?php echo esc_attr( $title_class ); ?>"><?php the_title(); ?></h1>
+		<h1 class="<?php echo esc_attr( $title_class ); ?> line-height-slim"><?php the_title(); ?></h1>
 	<?php endif; ?>
 	<?php if ( $has_thumb ) : ?>
 		<div class="post-hero__image post-hero__image--<?php echo esc_attr( $image_orientation ); ?>">
