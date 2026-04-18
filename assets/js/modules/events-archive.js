@@ -12,10 +12,23 @@
  * (injected via wp_localize_script in functions.php).
  */
 
+import { getScrollInstance } from './scroll.js';
+
 let _container   = null;
 let _grid        = null;
 let _currentTab  = 'upcoming';
 let _tabBtns     = [];
+
+function scrollToContainer( immediate = false ) {
+	if ( ! _container ) return;
+	const y = _container.getBoundingClientRect().top + window.scrollY - 150;
+	const scroll = getScrollInstance();
+	if ( scroll?.lenisInstance ) {
+		scroll.lenisInstance.scrollTo( y, { immediate, duration: immediate ? undefined : 1 } );
+	} else {
+		window.scrollTo( { top: y, behavior: immediate ? 'instant' : 'smooth' } );
+	}
+}
 
 function onTabClick( btn ) {
 	const tab = btn.dataset.tab;
@@ -23,7 +36,7 @@ function onTabClick( btn ) {
 
 	_currentTab = tab;
 	_tabBtns.forEach( ( b ) => b.setAttribute( 'aria-selected', String( b === btn ) ) );
-	fetchEvents( tab, 1 );
+	fetchEvents( tab, 1, false );
 }
 
 function onGridClick( e ) {
@@ -31,10 +44,10 @@ function onGridClick( e ) {
 	if ( ! pager ) return;
 	const page = parseInt( pager.dataset.page, 10 );
 	if ( ! page || page < 1 ) return;
-	fetchEvents( _currentTab, page );
+	fetchEvents( _currentTab, page, true );
 }
 
-async function fetchEvents( tab, paged ) {
+async function fetchEvents( tab, paged, immediate = true ) {
 	if ( ! _grid ) return;
 
 	_grid.setAttribute( 'aria-busy', 'true' );
@@ -67,6 +80,7 @@ async function fetchEvents( tab, paged ) {
 		_grid.innerHTML = data.data.html;
 		_grid.removeAttribute( 'aria-busy' );
 		animateCards();
+		requestAnimationFrame( () => scrollToContainer( immediate ) );
 
 	} catch {
 		_grid.removeAttribute( 'aria-busy' );

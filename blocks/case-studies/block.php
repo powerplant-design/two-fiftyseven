@@ -30,7 +30,7 @@ if ( $selected_ids ) {
 		'post_status'    => 'publish',
 		'post__in'       => $selected_ids,
 		'orderby'        => 'post__in',
-		'posts_per_page' => 3,
+		'posts_per_page' => 6,
 	] );
 }
 
@@ -60,13 +60,36 @@ if ( ! empty( $archive_link['url'] ) ) {
 					$item_id       = (int) $item->ID;
 					$item_title    = get_the_title( $item_id );
 					$item_link     = get_permalink( $item_id );
-					$item_subhead  = function_exists( 'get_field' ) ? get_field( 'post_subheading', $item_id ) : '';
+					$item_excerpt  = get_the_excerpt( $item_id );
 					$brand_logo_id = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo', $item_id ) : 0;
 					$brand_logo    = $brand_logo_id ? two_fiftyseven_get_inline_svg( $brand_logo_id ) : '';
 					$delay_ms      = $index * 300; // 0ms, 200ms, 400ms
+
+					$use_type   = function_exists( 'get_field' ) ? ( get_field( 'organisation_use_type', $item_id ) ?: '' ) : '';
+					$badge_term = '';
+					$terms      = get_the_terms( $item_id, 'organisation_category' );
+					if ( $terms && ! is_wp_error( $terms ) ) {
+						foreach ( $terms as $t ) {
+							if ( $t->slug !== 'uncategorized' ) {
+								$badge_term = $t->name;
+								break;
+							}
+						}
+					}
 				?>
 					<li class="case-studies__card | card" data-scroll data-scroll-repeat style="--delay: <?php echo $delay_ms; ?>ms">
 						<a class="case-studies__card-link" href="<?php echo esc_url( $item_link ); ?>">
+							<?php if ( $use_type || $badge_term ) : ?>
+								<div class="cluster badge-cluster">
+									<?php if ( $badge_term ) : ?>
+										<span class="badge"><?php echo esc_html( $badge_term ); ?></span>
+									<?php endif; ?>
+									<?php if ( $use_type ) : ?>
+										<span class="badge"><?php echo esc_html( strtoupper( $use_type ) ); ?></span>
+									<?php endif; ?>
+								</div>
+							<?php endif; ?>
+
 							<?php if ( $brand_logo ) : ?>
 								<div class="case-studies__logo" aria-hidden="true">
 									<?php echo $brand_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by two_fiftyseven_get_inline_svg() ?>
@@ -77,15 +100,15 @@ if ( ! empty( $archive_link['url'] ) ) {
 								<h3 class="case-studies__card-title | card-title"><?php echo esc_html( $item_title ); ?></h3>
 							<?php endif; ?>
 
-							<?php if ( $item_subhead ) : ?>
-								<p class="case-studies__card-subheading card-desc text-l"><?php echo esc_html( $item_subhead ); ?></p>
+							<?php if ( $item_excerpt ) : ?>
+								<p class="case-studies__card-excerpt card-desc | text-m line-clamp-3"><?php echo esc_html( $item_excerpt ); ?></p>
 							<?php endif; ?>
 						</a>
 					</li>
 				<?php endforeach; ?>
 			</ul>
 		<?php elseif ( $is_preview ) : ?>
-			<p class="case-studies__preview-hint">Select exactly 3 Organisation posts in the block settings &rarr;</p>
+			<p class="case-studies__preview-hint">Select up to 6 Organisation posts in the block settings &rarr;</p>
 		<?php endif; ?>
 
 		<?php if ( $archive_url ) : ?>

@@ -1,0 +1,23 @@
+// ============================================================
+// Badge — shared pill component
+// ============================================================
+
+.badge-cluster {
+	--cluster-gap-rows: var(--space-3xs);
+	--cluster-gap-columns: var(--space-3xs);
+}
+
+.badge {
+	display: inline-flex;
+	align-items: center;
+	padding-block: var(--space-3xs);
+	padding-inline: var(--space-xs);
+	border-radius: var(--corner-radius-xs);
+	font-family: var(--font-monospace-family);
+	font-weight: var(--font-monospace-weight);
+	font-size: var(--step--2);
+	letter-spacing: var(--kerning-caps);
+	text-transform: uppercase;
+	background-color: var(--color-btn-secondary-text);
+	color: var(--color-content-inverse);
+}

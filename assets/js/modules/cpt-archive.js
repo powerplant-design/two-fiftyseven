@@ -15,6 +15,7 @@
  */
 
 import { applyThemes } from './color-theme.js';
+import { getScrollInstance } from './scroll.js';
 
 let _container   = null;
 let _grid        = null;
@@ -22,14 +23,23 @@ let _postType    = '';
 let _taxonomy    = '';
 let _currentTerm = '';
 let _tabBtns     = [];
-
+function scrollToContainer( immediate = false ) {
+	if ( ! _container ) return;
+	const y = _container.getBoundingClientRect().top + window.scrollY - 150;
+	const scroll = getScrollInstance();
+	if ( scroll?.lenisInstance ) {
+		scroll.lenisInstance.scrollTo( y, { immediate, duration: immediate ? undefined : 1 } );
+	} else {
+		window.scrollTo( { top: y, behavior: immediate ? 'instant' : 'smooth' } );
+	}
+}
 function onTabClick( btn ) {
 	const term = btn.dataset.term ?? '';
 	if ( term === _currentTerm ) return;
 
 	_currentTerm = term;
 	_tabBtns.forEach( ( b ) => b.setAttribute( 'aria-selected', String( b === btn ) ) );
-	fetchPosts( term, 1 );
+	fetchPosts( term, 1, false );
 }
 
 function onGridClick( e ) {
@@ -37,10 +47,10 @@ function onGridClick( e ) {
 	if ( ! pager ) return;
 	const page = parseInt( pager.dataset.page, 10 );
 	if ( ! page || page < 1 ) return;
-	fetchPosts( _currentTerm, page );
+	fetchPosts( _currentTerm, page, true );
 }
 
-async function fetchPosts( term, paged ) {
+async function fetchPosts( term, paged, immediate = true ) {
 	if ( ! _grid ) return;
 
 	_grid.setAttribute( 'aria-busy', 'true' );
@@ -76,6 +86,7 @@ async function fetchPosts( term, paged ) {
 		_grid.removeAttribute( 'aria-busy' );
 		applyThemes();
 		animateCards();
+		requestAnimationFrame( () => scrollToContainer( immediate ) );
 
 	} catch {
 		_grid.removeAttribute( 'aria-busy' );

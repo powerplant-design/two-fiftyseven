@@ -48,31 +48,41 @@ if ( have_posts() ) : ?>
 					}
 				}
 			}
+
+			$use_type = '';
+			if ( $post_type === 'organisation' && function_exists( 'get_field' ) ) {
+				$use_type = get_field( 'organisation_use_type', get_the_ID() ) ?: '';
+			}
 		?>
 
 			<article class="post-index__item<?php echo $card_modifier; ?>" data-color-space="<?php echo esc_attr( $card_space ); ?>">
 
-				<?php if ( has_post_thumbnail() ) : ?>
-					<div class="post-index__image | frame">
-						<?php the_post_thumbnail( 'medium_large' ); ?>
-					</div>
-				<?php elseif ( $brand_logo_svg ) : ?>
+				<?php if ( $brand_logo_svg ) : ?>
 					<div class="post-index__image post-index__image--logo | frame" aria-hidden="true">
 						<?php echo $brand_logo_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped — sanitized by two_fiftyseven_get_inline_svg() ?>
+					</div>
+				<?php elseif ( has_post_thumbnail() && $post_type !== 'organisation' ) : ?>
+					<div class="post-index__image | frame">
+						<?php the_post_thumbnail( 'medium_large' ); ?>
 					</div>
 				<?php endif; ?>
 
 				<div class="post-index__body | stack">
-					<?php if ( $post_type === 'post' || $badge_term ) : ?>
-					<div class="post-index__badges">
+					<?php if ( $post_type === 'post' || $badge_term || $use_type ) : ?>
+					<div class="cluster badge-cluster">
 						<?php if ( $post_type === 'post' ) : ?>
-							<span class="post-index__badge text-monospace">
+							<span class="badge">
 								<?php echo esc_html( get_the_date( 'j M Y' ) ); ?>
 							</span>
 						<?php endif; ?>
 						<?php if ( $badge_term ) : ?>
-							<span class="post-index__badge text-monospace">
+							<span class="badge">
 								<?php echo esc_html( $badge_term ); ?>
+							</span>
+						<?php endif; ?>
+						<?php if ( $use_type ) : ?>
+							<span class="badge">
+								<?php echo esc_html( strtoupper( $use_type ) ); ?>
 							</span>
 						<?php endif; ?>
 					</div>

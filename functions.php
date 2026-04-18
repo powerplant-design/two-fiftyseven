@@ -1011,13 +1011,15 @@ function two57_get_cpt_query_args( string $post_type, string $term_slug, int $pa
 		'media_item'   => 'media_item_category',
 	];
 
+	$alpha_types = [ 'person', 'organisation' ];
+
 	$args = [
 		'post_type'      => $post_type,
 		'post_status'    => 'publish',
 		'posts_per_page' => 12,
 		'paged'          => $paged,
-		'orderby'        => 'date',
-		'order'          => 'DESC',
+		'orderby'        => in_array( $post_type, $alpha_types, true ) ? 'title' : 'date',
+		'order'          => in_array( $post_type, $alpha_types, true ) ? 'ASC'   : 'DESC',
 	];
 
 	$taxonomy  = $taxonomy_map[ $post_type ] ?? '';

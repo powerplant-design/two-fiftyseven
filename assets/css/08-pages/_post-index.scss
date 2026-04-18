@@ -23,7 +23,7 @@ Description: Card grid for the posts index page (home.php).
 	background-color: var(--color-surface-secondary);
 	border-radius: var(--corner-radius-xl);
 	overflow: hidden;
-	padding: var(--space-s);
+	padding: var(--space-2xs);
 	display: flex;
 	flex-direction: column;
 	position: relative; // stacking context for stretched link
@@ -70,13 +70,13 @@ Description: Card grid for the posts index page (home.php).
 
 .post-index__image--logo {
 	--frame-aspect-ratio: 1;
-	color: var(--color-content-primary);
-	padding: var(--space-m);
+	color: var(--color-content-secondary);
+	padding: var(--space-xs);
 
 	svg {
 		fill: currentColor;
-		width: 60%;
-		height: 60%;
+		width: 75%;
+		height: 75%;
 		object-fit: contain;
 	}
 }
@@ -131,7 +131,7 @@ Description: Card grid for the posts index page (home.php).
 .post-index__item--media-item {
 	@media (max-width: #{bp.$bp-sm}) {
 		.post-index__image--logo {
-			width: 60%;
+			width: 80%;
 			align-self: center;
 		}
 	}
@@ -144,31 +144,9 @@ Description: Card grid for the posts index page (home.php).
 	padding: var(--space-xs) var(--space-s) var(--space-xs) var(--space-xs);
 }
 
-// ── Badge cluster ────────────────────────────────────────────────
-
-.post-index__badges {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--space-3xs);
-	align-items: center;
-}
-
-.post-index__badge {
-	display: inline-flex;
-	align-items: center;
-	padding-block: var(--space-3xs);
-	padding-inline: var(--space-xs);
-	border-radius: var(--corner-radius-s);
-	font-size: var(--step--1);
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	background-color: var(--color-btn-secondary-text);
-	color: var(--color-content-inverse);
-}
-
 .post-index__link {
 	text-decoration: none;
-	color: var(--color-content-primary);
+	color: var(--color-content-secondary);
 
 	// Stretch to cover the entire card.
 	&::after {
@@ -184,7 +162,7 @@ Description: Card grid for the posts index page (home.php).
 }
 
 .post-index__excerpt {
-	color: var(--color-content-secondary);
+	color: var(--color-content-primary);
 }
 
 // ── Pagination ───────────────────────────────────────────────────

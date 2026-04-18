@@ -1,0 +1,54 @@
+{
+	"key": "group_two57_organisation_use_type",
+	"title": "Organisation Use Type",
+	"fields": [
+		{
+			"key": "field_two57_organisation_use_type",
+			"label": "Use Type",
+			"name": "organisation_use_type",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "The type of space this organisation uses at Two Fifty Seven.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": {
+				"width": "",
+				"class": "",
+				"id": ""
+			},
+			"choices": {
+				"base": "Base",
+				"hub": "Hub",
+				"desk": "Desk",
+				"meet": "Meet",
+				"events": "Events"
+			},
+			"default_value": "",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 1,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": "Select a use type\u2026"
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "post_type",
+				"operator": "==",
+				"value": "organisation"
+			}
+		]
+	],
+	"menu_order": 1,
+	"position": "side",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Sets the use type badge displayed on organisation cards.",
+	"show_in_rest": 0,
+	"modified": 1713398400
+}

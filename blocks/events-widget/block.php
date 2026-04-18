@@ -10,11 +10,12 @@
  * updated automatically when those posts are edited).
  */
 
-$heading    = get_field( 'events_widget_heading' ) ?: __( 'Coming up at Two/Fiftyseven', 'two-fiftyseven' );
-$count      = (int) ( get_field( 'events_widget_count' ) ?: 6 );
-$count      = in_array( $count, [ 2, 4, 6, 8, 10 ], true ) ? $count : 6;
-$mode       = get_field( 'events_widget_selection_mode' ) ?: 'auto';
-$is_preview = ! empty( $block['data']['preview'] );
+$heading        = get_field( 'events_widget_heading' ) ?: __( 'Coming up at Two/Fiftyseven', 'two-fiftyseven' );
+$count          = (int) ( get_field( 'events_widget_count' ) ?: 6 );
+$count          = in_array( $count, [ 2, 4, 6, 8, 10 ], true ) ? $count : 6;
+$mode           = get_field( 'events_widget_selection_mode' ) ?: 'auto';
+$hide_recurring = (bool) get_field( 'events_widget_hide_recurring' );
+$is_preview     = ! empty( $block['data']['preview'] );
 
 // ── Fetch events ──────────────────────────────────────────────────────────────
 
@@ -35,6 +36,18 @@ if ( $mode === 'manual' ) {
 	$args['posts_per_page']  = $count;
 	$args['no_found_rows']   = true;
 	unset( $args['paged'] );
+
+	if ( $hide_recurring ) {
+		$args['meta_query'] = [
+			'relation' => 'AND',
+			$args['meta_query'],
+			[
+				'relation' => 'OR',
+				[ 'key' => 'event_recurring', 'compare' => 'NOT EXISTS' ],
+				[ 'key' => 'event_recurring', 'value' => '1', 'compare' => '!=' ],
+			],
+		];
+	}
 
 	$query = new WP_Query( $args );
 	$items = $query->posts;

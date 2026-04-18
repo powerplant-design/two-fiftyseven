@@ -89,6 +89,30 @@
 			"elements": [ "featured_image" ],
 			"bidirectional": 0,
 			"bidirectional_target": []
+		},
+		{
+			"key": "field_two57_ew_hide_recurring",
+			"label": "Hide Recurring Events",
+			"name": "events_widget_hide_recurring",
+			"aria-label": "",
+			"type": "true_false",
+			"instructions": "When enabled, only one-off events are shown (recurring events are excluded).",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_ew_mode",
+						"operator": "==",
+						"value": "auto"
+					}
+				]
+			],
+			"wrapper": { "width": "20", "class": "", "id": "" },
+			"message": "",
+			"default_value": 0,
+			"ui": 1,
+			"ui_on_text": "Yes",
+			"ui_off_text": "No"
 		}
 	],
 	"location": [

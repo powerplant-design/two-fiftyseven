@@ -33,7 +33,7 @@ $has_thumb     = has_post_thumbnail( $post_id );
 		<div class="event-card__body | stack">
 
 			<?php if ( $badge ) : ?>
-				<span class="event-card__badge text-monospace"><?php echo esc_html( $badge ); ?></span>
+				<span class="badge event-card__badge"><?php echo esc_html( $badge ); ?></span>
 			<?php endif; ?>
 
             <div class="event-card__copy">
@@ -51,11 +51,11 @@ $has_thumb     = has_post_thumbnail( $post_id );
 
 		</div>
 
+		<?php if ( $has_thumb ) : ?>
 		<div class="event-card__image | frame">
-			<?php if ( $has_thumb ) : ?>
-				<?php echo get_the_post_thumbnail( $post_id, 'medium_large', [ 'loading' => 'lazy' ] ); ?>
-			<?php endif; ?>
+			<?php echo get_the_post_thumbnail( $post_id, 'medium_large', [ 'loading' => 'lazy' ] ); ?>
 		</div>
+		<?php endif; ?>
 
 	</a>
 </article>

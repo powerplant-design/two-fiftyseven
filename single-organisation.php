@@ -22,6 +22,17 @@ while ( have_posts() ) :
 	$post_links          = get_field( 'post_links' ) ?: [];
 	$logo_id             = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo' ) : 0;
 	$logo_svg            = $logo_id ? two_fiftyseven_get_inline_svg( $logo_id ) : '';
+	$use_type            = function_exists( 'get_field' ) ? ( get_field( 'organisation_use_type' ) ?: '' ) : '';
+	$badge_term          = '';
+	$terms               = get_the_terms( get_the_ID(), 'organisation_category' );
+	if ( $terms && ! is_wp_error( $terms ) ) {
+		foreach ( $terms as $t ) {
+			if ( $t->slug !== 'uncategorized' ) {
+				$badge_term = $t->name;
+				break;
+			}
+		}
+	}
 ?>
 
 <div class="page-layout">
@@ -38,6 +49,17 @@ while ( have_posts() ) :
 			<?php get_template_part( 'template-parts/post-sidebar-logo', null, [
 				'logo_svg' => $logo_svg,
 			] ); ?>
+
+			<?php if ( $use_type || $badge_term ) : ?>
+				<div class="cluster badge-cluster">
+					<?php if ( $badge_term ) : ?>
+						<span class="badge"><?php echo esc_html( $badge_term ); ?></span>
+					<?php endif; ?>
+					<?php if ( $use_type ) : ?>
+						<span class="badge"><?php echo esc_html( strtoupper( $use_type ) ); ?></span>
+					<?php endif; ?>
+				</div>
+			<?php endif; ?>
 
 			<?php get_template_part( 'template-parts/post-sidebar-meta' ); ?>
 
