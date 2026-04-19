@@ -48,6 +48,29 @@
 			"ajax": 0
 		},
 		{
+			"key": "field_two57_image_contain",
+			"label": "Contain Image",
+			"name": "image_contain",
+			"aria-label": "",
+			"type": "true_false",
+			"instructions": "When enabled the image fits inside the frame instead of covering it.",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_show_featured_image",
+						"operator": "==",
+						"value": "1"
+					}
+				]
+			],
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"default_value": 0,
+			"ui": 1,
+			"ui_on_text": "Contain",
+			"ui_off_text": "Cover"
+		},
+		{
 			"key": "field_two57_post_links",
 			"label": "Links",
 			"name": "post_links",

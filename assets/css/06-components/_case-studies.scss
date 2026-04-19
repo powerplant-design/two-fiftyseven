@@ -62,6 +62,8 @@
 		justify-content: center;
 		color: var(--color-content-secondary);
 		min-block-size: clamp(var(--space-l), 9vw, var(--space-3xl));
+		background: linear-gradient(var(--color-surface-primary), var(--color-trans));
+		border-radius: var(--corner-radius-m);
 
 		svg {
 			block-size: var(--space-3xl);

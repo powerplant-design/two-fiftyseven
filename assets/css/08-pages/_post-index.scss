@@ -56,7 +56,7 @@ Description: Card grid for the posts index page (home.php).
 // ── Featured image ───────────────────────────────────────────────
 
 .post-index__image {
-	background: linear-gradient(to left, var(--color-surface-primary), var(--color-surface-secondary));
+	background: linear-gradient(to left, var(--color-surface-primary), var(--color-trans));
 	border-radius: var(--corner-radius-m);
     --frame-aspect-ratio: 16 / 9;
 

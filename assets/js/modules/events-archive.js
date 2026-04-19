@@ -93,7 +93,7 @@ function animateCards() {
 	const cards = _grid.querySelectorAll( '.event-card' );
 
 	cards.forEach( ( card, i ) => {
-		const delay = i * 160;
+		const delay = i * 100;
 		card.style.setProperty( '--delay', `${ delay }ms` );
 		// Remove class first so the transition can re-fire for newly injected cards.
 		card.classList.remove( 'is-visible' );

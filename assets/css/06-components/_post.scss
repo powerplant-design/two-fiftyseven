@@ -89,6 +89,10 @@ With a featured image:    image on the left (2/5), title on the right (3/5).
 			aspect-ratio: 210 / 297; // A4 portrait
 		}
 	}
+
+	&[data-image-fit='contain'] img {
+		object-fit: contain;
+	}
 }
 
 .post-hero__title,

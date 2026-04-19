@@ -10,7 +10,7 @@
  */
 
 // ── Tuning ────────────────────────────────────────────────────
-const BASE_SPEED = 0.4;  // px per rAF frame at 60fps (~30 px/s)
+const BASE_SPEED = 0.75;  // px per rAF frame at 60fps (~34 px/s)
 // ─────────────────────────────────────────────────────────────
 
 let rafId  = null;

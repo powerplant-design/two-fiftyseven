@@ -11,6 +11,7 @@
 
 $show_featured_image = $args['show_featured_image'] ?? true;
 $image_orientation   = $args['image_orientation'] ?? 'landscape';
+$image_contain       = $args['image_contain'] ?? ( function_exists( 'get_field' ) && get_field( 'image_contain' ) );
 
 // Allow callers to pass a subheading directly (e.g. when the field name differs).
 // Falls back to the shared post_subheading ACF field used by other CPTs.
@@ -34,7 +35,7 @@ $title_class = mb_strlen( get_the_title() ) < 28 ? 'post-hero__title' : 'post-he
 		<h1 class="<?php echo esc_attr( $title_class ); ?> line-height-slim"><?php the_title(); ?></h1>
 	<?php endif; ?>
 	<?php if ( $has_thumb ) : ?>
-		<div class="post-hero__image post-hero__image--<?php echo esc_attr( $image_orientation ); ?>">
+		<div class="post-hero__image post-hero__image--<?php echo esc_attr( $image_orientation ); ?>"<?php if ( $image_contain ) : ?> data-image-fit="contain"<?php endif; ?>>
 			<?php the_post_thumbnail( 'large' ); ?>
 		</div>
 	<?php endif; ?>

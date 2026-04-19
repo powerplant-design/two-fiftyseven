@@ -165,7 +165,7 @@ function animateCards() {
 	const cards = _grid.querySelectorAll( '.post-index__item' );
 
 	cards.forEach( ( card, i ) => {
-		const delay = i * 160;
+		const delay = i * 100;
 		card.style.setProperty( '--delay', `${ delay }ms` );
 		card.classList.remove( 'is-visible' );
 		// Force reflow so transition re-fires for newly injected cards.

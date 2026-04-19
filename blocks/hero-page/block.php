@@ -81,25 +81,49 @@ if ( ! empty( $bg_image['url'] ) ) {
 		if ( 'custom' === $marquee_mode ) :
 			$selected_post_ids = get_field( 'page_hero_marquee_logos' ) ?: [];
 		else :
-			// Map page slug → CPT post type(s) to query.
-			$page_slug = get_post_field( 'post_name', $post_id );
-			$cpt_map   = [
-				'workspace'   => [ 'organisation' ],
-				'meetings'    => [ 'organisation', 'person' ],
-				'host-events' => [ 'event' ],
+			// Map page slug → use-type filter for organisation logos.
+			$page_slug    = get_post_field( 'post_name', $post_id );
+			$use_type_map = [
+				'workspace'   => [ 'base', 'hub', 'desk' ],
+				'meetings'    => [ 'meet' ],
+				'host-events' => [ 'events' ],
 			];
-			$cpt_types = $cpt_map[ $page_slug ] ?? [ 'organisation', 'person', 'event' ];
 
-			$logo_query = new WP_Query( [
-				'post_type'      => $cpt_types,
+			$query_args = [
+				'post_type'      => 'organisation',
 				'post_status'    => 'publish',
 				'posts_per_page' => -1,
 				'fields'         => 'ids',
 				'orderby'        => 'date',
 				'order'          => 'ASC',
 				'no_found_rows'  => true,
-			] );
+			];
+
+			// Filter by use type when on a specific page; homepage shows all.
+			if ( isset( $use_type_map[ $page_slug ] ) ) {
+				$query_args['meta_query'] = [
+					[
+						'key'     => 'organisation_use_type',
+						'value'   => $use_type_map[ $page_slug ],
+						'compare' => 'IN',
+					],
+				];
+			}
+
+			$logo_query        = new WP_Query( $query_args );
 			$selected_post_ids = $logo_query->posts;
+
+			// host-events: also include all event CPT posts with logos.
+			if ( 'host-events' === $page_slug ) {
+				$event_query = new WP_Query( [
+					'post_type'      => 'event',
+					'post_status'    => 'publish',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+					'no_found_rows'  => true,
+				] );
+				$selected_post_ids = array_merge( $selected_post_ids, $event_query->posts );
+			}
 		endif;
 
 		foreach ( $selected_post_ids as $logo_post_id ) :
