@@ -39,7 +39,7 @@
 		transform 0.8s ease-out var(--delay, 0ms),
 		background-color var(--transition-speed) ease;
 
-	&.is-inview {
+	.three-cards__grid.is-inview & {
 		opacity: 1;
 		transform: translateY(0);
 	}

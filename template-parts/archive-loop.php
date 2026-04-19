@@ -81,7 +81,7 @@ if ( have_posts() ) : ?>
 							</span>
 						<?php endif; ?>
 						<?php if ( $use_type ) : ?>
-							<span class="badge">
+							<span class="badge" data-color="maroon">
 								<?php echo esc_html( strtoupper( $use_type ) ); ?>
 							</span>
 						<?php endif; ?>

@@ -23,17 +23,67 @@
 	flex-direction: column;
 }
 
+// Group wrapper — puts category tabs left, use type select right.
+.post-archive__tabs-group {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	align-items: end;
+
+	@media (max-width: #{bp.$bp-sm}) {
+		display: none;
+	}
+
+	> .post-archive__select {
+		margin-inline-end: var(--space-m);
+		margin-block-end: -1px;
+		position: relative;
+		z-index: 1;
+		margin-bottom: var(--space-xs);
+		min-width: var(--space-6xl);
+	}
+}
+
 .post-archive__tabs {
 	padding-inline-start: var(--space-m);
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	gap: 0;
-	align-self: flex-start;
+}
+
+// ── Mobile select dropdowns ──────────────────────────────
+
+.post-archive__selects {
+	display: none;
 
 	@media (max-width: #{bp.$bp-sm}) {
-		padding-inline: 0;
+		display: flex;
+		gap: var(--space-xs);
+		padding-block-end: var(--space-xs);
+
+		> .post-archive__select {
+			flex: 1;
+		}
 	}
+}
+
+.post-archive__select {
+	appearance: none;
+	background-color: var(--color-surface-secondary);
+	color: var(--color-content-primary);
+	border: var(--border-tertiary);
+	border-radius: var(--corner-radius-l);
+	padding: var(--space-xs) var(--space-s);
+	font-family: var(--font-mono);
+	font-size: var(--step--1);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	cursor: pointer;
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right var(--space-xs) center;
+	background-size: 12px;
+	padding-inline-end: var(--space-l);
 }
 
 // ── Tab buttons ───────────────────────────────────────────
@@ -89,7 +139,7 @@
 // ── Grid ─────────────────────────────────────────────────
 
 .post-archive__grid {
-	padding: var(--space-m);
+	padding: var(--space-s-xl);
 	background-color: var(--color-surface-primary);
 	border-end-start-radius: var(--corner-radius-3xl);
 	border-end-end-radius: var(--corner-radius-3xl);
@@ -113,8 +163,15 @@
 
 // ── Empty state ───────────────────────────────────────────
 
-.post-archive__empty {
+.post-archive__empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--space-s);
 	padding-block: var(--space-2xl);
+}
+
+.post-archive__empty {
 	text-align: center;
 	color: var(--color-content-secondary);
 }
@@ -122,18 +179,54 @@
 // ── Pagination ────────────────────────────────────────────
 
 .post-archive__pagination {
-	display: flex;
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
 	align-items: center;
-	justify-content: space-between;
 	gap: var(--space-s);
 	padding-block-start: var(--space-m);
 
+	// All three items share row 1; the page count is centred
+	// over the full width so it never shifts when a button is absent.
+	> * {
+		grid-row: 1;
+	}
+
 	@media (max-width: #{bp.$bp-sm}) {
-		flex-direction: column;
-		align-items: center;
+		grid-template-columns: 1fr 1fr;
+
+		> * {
+			grid-row: auto;
+		}
 	}
 }
 
 .post-archive__page-count {
+	grid-column: 1 / -1;
+	text-align: center;
 	color: var(--color-content-secondary);
+
+	@media (max-width: #{bp.$bp-sm}) {
+		grid-row: 1;
+	}
+}
+
+.post-archive__pagination > .btn[data-dir='prev'] {
+	grid-column: 1;
+	justify-self: start;
+
+	@media (max-width: #{bp.$bp-sm}) {
+		justify-self: stretch;
+		text-align: center;
+	}
+}
+
+.post-archive__pagination > .btn[data-dir='next'] {
+	grid-column: 3;
+	justify-self: end;
+
+	@media (max-width: #{bp.$bp-sm}) {
+		grid-column: 2;
+		justify-self: stretch;
+		text-align: center;
+	}
 }

@@ -16,7 +16,7 @@ import Swup           from 'swup';
 import SwupHeadPlugin from '@swup/head-plugin';
 import SwupA11yPlugin from '@swup/a11y-plugin';
 import { applyThemes } from './color-theme.js';
-import { initScroll, destroyScroll } from './scroll.js';
+import { initScroll, destroyScroll, getScrollInstance } from './scroll.js';
 import { initMarquee, destroyMarquee } from './marquee.js';
 import { syncHeader } from './header.js';
 import { initFooter, destroyFooter } from './footer.js';
@@ -33,6 +33,22 @@ function resetScrollRevealState() {
 }
 
 export function initTransitions() {
+	// ── Bfcache restoration ─────────────────────────────────────────────────
+	// When the browser restores from the back-forward cache, Swup's hooks
+	// don't fire. Destroy stale Locomotive, reset is-inview, then wait two
+	// frames so the browser paints the reset state before re-observing.
+	window.addEventListener( 'pageshow', ( e ) => {
+		if ( e.persisted ) {
+			destroyScroll();
+			resetScrollRevealState();
+			requestAnimationFrame( () => {
+				requestAnimationFrame( () => {
+					initScroll();
+				} );
+			} );
+		}
+	} );
+
 	const swup = new Swup( {
 		containers: [ '#swup' ],
 		plugins: [
@@ -96,6 +112,15 @@ export function initTransitions() {
 		initCptArchive();
 		initImpact();
 		syncHeader();
+
+		// Safety net: if animation:in:end never fires (e.g. transitionend
+		// doesn't trigger on back/forward navigation), init Locomotive after
+		// the expected fade duration so scroll reveals aren't stuck.
+		setTimeout( () => {
+			if ( ! getScrollInstance() ) {
+				initScroll();
+			}
+		}, 1200 );
 	} );
 
 	// 4. Init Locomotive only after the fade-in animation completes so that

@@ -38,15 +38,14 @@
 			background-color var(--transition-speed) ease;
 
 		a {
-			gap: var(--space-xs);
-			padding: var(--space-s);
+			padding-block-end: var(--space-s);
 		}
 
 		&:hover {
 			background-color: color-mix(in srgb, var(--color-surface-secondary) 95%, var(--color-content-primary));
 		}
 
-		&.is-inview {
+		.case-studies__cards.is-inview & {
 			opacity: 1;
 			transform: translateY(0);
 		}
@@ -57,19 +56,23 @@
 	}
 
 	&__logo {
-		aspect-ratio: 1 / 0.6;
+		aspect-ratio: 2 / 1;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		color: var(--color-content-primary);
+		color: var(--color-content-secondary);
 		min-block-size: clamp(var(--space-l), 9vw, var(--space-3xl));
 
-		svg,
-		img {
+		svg {
 			block-size: var(--space-3xl);
 			inline-size: auto;
-			max-inline-size: 85%;
+			max-inline-size: 75%;
 		}
+	}
+
+	&__card-copy {
+		--stack-gap: var(--space-s);		
+		padding: var(--space-xs);
 	}
 
 	&__card-title {

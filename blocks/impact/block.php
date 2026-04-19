@@ -52,7 +52,7 @@ $link_target = ! empty( $link['target'] ) ? $link['target'] : '';
 			<?php foreach ( $items as $index => $item ) :
 				$number    = $item['impact_number'] ?? '';
 				$label     = $item['impact_label']  ?? '';
-				$delay_ms  = $index * 120;
+				$delay_ms  = $index * 160;
 				if ( ! $number && ! $label ) continue;
 			?>
 				<li class="impact__row" data-js="impact-row" data-scroll data-scroll-repeat style="--delay: <?php echo esc_attr( $delay_ms ); ?>ms">

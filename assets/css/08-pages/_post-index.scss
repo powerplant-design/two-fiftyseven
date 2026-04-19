@@ -30,7 +30,7 @@ Description: Card grid for the posts index page (home.php).
 	transition: transform 0.3s ease-out, background-color var(--transition-speed) ease, opacity 0.4s ease-out var(--delay, 0ms);
 	opacity: 0;
 	transform: translateY(1.5rem);
-	gap: var(--space-s);
+	gap: var(--space-xs);
 
 	&.is-visible {
 		opacity: 1;
@@ -56,6 +56,7 @@ Description: Card grid for the posts index page (home.php).
 // ── Featured image ───────────────────────────────────────────────
 
 .post-index__image {
+	background: linear-gradient(to left, var(--color-surface-primary), var(--color-surface-secondary));
 	border-radius: var(--corner-radius-m);
     --frame-aspect-ratio: 16 / 9;
 
@@ -111,6 +112,10 @@ Description: Card grid for the posts index page (home.php).
 	@media (max-width: #{bp.$bp-sm}) {
 		flex-direction: column;
 
+		.post-index__image--logo {
+			display: none;
+		}
+
 		.post-index__image,
 		.post-index__image--logo {
 			flex: none;
@@ -141,7 +146,7 @@ Description: Card grid for the posts index page (home.php).
 
 .post-index__body {
     --block-gap: var(--space-xs);
-	padding: var(--space-xs) var(--space-s) var(--space-xs) var(--space-xs);
+	padding: var(--space-xs);
 }
 
 .post-index__link {

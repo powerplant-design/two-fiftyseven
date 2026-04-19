@@ -34,14 +34,12 @@ if ( ! $query instanceof WP_Query || ! $query->have_posts() ) : ?>
 </ul>
 
 <?php if ( $total_pages > 1 ) : ?>
-<nav class="post-archive__pagination | repel" aria-label="<?php esc_attr_e( 'Events pagination', 'two-fiftyseven' ); ?>">
+<nav class="post-archive__pagination" aria-label="<?php esc_attr_e( 'Events pagination', 'two-fiftyseven' ); ?>">
 
 	<?php if ( $current_page > 1 ) : ?>
-		<button class="btn" data-type="secondary" data-js="events-pager" data-page="<?php echo esc_attr( $current_page - 1 ); ?>">
+		<button class="btn" data-type="secondary" data-dir="prev" data-js="events-pager" data-page="<?php echo esc_attr( $current_page - 1 ); ?>">
 			&larr; <?php esc_html_e( 'Previous', 'two-fiftyseven' ); ?>
 		</button>
-	<?php else : ?>
-		<span></span>
 	<?php endif; ?>
 
 	<span class="post-archive__page-count text-monospace text-s">
@@ -54,11 +52,9 @@ if ( ! $query instanceof WP_Query || ! $query->have_posts() ) : ?>
 	</span>
 
 	<?php if ( $current_page < $total_pages ) : ?>
-		<button class="btn" data-type="secondary" data-js="events-pager" data-page="<?php echo esc_attr( $current_page + 1 ); ?>">
+		<button class="btn" data-type="secondary" data-dir="next" data-js="events-pager" data-page="<?php echo esc_attr( $current_page + 1 ); ?>">
 			<?php esc_html_e( 'Next', 'two-fiftyseven' ); ?> &rarr;
 		</button>
-	<?php else : ?>
-		<span></span>
 	<?php endif; ?>
 
 </nav>

@@ -37,7 +37,7 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 		<?php endif; ?>
 
 		<?php if ( $cards ) : ?>
-			<ul class="three-cards__grid | grid" data-grid-layout="thirds">
+			<ul class="three-cards__grid | grid" data-grid-layout="thirds" data-scroll data-scroll-repeat>
 				<?php foreach ( $cards as $index => $card ) :
 					$title       = $card['card_title'] ?? '';
 					$description = $card['card_description'] ?? '';
@@ -50,13 +50,11 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 					$image_alt   = ! empty( $image['alt'] ) ? $image['alt'] : '';
 					$space       = $card['card_colour_space'] ?? 'neutral';
 					if ( ! in_array( $space, $allowed_spaces, true ) ) { $space = 'neutral'; }
-					$delay_ms    = $index * 150;
+					$delay_ms    = $index * 160;
 				?>
 					<li
 						class="three-cards__card"
 						data-color-space="<?php echo esc_attr( $space ); ?>"
-						data-scroll
-						data-scroll-repeat
 						style="--delay: <?php echo $delay_ms; ?>ms"
 					>
 						<a

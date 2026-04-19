@@ -30,7 +30,8 @@
 	background-color: var(--color-surface-secondary);
 
 	&.is-visible,
-	&.is-inview {
+	&.is-inview,
+	.event-cards.is-inview & {
 		opacity: 1;
 		transform: translateY(0);
 	}
@@ -67,6 +68,7 @@
 	height: stretch;
 	justify-content: center;
 	gap: var(--space-s);
+	padding-inline-end: var(--space-xs);
 }
 
 // ── Body — left content column ────────────────────────────

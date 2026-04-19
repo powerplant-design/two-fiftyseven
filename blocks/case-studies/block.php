@@ -55,7 +55,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 		<?php endif; ?>
 
 		<?php if ( $items ) : ?>
-			<ul class="case-studies__cards | grid cards" data-grid-layout="thirds">
+			<ul class="case-studies__cards | grid cards" data-grid-layout="thirds" data-scroll data-scroll-repeat>
 				<?php foreach ( $items as $index => $item ) :
 					$item_id       = (int) $item->ID;
 					$item_title    = get_the_title( $item_id );
@@ -63,7 +63,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 					$item_excerpt  = get_the_excerpt( $item_id );
 					$brand_logo_id = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo', $item_id ) : 0;
 					$brand_logo    = $brand_logo_id ? two_fiftyseven_get_inline_svg( $brand_logo_id ) : '';
-					$delay_ms      = $index * 300; // 0ms, 200ms, 400ms
+					$delay_ms      = $index * 160;
 
 					$use_type   = function_exists( 'get_field' ) ? ( get_field( 'organisation_use_type', $item_id ) ?: '' ) : '';
 					$badge_term = '';
@@ -77,32 +77,23 @@ if ( ! empty( $archive_link['url'] ) ) {
 						}
 					}
 				?>
-					<li class="case-studies__card | card" data-scroll data-scroll-repeat style="--delay: <?php echo $delay_ms; ?>ms">
+				<li class="case-studies__card | card" style="--delay: <?php echo $delay_ms; ?>ms">
 						<a class="case-studies__card-link" href="<?php echo esc_url( $item_link ); ?>">
-							<?php if ( $use_type || $badge_term ) : ?>
-								<div class="cluster badge-cluster">
-									<?php if ( $badge_term ) : ?>
-										<span class="badge"><?php echo esc_html( $badge_term ); ?></span>
-									<?php endif; ?>
-									<?php if ( $use_type ) : ?>
-										<span class="badge"><?php echo esc_html( strtoupper( $use_type ) ); ?></span>
-									<?php endif; ?>
-								</div>
-							<?php endif; ?>
-
 							<?php if ( $brand_logo ) : ?>
 								<div class="case-studies__logo" aria-hidden="true">
 									<?php echo $brand_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by two_fiftyseven_get_inline_svg() ?>
 								</div>
 							<?php endif; ?>
 
-							<?php if ( $item_title ) : ?>
-								<h3 class="case-studies__card-title | card-title"><?php echo esc_html( $item_title ); ?></h3>
-							<?php endif; ?>
-
-							<?php if ( $item_excerpt ) : ?>
-								<p class="case-studies__card-excerpt card-desc | text-m line-clamp-3"><?php echo esc_html( $item_excerpt ); ?></p>
-							<?php endif; ?>
+							<div class="case-studies__card-copy | stack">
+								<?php if ( $item_title ) : ?>
+									<h3 class="case-studies__card-title | card-title text-xl"><?php echo esc_html( $item_title ); ?></h3>
+								<?php endif; ?>
+								
+								<?php if ( $item_excerpt ) : ?>
+									<p class="case-studies__card-excerpt card-desc | text-m line-clamp-3"><?php echo esc_html( $item_excerpt ); ?></p>
+								<?php endif; ?>
+							</div>
 						</a>
 					</li>
 				<?php endforeach; ?>

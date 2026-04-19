@@ -16,6 +16,8 @@ import LocomotiveScroll from 'locomotive-scroll';
 let instance = null;
 
 export function initScroll() {
+	const isMobile = window.matchMedia( '(max-width: 767px)' ).matches;
+
 	instance = new LocomotiveScroll( {
 		lenisOptions: {
 			lerp: 0.1,      // inertia factor (0 = instant, 1 = no damping)
@@ -25,8 +27,7 @@ export function initScroll() {
 		// triggerRootMargin format: "top right bottom left" (like CSS margin).
 		// Negative BOTTOM margin shrinks the root from the bottom, so an element
 		// must travel that far above the viewport's bottom edge before triggering.
-		// e.g. '-25% 0px' → trigger fires when element's top reaches 75% from top (25% from bottom).
-		triggerRootMargin: '0px 0px -20% 0px',
+		triggerRootMargin: isMobile ? '0px 0px -10% 0px' : '0px 0px -15% 0px',
 	} );
 }
 

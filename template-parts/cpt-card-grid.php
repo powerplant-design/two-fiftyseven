@@ -18,7 +18,10 @@ $current_page = (int) ( $args['current_page'] ?? 1 );
 $total_pages  = (int) ( $args['total_pages'] ?? 1 );
 
 if ( ! $query instanceof WP_Query || ! $query->have_posts() ) : ?>
-	<p class="post-archive__empty text-monospace"><?php esc_html_e( 'Nothing found.', 'two-fiftyseven' ); ?></p>
+	<div class="post-archive__empty-state">
+		<p class="post-archive__empty text-monospace"><?php esc_html_e( 'Nothing yet', 'two-fiftyseven' ); ?></p>
+		<button class="btn" data-type="secondary" data-js="cpt-reset"><?php esc_html_e( 'Reset filters', 'two-fiftyseven' ); ?></button>
+	</div>
 <?php return; endif;
 
 $grid_layout = in_array( $post_type, [ 'person', 'organisation', 'media_item' ], true ) ? 'halves' : 'thirds';
@@ -96,7 +99,7 @@ $taxonomy_map = [
 						</span>
 					<?php endif; ?>
 					<?php if ( $use_type ) : ?>
-						<span class="badge">
+						<span class="badge" data-color="maroon">
 							<?php echo esc_html( strtoupper( $use_type ) ); ?>
 						</span>
 					<?php endif; ?>
@@ -118,14 +121,12 @@ $taxonomy_map = [
 </div>
 
 <?php if ( $total_pages > 1 ) : ?>
-<nav class="post-archive__pagination | repel" aria-label="<?php esc_attr_e( 'Archive pagination', 'two-fiftyseven' ); ?>">
+<nav class="post-archive__pagination" aria-label="<?php esc_attr_e( 'Archive pagination', 'two-fiftyseven' ); ?>">
 
 	<?php if ( $current_page > 1 ) : ?>
-		<button class="btn" data-type="secondary" data-js="cpt-pager" data-page="<?php echo esc_attr( $current_page - 1 ); ?>">
+		<button class="btn" data-type="secondary" data-dir="prev" data-js="cpt-pager" data-page="<?php echo esc_attr( $current_page - 1 ); ?>">
 			&larr; <?php esc_html_e( 'Previous', 'two-fiftyseven' ); ?>
 		</button>
-	<?php else : ?>
-		<span></span>
 	<?php endif; ?>
 
 	<span class="post-archive__page-count text-monospace text-s">
@@ -138,11 +139,9 @@ $taxonomy_map = [
 	</span>
 
 	<?php if ( $current_page < $total_pages ) : ?>
-		<button class="btn" data-type="secondary" data-js="cpt-pager" data-page="<?php echo esc_attr( $current_page + 1 ); ?>">
+		<button class="btn" data-type="secondary" data-dir="next" data-js="cpt-pager" data-page="<?php echo esc_attr( $current_page + 1 ); ?>">
 			<?php esc_html_e( 'Next', 'two-fiftyseven' ); ?> &rarr;
 		</button>
-	<?php else : ?>
-		<span></span>
 	<?php endif; ?>
 
 </nav>

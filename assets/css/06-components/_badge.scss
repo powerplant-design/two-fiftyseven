@@ -15,9 +15,43 @@
 	border-radius: var(--corner-radius-xs);
 	font-family: var(--font-monospace-family);
 	font-weight: var(--font-monospace-weight);
-	font-size: var(--step--2);
 	letter-spacing: var(--kerning-caps);
 	text-transform: uppercase;
 	background-color: var(--color-btn-secondary-text);
 	color: var(--color-content-inverse);
+	font-size: var(--step--2);
+
+	&[data-size='medium'] {
+		font-size: var(--step--1);
+	}
+
+	&[data-color='purple'] {
+		background-color: var(--color-purple-500);
+		color: var(--color-purple-100);
+	}
+
+	&[data-color='green'] {
+		background-color: var(--color-forest-500);
+		color: var(--color-forest-100);
+	}
+
+	&[data-color='maroon'] {
+		background-color: var(--color-maroon-500);
+		color: var(--color-maroon-100);
+	}
+
+	[data-theme*='-dark'] &[data-color='purple'] {
+		background-color: var(--color-purple-400);
+		color: var(--color-purple-600);
+	}
+
+	[data-theme*='-dark'] &[data-color='green'] {
+		background-color: var(--color-forest-400);
+		color: var(--color-forest-600);
+	}
+
+	[data-theme*='-dark'] &[data-color='maroon'] {
+		background-color: var(--color-maroon-400);
+		color: var(--color-maroon-600);
+	}
 }

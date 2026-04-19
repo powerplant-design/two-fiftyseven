@@ -66,12 +66,13 @@ if ( $mode === 'manual' ) {
 
 		<?php if ( $items ) : ?>
 
-			<ul class="event-cards | grid" data-grid-layout="halves" data-js="events-widget" role="list">
+			<ul class="event-cards | grid" data-grid-layout="halves" data-js="events-widget" data-scroll data-scroll-repeat role="list">
 				<?php foreach ( $items as $index => $item ) :
 					get_template_part( 'template-parts/event-card', null, [
-					'post_id'      => (int) $item->ID,
-					'card_index'   => $index,
-					'scroll_reveal' => true,
+					'post_id'       => (int) $item->ID,
+					'card_index'    => $index,
+					'scroll_reveal'  => false,
+					'badge_color'    => 'purple',
 					] );
 				endforeach; ?>
 			</ul>

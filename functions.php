@@ -632,6 +632,49 @@ add_action( 'init', function (): void {
 
 
 /**
+ * Show the ACF "Use Type" field as an admin column on the Organisations list table.
+ */
+add_filter( 'manage_organisation_posts_columns', function ( array $columns ): array {
+	$insert_after = 'taxonomy-organisation_category';
+	$new_columns  = [];
+	foreach ( $columns as $key => $label ) {
+		$new_columns[ $key ] = $label;
+		if ( $key === $insert_after ) {
+			$new_columns['use_type'] = __( 'Use Type', 'two-fiftyseven' );
+		}
+	}
+	// Fallback if taxonomy column doesn't exist.
+	if ( ! isset( $new_columns['use_type'] ) ) {
+		$new_columns['use_type'] = __( 'Use Type', 'two-fiftyseven' );
+	}
+	return $new_columns;
+} );
+
+add_action( 'manage_organisation_posts_custom_column', function ( string $column, int $post_id ): void {
+	if ( $column !== 'use_type' ) {
+		return;
+	}
+	$value = function_exists( 'get_field' ) ? get_field( 'organisation_use_type', $post_id ) : '';
+	echo $value ? esc_html( ucfirst( $value ) ) : '—';
+}, 10, 2 );
+
+add_filter( 'manage_edit-organisation_sortable_columns', function ( array $columns ): array {
+	$columns['use_type'] = 'use_type';
+	return $columns;
+} );
+
+add_action( 'pre_get_posts', function ( WP_Query $query ): void {
+	if ( ! is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+	if ( $query->get( 'orderby' ) === 'use_type' ) {
+		$query->set( 'meta_key', 'organisation_use_type' );
+		$query->set( 'orderby', 'meta_value' );
+	}
+} );
+
+
+/**
  * Register ACF Options page for per-archive colour space settings.
  */
 add_action( 'acf/init', function (): void {
@@ -998,7 +1041,7 @@ add_action( 'wp_ajax_nopriv_two57_events', 'two57_events_ajax' );
  * @return array             WP_Query args array.
  * ============================================================
  */
-function two57_get_cpt_query_args( string $post_type, string $term_slug, int $paged = 1 ): array {
+function two57_get_cpt_query_args( string $post_type, string $term_slug, int $paged = 1, string $use_type = '' ): array {
 	$allowed_types = [ 'post', 'person', 'organisation', 'media_item' ];
 	if ( ! in_array( $post_type, $allowed_types, true ) ) {
 		$post_type = 'post';
@@ -1035,6 +1078,17 @@ function two57_get_cpt_query_args( string $post_type, string $term_slug, int $pa
 		];
 	}
 
+	$use_type = sanitize_text_field( $use_type );
+	if ( $use_type && $post_type === 'organisation' ) {
+		$args['meta_query'] = [
+			[
+				'key'     => 'organisation_use_type',
+				'value'   => $use_type,
+				'compare' => '=',
+			],
+		];
+	}
+
 	return $args;
 }
 
@@ -1043,7 +1097,7 @@ function two57_get_cpt_query_args( string $post_type, string $term_slug, int $pa
  * ============================================================
  * CPT Archives — AJAX handler: return card grid HTML.
  *
- * Expects POST: action, nonce, post_type, taxonomy, term (slug), paged.
+ * Expects POST: action, nonce, post_type, taxonomy, term (slug), paged, use_type.
  * Returns JSON: { success: true, data: { html, totalPages, currentPage } }.
  * ============================================================
  */
@@ -1058,7 +1112,13 @@ function two57_cpt_archive_ajax(): void {
 	$term_slug = sanitize_text_field( $_POST['term'] ?? '' );
 	$paged     = max( 1, (int) ( $_POST['paged'] ?? 1 ) );
 
-	$query = new WP_Query( two57_get_cpt_query_args( $post_type, $term_slug, $paged ) );
+	$allowed_use_types = [ 'base', 'hub', 'desk', 'meet', 'events', '' ];
+	$use_type = sanitize_text_field( $_POST['use_type'] ?? '' );
+	if ( ! in_array( $use_type, $allowed_use_types, true ) ) {
+		$use_type = '';
+	}
+
+	$query = new WP_Query( two57_get_cpt_query_args( $post_type, $term_slug, $paged, $use_type ) );
 
 	ob_start();
 	get_template_part( 'template-parts/cpt-card-grid', null, [

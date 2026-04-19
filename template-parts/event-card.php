@@ -12,7 +12,8 @@
 $post_id      = (int) ( $args['post_id'] ?? get_the_ID() );
 $card_index   = (int) ( $args['card_index'] ?? 0 );
 $scroll_reveal = ! empty( $args['scroll_reveal'] );
-$delay_ms     = $card_index * 200;
+$badge_color   = ! empty( $args['badge_color'] ) ? $args['badge_color'] : '';
+$delay_ms     = $card_index * 160;
 
 if ( ! $post_id ) {
 	return;
@@ -33,7 +34,7 @@ $has_thumb     = has_post_thumbnail( $post_id );
 		<div class="event-card__body | stack">
 
 			<?php if ( $badge ) : ?>
-				<span class="badge event-card__badge"><?php echo esc_html( $badge ); ?></span>
+				<span class="badge event-card__badge" data-size="medium"<?php if ( $badge_color ) : ?> data-color="<?php echo esc_attr( $badge_color ); ?>"<?php endif; ?>><?php echo esc_html( $badge ); ?></span>
 			<?php endif; ?>
 
             <div class="event-card__copy">
