@@ -80,7 +80,7 @@ if ( have_posts() ) : ?>
 							</span>
 						<?php endforeach; ?>
 						<?php if ( $use_type ) : ?>
-							<span class="badge" data-color="maroon">
+						<span class="badge" data-color="purple">
 								<?php echo esc_html( strtoupper( $use_type ) ); ?>
 							</span>
 						<?php endif; ?>

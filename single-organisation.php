@@ -55,7 +55,7 @@ while ( have_posts() ) :
 						<span class="badge" data-size="medium"><?php echo esc_html( $badge_term_name ); ?></span>
 					<?php endforeach; ?>
 					<?php if ( $use_type ) : ?>
-						<span class="badge" data-size="medium" data-color="maroon"><?php echo esc_html( strtoupper( $use_type ) ); ?></span>
+						<span class="badge" data-size="medium" data-color="purple"><?php echo esc_html( strtoupper( $use_type ) ); ?></span>
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>
