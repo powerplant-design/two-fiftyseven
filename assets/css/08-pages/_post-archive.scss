@@ -153,11 +153,14 @@
 		padding-inline: 0;
 	}
 
-	// Loading state
+	// Loading state — fade only the cards, not the grid container
 	&[aria-busy='true'] {
-		opacity: 0.5;
 		pointer-events: none;
-		transition: opacity 0.15s ease;
+
+		> * {
+			opacity: 0.5;
+			transition: opacity var(--transition-duration) ease-out;
+		}
 	}
 }
 

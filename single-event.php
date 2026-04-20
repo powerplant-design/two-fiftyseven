@@ -14,6 +14,13 @@ while ( have_posts() ) :
 	$logo_id             = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo' ) : 0;
 	$logo_svg            = $logo_id ? two_fiftyseven_get_inline_svg( $logo_id ) : '';
 	$event_subheading    = function_exists( 'get_field' ) ? (string) ( get_field( 'event_subheading' ) ?: '' ) : '';
+	$badge_terms         = [];
+	$terms               = get_the_terms( get_the_ID(), 'event_category' );
+	if ( $terms && ! is_wp_error( $terms ) ) {
+		foreach ( $terms as $t ) {
+			$badge_terms[] = $t->name;
+		}
+	}
 ?>
 
 <div class="page-layout">
@@ -31,6 +38,14 @@ while ( have_posts() ) :
 			<?php get_template_part( 'template-parts/post-sidebar-logo', null, [
 				'logo_svg' => $logo_svg,
 			] ); ?>
+
+			<?php if ( $badge_terms ) : ?>
+				<div class="cluster badge-cluster">
+					<?php foreach ( $badge_terms as $badge_term_name ) : ?>
+						<span class="badge" data-size="medium" data-color="forest"><?php echo esc_html( $badge_term_name ); ?></span>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
 
 			<?php get_template_part( 'template-parts/post-sidebar-event-meta' ); ?>
 

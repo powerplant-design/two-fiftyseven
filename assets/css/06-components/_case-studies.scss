@@ -29,11 +29,12 @@
 		opacity: 0;
 		transform: translateY(3rem);
 		transition:
-			opacity 0.4s ease-out var(--delay),
-			transform 0.8s ease-out var(--delay),
-			background-color var(--transition-speed) ease;
-
+		opacity 0.4s ease-out var(--delay),
+		transform 0.8s ease-out var(--delay),
+		background-color var(--transition-speed) ease;
+		
 		a {
+			border-radius: var(--corner-radius-xl);
 			padding-block-end: var(--space-s);
 		}
 

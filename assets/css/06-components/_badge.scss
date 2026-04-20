@@ -30,7 +30,7 @@
 		color: var(--color-purple-100);
 	}
 
-	&[data-color='green'] {
+	&[data-color='forest'] {
 		background-color: var(--color-forest-500);
 		color: var(--color-forest-100);
 	}
@@ -45,7 +45,7 @@
 		color: var(--color-purple-600);
 	}
 
-	[data-theme*='-dark'] &[data-color='green'] {
+	[data-theme*='-dark'] &[data-color='forest'] {
 		background-color: var(--color-forest-400);
 		color: var(--color-forest-600);
 	}

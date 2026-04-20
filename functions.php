@@ -611,6 +611,7 @@ add_action( 'init', function (): void {
 		'person_category'       => [ 'object_type' => 'person',       'slug' => 'person-category',       'singular' => 'Person Category',       'plural' => 'Person Categories' ],
 		'organisation_category' => [ 'object_type' => 'organisation', 'slug' => 'organisation-category', 'singular' => 'Organisation Category', 'plural' => 'Organisation Categories' ],
 		'media_item_category'   => [ 'object_type' => 'media_item',   'slug' => 'media-category',        'singular' => 'Media Category',        'plural' => 'Media Categories' ],
+		'event_category'        => [ 'object_type' => 'event',        'slug' => 'event-category',        'singular' => 'Event Category',        'plural' => 'Event Categories' ],
 	];
 
 	foreach ( $cpt_taxonomies as $taxonomy => $config ) {
@@ -814,7 +815,7 @@ function two57_format_event_badge( int $post_id ): string {
  * @param int    $paged  Pagination page number.
  * @return array
  */
-function two57_get_event_query_args( string $tab, int $paged = 1 ): array {
+function two57_get_event_query_args( string $tab, int $paged = 1, string $term_slug = '' ): array {
 	$common = [
 		'post_type'      => 'event',
 		'post_status'    => 'publish',
@@ -823,6 +824,14 @@ function two57_get_event_query_args( string $tab, int $paged = 1 ): array {
 		'meta_key'       => 'event_sort_date',
 		'orderby'        => 'meta_value',
 	];
+
+	if ( $term_slug ) {
+		$common['tax_query'] = [ [
+			'taxonomy' => 'event_category',
+			'field'    => 'slug',
+			'terms'    => $term_slug,
+		] ];
+	}
 
 	if ( $tab === 'past' ) {
 		return array_merge( $common, [
@@ -1008,8 +1017,9 @@ function two57_events_ajax(): void {
 
 	$tab   = isset( $_POST['tab'] ) && $_POST['tab'] === 'past' ? 'past' : 'upcoming';
 	$paged = max( 1, (int) ( $_POST['paged'] ?? 1 ) );
+	$term  = isset( $_POST['term'] ) ? sanitize_key( $_POST['term'] ) : '';
 
-	$query = new WP_Query( two57_get_event_query_args( $tab, $paged ) );
+	$query = new WP_Query( two57_get_event_query_args( $tab, $paged, $term ) );
 
 	ob_start();
 	get_template_part( 'template-parts/event-card-grid', null, [

@@ -25,6 +25,15 @@ $excerpt       = get_the_excerpt( $post_id );
 $badge         = function_exists( 'two57_format_event_badge' ) ? two57_format_event_badge( $post_id ) : '';
 $location_type = function_exists( 'get_field' ) ? (string) ( get_field( 'event_location_type', $post_id ) ?: 'two_fiftyseven' ) : 'two_fiftyseven';
 $location_name = function_exists( 'get_field' ) ? (string) ( get_field( 'event_location_name', $post_id ) ?: '' ) : '';
+
+$show_cat_badges = ! empty( $args['show_cat_badges'] );
+$cat_names       = [];
+if ( $show_cat_badges ) {
+	$cat_terms = get_the_terms( $post_id, 'event_category' );
+	$cat_names = ( $cat_terms && ! is_wp_error( $cat_terms ) )
+		? array_map( fn( $t ) => $t->name, $cat_terms )
+		: [];
+}
 $has_thumb     = has_post_thumbnail( $post_id );
 ?>
 
@@ -33,8 +42,15 @@ $has_thumb     = has_post_thumbnail( $post_id );
 
 		<div class="event-card__body | stack">
 
-			<?php if ( $badge ) : ?>
-				<span class="badge event-card__badge" data-size="medium"<?php if ( $badge_color ) : ?> data-color="<?php echo esc_attr( $badge_color ); ?>"<?php endif; ?>><?php echo esc_html( $badge ); ?></span>
+			<?php if ( $badge || $cat_names ) : ?>
+				<div class="cluster badge-cluster">
+					<?php if ( $badge ) : ?>
+						<span class="badge event-card__badge" data-size="medium"<?php if ( $badge_color ) : ?> data-color="<?php echo esc_attr( $badge_color ); ?>"<?php endif; ?>><?php echo esc_html( $badge ); ?></span>
+					<?php endif; ?>
+					<?php foreach ( $cat_names as $cat_name ) : ?>
+						<span class="badge" data-size="medium" data-color="forest"><?php echo esc_html( $cat_name ); ?></span>
+					<?php endforeach; ?>
+				</div>
 			<?php endif; ?>
 
             <div class="event-card__copy">
@@ -54,7 +70,7 @@ $has_thumb     = has_post_thumbnail( $post_id );
 
 		<?php if ( $has_thumb ) : ?>
 		<div class="event-card__image | frame">
-			<?php echo get_the_post_thumbnail( $post_id, 'medium_large', [ 'loading' => 'lazy' ] ); ?>
+			<?php echo get_the_post_thumbnail( $post_id, 'large', [ 'loading' => 'lazy' ] ); ?>
 		</div>
 		<?php endif; ?>
 

@@ -15,7 +15,10 @@ $current_page = (int) ( $args['current_page'] ?? 1 );
 $total_pages  = (int) ( $args['total_pages'] ?? 1 );
 
 if ( ! $query instanceof WP_Query || ! $query->have_posts() ) : ?>
-	<p class="post-archive__empty text-monospace"><?php esc_html_e( 'No events found.', 'two-fiftyseven' ); ?></p>
+	<div class="post-archive__empty-state">
+		<p class="post-archive__empty text-monospace"><?php esc_html_e( 'No events found', 'two-fiftyseven' ); ?></p>
+		<button class="btn" data-type="secondary" data-js="events-reset"><?php esc_html_e( 'Reset filters', 'two-fiftyseven' ); ?></button>
+	</div>
 <?php return; endif; ?>
 
 <ul class="event-cards | grid" data-grid-layout="halves" role="list">
@@ -24,8 +27,9 @@ if ( ! $query instanceof WP_Query || ! $query->have_posts() ) : ?>
 	while ( $query->have_posts() ) :
 		$query->the_post();
 		get_template_part( 'template-parts/event-card', null, [
-			'post_id'    => get_the_ID(),
-			'card_index' => $index,
+			'post_id'         => get_the_ID(),
+			'card_index'      => $index,
+			'show_cat_badges' => true,
 		] );
 		$index++;
 	endwhile;
