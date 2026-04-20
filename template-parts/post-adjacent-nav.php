@@ -9,10 +9,60 @@
  * scope to the current post type.
  */
 
-$prev_post = get_previous_post();
-$next_post = get_next_post();
+$post_type = get_post_type();
 
-$post_type     = get_post_type();
+if ( $post_type === 'event' ) {
+	/**
+	 * For events, adjacent navigation is ordered by event_sort_date (Ymd meta),
+	 * not by publish date. This respects recurring events (which store the next
+	 * upcoming weekday occurrence) and one-off events (which store their fixed date).
+	 *
+	 * Ties on the same sort date are broken by post ID so a post is never its own
+	 * neighbour, and the pair always navigates consistently in both directions.
+	 */
+	$current_sort_date = (string) ( get_post_meta( get_the_ID(), 'event_sort_date', true ) ?: '99991231' );
+	$current_id        = get_the_ID();
+
+	$prev_query = new WP_Query( [
+		'post_type'      => 'event',
+		'post_status'    => 'publish',
+		'posts_per_page' => 1,
+		'no_found_rows'  => true,
+		'post__not_in'   => [ $current_id ],
+		'meta_key'       => 'event_sort_date',
+		'orderby'        => [ 'meta_value' => 'DESC', 'ID' => 'DESC' ],
+		'meta_query'     => [ [
+			'key'     => 'event_sort_date',
+			'value'   => $current_sort_date,
+			'compare' => '<=',
+			'type'    => 'CHAR',
+		] ],
+	] );
+	$prev_post = $prev_query->have_posts() ? $prev_query->posts[0] : null;
+
+	$next_query = new WP_Query( [
+		'post_type'      => 'event',
+		'post_status'    => 'publish',
+		'posts_per_page' => 1,
+		'no_found_rows'  => true,
+		'post__not_in'   => [ $current_id ],
+		'meta_key'       => 'event_sort_date',
+		'orderby'        => [ 'meta_value' => 'ASC', 'ID' => 'ASC' ],
+		'meta_query'     => [ [
+			'key'     => 'event_sort_date',
+			'value'   => $current_sort_date,
+			'compare' => '>=',
+			'type'    => 'CHAR',
+		] ],
+	] );
+	$next_post = $next_query->have_posts() ? $next_query->posts[0] : null;
+
+	wp_reset_postdata();
+} else {
+	$prev_post = get_previous_post();
+	$next_post = get_next_post();
+}
+
 $archive_url   = get_post_type_archive_link( $post_type );
 $archive_labels = [
 	'post'         => __( 'Back to all posts', 'two-fiftyseven' ),

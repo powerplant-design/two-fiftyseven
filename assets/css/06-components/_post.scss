@@ -61,7 +61,7 @@ With a featured image:    image on the left (2/5), title on the right (3/5).
 	&--with-image {
 		display: flex;
 		align-items: center;
-		gap: var(--space-xl-3xl);
+		gap: var(--space-xl);
 
 		@media (max-width: #{bp.$bp-sm}) {
 			flex-direction: column;
@@ -71,7 +71,7 @@ With a featured image:    image on the left (2/5), title on the right (3/5).
 }
 
 .post-hero__image {
-	flex: 0 0 40%;
+	flex: 0 0 45%;
 
 	img {
 		display: block;

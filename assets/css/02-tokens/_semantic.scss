@@ -12,7 +12,7 @@ html {
 	--border-secondary: var(--border-width-thin) solid var(--color-border-secondary, currentcolor);
 	--border-tertiary: var(--border-width-thin) solid var(--color-border-tertiary, currentcolor);
 
-	--image-border-radius: var(--space-s-xl);
+	--image-border-radius: var(--corner-radius-m);
 
 	/* -----------------------------------------------
 	Focus Indicator
@@ -100,12 +100,12 @@ html {
 	--text-l-weight: var(--font-body-weight-normal);
 
 	/* M→L — body font, M on mobile, L on desktop.
-	   clamp derived from step-0 min (1.125rem) → step-1 max (1.7675rem)
-	   across the 360px–1520px viewport range. */
+	   clamp derived from step-0 min (1.125rem) → step-1 max (1.83rem)
+	   across the 360px–1920px viewport range. */
 	--text-m-l-family: var(--font-body-family);
 	--text-m-l-features: normal;
 	--text-m-l-weight: var(--font-body-weight-normal);
-	--text-m-l-size: clamp(1.125rem, 0.926rem + 0.886vw, 1.7675rem);
+	--text-m-l-size: clamp(1.125rem, 0.962rem + 0.723vw, 1.83rem);
 	--text-m-l-leading: var(--leading-base);
 	--text-m-l-kerning: var(--kerning-regular);
 	--text-m-l-transform: none;

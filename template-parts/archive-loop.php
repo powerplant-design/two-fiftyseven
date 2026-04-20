@@ -35,15 +35,14 @@ if ( have_posts() ) : ?>
 				'media_item'   => 'media_item_category',
 			];
 			$badge_taxonomy = $taxonomy_map[ $post_type ] ?? '';
-			$badge_term     = '';
+			$badge_terms    = [];
 			if ( $badge_taxonomy ) {
 				$terms = get_the_terms( get_the_ID(), $badge_taxonomy );
 				if ( $terms && ! is_wp_error( $terms ) ) {
 					// Skip 'uncategorized' — uncategorised posts show no category badge.
 					foreach ( $terms as $t ) {
 						if ( $t->slug !== 'uncategorized' ) {
-							$badge_term = $t->name;
-							break;
+							$badge_terms[] = $t->name;
 						}
 					}
 				}
@@ -68,18 +67,18 @@ if ( have_posts() ) : ?>
 				<?php endif; ?>
 
 				<div class="post-index__body | stack">
-					<?php if ( $post_type === 'post' || $badge_term || $use_type ) : ?>
+					<?php if ( $post_type === 'post' || $badge_terms || $use_type ) : ?>
 					<div class="cluster badge-cluster">
 						<?php if ( $post_type === 'post' ) : ?>
 							<span class="badge">
 								<?php echo esc_html( get_the_date( 'j M Y' ) ); ?>
 							</span>
 						<?php endif; ?>
-						<?php if ( $badge_term ) : ?>
+						<?php foreach ( $badge_terms as $badge_term_name ) : ?>
 							<span class="badge">
-								<?php echo esc_html( $badge_term ); ?>
+								<?php echo esc_html( $badge_term_name ); ?>
 							</span>
-						<?php endif; ?>
+						<?php endforeach; ?>
 						<?php if ( $use_type ) : ?>
 							<span class="badge" data-color="maroon">
 								<?php echo esc_html( strtoupper( $use_type ) ); ?>

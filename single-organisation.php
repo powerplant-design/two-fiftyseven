@@ -23,13 +23,12 @@ while ( have_posts() ) :
 	$logo_id             = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo' ) : 0;
 	$logo_svg            = $logo_id ? two_fiftyseven_get_inline_svg( $logo_id ) : '';
 	$use_type            = function_exists( 'get_field' ) ? ( get_field( 'organisation_use_type' ) ?: '' ) : '';
-	$badge_term          = '';
+	$badge_terms         = [];
 	$terms               = get_the_terms( get_the_ID(), 'organisation_category' );
 	if ( $terms && ! is_wp_error( $terms ) ) {
 		foreach ( $terms as $t ) {
 			if ( $t->slug !== 'uncategorized' ) {
-				$badge_term = $t->name;
-				break;
+				$badge_terms[] = $t->name;
 			}
 		}
 	}
@@ -50,13 +49,13 @@ while ( have_posts() ) :
 				'logo_svg' => $logo_svg,
 			] ); ?>
 
-			<?php if ( $use_type || $badge_term ) : ?>
+			<?php if ( $use_type || $badge_terms ) : ?>
 				<div class="cluster badge-cluster">
-					<?php if ( $badge_term ) : ?>
-						<span class="badge"><?php echo esc_html( $badge_term ); ?></span>
-					<?php endif; ?>
+					<?php foreach ( $badge_terms as $badge_term_name ) : ?>
+						<span class="badge" data-size="medium"><?php echo esc_html( $badge_term_name ); ?></span>
+					<?php endforeach; ?>
 					<?php if ( $use_type ) : ?>
-						<span class="badge" data-color="maroon"><?php echo esc_html( strtoupper( $use_type ) ); ?></span>
+						<span class="badge" data-size="medium" data-color="maroon"><?php echo esc_html( strtoupper( $use_type ) ); ?></span>
 					<?php endif; ?>
 				</div>
 			<?php endif; ?>

@@ -22,6 +22,10 @@
   a:not(.wp-block-button__link):not(.btn) {
     color: var(--color-link);
     text-decoration: underline;
+
+    &:hover {
+      color: var(--color-link-hover);
+    }
   }
 
   ul,

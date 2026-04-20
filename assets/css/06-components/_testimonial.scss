@@ -1,6 +1,11 @@
 @use '../02-tokens/breakpoints' as bp;
 @use 'button';
 
+// Swiper core + modules
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+@import 'swiper/css/pagination';
+
 .testimonial {
 	position: relative;
 	padding-block: var(--space-xl-3xl);
@@ -10,7 +15,6 @@
     
     @media (max-width: #{bp.$bp-sm}) {
 		overflow: clip;
-        // transform: rotate(90deg);
         min-height: 50vw;
     }
 }
@@ -36,40 +40,128 @@
 	}
 }
 
-/* Text content — centred via .wrapper, sits above the media layer */
+/* Text content — full viewport width, sits above the media layer */
 .testimonial__inner {
 	position: relative;
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-s-xl);
+	width: 100%;
 }
 
+// ── Swiper shell ──────────────────────────────────────────────────────────────
+.testimonial__swiper {
+	cursor: grab;
+	width: 100%;
+	overflow: hidden; // clip slides — prevents horizontal page overflow
+
+	// Swiper colour overrides — use active colour-space tokens
+	--swiper-pagination-color: var(--color-content-primary);
+	--swiper-pagination-bullet-inactive-color: var(--color-content-secondary);
+	--swiper-pagination-bullet-inactive-opacity: 0.4;
+
+	// Make room below slides for the controls row
+	&:has(.swiper-pagination) {
+		padding-block-end: var(--space-3xl);
+	}
+}
+
+// ── Nav buttons — secondary button style ─────────────────────────────────────
+.swiper-button-prev,
+.swiper-button-next {
+	--color-content-link-hover: var(--color-link-hover);
+	width: var(--space-xl);
+	border: none;
+	top: 0 !important;
+	bottom: 0;
+	height: 100%;
+	color: var(--color-link);
+
+	&:hover,
+	&:active  { color: var(--color-content-link-hover); }
+
+	position: absolute;
+
+	@media (max-width: #{bp.$bp-sm}) {
+		top: unset !important;
+		height: var(--space-xl);
+	}
+}
+
+.swiper-slide {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-top: auto;
+	gap: var(--space-s-xl);
+	box-sizing: border-box;
+	// Side padding mirrors the wrapper — content is bounded but swiper is full-width
+	// so text freely slides off the viewport edge rather than a narrower container
+	padding-inline: var(--wrapper-padding-inline, var(--global-padding-inline, 1rem));
+
+		@media (max-width: #{bp.$bp-sm}) {
+			align-items: flex-start;
+			padding-inline: var(--space-m);
+		}
+}
+
+// ── Quote ─────────────────────────────────────────────────────────────────────
 .testimonial__quote {
 	margin: 0;
 	text-align: center;
 	color: var(--color-content-primary);
+	max-inline-size: var(--layout-wide-size);
+	width: 100%;
+	overflow-wrap: break-word;
 	opacity: 0;
-	transform: translateY(3rem);
-	transition:
-		opacity 0.4s ease-out var(--delay),
-		transform 0.8s ease-out var(--delay);
+	transition: opacity var(--transition-duration) ease-out;
 
-	&.is-inview {
+		@media (max-width: #{bp.$bp-sm}) {
+			text-align: left;
+		}
+
+	.swiper-slide-active & {
 		opacity: 1;
-		transform: translateY(0);
+	}
+
+	// Single-slide (no swiper init): always visible
+	.testimonial__swiper[data-slides='1'] & {
+		opacity: 1;
 	}
 }
 
+// ── Attribution ───────────────────────────────────────────────────────────────
 .testimonial__attribution {
 	margin: 0;
 	text-align: center;
 	gap: var(--space-2xs-2xl);
 	display: flex;
 	justify-content: center;
+	opacity: 0;
+	transform: translateY(1rem);
+	transition:
+		opacity 0.4s ease-out 0.3s,
+		transform 0.6s ease-out 0.3s;
+
+	.swiper-slide-active & {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	a {
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+
+	.testimonial__swiper[data-slides='1'] & {
+		opacity: 1;
+		transform: none;
+		transition: none;
+	}
 
 	@media (max-width: #{bp.$bp-sm}) {
 		flex-direction: column;
-		align-items: center;
+		align-items: flex-start;
         font-size: var(--text-s-size);
 	}
 }
@@ -78,28 +170,6 @@
 	@media (max-width: #{bp.$bp-sm}) {
 		display: none;
     }
-}
-
-// Staggered reveal on individual attribution spans.
-.testimonial__name,
-.testimonial__role,
-.testimonial__org,
-.testimonial__sep {
-	opacity: 0;
-	transform: translateY(1rem);
-	transition:
-		opacity 0.4s ease-out var(--delay, 150ms),
-		transform 0.6s ease-out var(--delay, 150ms);
-}
-
-.testimonial__attribution.is-inview {
-	.testimonial__name,
-	.testimonial__role,
-	.testimonial__org,
-	.testimonial__sep {
-		opacity: 1;
-		transform: translateY(0);
-	}
 }
 
 .testimonial__name a,

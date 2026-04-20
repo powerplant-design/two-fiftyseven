@@ -16,7 +16,6 @@
 		padding-inline: var(--space-s);
 		background-color: var(--color-surface-secondary);
 		color: var(--color-content-primary);
-		// border: var(--border-tertiary);
 		border-block-end: none;
 		border-start-start-radius: var(--corner-radius-l);
 		border-start-end-radius: var(--corner-radius-l);
@@ -35,7 +34,6 @@
 		width: 100%;
 		background-color: var(--color-surface-secondary);
 		color: var(--color-content-primary);
-		// border: var(--border-tertiary);
 		border-radius: var(--corner-radius-2xl);
 		border-start-start-radius: 0;
 		padding: var(--space-m) var(--space-s-xl);
@@ -47,7 +45,7 @@
 	}
 
 	&__item:not(:first-child) {
-		border-top: var(--border-tertiary)
+		border-top: var(--border-secondary);
 	}
 
 	// ── Question trigger ─────────────────────────────────────

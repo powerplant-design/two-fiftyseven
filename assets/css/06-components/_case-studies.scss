@@ -5,10 +5,6 @@
 .case-studies {
 	padding-block: var(--space-xl-3xl);
 
-	&__inner {
-		--stack-gap: var(--space-xl);
-	}
-
 	&__heading {
 		text-align: center;
 		opacity: 0;

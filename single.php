@@ -22,6 +22,15 @@ while ( have_posts() ) :
 	$show_featured_image = get_field( 'show_featured_image' ) !== false;
 	$image_orientation   = get_field( 'image_orientation' ) ?: 'landscape';
 	$post_links          = get_field( 'post_links' ) ?: [];
+	$badge_terms         = [];
+	$terms               = get_the_terms( get_the_ID(), 'category' );
+	if ( $terms && ! is_wp_error( $terms ) ) {
+		foreach ( $terms as $t ) {
+			if ( $t->slug !== 'uncategorized' ) {
+				$badge_terms[] = $t->name;
+			}
+		}
+	}
 ?>
 
 <div class="page-layout">
@@ -34,6 +43,14 @@ while ( have_posts() ) :
 	<div class="post-layout">
 
 		<aside class="post-layout__sidebar">
+
+			<?php if ( $badge_terms ) : ?>
+				<div class="cluster badge-cluster">
+					<?php foreach ( $badge_terms as $badge_term_name ) : ?>
+						<span class="badge" data-size="medium"><?php echo esc_html( $badge_term_name ); ?></span>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
 
 			<?php get_template_part( 'template-parts/post-sidebar-meta' ); ?>
 

@@ -14,6 +14,7 @@ import { initFaq }           from './modules/faq.js';
 import { initEventsArchive } from './modules/events-archive.js';
 import { initCptArchive }    from './modules/cpt-archive.js';
 import { initImpact }        from './modules/impact.js';
+import { initTestimonials }  from './modules/testimonial.js';
 
 initColorTheme();
 initScroll();
@@ -26,3 +27,4 @@ initFaq();
 initEventsArchive();
 initCptArchive();
 initImpact();
+initTestimonials();

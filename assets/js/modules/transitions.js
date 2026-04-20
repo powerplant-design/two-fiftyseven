@@ -25,6 +25,7 @@ import { initFaq, destroyFaq } from './faq.js';
 import { initEventsArchive, destroyEventsArchive } from './events-archive.js';
 import { initCptArchive, destroyCptArchive } from './cpt-archive.js';
 import { initImpact, destroyImpact } from './impact.js';
+import { initTestimonials, destroyTestimonials } from './testimonial.js';
 
 function resetScrollRevealState() {
 	document.querySelectorAll( '[data-scroll].is-inview' ).forEach( ( el ) => {
@@ -72,6 +73,7 @@ export function initTransitions() {
 		destroyEventsArchive();
 		destroyCptArchive();
 		destroyImpact();
+		destroyTestimonials();
 		destroyScroll();
 	} );
 
@@ -111,6 +113,7 @@ export function initTransitions() {
 		initEventsArchive();
 		initCptArchive();
 		initImpact();
+		initTestimonials();
 		syncHeader();
 
 		// Safety net: if animation:in:end never fires (e.g. transitionend
