@@ -28,7 +28,7 @@ function two_fiftyseven_get_colour_space(): string {
 
 		// Event archive: read colour space from ACF Options (default purple).
 		if ( is_post_type_archive( 'event' ) ) {
-			$space = function_exists( 'get_field' ) ? get_field( 'event_colour_space', 'option' ) : '';
+			$space = get_field( 'event_colour_space', 'option' );
 			return sanitize_key( $space ?: 'purple' );
 		}
 
@@ -676,6 +676,101 @@ add_action( 'pre_get_posts', function ( WP_Query $query ): void {
 
 
 /**
+ * ============================================================
+ * Events — Admin list table: columns, sorting, and ordering
+ * ============================================================
+ */
+
+/**
+ * Add Date and Status columns to the Events list table.
+ */
+add_filter( 'manage_event_posts_columns', function ( array $columns ): array {
+	$new = [];
+	foreach ( $columns as $key => $label ) {
+		$new[ $key ] = $label;
+		if ( $key === 'taxonomy-event_category' ) {
+			$new['event_date_col']   = __( 'Date', 'two-fiftyseven' );
+			$new['event_status_col'] = __( 'Status', 'two-fiftyseven' );
+		}
+	}
+	if ( ! isset( $new['event_date_col'] ) ) {
+		$new['event_date_col']   = __( 'Event Date', 'two-fiftyseven' );
+		$new['event_status_col'] = __( 'Status', 'two-fiftyseven' );
+	}
+	return $new;
+} );
+
+add_action( 'manage_event_posts_custom_column', function ( string $column, int $post_id ): void {
+	if ( $column === 'event_date_col' ) {
+		$badge = function_exists( 'two57_format_event_badge' ) ? two57_format_event_badge( $post_id ) : '';
+		echo $badge ? esc_html( $badge ) : '—';
+	}
+	if ( $column === 'event_status_col' ) {
+		$passed = get_post_meta( $post_id, 'event_has_passed', true ) === '1';
+		echo $passed ? esc_html__( 'Past', 'two-fiftyseven' ) : esc_html__( 'Upcoming', 'two-fiftyseven' );
+	}
+}, 10, 2 );
+
+add_filter( 'manage_edit-event_sortable_columns', function ( array $columns ): array {
+	$columns['event_date_col']   = 'event_sort_date';
+	$columns['event_status_col'] = 'event_has_passed';
+	return $columns;
+} );
+
+add_action( 'pre_get_posts', function ( WP_Query $query ): void {
+	if ( ! is_admin() || ! $query->is_main_query() ) {
+		return;
+	}
+	if ( $query->get( 'post_type' ) !== 'event' ) {
+		return;
+	}
+	$orderby = $query->get( 'orderby' );
+	if ( $orderby === 'event_sort_date' ) {
+		$query->set( 'meta_key', 'event_sort_date' );
+		$query->set( 'orderby', 'meta_value' );
+	} elseif ( $orderby === 'event_has_passed' ) {
+		$query->set( 'meta_key', 'event_has_passed' );
+		$query->set( 'orderby', 'meta_value' );
+	}
+} );
+
+/**
+ * Default admin order: upcoming first (ASC by sort date), then past (DESC by sort date).
+ * Uses a FIELD() trick: rows where event_has_passed != '1' come before rows where it is '1',
+ * both groups sorted by event_sort_date.
+ */
+add_filter( 'posts_clauses', function ( array $clauses, WP_Query $query ): array {
+	global $wpdb;
+
+	if ( ! is_admin() || ! $query->is_main_query() ) {
+		return $clauses;
+	}
+	if ( $query->get( 'post_type' ) !== 'event' ) {
+		return $clauses;
+	}
+	// Only apply our default order when no explicit orderby is requested.
+	if ( $query->get( 'orderby' ) ) {
+		return $clauses;
+	}
+
+	$clauses['join'] .= "
+		LEFT JOIN {$wpdb->postmeta} AS _es_passed
+			ON ( {$wpdb->posts}.ID = _es_passed.post_id AND _es_passed.meta_key = 'event_has_passed' )
+		LEFT JOIN {$wpdb->postmeta} AS _es_date
+			ON ( {$wpdb->posts}.ID = _es_date.post_id AND _es_date.meta_key = 'event_sort_date' )
+	";
+
+	$clauses['orderby'] = "
+		CASE WHEN _es_passed.meta_value = '1' THEN 1 ELSE 0 END ASC,
+		CASE WHEN _es_passed.meta_value = '1' THEN _es_date.meta_value END DESC,
+		_es_date.meta_value ASC
+	";
+
+	return $clauses;
+}, 10, 2 );
+
+
+/**
  * Register ACF Options page for per-archive colour space settings.
  */
 add_action( 'acf/init', function (): void {
@@ -889,6 +984,14 @@ add_action( 'acf/save_post', function ( $post_id ): void {
 		$sort_date = (string) ( get_field( 'event_date', $post_id ) ?: '99991231' );
 	}
 
+	$time_start = (string) ( get_field( 'event_time_start', $post_id ) ?: '' );
+	if ( $time_start ) {
+		$dt_time = \DateTime::createFromFormat( 'H:i', $time_start );
+		if ( $dt_time ) {
+			$sort_date .= $dt_time->format( 'Hi' );
+		}
+	}
+
 	update_post_meta( $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
 }, 20 );
 
@@ -921,8 +1024,15 @@ function two57_refresh_recurring_sort_dates(): void {
 	] );
 
 	foreach ( $recurring_events->posts as $post_id ) {
-		$day_abbr  = (string) ( get_field( 'event_day_of_week', (int) $post_id ) ?: '' );
-		$sort_date = $day_abbr ? two57_next_weekday_ymd( $day_abbr ) : '99991231';
+		$day_abbr   = (string) ( get_field( 'event_day_of_week', (int) $post_id ) ?: '' );
+		$sort_date  = $day_abbr ? two57_next_weekday_ymd( $day_abbr ) : '99991231';
+		$time_start = (string) ( get_field( 'event_time_start', (int) $post_id ) ?: '' );
+		if ( $time_start ) {
+			$dt_time = \DateTime::createFromFormat( 'H:i', $time_start );
+			if ( $dt_time ) {
+				$sort_date .= $dt_time->format( 'Hi' );
+			}
+		}
 		update_post_meta( (int) $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
 	}
 }
@@ -983,8 +1093,15 @@ function two57_auto_mark_events_passed(): void {
 	foreach ( $due_events->posts as $post_id ) {
 		update_post_meta( (int) $post_id, 'event_has_passed', '1' );
 		// Keep sort_date consistent so the past tab sorts correctly (DESC).
-		$raw_date  = get_post_meta( (int) $post_id, 'event_date', true );
-		$sort_date = $raw_date ?: '00000000';
+		$raw_date   = get_post_meta( (int) $post_id, 'event_date', true );
+		$sort_date  = $raw_date ?: '00000000';
+		$time_start = get_post_meta( (int) $post_id, 'event_time_start', true );
+		if ( $time_start ) {
+			$dt_time = \DateTime::createFromFormat( 'H:i', (string) $time_start );
+			if ( $dt_time ) {
+				$sort_date .= $dt_time->format( 'Hi' );
+			}
+		}
 		update_post_meta( (int) $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
 	}
 }
