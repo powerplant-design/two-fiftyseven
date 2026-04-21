@@ -4,7 +4,7 @@
 	"fields": [
 		{
 			"key": "field_two57_tc_heading",
-			"label": "Heading",
+			"label": "Three Cards Heading",
 			"name": "tc_heading",
 			"aria-label": "",
 			"type": "text",
@@ -18,7 +18,7 @@
 		},
 		{
 			"key": "field_two57_tc_cards",
-			"label": "Cards",
+			"label": "Three Cards",
 			"name": "tc_cards",
 			"aria-label": "",
 			"type": "repeater",

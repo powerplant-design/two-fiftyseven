@@ -6,6 +6,9 @@
 // Three linked cards in a thirds grid. Each card has a solid
 // colour-space background, text at the top, and an image below.
 // ============================================================
+.three-cards {
+	padding-block: var(--space-xl-3xl);
+}
 
 // ── Heading ───────────────────────────────────────────────────
 .three-cards__heading {
@@ -27,7 +30,6 @@
 
 // ── Card ─────────────────────────────────────────────────────
 .three-cards__card {
-	// background-color: var(--color-surface-secondary);
 	border-radius: var(--corner-radius-xl);
 	backdrop-filter: blur(4px);
 

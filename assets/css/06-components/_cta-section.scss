@@ -1,45 +1,101 @@
 // ============================================================
 // CTA Section Block
 // ============================================================
+@use '../02-tokens/breakpoints' as bp;
 
 .cta-section {
 	padding-block: var(--space-xl-3xl);
 
 
 	&__panel {
+		outline: 1px solid var(--color-surface-primary);
 		box-sizing: border-box;
 		width: 100%;
 		background-color: var(--color-surface-secondary);
 		position: relative;
 		overflow: hidden;
 		border-radius: var(--corner-radius-2xl);
-		padding: var(--space-xl-3xl);
+		padding: var(--space-m);
         
 		&:has(.btn:hover) .cta-section__bg,
 		&:has(.btn:focus-visible) .cta-section__bg {
             opacity: 1;
 		}
+
+		// No background: transparent panel, no rounded box
+		&--no-bg {
+			background-color: transparent;
+			outline: none;
+			border-radius: 0;
+		}
+
+		// Two-column layout when an image is present
+		&--has-image {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: var(--space-xl);
+			align-items: center;
+
+			.cta-section__content {
+				--stack-horizontal-alignment: start;
+			}
+
+			.cta-section__heading,
+			.cta-section__label {
+				text-align: start;
+			}
+
+			@media (max-width: #{bp.$bp-md}) {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		// Image left: media first visually, content second
+		&--image-left {
+			.cta-section__media  { order: 1; }
+			.cta-section__content { order: 2; }
+
+			@media (max-width: #{bp.$bp-md}) {
+				.cta-section__media,
+				.cta-section__content { order: unset; }
+			}
+		}
+
+		// Image right: content first visually, media second
+		&--image-right {
+			.cta-section__content { order: 1; }
+			.cta-section__media  { order: 2; }
+
+			@media (max-width: #{bp.$bp-md}) {
+				.cta-section__media,
+				.cta-section__content { order: unset; }
+			}
+		}
 	}
     
 	&__bg {
+		pointer-events: none;
 		position: absolute;
 		inset: 0;
+		scale: 1.4;
 		z-index: 0;
 		color: var(--color-surface-primary);
-		opacity: 0.75;
+		opacity: 0.55;
 		overflow: hidden;
 		transition: opacity 220ms ease;
 	}
 
 	&__content {
-		--stack-gap: var(--space-xl);
+		--stack-gap: var(--space-s-xl);
         --stack-horizontal-alignment: center;
 		position: relative;
 		z-index: 1;
+		padding-block: var(--space-s);
+		padding-inline-start: var(--space-s);
+		padding-inline-end: var(--space-s-xl);
 	}
 
 	&__label {
-		// margin: 0;
 		text-align: center;
 		color: var(--color-content-secondary);
 		opacity: 0;
@@ -47,11 +103,6 @@
 		transition:
 			opacity 0.4s ease-out var(--delay),
 			transform 0.8s ease-out var(--delay);
-
-		&.is-inview {
-			opacity: 1;
-			transform: translateY(0);
-		}
 	}
 
 	&__heading {
@@ -62,10 +113,31 @@
 		transition:
 			opacity 0.4s ease-out var(--delay),
 			transform 0.8s ease-out var(--delay);
+	}
 
-		&.is-inview {
-			opacity: 1;
-			transform: translateY(0);
+	&__body {
+		color: var(--color-content-primary);
+		opacity: 0;
+		transform: translateY(3rem);
+		transition:
+			opacity 0.4s ease-out var(--delay),
+			transform 0.8s ease-out var(--delay);
+
+		// Allow rich text children (p, ul, etc.) to inherit the text size
+		p, ul, ol {
+			margin: 0;
+		}
+	}
+
+	&__media {
+		--frame-aspect-ratio: 3 / 4;
+		border-radius: var(--corner-radius-m);
+		overflow: hidden;
+		position: relative;
+		z-index: 1;
+
+		@media (max-width: #{bp.$bp-md}) {
+			--frame-aspect-ratio: 16 / 9;
 		}
 	}
 
@@ -81,8 +153,14 @@
 		transition:
 			opacity 0.4s ease-out var(--delay),
 			transform 0.8s ease-out var(--delay);
+	}
 
-		&.is-inview {
+	// Fire all stagger children when the content wrapper enters the viewport
+	&__content.is-inview {
+		.cta-section__label,
+		.cta-section__heading,
+		.cta-section__body,
+		.btn {
 			opacity: 1;
 			transform: translateY(0);
 		}

@@ -58,9 +58,22 @@ $link_url  = ! empty( $link['url'] ) ? $link['url'] : '';
 $link_text = ! empty( $link['title'] ) ? $link['title'] : __( 'Contact', 'two-fiftyseven' );
 $link_tgt  = ! empty( $link['target'] ) ? $link['target'] : '';
 
-// Keep reveal timing consistent when the optional label is present.
+$no_background  = (bool) get_field( 'cta_no_background' );
+$body           = get_field( 'cta_body' ) ?: '';
+$image          = get_field( 'cta_image' ) ?: [];
+$image_position = get_field( 'cta_image_position' ) ?: 'left';
+$image_position = in_array( $image_position, [ 'left', 'right' ], true ) ? $image_position : 'left';
+$secondary_link = get_field( 'cta_secondary_link' ) ?: [];
+$has_image      = ! empty( $image['id'] );
+
+$secondary_url  = ! empty( $secondary_link['url'] ) ? $secondary_link['url'] : '';
+$secondary_text = ! empty( $secondary_link['title'] ) ? $secondary_link['title'] : '';
+$secondary_tgt  = ! empty( $secondary_link['target'] ) ? $secondary_link['target'] : '';
+
+// Keep reveal timing consistent — chain shifts one step when label is present.
 $heading_delay = $label ? '150ms' : '0ms';
-$button_delay  = $label ? '300ms' : '150ms';
+$body_delay    = $label ? '300ms' : '150ms';
+$button_delay  = $label ? '450ms' : '300ms';
 
 $attrs = [
 	'class' => 'cta-section | block',
@@ -78,41 +91,81 @@ foreach ( $attrs as $key => $value ) {
 
 <section<?php echo $attr_string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?>>
 	<div class="cta-section__inner">
-		<div class="cta-section__panel">
+		<?php
+		$panel_classes = 'cta-section__panel';
+		if ( $has_image ) $panel_classes .= ' cta-section__panel--has-image cta-section__panel--image-' . $image_position;
+		if ( $no_background ) $panel_classes .= ' cta-section__panel--no-bg';
+		?>
+		<div class="<?php echo esc_attr( $panel_classes ); ?>">
 
-		<?php if ( $bg_svg ) : ?>
-			<div class="cta-section__bg <?php echo 'cover' === $svg_fit ? 'svg-cover' : 'svg-contain'; ?>"<?php echo 'contain' === $svg_fit ? ' style="padding: var(--space-l);"' : ''; ?> aria-hidden="true">
+		<?php if ( $bg_svg && ! $no_background ) : ?>
+			<div class="cta-section__bg <?php echo 'cover' === $svg_fit ? 'svg-cover' : 'svg-contain'; ?>"<?php echo 'contain' === $svg_fit ? ' style="padding: var(--space-l);"' : ''; ?> aria-hidden="true" data-scroll data-scroll-speed="-0.1">
 				<?php echo $bg_svg; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by two_fiftyseven_get_inline_svg() ?>
 			</div>
 		<?php endif; ?>
 
-		<div class="cta-section__content stack">
+		<div class="cta-section__content stack" data-scroll data-scroll-repeat>
 			<?php if ( $label ) : ?>
-				<p class="cta-section__label | text-monospace text-s" data-scroll data-scroll-repeat style="--delay: 0ms"><?php echo esc_html( $label ); ?></p>
+				<p class="cta-section__label | text-monospace text-s" style="--delay: 0ms"><?php echo esc_html( $label ); ?></p>
 			<?php endif; ?>
 
-			<?php if ( $heading ) : ?>
-				<h2 class="cta-section__heading | text-3xl text-balance" data-scroll data-scroll-repeat style="--delay: <?php echo esc_attr( $heading_delay ); ?>"><?php echo esc_html( $heading ); ?></h2>
-			<?php elseif ( $is_preview ) : ?>
-				<p class="cta-section__preview-hint">Add a CTA heading in the block settings.</p>
-			<?php endif; ?>
+			<div class="stack" style="--stack-gap: var(--space-xs);">
+				<?php if ( $heading ) : ?>
+					<h2 class="cta-section__heading | text-3xl text-balance" style="--delay: <?php echo esc_attr( $heading_delay ); ?>"><?php echo esc_html( $heading ); ?></h2>
+				<?php elseif ( $is_preview ) : ?>
+					<p class="cta-section__preview-hint">Add a CTA heading in the block settings.</p>
+				<?php endif; ?>
 
-			<?php if ( $link_url ) : ?>
-				<a
-					class="btn"
-					data-type="primary"
-					data-scroll
-					data-scroll-repeat
-					style="--delay: <?php echo esc_attr( $button_delay ); ?>"
-					href="<?php echo esc_url( $link_url ); ?>"
-					<?php if ( $link_tgt ) : ?>target="<?php echo esc_attr( $link_tgt ); ?>" rel="noopener noreferrer"<?php endif; ?>
-				>
-					<?php echo esc_html( $link_text ); ?>
-				</a>
+				<?php if ( $body ) : ?>
+					<div class="cta-section__body | text-l" style="--delay: <?php echo esc_attr( $body_delay ); ?>">
+						<?php echo wp_kses_post( $body ); ?>
+					</div>
+				<?php endif; ?>
+			</div>
+
+			<?php if ( $link_url || $secondary_url ) : ?>
+				<div class="cluster cluster__buttons">
+					<?php if ( $link_url ) : ?>
+						<a
+							class="btn"
+							data-type="primary"
+							style="--delay: <?php echo esc_attr( $button_delay ); ?>"
+							href="<?php echo esc_url( $link_url ); ?>"
+							<?php if ( $link_tgt ) : ?>target="<?php echo esc_attr( $link_tgt ); ?>" rel="noopener noreferrer"<?php endif; ?>
+						>
+							<?php echo esc_html( $link_text ); ?>
+						</a>
+					<?php endif; ?>
+					<?php if ( $secondary_url ) : ?>
+						<a
+							class="btn"
+							data-type="secondary"
+							style="--delay: <?php echo esc_attr( $button_delay ); ?>"
+							href="<?php echo esc_url( $secondary_url ); ?>"
+							<?php if ( $secondary_tgt ) : ?>target="<?php echo esc_attr( $secondary_tgt ); ?>" rel="noopener noreferrer"<?php endif; ?>
+						>
+							<?php echo esc_html( $secondary_text ); ?>
+						</a>
+					<?php endif; ?>
+				</div>
 			<?php elseif ( $is_preview ) : ?>
 				<p class="cta-section__preview-hint">Add a primary button link in the block settings.</p>
 			<?php endif; ?>
 		</div>
+
+		<?php if ( $has_image ) : ?>
+			<div class="cta-section__media | frame">
+				<?php echo wp_get_attachment_image(
+					(int) $image['id'],
+					'large',
+					false,
+					[
+						'alt'     => ! empty( $image['alt'] ) ? esc_attr( $image['alt'] ) : '',
+						'loading' => 'lazy',
+					]
+				); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+			</div>
+		<?php endif; ?>
 		</div>
 	</div>
 </section>

@@ -1,0 +1,17 @@
+/* ===================================================================
+Measure
+Constrains inline size using ch units — useful for capping heading
+and body text width to an optimal reading measure.
+=================================================================== */
+
+.measure-narrow {
+	max-inline-size: 30ch;
+}
+
+.measure {
+	max-inline-size: 60ch;
+}
+
+.measure-wide {
+	max-inline-size: 75ch;
+}

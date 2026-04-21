@@ -4,7 +4,7 @@
 	"fields": [
 		{
 			"key": "field_two57_impact_heading",
-			"label": "Heading",
+			"label": "Impact Heading",
 			"name": "impact_heading",
 			"aria-label": "",
 			"type": "text",

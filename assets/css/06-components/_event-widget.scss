@@ -6,7 +6,12 @@
 	padding-block: var(--space-2xl);
 }
 
+.events-widget__inner {
+	--stack-gap: var(--space-s-xl);
+}
+
 .events-widget__heading {
+	text-transform: uppercase !important;
 	text-align: center;
 	opacity: 0;
 	transform: translateY(1.5rem);

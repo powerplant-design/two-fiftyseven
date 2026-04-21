@@ -4,7 +4,7 @@
 	"fields": [
 		{
 			"key": "field_two57_case_studies_heading",
-			"label": "Heading",
+			"label": "Case Studies Heading",
 			"name": "case_studies_heading",
 			"aria-label": "",
 			"type": "text",

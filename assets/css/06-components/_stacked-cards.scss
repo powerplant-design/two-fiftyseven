@@ -14,6 +14,18 @@
 	}
 }
 
+// ── Optional section title — sits above the sticky track ─────
+.stacked-cards__section-title {
+	margin: 0 auto;
+	text-transform: uppercase !important;
+	text-align: center;
+	margin-block-end: var(--space-s);
+
+	@media (min-width: bp.$bp-md) {
+		transform: translateY(10vh);
+	}
+}
+
 // ── Sticky viewport — cards are clipped here ─────────────────
 .stacked-cards__track {
 	display: flex;

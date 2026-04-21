@@ -44,3 +44,9 @@ Variables:
 		margin: 0;
 	}
 }
+
+
+.cluster__buttons {
+	--cluster-gap-columns: var(--space-xs);
+	--cluster-gap-rows: var(--space-xs);
+}

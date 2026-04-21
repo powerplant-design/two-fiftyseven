@@ -4,7 +4,7 @@
 	"fields": [
 		{
 			"key": "field_two57_testimonial_slides",
-			"label": "Quotes",
+			"label": "Testimonial Quotes",
 			"name": "testimonial_slides",
 			"aria-label": "",
 			"type": "repeater",
