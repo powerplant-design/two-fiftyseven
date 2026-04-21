@@ -376,6 +376,21 @@ add_action( 'acf/init', function (): void {
 		],
 	] );
 	acf_register_block_type( [
+		'name'            => 'text-block',
+		'title'           => __( '257 Text Block', 'two-fiftyseven' ),
+		'description'     => __( 'Large H2 heading with a divider, followed by a 2- or 3-column grid of text items with optional subheadings.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/text-block/block.php',
+		'category'        => 'text',
+		'icon'            => 'text',
+		'keywords'        => [ 'text', 'columns', 'features', 'list', 'body' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
 		'name'            => 'impact',
 		'title'           => __( '257 Impact', 'two-fiftyseven' ),
 		'description'     => __( 'Full-bleed impact stats block. Each item is a number + label pair that scales to fill the screen width.', 'two-fiftyseven' ),

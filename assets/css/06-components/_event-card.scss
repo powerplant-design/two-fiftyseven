@@ -23,11 +23,16 @@
 	transform: translateY(2rem);
 	transition:
 		opacity  0.4s ease-out var(--delay, 0ms),
-		transform 0.8s ease-out var(--delay, 0ms);
+		transform 0.8s ease-out var(--delay, 0ms),
+		background-color var(--transition-speed) ease;
 	border-radius: var(--corner-radius-xl);
 	overflow: hidden;
 	backdrop-filter: blur(4px);
 	background-color: var(--color-surface-secondary);
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--color-surface-secondary) 95%, var(--color-content-primary));
+	}
 
 	&.is-visible,
 	&.is-inview,

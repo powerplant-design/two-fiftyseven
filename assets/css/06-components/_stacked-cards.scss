@@ -148,7 +148,12 @@
 .stacked-cards__content {
 	ul {
 		padding-left: var(--space-m);
-		list-style-type: "/  ";
+		list-style-type: "/ ";
+
+		li::marker {
+			font-family: var(--font-monospace-family);
+			color: var(--color-link);
+		}
 	}
 
 	li:not(:last-child) {

@@ -1,0 +1,231 @@
+{
+	"key": "group_two57_block_text_block",
+	"title": "257 Text Block",
+	"fields": [
+		{
+			"key": "field_two57_tb_heading",
+			"label": "Text Block Heading",
+			"name": "text_block_heading",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Optional large H2 heading shown above the items with a divider line.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "100", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "e.g. Why it feels different from every other space in the city"
+		},
+		{
+			"key": "field_two57_tb_intro",
+			"label": "Intro Text",
+			"name": "text_block_intro",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Optional short line shown between the H2 heading and the divider.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "100", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "e.g. A flexible space designed around you."
+		},
+		{
+			"key": "field_two57_tb_layout",
+			"label": "Column Layout",
+			"name": "text_block_layout",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Number of columns for the items grid. Stacks to 1 column on mobile.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "33", "class": "", "id": "" },
+			"choices": {
+				"two-col": "2 Columns",
+				"three-col": "3 Columns"
+			},
+			"default_value": "two-col",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 0,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": ""
+		},
+		{
+			"key": "field_two57_tb_colour_space",
+			"label": "Colour Space Override",
+			"name": "text_block_colour_space",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Optional. Leave empty to inherit the page or section theme.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "33", "class": "", "id": "" },
+			"choices": {
+				"neutral": "Neutral",
+				"maroon": "Maroon",
+				"forest": "Forest",
+				"purple": "Purple"
+			},
+			"default_value": "",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 1,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": ""
+		},
+		{
+			"key": "field_two57_tb_dark",
+			"label": "Force Dark Mode",
+			"name": "text_block_dark",
+			"aria-label": "",
+			"type": "true_false",
+			"instructions": "Forces dark background with light text, overriding the OS/page colour mode.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "33", "class": "", "id": "" },
+			"default_value": 0,
+			"ui": 1,
+			"ui_on_text": "Yes",
+			"ui_off_text": "No"
+		},
+		{
+			"key": "field_two57_tb_heading_size",
+			"label": "Card Heading Size",
+			"name": "text_block_heading_size",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Visual size of H3 subheadings across all items.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"choices": {
+				"heading-l": "Heading L",
+				"heading-m": "Heading M"
+			},
+			"default_value": "heading-m",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 0,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": ""
+		},
+		{
+			"key": "field_two57_tb_text_size",
+			"label": "Card Text Size",
+			"name": "text_block_text_size",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Body text size applied to all items. Large uses the step-up size; Medium uses the base size.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"choices": {
+				"large": "Large",
+				"medium": "Medium"
+			},
+			"default_value": "large",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 0,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": ""
+		},
+		{
+			"key": "field_two57_tb_primary_button",
+			"label": "Primary Button",
+			"name": "text_block_primary_button",
+			"aria-label": "",
+			"type": "link",
+			"instructions": "Optional primary CTA button shown below the items grid.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"return_format": "array"
+		},
+		{
+			"key": "field_two57_tb_secondary_button",
+			"label": "Secondary Button",
+			"name": "text_block_secondary_button",
+			"aria-label": "",
+			"type": "link",
+			"instructions": "Optional secondary button shown alongside the primary.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"return_format": "array"
+		},
+		{
+			"key": "field_two57_tb_items",
+			"label": "Text Items",
+			"name": "text_block_items",
+			"aria-label": "",
+			"type": "repeater",
+			"instructions": "Add one item per text block. Items flow into the column grid.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "", "class": "", "id": "" },
+			"layout": "block",
+			"pagination": 0,
+			"min": 0,
+			"max": 0,
+			"collapsed": "field_two57_tb_item_heading",
+			"button_label": "Add Text Item",
+			"sub_fields": [
+				{
+					"key": "field_two57_tb_item_heading",
+					"label": "Subheading",
+					"name": "heading",
+					"aria-label": "",
+					"type": "text",
+					"instructions": "Optional H3 subheading above the body text. Leave empty to omit.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "100", "class": "", "id": "" },
+					"default_value": "",
+					"maxlength": "",
+					"placeholder": "e.g. 200% carbon offset"
+				},
+				{
+					"key": "field_two57_tb_item_body",
+					"label": "Body",
+					"name": "body",
+					"aria-label": "",
+					"type": "wysiwyg",
+					"instructions": "Main body text for this item.",
+					"required": 0,
+					"conditional_logic": 0,
+					"wrapper": { "width": "100", "class": "", "id": "" },
+					"default_value": "",
+					"tabs": "all",
+					"toolbar": "basic",
+					"media_upload": 0,
+					"delay": 0
+				}
+			]
+		}
+	],
+	"location": [
+		[
+			{
+				"param": "block",
+				"operator": "==",
+				"value": "acf/text-block"
+			}
+		]
+	],
+	"menu_order": 0,
+	"position": "normal",
+	"style": "default",
+	"label_placement": "top",
+	"instruction_placement": "label",
+	"hide_on_screen": "",
+	"active": true,
+	"description": "Large H2 heading with a divider, followed by a 2- or 3-column grid of text items with optional subheadings.",
+	"show_in_rest": 0,
+	"modified": 1745193600
+}

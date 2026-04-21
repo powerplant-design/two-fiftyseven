@@ -1,0 +1,156 @@
+// ============================================================
+// 257 Text Block
+// ============================================================
+// Large H2 heading (with divider) + a 2- or 3-column subgrid
+// of text items. Subgrid keeps item rows horizontally aligned
+// even when subheadings wrap across multiple lines.
+// ============================================================
+@use '../02-tokens/breakpoints' as bp;
+
+.text-block {
+	padding-block: var(--space-xl-3xl);
+	color: var(--color-content-primary);
+
+	&[data-color-mode="dark"] {
+		background-color: var(--color-surface-primary);
+	}
+}
+
+// ── Header (heading + optional intro, above the divider) ──────
+.text-block__header {
+	padding-block-end: var(--space-s-xl);
+	border-block-end: 1px solid var(--color-border-secondary);
+	margin-block-end: var(--space-s-xl);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-s);
+	opacity: 0;
+	transform: translateY(2rem);
+	transition:
+		opacity 0.4s ease-out,
+		transform 0.8s ease-out;
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// ── Heading ───────────────────────────────────────────────────
+.text-block__heading {
+    text-transform: uppercase !important;
+}
+
+// ── Intro text ────────────────────────────────────────────────
+.text-block__intro {
+	color: var(--color-content-secondary);
+	margin: 0;
+}
+
+// ── Items grid ────────────────────────────────────────────────
+// The ul is the outer grid. Each li spans one column cell but
+// its internal rows (subheading + body) use subgrid so all
+// items in the same row share the same row tracks.
+
+.text-block__items {
+	--list-indent: 0;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: grid;
+    
+	// Two-column (default)
+	&--two-col {
+        gap: var(--space-2xl) var(--space-xl);
+		@media (min-width: #{bp.$bp-md}) {
+            grid-template-columns: 1fr 1fr;
+		}
+	}
+    
+	// Three-column
+	&--three-col {
+        gap: var(--space-2xl) var(--space-2xl);
+		@media (min-width: #{bp.$bp-md}) {
+			grid-template-columns: 1fr 1fr 1fr;
+		}
+	}
+}
+
+// ── Item ──────────────────────────────────────────────────────
+// Each item is a subgrid participant: it spans 1 column and
+// uses `subgrid` for its row tracks so headings and bodies
+// align across columns.
+
+.text-block__item {
+	// Subgrid: inherit the parent row tracks so same-row items align.
+	display: grid;
+	grid-row: span 2;
+	grid-template-rows: subgrid;
+	// gap: var(--space-xs);
+
+	// Reveal animation — triggered by parent .is-inview
+	opacity: 0;
+	transform: translateY(2rem);
+	transition:
+		opacity 0.4s ease-out var(--delay, 0ms),
+		transform 0.8s ease-out var(--delay, 0ms);
+
+	.text-block__items.is-inview & {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// ── Subheading ────────────────────────────────────────────────
+.text-block__subheading {
+	color: var(--color-content-secondary);
+	margin: 0;
+	// Sits in row 1 of the subgrid — aligns with other items' headings
+	align-self: start;
+
+	&--heading-l {
+		font-family: var(--text-xl-family);
+		font-size: var(--text-xl-size);
+		font-weight: 700;
+		line-height: var(--text-xl-leading);
+		letter-spacing: var(--text-xl-kerning);
+	}
+    
+	&--heading-m {
+        font-family: var(--text-l-family);
+        font-size: var(--text-l-size);
+        font-weight: 700;
+        line-height: var(--text-l-leading);
+        letter-spacing: var(--text-l-kerning);
+        text-transform: uppercase;
+	}
+}
+
+// ── Body ──────────────────────────────────────────────────────
+.text-block__body {
+	color: var(--color-content-primary);
+	// Sits in row 2 of the subgrid
+	align-self: start;
+
+	p, ul, ol {
+		margin: 0;
+	}
+
+	ul, ol {
+		padding-inline-start: var(--space-m);
+        list-style-type: "/ ";
+
+		li::marker {
+            font-family: var(--font-monospace-family);
+			color: var(--color-content-secondary);
+		}
+	}
+
+    li {
+        margin-top: var(--space-m);
+    }
+}
+
+.text-block__buttons {
+    margin-top: var(--space-s-xl);
+}
