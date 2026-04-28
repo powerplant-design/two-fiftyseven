@@ -16,7 +16,7 @@ Custom WordPress theme by [Powerplant Design](https://powerplant.design).
 
 ## Requirements
 
-- Node.js 18+
+- Node.js 22+
 - PHP 8.0+
 - WordPress 6.4+
 - DevKinsta (for local development)
@@ -109,7 +109,7 @@ Every build is a clean recompile — `emptyOutDir: true` wipes `assets/dist/` be
 
 The manifest at `assets/dist/.vite/manifest.json` is committed to version control so WordPress can resolve hashed asset paths on production without Node being available on the server. Everything else in `assets/dist/` is gitignored.
 
-> Make sure to run `npm run build` before deploying — if the manifest is stale, WordPress will enqueue old hashed filenames that no longer exist.
+> The GitHub Actions deploy pipeline runs `npm run build` automatically on every deploy — you do not need to build manually before pushing.
 
 ---
 
@@ -129,15 +129,9 @@ This is the recommended pre-launch order for this project:
 
 ### Phase 1: Local (DevKinsta)
 
-1. Ensure theme changes are committed.
-2. Run a production asset build:
-
-```bash
-npm run build
-```
-
-3. Verify `assets/dist/.vite/manifest.json` exists and includes `assets/js/main.js`.
-4. In WP Admin, update WordPress core to latest and test:
+1. Ensure theme changes are committed and pushed to `main`.
+2. Merge `main` into `deploy/staging` to trigger the GitHub Action — the build and deploy run automatically.
+3. In WP Admin, update WordPress core to latest and test:
   - Front-end pages and navigation
   - ACF block editing/saving
   - Forms (WPForms)
@@ -146,7 +140,7 @@ npm run build
 ### Phase 2: Kinsta Staging
 
 1. Create a staging environment in MyKinsta.
-2. Deploy files/database from local to staging.
+2. The GitHub Action deploys the theme automatically when you push to `deploy/staging` — no manual file transfer needed.
 3. Confirm production asset mode is active (no Vite dev server dependency).
 4. Update WordPress core to latest on staging (if needed).
 5. Change PHP version on staging to **8.3**.
@@ -179,45 +173,86 @@ If a critical issue appears after launch:
 
 ## Ongoing Deployment Workflow
 
-### How environment detection works
+### Branch strategy
 
-Asset loading is automatic based on hostname — no environment variables or config changes needed:
+| Branch | Purpose |
+|--------|---------|
+| `feature/xxx` | New features and bug fixes — branch off `main` |
+| `main` | Stable, tested code — merge feature branches here |
+| `deploy/staging` | Triggers automatic deploy to Kinsta staging |
 
-- `*.local` / `localhost` → Vite dev server (HMR)
-- Anything else (staging, production) → built files from `assets/dist/`
-
-This is handled in `functions.php → is_vite_hmr_available()`. As long as you run `npm run build` before pushing, styles and JS will load correctly on staging and live.
+There is no `production` branch — live is updated manually via Kinsta's Push to Live.
 
 ### Standard dev cycle
 
 ```
-1. Pull from Live          — DevKinsta → Sync → Pull from Kinsta → Live (files only, or files + db)
-2. npm run dev             — develop with HMR
-3. npm run build           — production build
-4. git commit && git push  — commit built assets + code changes
-5. Push to Staging         — DevKinsta → Sync → Push to Kinsta → Staging (files only)
-6. Test on staging URL
-7. Push Staging to Live    — MyKinsta → Staging → Push to Live (files only)
+1. Create feature branch   — git checkout -b feature/my-feature
+2. Develop with HMR        — npm run dev
+3. Commit changes          — git add . && git commit -m "feat: ..."
+4. Merge to main           — git checkout main && git merge feature/my-feature && git push
+5. Deploy to staging       — git checkout deploy/staging && git merge main && git push && git checkout main
+6. GitHub Action fires     — builds theme assets, rsyncs to Kinsta staging automatically
+7. Test on staging URL
+8. Push staging → live     — MyKinsta → Staging → Push to Live (themes + plugins, no uploads, no db)
 ```
+
+### How environment detection works
+
+Asset loading is automatic based on hostname — no environment variables needed:
+
+- `*.local` / `localhost` → Vite dev server (HMR)
+- Anything else (staging, production) → built files from `assets/dist/`
+
+Handled in `functions.php → is_vite_hmr_available()`. The GitHub Action runs `npm run build` on every deploy, so assets on staging and live are always up to date.
+
+### GitHub Actions deploy pipeline
+
+Defined in `.github/workflows/deploy-staging.yml`. Triggers on every push to `deploy/staging`.
+
+The action:
+1. Checks out the repo on a GitHub-hosted Ubuntu runner
+2. Installs Node 22 and runs `npm ci && npm run build`
+3. rsyncs the built theme to Kinsta staging via SSH, with `--delete` to remove stale hashed files
+4. Excludes: `node_modules/`, `.git/`, `.github/`, `.env`
+
+**Required GitHub repository secrets** (Settings → Secrets and variables → Actions):
+
+| Secret | Value |
+|--------|-------|
+| `KINSTA_STAGING_SSH_HOST` | Kinsta staging SSH hostname (e.g. `168.138.25.97`) |
+| `KINSTA_STAGING_SSH_USER` | SSH username (e.g. `twofiftyseven`) |
+| `KINSTA_STAGING_SSH_PORT` | SSH port (e.g. `40989`) |
+| `KINSTA_STAGING_SSH_KEY` | Private key (`~/.ssh/kinsta_deploy`) — full contents including `-----BEGIN/END-----` lines |
+| `KINSTA_STAGING_THEME_PATH` | Absolute path to theme on server (e.g. `/www/twofiftyseven_471/public/wp-content/themes/two-fiftyseven`) |
+
+The corresponding public key (`~/.ssh/kinsta_deploy.pub`) must be added to Kinsta → User settings → SSH keys.
+
+### Pushing staging → live
+
+MyKinsta → Two-Fiftyseven → **Staging** tab → **"Push to Live"** → select **Specific files or folders**:
+- ✅ themes
+- ✅ plugins
+- ☐ uploads (always untick — never overwrite live media)
+- ☐ Database (untick unless intentionally migrating content)
 
 ### Files only vs. files + database
 
 Once the client is adding content on live, always push **files only** — never overwrite the database:
 
-- **Files only** — theme, plugins, `wp-config.php`, uploads → use for all routine deploys
-- **Files + database** — use only for the initial launch, or when migrating a full content rebuild from local
+- **Files only** — theme, plugins → use for all routine deploys
+- **Files + database** — use only for initial launch, or when migrating a full content rebuild from local
 
 ### ACF fields
 
-Field group *definitions* live in `acf-json/` and are tracked in git — they deploy with the theme automatically. Field *values* (content) live in the database and are never touched by a files-only push.
+Field group *definitions* live in `acf-json/` and are tracked in git — they deploy with the theme automatically via the GitHub Action. Field *values* (content) live in the database and are never touched by a files-only deploy.
 
-### Pushing staging → live
+### After deploying cron changes
 
-MyKinsta → Two-Fiftyseven → **Staging** tab → **"Push to Live"** → select **Files only**.
+If `two57_daily_refresh_events` scheduling logic changes, delete the existing cron event in WP Crontrol on staging (and live after push). The `init` hook reschedules it automatically with the correct timezone and recurrence on the next page load.
 
 ### Client admin account
 
-Create the client's admin account on **Live** only — not staging. Staging is overwritten each time you push from DevKinsta or promote staging to live.
+Create the client's admin account on **Live** only — not staging. Staging is overwritten each time you push to live.
 
 Steps: WP Admin (live) → Users → Add New → Role: Administrator
 

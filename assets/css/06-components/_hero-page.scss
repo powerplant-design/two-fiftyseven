@@ -32,6 +32,9 @@
 
 	// ── Inner content wrapper ─────────────────────────────────
 	&__inner {
+		@include bp.from(md) {
+			width: 100%;
+		}
 		position: relative;
 		z-index: 1;
 		padding-block-start: var(--space-3xl);
@@ -41,8 +44,6 @@
 		flex: 1;
 		gap: var(--space-s);
 		--stack-horizontal-alignment: flex-start;
-
-
 	}
 
 	// ── Headline ──────────────────────────────────────────────
@@ -56,8 +57,6 @@
 		color: var(--color-content-unchanged);
 		max-inline-size: 48ch;
 	}
-
-
 
 	// ── Marquee wrapper (label + strip) ───────────────────────
 	&__marquee-wrap {
