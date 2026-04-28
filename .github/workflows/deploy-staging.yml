@@ -1,0 +1,23 @@
+name: Deploy to Kinsta Staging
+
+on:
+  push:
+    branches:
+      - deploy/staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH into Kinsta staging and pull latest theme
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.KINSTA_STAGING_SSH_HOST }}
+          username: ${{ secrets.KINSTA_STAGING_SSH_USER }}
+          port: ${{ secrets.KINSTA_STAGING_SSH_PORT }}
+          key: ${{ secrets.KINSTA_STAGING_SSH_KEY }}
+          script: |
+            cd ${{ secrets.KINSTA_STAGING_THEME_PATH }}
+            git fetch origin
+            git checkout deploy/staging
+            git pull origin deploy/staging
