@@ -1016,7 +1016,7 @@ add_action( 'acf/save_post', function ( $post_id ): void {
  *
  * Recurring events only get their sort date computed at save time, so after
  * the stored date passes the event sorts as if it were in the past. This job
- * runs once a day (midnight WP time) and recalculates each recurring event's
+ * runs twice a day (2am + 2pm site time) and recalculates each recurring event's
  * next occurrence date so the archive always shows the correct order.
  */
 function two57_refresh_recurring_sort_dates(): void {
@@ -1122,10 +1122,22 @@ function two57_auto_mark_events_passed(): void {
 }
 add_action( 'two57_daily_refresh_events', 'two57_auto_mark_events_passed' );
 
-// Schedule the daily job if it isn't already queued.
+// Schedule the twice-daily job (2am + 2pm site time) if it isn't already queued.
 add_action( 'init', function (): void {
 	if ( ! wp_next_scheduled( 'two57_daily_refresh_events' ) ) {
-		wp_schedule_event( strtotime( 'midnight' ), 'daily', 'two57_daily_refresh_events' );
+		// Anchor to the next 2am or 2pm in the site's timezone (e.g. Auckland UTC+12).
+		// Using 'twicedaily' (12h interval) means after firing at 2am it fires at 2pm, then 2am, etc.
+		// strtotime() is wrong here because WordPress sets PHP's timezone to UTC.
+		$tz  = wp_timezone();
+		$now = new \DateTime( 'now', $tz );
+		$run = new \DateTime( 'today 02:00', $tz );
+		if ( $run <= $now ) {
+			$run->modify( '+12 hours' ); // try 2pm today
+		}
+		if ( $run <= $now ) {
+			$run->modify( '+12 hours' ); // try 2am tomorrow
+		}
+		wp_schedule_event( $run->getTimestamp(), 'twicedaily', 'two57_daily_refresh_events' );
 	}
 } );
 
