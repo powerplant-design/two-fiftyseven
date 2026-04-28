@@ -32,7 +32,7 @@
 
 	// ── Inner content wrapper ─────────────────────────────────
 	&__inner {
-		@include bp.from(md) {
+		@media (min-width: bp.$bp-md) {
 			width: 100%;
 		}
 		position: relative;
