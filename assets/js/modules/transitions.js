@@ -16,7 +16,7 @@ import Swup           from 'swup';
 import SwupHeadPlugin from '@swup/head-plugin';
 import SwupA11yPlugin from '@swup/a11y-plugin';
 import { applyThemes } from './color-theme.js';
-import { initScroll, destroyScroll, getScrollInstance } from './scroll.js';
+import { initScroll, destroyScroll, getScrollInstance, initAnchorLinks } from './scroll.js';
 import { initMarquee, destroyMarquee } from './marquee.js';
 import { syncHeader } from './header.js';
 import { initFooter, destroyFooter } from './footer.js';
@@ -36,17 +36,49 @@ function resetScrollRevealState() {
 export function initTransitions() {
 	// ── Bfcache restoration ─────────────────────────────────────────────────
 	// When the browser restores from the back-forward cache, Swup's hooks
-	// don't fire. Destroy stale Locomotive, reset is-inview, then wait two
-	// frames so the browser paints the reset state before re-observing.
+	// don't fire. Do a full module reinit — not just scroll — because footer.js
+	// and stacked-cards.js hold Lenis instance references that become stale once
+	// destroyScroll() tears down the old instance.
 	window.addEventListener( 'pageshow', ( e ) => {
 		if ( e.persisted ) {
+			destroyMarquee();
+			destroyFooter();
+			destroyStackedCards();
+			destroyFaq();
+			destroyEventsArchive();
+			destroyCptArchive();
+			destroyImpact();
+			destroyTestimonials();
 			destroyScroll();
 			resetScrollRevealState();
 			requestAnimationFrame( () => {
 				requestAnimationFrame( () => {
 					initScroll();
+					initAnchorLinks();
+					initMarquee();
+					initFooter();
+					initStackedCards();
+					initFaq();
+					initEventsArchive();
+					initCptArchive();
+					initImpact();
+					initTestimonials();
 				} );
 			} );
+		}
+	} );
+
+	// ── Tab visibility — stop/start Lenis ──────────────────────────────────
+	// When the browser freezes or throttles a background tab, Lenis's RAF loop
+	// stops. Explicitly pausing on hide and resuming on show is more robust than
+	// relying on the browser to resume the loop cleanly.
+	document.addEventListener( 'visibilitychange', () => {
+		const lenis = getScrollInstance()?.lenisInstance;
+		if ( ! lenis ) return;
+		if ( document.hidden ) {
+			lenis.stop();
+		} else {
+			lenis.start();
 		}
 	} );
 
@@ -122,6 +154,7 @@ export function initTransitions() {
 		setTimeout( () => {
 			if ( ! getScrollInstance() ) {
 				initScroll();
+				initAnchorLinks();
 			}
 		}, 1200 );
 	} );
@@ -131,5 +164,6 @@ export function initTransitions() {
 	//    not while the page is still invisible.
 	swup.hooks.on( 'animation:in:end', () => {
 		initScroll();
+		initAnchorLinks();
 	} );
 }
