@@ -4,7 +4,7 @@ import '../css/styles.scss';
 import 'locomotive-scroll/dist/locomotive-scroll.css';
 
 import { initColorTheme }    from './modules/color-theme.js';
-import { initScroll }        from './modules/scroll.js';
+import { initScroll, initAnchorLinks } from './modules/scroll.js';
 import { initMarquee }       from './modules/marquee.js';
 import { initTransitions }   from './modules/transitions.js';
 import { initFooter }        from './modules/footer.js';
@@ -18,6 +18,7 @@ import { initTestimonials }  from './modules/testimonial.js';
 
 initColorTheme();
 initScroll();
+initAnchorLinks();
 initMarquee();
 initTransitions();
 initFooter();
