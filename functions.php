@@ -1038,6 +1038,9 @@ function two57_refresh_recurring_sort_dates(): void {
 		],
 	] );
 
+	$tz  = wp_timezone();
+	$now = new \DateTimeImmutable( 'now', $tz );
+
 	foreach ( $recurring_events->posts as $post_id ) {
 		$day_abbr   = (string) ( get_field( 'event_day_of_week', (int) $post_id ) ?: '' );
 		$sort_date  = $day_abbr ? two57_next_weekday_ymd( $day_abbr ) : '99991231';
@@ -1045,6 +1048,12 @@ function two57_refresh_recurring_sort_dates(): void {
 		if ( $time_start ) {
 			$dt_time = \DateTime::createFromFormat( 'H:i', $time_start );
 			if ( $dt_time ) {
+				// If today is the event's weekday but the start time has already passed,
+				// roll the sort date forward 7 days to next week's occurrence.
+				$event_dt = \DateTimeImmutable::createFromFormat( 'Ymd H:i', $sort_date . ' ' . $time_start, $tz );
+				if ( $event_dt && $event_dt <= $now ) {
+					$sort_date = ( new \DateTimeImmutable( $sort_date, $tz ) )->modify( '+7 days' )->format( 'Ymd' );
+				}
 				$sort_date .= $dt_time->format( 'Hi' );
 			}
 		}

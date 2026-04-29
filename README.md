@@ -242,6 +242,24 @@ Once the client is adding content on live, always push **files only** — never 
 - **Files only** — theme, plugins → use for all routine deploys
 - **Files + database** — use only for initial launch, or when migrating a full content rebuild from local
 
+### Plugin updates
+
+The GitHub Actions deploy only rsyncs the **theme folder** — it never touches `wp-content/plugins/`. Plugin files updated in WP Admin locally will not appear on Kinsta, and plugin updates done in DevKinsta are not reflected on staging or live.
+
+**Always update plugins on Kinsta staging, not locally:**
+
+1. WP Admin on **Kinsta staging** → Plugins → update what's needed
+2. Test that nothing breaks on staging
+3. Kinsta → Staging → **Push to Live** → tick ✅ plugins (and ✅ themes if you also have theme changes)
+
+Never update plugins directly on live — always go through staging first so you have a tested state before promoting.
+
+**Pulling plugin updates back to local:**
+
+After pushing updated plugins to live, pull them down to DevKinsta so your local stays in sync:
+
+DevKinsta → **Sync → Pull from Kinsta** → select **Live** → tick **Files** → pull.
+
 ### ACF fields
 
 Field group *definitions* live in `acf-json/` and are tracked in git — they deploy with the theme automatically via the GitHub Action. Field *values* (content) live in the database and are never touched by a files-only deploy.
