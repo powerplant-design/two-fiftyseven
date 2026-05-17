@@ -34,11 +34,12 @@ Light (default)
 
 	/* Surface */
 	--color-trans: rgba(0, 0, 0, 0);
-	--color-surface-primary: var(--color-neutral-100);
+	--color-surface-primary: var(--color-bg-grey);
 	--color-surface-secondary: var(--color-neutral-200);
 	--color-surface-inverse-primary: var(--color-neutral-600);
 	--color-surface-inverse-secondary: var(--color-neutral-500);
 	--color-surface-unchanged: var(--color-neutral-600);
+	--color-bg-grey: #b0bca6;
 
 	/* Border */
 	--color-border-primary: var(--color-neutral-600);
@@ -75,11 +76,12 @@ Dark
 	--color-content-unchanged: var(--color-neutral-100);
 
 	/* Surface */
-	--color-surface-primary: var(--color-neutral-600);
+	--color-surface-primary: var(--color-bg-grey);
 	--color-surface-secondary: var(--color-neutral-500);
 	--color-surface-inverse-primary: var(--color-neutral-100);
 	--color-surface-inverse-secondary: var(--color-neutral-200);
 	--color-surface-unchanged: var(--color-neutral-600);
+	--color-bg-grey: #1c1c1c;
 
 	/* Border */
 	--color-border-primary: var(--color-neutral-100);
@@ -115,11 +117,12 @@ Forest Light
 	--color-content-unchanged: var(--color-forest-100);
 
 	/* Surface */
-	--color-surface-primary: var(--color-forest-100);
+	--color-surface-primary: var(--color-bg-grey);
 	--color-surface-secondary: var(--color-forest-200);
 	--color-surface-inverse-primary: var(--color-forest-600);
 	--color-surface-inverse-secondary: var(--color-forest-500);
 	--color-surface-unchanged: var(--color-forest-600);
+	--color-bg-grey: #b0bca6;
 
 	/* Border */
 	--color-border-primary: var(--color-forest-600);
@@ -155,11 +158,12 @@ Forest Dark
 	--color-content-unchanged: var(--color-forest-100);
 
 	/* Surface */
-	--color-surface-primary: var(--color-forest-600);
+	--color-surface-primary: var(--color-bg-grey);
 	--color-surface-secondary: var(--color-forest-500);
 	--color-surface-inverse-primary: var(--color-forest-100);
 	--color-surface-inverse-secondary: var(--color-forest-200);
 	--color-surface-unchanged: var(--color-forest-600);
+	--color-bg-grey: #181c18;
 
 	/* Border */
 	--color-border-primary: var(--color-forest-100);
@@ -195,11 +199,12 @@ Purple Light
 	--color-content-unchanged: var(--color-purple-100);
 
 	/* Surface */
-	--color-surface-primary: var(--color-purple-100);
+	--color-surface-primary: var(--color-bg-grey);
 	--color-surface-secondary: var(--color-purple-200);
 	--color-surface-inverse-primary: var(--color-purple-600);
 	--color-surface-inverse-secondary: var(--color-purple-500);
 	--color-surface-unchanged: var(--color-purple-600);
+	--color-bg-grey: #b0a5bb;
 
 	/* Border */
 	--color-border-primary: var(--color-purple-600);
@@ -235,11 +240,12 @@ Purple Dark
 	--color-content-unchanged: var(--color-purple-100);
 
 	/* Surface */
-	--color-surface-primary: var(--color-purple-600);
+	--color-surface-primary: var(--color-bg-grey);
 	--color-surface-secondary: var(--color-purple-500);
 	--color-surface-inverse-primary: var(--color-purple-100);
 	--color-surface-inverse-secondary: var(--color-purple-200);
 	--color-surface-unchanged: var(--color-purple-600);
+	--color-bg-grey: #1c1820;
 
 	/* Border */
 	--color-border-primary: var(--color-purple-100);
@@ -275,11 +281,12 @@ Maroon Light
 	--color-content-unchanged: var(--color-maroon-100);
 
 	/* Surface */
-	--color-surface-primary: var(--color-maroon-100);
+	--color-surface-primary: var(--color-bg-grey);
 	--color-surface-secondary: var(--color-maroon-200);
 	--color-surface-inverse-primary: var(--color-maroon-600);
 	--color-surface-inverse-secondary: var(--color-maroon-500);
 	--color-surface-unchanged: var(--color-maroon-600);
+	--color-bg-grey: #bba5a5;
 
 	/* Border */
 	--color-border-primary: var(--color-maroon-600);
@@ -315,11 +322,12 @@ Maroon Dark
 	--color-content-unchanged: var(--color-maroon-100);
 
 	/* Surface */
-	--color-surface-primary: var(--color-maroon-600);
+	--color-surface-primary: var(--color-bg-grey);
 	--color-surface-secondary: var(--color-maroon-500);
 	--color-surface-inverse-primary: var(--color-maroon-100);
 	--color-surface-inverse-secondary: var(--color-maroon-200);
 	--color-surface-unchanged: var(--color-maroon-600);
+	--color-bg-grey: #201818;
 
 	/* Border */
 	--color-border-primary: var(--color-maroon-100);

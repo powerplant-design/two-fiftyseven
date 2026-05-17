@@ -403,7 +403,23 @@ add_action( 'acf/init', function (): void {
 			'innerBlocks' => false,
 			'align'       => false,
 		],
-	] );} );
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'gallery-slider',
+		'title'           => __( '257 Gallery Slider', 'two-fiftyseven' ),
+		'description'     => __( 'Full-screen image sequence. Images are 100vw × 100vh and slide in from the right on scroll, stacking one on top of the next.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/gallery-slider/block.php',
+		'category'        => 'media',
+		'icon'            => 'format-gallery',
+		'keywords'        => [ 'gallery', 'slider', 'images', 'fullscreen', 'scroll' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+} );
 
 
 /**
