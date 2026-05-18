@@ -20,9 +20,20 @@ $has_hero = $current_post_id && (
 	has_block( 'acf/hero-home', $current_post_id ) ||
 	has_block( 'acf/hero-page', $current_post_id )
 );
+
+// Split hero has a transparent/light background — needs dark-logo header treatment.
+$hero_is_split = false;
+if ( $has_hero && has_block( 'acf/hero-page', $current_post_id ) ) {
+	foreach ( parse_blocks( get_post_field( 'post_content', $current_post_id ) ) as $blk ) {
+		if ( 'acf/hero-page' === $blk['blockName'] ) {
+			$hero_is_split = ( $blk['attrs']['data']['page_hero_layout'] ?? '' ) === 'split';
+			break;
+		}
+	}
+}
 ?>
 
-<header class="site-header<?php echo $has_hero ? '' : ' site-header--no-hero'; ?>">
+<header class="site-header<?php echo ( ! $has_hero || $hero_is_split ) ? ' site-header--no-hero' : ''; ?>">
 	<div class="wrapper | w-full">
 		<nav class="site-nav site-nav--primary" aria-label="<?php esc_attr_e( 'Primary', 'two-fiftyseven' ); ?>">
 			<?php

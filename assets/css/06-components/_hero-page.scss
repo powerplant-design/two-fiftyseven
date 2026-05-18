@@ -115,4 +115,65 @@
 			fill: currentColor;
 		}
 	}
+
+	// ── Eyebrow ───────────────────────────────────────────────────────────────
+	&__eyebrow {
+		text-transform: uppercase;
+		color: var(--color-content-unchanged);
+	}
+
+	// ── Content column (split layout) ─────────────────────────────────────────
+	&__content {
+		--stack-horizontal-alignment: flex-start;
+	}
+
+	// ── Image column (split layout) ───────────────────────────────────────────
+	&__image-col {
+		overflow: hidden;
+		border-radius: var(--corner-radius-l);
+
+		@media (max-width: #{bp.$bp-md}) {
+			order: -1;
+			max-block-size: 60svh;
+		}
+	}
+
+	&__column-img {
+		width: 100%;
+		height: 60vh;
+		object-fit: cover;
+		display: block;
+	}
+
+	// ── Split layout modifier ─────────────────────────────────────────────────
+	// Two-column grid: text content left, photo right, on plain background.
+	&--split {
+		background-image: none;
+		background-color: transparent;
+
+		.hero-page__inner {
+			display: grid;
+			grid-template-columns: 1.5fr 1fr;
+			align-items: center;
+			justify-content: unset;
+			gap: var(--space-xl);
+			padding-block-start: var(--space-3xl);
+
+			@media (max-width: #{bp.$bp-md}) {
+				grid-template-columns: 1fr;
+			}
+		}
+
+		.hero-page__eyebrow,
+		.hero-page__headline,
+		.hero-page__subtitle {
+			color: var(--color-content-primary);
+		}
+
+		// Marquee logos use content-primary on the plain background.
+		.hero-page__marquee-item,
+		.hero-page__marquee-label {
+			color: var(--color-content-primary);
+		}
+	}
 }
