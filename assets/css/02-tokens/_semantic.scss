@@ -58,6 +58,15 @@ html {
 	/* Monospace */
 	--text-monospace-size: 0.8125em;
 
+	/* 5XL — hero display font */
+	--text-5xl-family: var(--font-display-family);
+	--text-5xl-features: var(--font-display-features);
+	--text-5xl-weight: var(--font-display-weight);
+	--text-5xl-size: var(--step-6);
+	--text-5xl-leading: var(--leading-slim);
+	--text-5xl-kerning: var(--kerning-heading);
+	--text-5xl-transform: none;
+
 	/* 4XL — h1, display font */
 	--text-4xl-family: var(--font-display-family);
 	--text-4xl-features: var(--font-display-features);

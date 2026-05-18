@@ -2,6 +2,16 @@
 Text Styles
 =================================================================== */
 
+.text-5xl {
+	font-family: var(--text-5xl-family);
+	font-size: var(--text-5xl-size);
+	font-weight: var(--text-5xl-weight);
+	font-feature-settings: var(--text-5xl-features);
+	line-height: var(--text-5xl-leading);
+	text-transform: var(--text-5xl-transform);
+	letter-spacing: var(--text-5xl-kerning);
+}
+
 .text-4xl {
 	font-family: var(--text-4xl-family);
 	font-size: var(--text-4xl-size);

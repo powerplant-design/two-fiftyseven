@@ -10,6 +10,7 @@
 //   --step-3   (2xl)
 //   --step-4   (3xl)
 //   --step-5   (4xl / display)
+//   --step-6   (5xl / hero display)
 
 @use 'utopia-core-scss/src/utopia' as utopia;
 
@@ -21,7 +22,7 @@
     "maxFontSize": 20,
     "minTypeScale": 1.2,
     "maxTypeScale": 1.414,
-    "positiveSteps": 5,
+    "positiveSteps": 6,
     "negativeSteps": 2,
     "prefix": "step-",
     "relativeTo": "viewport-width"

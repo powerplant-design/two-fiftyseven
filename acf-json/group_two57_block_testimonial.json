@@ -135,6 +135,28 @@
 			"preview_size": "medium"
 		},
 		{
+			"key": "field_two57_testimonial_alignment",
+			"label": "Content Alignment",
+			"name": "testimonial_alignment",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Align the quote and attribution. Defaults to centred.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"choices": {
+				"center": "Centre",
+				"left": "Left"
+			},
+			"default_value": "center",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 0,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": ""
+		},
+		{
 			"key": "field_two57_testimonial_colour_space",
 			"label": "Colour Space",
 			"name": "testimonial_colour_space",

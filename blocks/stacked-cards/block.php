@@ -41,7 +41,7 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 	<?php endif; ?>
 
 	<?php if ( $section_title ) : ?>
-		<h2 class="stacked-cards__section-title | text-2xl measure-narrow text-balance"><?php echo esc_html( $section_title ); ?></h2>
+		<h2 class="stacked-cards__section-title | text-3xl measure-narrow text-balance"><?php echo esc_html( $section_title ); ?></h2>
 	<?php endif; ?>
 
 	<div class="stacked-cards__track" data-js="stacked-cards-track">
