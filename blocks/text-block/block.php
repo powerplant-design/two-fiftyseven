@@ -75,7 +75,7 @@ $attr_string .= ' data-block="full"';
 					<h2 class="text-block__heading | text-3xl measure-narrow text-balance"><?php echo esc_html( $heading ); ?></h2>
 				<?php endif; ?>
 				<?php if ( $intro ) : ?>
-					<p class="text-block__intro | text-xl"><?php echo esc_html( $intro ); ?></p>
+					<p class="text-block__intro | text-xl text-balance"><?php echo esc_html( $intro ); ?></p>
 				<?php endif; ?>
 			</div>
 		<?php elseif ( $is_preview ) : ?>

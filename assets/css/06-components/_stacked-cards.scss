@@ -16,9 +16,7 @@
 
 // ── Optional section title — sits above the sticky track ─────
 .stacked-cards__section-title {
-	margin: 0 auto;
 	text-transform: uppercase !important;
-	text-align: center;
 	margin-block-end: var(--space-s);
 
 	@media (min-width: bp.$bp-md) {
@@ -51,8 +49,8 @@
 		position: absolute;
 		inset: 0;
 		justify-content: center;
-		// First card (index 0) = on top; last card = furthest back.
-		z-index: calc(50 - var(--card-index, 0));
+		// Last card (highest index) = on top; card 0 is the base layer.
+		z-index: calc(10 + var(--card-index, 0));
 		will-change: transform;
 		// Cards underneath must not block pointer events — tabs re-enable them.
 		pointer-events: none;

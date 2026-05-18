@@ -101,6 +101,20 @@ add_filter( 'nav_menu_link_attributes', function ( array $atts, $menu_item, $arg
 	return $atts;
 }, 10, 3 );
 
+/**
+ * Remove href from nav items with the 'no-link' CSS class.
+ * The item still renders as an <a> for styling/JS purposes but won't navigate.
+ */
+add_filter( 'nav_menu_link_attributes', function ( array $atts, $menu_item ): array {
+	$classes = isset( $menu_item->classes ) ? (array) $menu_item->classes : [];
+
+	if ( in_array( 'no-link', $classes, true ) ) {
+		unset( $atts['href'] );
+	}
+
+	return $atts;
+}, 10, 2 );
+
 
 /**
  * Returns true when running in a local environment.
@@ -403,7 +417,23 @@ add_action( 'acf/init', function (): void {
 			'innerBlocks' => false,
 			'align'       => false,
 		],
-	] );} );
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'gallery-slider',
+		'title'           => __( '257 Gallery Slider', 'two-fiftyseven' ),
+		'description'     => __( 'Full-screen image sequence. Images are 100vw × 100vh and slide in from the right on scroll, stacking one on top of the next.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/gallery-slider/block.php',
+		'category'        => 'media',
+		'icon'            => 'format-gallery',
+		'keywords'        => [ 'gallery', 'slider', 'images', 'fullscreen', 'scroll' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+} );
 
 
 /**

@@ -26,6 +26,8 @@
 $slides                = get_field( 'testimonial_slides' ) ?: [];
 $image                 = get_field( 'testimonial_image' );
 $colour_space_override = get_field( 'testimonial_colour_space' ) ?: null;
+$alignment             = get_field( 'testimonial_alignment' ) ?: 'center';
+$alignment             = in_array( $alignment, [ 'center', 'left' ], true ) ? $alignment : 'center';
 
 // Sanitise against allowed spaces.
 $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
@@ -35,7 +37,7 @@ if ( $colour_space_override && ! in_array( $colour_space_override, $allowed_spac
 
 // Build the attribute map for the outer <section>.
 $attrs = [
-	'class'      => 'testimonial',
+	'class'      => 'testimonial' . ( 'left' === $alignment ? ' testimonial--left' : '' ),
 	'data-block' => 'full',
 ];
 
@@ -87,11 +89,10 @@ $slide_count = count( $slides );
 						if ( ! $quote && ! $name ) continue;
 
 						$quote_class = mb_strlen( wp_strip_all_tags( $quote ) ) < 33
-							? 'testimonial__quote text-4xl text-wrap-balance'
-							: 'testimonial__quote text-3xl text-wrap-balance';
+							? 'testimonial__quote text-5xl text-wrap-balance'
+							: 'testimonial__quote text-4xl text-wrap-balance';
 					?>
 					<div class="swiper-slide">
-
 						<?php if ( $quote ) : ?>
 							<blockquote class="<?php echo esc_attr( $quote_class ); ?>">
 								<?php echo wp_kses( $quote, [ 'br' => [], 'em' => [], 'strong' => [] ] ); ?>

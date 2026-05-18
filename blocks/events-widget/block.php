@@ -61,7 +61,7 @@ if ( $mode === 'manual' ) {
 	<div class="events-widget__inner | stack">
 
 		<?php if ( $heading ) : ?>
-			<h2 class="events-widget__heading | text-2xl" data-scroll data-scroll-repeat><?php echo esc_html( $heading ); ?></h2>
+			<h2 class="events-widget__heading | text-3xl" data-scroll data-scroll-repeat><?php echo esc_html( $heading ); ?></h2>
 		<?php endif; ?>
 
 		<?php if ( $items ) : ?>

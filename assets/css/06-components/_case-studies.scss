@@ -11,7 +11,6 @@
 
 	&__heading {
 		text-transform: uppercase !important;
-		text-align: center;
 		opacity: 0;
 		transform: translateY(1.5rem);
 		transition: opacity 0.4s ease-out, transform 0.8s ease-out;
@@ -64,7 +63,6 @@
 		justify-content: center;
 		color: var(--color-content-secondary);
 		min-block-size: clamp(var(--space-l), 9vw, var(--space-3xl));
-		background: linear-gradient(var(--color-surface-primary), var(--color-trans));
 		border-radius: var(--corner-radius-m);
 
 		svg {

@@ -38,13 +38,13 @@ export function applyThemes() {
 	syncToggleButton();
 }
 
-/** Keeps the toggle button label and aria-pressed in sync with the current mode. */
+/** Keeps all toggle buttons' labels and aria-pressed in sync with the current mode. */
 function syncToggleButton() {
-	const dark  = isDarkMode();
-	const btn   = document.querySelector( '[data-js="color-mode-toggle"]' );
-	const label = document.querySelector( '[data-mode-label]' );
-	if ( btn )   btn.setAttribute( 'aria-pressed', String( dark ) );
-	if ( label ) label.textContent = dark ? '⏾' : '✴︎';
+	const dark    = isDarkMode();
+	const buttons = document.querySelectorAll( '[data-js="color-mode-toggle"]' );
+	const labels  = document.querySelectorAll( '[data-mode-label]' );
+	buttons.forEach( btn   => btn.setAttribute( 'aria-pressed', String( dark ) ) );
+	labels.forEach(  label => label.textContent = dark ? '⏾' : '✴︎' );
 }
 
 /** Toggles the user preference and persists it to localStorage. */

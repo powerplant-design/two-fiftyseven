@@ -26,6 +26,7 @@ import { initEventsArchive, destroyEventsArchive } from './events-archive.js';
 import { initCptArchive, destroyCptArchive } from './cpt-archive.js';
 import { initImpact, destroyImpact } from './impact.js';
 import { initTestimonials, destroyTestimonials } from './testimonial.js';
+import { initGallerySlider, destroyGallerySlider } from './gallery-slider.js';
 
 function resetScrollRevealState() {
 	document.querySelectorAll( '[data-scroll].is-inview' ).forEach( ( el ) => {
@@ -46,6 +47,7 @@ export function initTransitions() {
 			destroyStackedCards();
 			destroyFaq();
 			destroyEventsArchive();
+			destroyGallerySlider();
 			destroyCptArchive();
 			destroyImpact();
 			destroyTestimonials();
@@ -60,6 +62,7 @@ export function initTransitions() {
 					initStackedCards();
 					initFaq();
 					initEventsArchive();
+					initGallerySlider();
 					initCptArchive();
 					initImpact();
 					initTestimonials();
@@ -103,6 +106,7 @@ export function initTransitions() {
 		destroyFaq();
 		destroyFooter();
 		destroyEventsArchive();
+		destroyGallerySlider();
 		destroyCptArchive();
 		destroyImpact();
 		destroyTestimonials();
@@ -143,6 +147,7 @@ export function initTransitions() {
 		initStackedCards();
 		initFaq();
 		initEventsArchive();
+		initGallerySlider();
 		initCptArchive();
 		initImpact();
 		initTestimonials();

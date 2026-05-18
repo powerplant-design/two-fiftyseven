@@ -51,7 +51,7 @@ if ( ! empty( $archive_link['url'] ) ) {
 <section class="case-studies | block">
 	<div class="case-studies__inner | stack">
 		<?php if ( $heading ) : ?>
-			<h2 class="case-studies__heading | text-2xl" data-scroll data-scroll-repeat><?php echo esc_html( $heading ); ?></h2>
+			<h2 class="case-studies__heading | text-3xl" data-scroll data-scroll-repeat><?php echo esc_html( $heading ); ?></h2>
 		<?php endif; ?>
 
 		<?php if ( $items ) : ?>
@@ -79,12 +79,11 @@ if ( ! empty( $archive_link['url'] ) ) {
 				?>
 				<li class="case-studies__card | card" style="--delay: <?php echo $delay_ms; ?>ms">
 						<a class="case-studies__card-link" href="<?php echo esc_url( $item_link ); ?>">
+						<div class="case-studies__logo" aria-hidden="true">
 							<?php if ( $brand_logo ) : ?>
-								<div class="case-studies__logo" aria-hidden="true">
-									<?php echo $brand_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by two_fiftyseven_get_inline_svg() ?>
-								</div>
+								<?php echo $brand_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by two_fiftyseven_get_inline_svg() ?>
 							<?php endif; ?>
-
+						</div>
 							<div class="case-studies__card-copy | stack">
 								<?php if ( $item_title ) : ?>
 									<h3 class="case-studies__card-title | card-title text-xl"><?php echo esc_html( $item_title ); ?></h3>

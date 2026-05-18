@@ -1,13 +1,15 @@
 /**
- * Stacked Cards — Lenis scroll-driven sequential card exit.
+ * Stacked Cards — Lenis scroll-driven sequential card entry.
  *
- * All cards start absolutely stacked on top of each other inside a
- * sticky 100svh track. The outer wrapper is given enough min-height to
- * provide scroll runway: (count) * 100svh.
+ * Cards 0..(n-1) are absolutely stacked in a sticky 100svh track. The outer
+ * wrapper is given enough min-height to provide scroll runway: (count) × 100svh.
  *
- * As Lenis scrolls through that runway, each card (card 0 = top of stack,
- * highest z-index) is translated downward off-screen in sequence — revealing
- * the card behind it. The last card stays in place as the final visible state.
+ * Card 0 is the base layer (lowest z-index) and stays fixed in place.
+ * Cards 1..n slide in from below in sequence, each covering the card before it.
+ * The last card becomes the top of the completed stack.
+ *
+ * Tabs above each card let the user scroll back to any earlier state after all
+ * cards have stacked.
  *
  * Mirrors the footer.js pattern: attaches to lenis.on('scroll', ...) once
  * the Lenis instance is ready.
@@ -46,22 +48,23 @@ function updateWrapper( wrapper ) {
 	const scrolledIn = Math.max( 0, -rect.top );
 	const progress   = Math.min( 1, scrolledIn / totalRunway );
 
-	// Only the first (count - 1) cards exit; last card stays as final state.
+	// Card 0 stays fixed (base layer). Cards 1..n-1 slide in from below in sequence.
 	const segments = count - 1;
 
 	cards.forEach( ( card, i ) => {
-		if ( i === count - 1 ) {
-			// Last card never exits.
+		if ( i === 0 ) {
+			// Base layer — never moves.
 			card.style.transform = '';
 			return;
 		}
 
-		const segStart   = i / segments;
-		const segSize    = 1 / segments;
-		// Local progress for this card: 0 = hasn't started exiting, 1 = fully gone.
-		const local      = Math.max( 0, Math.min( 1, ( progress - segStart ) / segSize ) );
-		// Translate upward: -110% clears the card completely out of the track.
-		card.style.transform = `translateY( ${ local * -110 }% )`;
+		// Card i enters during segment (i - 1): progress from (i-1)/segments → i/segments.
+		const segStart = ( i - 1 ) / segments;
+		const segSize  = 1 / segments;
+		// Local progress: 0 = off-screen below, 1 = fully covering previous card.
+		const local    = Math.max( 0, Math.min( 1, ( progress - segStart ) / segSize ) );
+		// Slide in from below: 110% → 0%.
+		card.style.transform = `translateY( ${ ( 1 - local ) * 110 }% )`;
 	} );
 }
 
@@ -70,8 +73,8 @@ function onScroll() {
 }
 
 /**
- * Scroll to the position in the runway where `targetIndex` card is fully revealed.
- * Used by tab click listeners.
+ * Scroll to the position in the runway where `targetIndex` card is on top of the stack.
+ * Used by tab click listeners to navigate back through stacked cards.
  */
 function scrollToCard( wrapper, targetIndex ) {
 	if ( ! lenisInstance ) return;

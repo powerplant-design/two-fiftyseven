@@ -9,17 +9,17 @@
 	padding-block-start: var(--space-2xl);
 	padding-block-end: var(--space-l);
 	font-size: var(--text-s-size, 0.875rem);
-	color: var(--color-content-unchanged);
-    background-color: var(--color-surface-unchanged);
+	color: var(--color-content-primary);
+    background-color: var(--color-surface-primary);
 	
 	a {
-		color: var(--color-content-unchanged);
+		color: var(--color-content-primary);
 	}
 
 	&__logo {
 		display: block;
 		width: 100%;
-		color: var(--color-content-unchanged);
+		color: var(--color-content-primary);
 		transition: none;
 		will-change: transform;
 

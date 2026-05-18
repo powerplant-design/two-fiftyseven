@@ -3,6 +3,42 @@
 	"title": "Hero Page Block",
 	"fields": [
 		{
+			"key": "field_two57_page_hero_layout",
+			"label": "Layout",
+			"name": "page_hero_layout",
+			"aria-label": "",
+			"type": "select",
+			"instructions": "Full-bleed fills the section with a background image. Split shows a right-column photo on a plain background.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"choices": {
+				"full-bleed": "Full-bleed background image",
+				"split": "Split \u2014 image in right column"
+			},
+			"default_value": "full-bleed",
+			"return_format": "value",
+			"multiple": 0,
+			"allow_null": 0,
+			"ui": 0,
+			"ajax": 0,
+			"placeholder": ""
+		},
+		{
+			"key": "field_two57_page_hero_eyebrow",
+			"label": "Eyebrow",
+			"name": "page_hero_eyebrow",
+			"aria-label": "",
+			"type": "text",
+			"instructions": "Optional short label displayed above the headline, e.g. \"Workspace\".",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": { "width": "50", "class": "", "id": "" },
+			"default_value": "",
+			"maxlength": "",
+			"placeholder": "Workspace"
+		},
+		{
 			"key": "field_two57_page_hero_headline",
 			"label": "Headline",
 			"name": "page_hero_headline",
@@ -57,6 +93,22 @@
 			"return_format": "array"
 		},
 		{
+			"key": "field_two57_page_hero_secondary_button",
+			"label": "Secondary Button",
+			"name": "page_hero_secondary_button",
+			"aria-label": "",
+			"type": "link",
+			"instructions": "Optional secondary CTA (outline style) displayed beside the primary button.",
+			"required": 0,
+			"conditional_logic": 0,
+			"wrapper": {
+				"width": "40",
+				"class": "",
+				"id": ""
+			},
+			"return_format": "array"
+		},
+		{
 			"key": "field_two57_page_hero_bg_image",
 			"label": "Background Image",
 			"name": "page_hero_background_image",
@@ -64,12 +116,49 @@
 			"type": "image",
 			"instructions": "Full-bleed hero background. Aim for at least 1920\u00d71080px.",
 			"required": 0,
-			"conditional_logic": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_page_hero_layout",
+						"operator": "==",
+						"value": "full-bleed"
+					}
+				]
+			],
 			"wrapper": {
 				"width": "",
 				"class": "",
 				"id": ""
 			},
+			"return_format": "array",
+			"library": "all",
+			"min_width": "",
+			"min_height": "",
+			"min_size": "",
+			"max_width": "",
+			"max_height": "",
+			"max_size": "",
+			"mime_types": "",
+			"preview_size": "medium"
+		},
+		{
+			"key": "field_two57_page_hero_column_image",
+			"label": "Column Image",
+			"name": "page_hero_column_image",
+			"aria-label": "",
+			"type": "image",
+			"instructions": "Photo displayed in the right column. Split layout only. Portrait or square crops work best.",
+			"required": 0,
+			"conditional_logic": [
+				[
+					{
+						"field": "field_two57_page_hero_layout",
+						"operator": "==",
+						"value": "split"
+					}
+				]
+			],
+			"wrapper": { "width": "", "class": "", "id": "" },
 			"return_format": "array",
 			"library": "all",
 			"min_width": "",

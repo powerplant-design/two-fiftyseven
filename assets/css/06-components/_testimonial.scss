@@ -23,7 +23,7 @@
    Set color here to control the SVG colour via the active colour space token. */
 .testimonial__media {
 	position: absolute;
-	inset: -40svh 1svw;
+	inset: -40svh 0;
 
 	pointer-events: none;
 	color: var(--color-content-secondary-inverse);
@@ -66,33 +66,29 @@
 	}
 }
 
-// ── Nav buttons — secondary button style ─────────────────────────────────────
+// ── Nav buttons ───────────────────────────────────────────────────────────────
+// Always sit at the bottom, inline with the pagination dots.
 .swiper-button-prev,
 .swiper-button-next {
 	--color-content-link-hover: var(--color-link-hover);
 	width: var(--space-xl);
-	border: none;
-	top: 0 !important;
+	height: var(--space-xl);
+	top: unset !important;
 	bottom: 0;
-	height: 100%;
+	border: none;
 	color: var(--color-link);
 
 	&:hover,
 	&:active  { color: var(--color-content-link-hover); }
 
 	position: absolute;
-
-	@media (max-width: #{bp.$bp-sm}) {
-		top: unset !important;
-		height: var(--space-xl);
-	}
 }
 
 .swiper-slide {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	margin-top: auto;
+	// margin-top: auto;
 	gap: var(--space-s-xl);
 	box-sizing: border-box;
 	// Side padding mirrors the wrapper — content is bounded but swiper is full-width
@@ -103,6 +99,24 @@
 			align-items: flex-start;
 			padding-inline: var(--space-m);
 		}
+}
+
+// ── Left-align modifier ──────────────────────────────────────────────────────
+// Overrides centre-alignment on the slide, quote, and attribution.
+// Extra padding-inline-start clears the absolutely-positioned prev arrow.
+.testimonial--left {
+	.swiper-slide {
+		align-items: flex-start;
+		padding-inline-start: calc( var(--space-xl) + var(--global-padding-inline, 1rem) );
+	}
+
+	.testimonial__quote {
+		text-align: left;
+	}
+
+	.testimonial__attribution {
+		justify-content: flex-start;
+	}
 }
 
 // ── Quote ─────────────────────────────────────────────────────────────────────

@@ -49,8 +49,9 @@ Usage:
 	overflow: hidden;
 	pointer-events: none;
 	color: var(--color-surface-secondary);
-	mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
-	-webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
+	mask-image: linear-gradient(to bottom, black 0%, transparent 40%);
+	-webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 40%);
+	opacity: 0.5;
 	
 	svg {
 		fill: currentColor;

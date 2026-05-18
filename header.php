@@ -20,19 +20,21 @@ $has_hero = $current_post_id && (
 	has_block( 'acf/hero-home', $current_post_id ) ||
 	has_block( 'acf/hero-page', $current_post_id )
 );
+
+// Split hero has a transparent/light background — needs dark-logo header treatment.
+$hero_is_split = false;
+if ( $has_hero && has_block( 'acf/hero-page', $current_post_id ) ) {
+	foreach ( parse_blocks( get_post_field( 'post_content', $current_post_id ) ) as $blk ) {
+		if ( 'acf/hero-page' === $blk['blockName'] ) {
+			$hero_is_split = ( $blk['attrs']['data']['page_hero_layout'] ?? '' ) === 'split';
+			break;
+		}
+	}
+}
 ?>
 
-<header class="site-header<?php echo $has_hero ? '' : ' site-header--no-hero'; ?>">
-	<div class="wrapper | w-full">
-		<nav class="site-nav site-nav--primary" aria-label="<?php esc_attr_e( 'Primary', 'two-fiftyseven' ); ?>">
-			<?php
-			wp_nav_menu( [
-				'theme_location' => 'primary',
-				'menu_class'     => 'nav-menu cluster',
-				'fallback_cb'    => false,
-			] );
-			?>
-		</nav>
+<header class="site-header<?php echo ( ! $has_hero || $hero_is_split ) ? ' site-header--no-hero' : ''; ?>">
+	<div class="site-header__wrapper">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-logo" aria-label="<?php bloginfo( 'name' ); ?>">
 			<?php
 			$logo = get_template_directory() . '/assets/images/logo-257.svg';
@@ -44,7 +46,25 @@ $has_hero = $current_post_id && (
 			}
 			?>
 		</a>
+		<nav class="site-nav site-nav--primary" aria-label="<?php esc_attr_e( 'Primary', 'two-fiftyseven' ); ?>">
+			<?php
+			wp_nav_menu( [
+				'theme_location' => 'primary',
+				'menu_class'     => 'nav-menu cluster',
+				'fallback_cb'    => false,
+			] );
+			?>
+		</nav>
 		<div class="site-header__end">
+			<button
+				class="color-mode-toggle"
+				data-js="color-mode-toggle"
+				aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
+				aria-pressed="false"
+				type="button"
+			>
+				<span data-mode-label></span>
+			</button>
 			<nav class="site-nav site-nav--secondary" aria-label="<?php esc_attr_e( 'Secondary', 'two-fiftyseven' ); ?>">
 				<?php
 				wp_nav_menu( [
@@ -53,18 +73,56 @@ $has_hero = $current_post_id && (
 					'fallback_cb'    => false,
 				] );
 				?>
-				<button
-					class="color-mode-toggle"
-					data-js="color-mode-toggle"
-					aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
-					aria-pressed="false"
-					type="button"
-				>
-					<span data-mode-label></span>
-				</button>
+			</nav>
+			<button
+				class="nav-mobile-toggle"
+				data-js="nav-mobile-toggle"
+				aria-expanded="false"
+				aria-label="<?php esc_attr_e( 'Open navigation', 'two-fiftyseven' ); ?>"
+				type="button"
+			>
+				<span class="nav-mobile-toggle__bar"></span>
+				<span class="nav-mobile-toggle__bar"></span>
+				<span class="nav-mobile-toggle__bar"></span>
+			</button>
+		</div>
+
+	</div>
+
+	<div class="site-header__mobile-panel" aria-hidden="true">
+		<div class="site-header__mobile-panel__scroll">
+			<nav class="site-nav site-nav--mobile-primary" aria-label="<?php esc_attr_e( 'Primary', 'two-fiftyseven' ); ?>">
+				<?php
+				wp_nav_menu( [
+					'theme_location' => 'primary',
+					'menu_class'     => 'nav-menu',
+					'fallback_cb'    => false,
+				] );
+				?>
 			</nav>
 		</div>
+		<div class="site-header__mobile-panel__footer">
+			<nav class="site-nav site-nav--mobile-secondary" aria-label="<?php esc_attr_e( 'Secondary', 'two-fiftyseven' ); ?>">
+				<?php
+				wp_nav_menu( [
+					'theme_location' => 'secondary',
+					'menu_class'     => 'nav-menu',
+					'fallback_cb'    => false,
+				] );
+				?>
+			</nav>
+			<button
+				class="color-mode-toggle color-mode-toggle--mobile"
+				data-js="color-mode-toggle"
+				aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
+				aria-pressed="false"
+				type="button"
+			>
+				<span data-mode-label></span>
+			</button>
+		</div>
 	</div>
+
 </header>
 
 <div id="swup">
