@@ -44,8 +44,16 @@ $anchor_id = sanitize_html_class( (string) get_field( 'gallery_slider_anchor_id'
 			data-index="<?php echo esc_attr( $index ); ?>"
 			style="--slide-index: <?php echo esc_attr( $index ); ?>;"
 		>
-			<?php
-			echo wp_get_attachment_image(
+			<?php if ( 'image/svg+xml' === ( $image['mime_type'] ?? '' ) ) : ?>
+			<img
+				class="gallery-slider__img gallery-slider__img--svg"
+				src="<?php echo esc_url( $image['url'] ); ?>"
+				alt="<?php echo esc_attr( $image['alt'] ?? '' ); ?>"
+				loading="<?php echo 0 === $index ? 'eager' : 'lazy'; ?>"
+				decoding="async"
+			>
+			<?php else : ?>
+			<?php echo wp_get_attachment_image(
 				$image['ID'],
 				'full',
 				false,
@@ -55,8 +63,8 @@ $anchor_id = sanitize_html_class( (string) get_field( 'gallery_slider_anchor_id'
 					'decoding' => 'async',
 					'sizes'    => '100vw',
 				]
-			);
-			?>
+			); ?>
+			<?php endif; ?>
 		</div>
 		<?php endforeach; ?>
 

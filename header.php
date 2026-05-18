@@ -34,16 +34,7 @@ if ( $has_hero && has_block( 'acf/hero-page', $current_post_id ) ) {
 ?>
 
 <header class="site-header<?php echo ( ! $has_hero || $hero_is_split ) ? ' site-header--no-hero' : ''; ?>">
-	<div class="wrapper | w-full">
-		<nav class="site-nav site-nav--primary" aria-label="<?php esc_attr_e( 'Primary', 'two-fiftyseven' ); ?>">
-			<?php
-			wp_nav_menu( [
-				'theme_location' => 'primary',
-				'menu_class'     => 'nav-menu cluster',
-				'fallback_cb'    => false,
-			] );
-			?>
-		</nav>
+	<div class="site-header__wrapper">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-logo" aria-label="<?php bloginfo( 'name' ); ?>">
 			<?php
 			$logo = get_template_directory() . '/assets/images/logo-257.svg';
@@ -55,7 +46,25 @@ if ( $has_hero && has_block( 'acf/hero-page', $current_post_id ) ) {
 			}
 			?>
 		</a>
+		<nav class="site-nav site-nav--primary" aria-label="<?php esc_attr_e( 'Primary', 'two-fiftyseven' ); ?>">
+			<?php
+			wp_nav_menu( [
+				'theme_location' => 'primary',
+				'menu_class'     => 'nav-menu cluster',
+				'fallback_cb'    => false,
+			] );
+			?>
+		</nav>
 		<div class="site-header__end">
+			<button
+				class="color-mode-toggle"
+				data-js="color-mode-toggle"
+				aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
+				aria-pressed="false"
+				type="button"
+			>
+				<span data-mode-label></span>
+			</button>
 			<nav class="site-nav site-nav--secondary" aria-label="<?php esc_attr_e( 'Secondary', 'two-fiftyseven' ); ?>">
 				<?php
 				wp_nav_menu( [
@@ -64,17 +73,10 @@ if ( $has_hero && has_block( 'acf/hero-page', $current_post_id ) ) {
 					'fallback_cb'    => false,
 				] );
 				?>
-				<button
-					class="color-mode-toggle"
-					data-js="color-mode-toggle"
-					aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
-					aria-pressed="false"
-					type="button"
-				>
-					<span data-mode-label></span>
-				</button>
 			</nav>
+			
 		</div>
+
 	</div>
 </header>
 

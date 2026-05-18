@@ -1,173 +1,239 @@
 @use '../02-tokens/breakpoints' as bp;
 
-/* Site header */
-
 .site-header {
-	display: flex;
-	width: 100%;
-	align-items: center;
-	justify-content: space-between;
-	padding-block: var(--space-s, 1.25rem);
-	// border-block-end: var(--border);
-
 	position: fixed;
-	top: 1rem;
-	left: 0;
-	width: 100%;
+	top: var(--space-2xs);
+	left: var(--space-s);
+	right: var(--space-s);
 	z-index: 1000;
-
-	// Fading backdrop blur — full at top, none at bottom.
-	// Only rendered once .site-header--scrolled is set by header.js.
-	&::before {
-		content: '';
-		position: absolute;
-		inset-inline: 0;
-		top: -2rem; // extend up to cover gap above header
-		bottom: -0.5rem; // extend down so the fade has room
-		// background: linear-gradient(to bottom, var(--color-surface-unchanged) 0%, transparent 100%);
-		backdrop-filter: blur(18px);
-		-webkit-backdrop-filter: blur(18px);
-		mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
-		-webkit-mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
-		pointer-events: none;
-		z-index: -1;
-		opacity: 0;
-		transition: opacity 300ms ease-out;
-	}
-
-	&--scrolled::before {
-		opacity: 1;
+	
+	&__wrapper {
+		position: relative;
+		z-index: 2; // sits above the drawer (z-index: 1)
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
+		align-items: center;
+		padding-block: var(--space-2xs);
+		padding-inline-start: var(--space-m);
+		padding-inline-end: var(--space-s);
+		border-radius: var(--corner-radius-s);
+		transition: background-color 300ms ease-out;
 	}
 
 	.site-logo {
-		color: var(--color-content-unchanged);
+		color: var(--color-content-unchanged); // light over hero — overridden by --scrolled / --no-hero / --past-hero
 		transition: color 0.3s ease;
+		justify-self: start;
 
 		svg {
 			display: block;
-			// height: 2rem;
-			width: var(--space-3xl-6xl);
+			width: calc(var(--space-3xl-6xl) * 0.75); // 20% smaller
 			fill: currentColor;
 		}
 	}
 
-	// Wrapper grid: 3-zone layout for a truly viewport-centered logo.
-	.wrapper {
-		display: grid;
-		grid-template-columns: 1fr auto 1fr;
-		align-items: center;
+	&--scrolled {
+		.site-header__wrapper { background-color: var(--color-surface-primary); }
+		.site-logo { color: var(--color-content-primary); }
 	}
 
-	// Right zone: secondary nav + toggle, flush right.
-	.site-header__end {
-		display: flex;
-		align-items: center;
-		justify-content: flex-end;
-		gap: 0;
+	&:has(.site-header__drawer.is-open) {
+		.site-logo { color: var(--color-content-primary); }
 	}
 
-	// Nav pills — items in each UL join into one long pill shape.
+	// Nav items — individual rounded pills with a small gap between them.
 	.nav-menu {
-		--cluster-gap-columns: 0;
+		--cluster-gap-columns: var(--space-3xs);
+		--list-indent: 0;
 
 		a {
 			display: block;
-			padding: 0.35em 1em;
-			border-radius: 0;
+			padding: var(--space-3xs) var(--space-xs);
+			border-radius: var(--corner-radius-xs);
 			color: var(--color-content-primary);
-			background: var(--color-surface-secondary);
+			background: var(--color-surface-primary);
 			text-decoration: none;
-			font-size: var(--text-base-size);
+			font-family: var(--font-monospace-family);
+			font-weight: var(--font-monospace-weight);
+			font-size: var(--step--1);
+			text-transform: uppercase;
+			letter-spacing: var(--kerning-caps);
 			line-height: 1;
 			cursor: pointer;
+			transition: background 0.15s ease, color 0.15s ease;
 
-			&:hover {
-				background: var(--color-surface-primary);
+			&:hover,
+			&:focus-visible {
+				background: var(--color-surface-secondary);
 			}
 		}
 
-		// Left end-cap.
-		li:first-child a {
-			border-radius: 999px 0 0 999px;
+		// Per-destination theme tints on hover.
+		// Add these CSS classes to each menu item in WP Admin → Appearance → Menus.
+		li.nav-theme-forest a:hover,
+		li.nav-theme-forest.is-active > a  { background: var(--color-forest-200);  color: var(--color-forest-600); }
+		li.nav-theme-maroon a:hover,
+		li.nav-theme-maroon.is-active > a  { background: var(--color-maroon-200);  color: var(--color-maroon-600); }
+		li.nav-theme-purple a:hover,
+		li.nav-theme-purple.is-active > a  { background: var(--color-purple-200);  color: var(--color-purple-600); }
+
+		// Active parent item — stays highlighted while its drawer is open.
+		li.is-active > a { background: var(--color-surface-secondary); }
+
+		// Sub-menus are rendered into the drawer by nav-drawer.js — hide in-place.
+		.sub-menu {
+			display: none;
 		}
 
-		// Right end-cap.
-		li:last-child a {
-			border-radius: 0 999px 999px 0;
-		}
-
-		// Single item gets a full pill.
-		li:only-child a {
-			border-radius: 999px;
-		}
 	}
 
-	.menu-primary-navigation-container {
-		--list-indent: 0;
-	}
-
-	// Light/dark toggle — sits alongside the secondary nav, visually distinct.
-	// Secondary nav + toggle: flex row — toggle is the right end-cap of the pill.
-	.site-nav--secondary {
+	// Right zone: secondary nav + standalone colour-mode toggle.
+	&__end {
+		justify-self: end;
 		display: flex;
 		align-items: center;
+		gap: var(--space-3xs);
+	}
 
-		// The last nav item is no longer the rightmost — remove its right end-cap.
-		.nav-menu li:last-child a {
-			border-radius: 0;
+	// Secondary nav — first item = secondary button, second = primary button.
+	.site-nav--secondary .nav-menu {
+		li:first-child a {
+			background: var(--color-btn-secondary-bg);
+			color: var(--color-btn-secondary-text);
+	
+			&:hover {
+				background: var(--color-btn-secondary-bg);
+				filter: brightness(0.94);
+			}
+		}
+		
+		li:last-child:not(:first-child) a {
+			background: var(--color-btn-primary-bg);
+			color: var(--color-btn-primary-text);
+	
+			&:hover {
+				background: var(--color-btn-primary-bg);
+				filter: brightness(0.88);
+			}
 		}
 	}
 
-	// Light/dark toggle — right end-cap of the secondary nav pill.
+	// Light/dark toggle — standalone pill.
 	.color-mode-toggle {
 		border: none;
-		background: var(--color-surface-secondary);
+		background: var(--color-surface-primary);
 		color: var(--color-content-primary);
-		padding: 0.35em 1em;
-		min-width: 58px;
-		border-radius: 0 999px 999px 0;
+		padding: var(--space-3xs) var(--space-xs);
+		border-radius: var(--corner-radius-xs);
+		min-width: 40px;
 		display: block;
 		cursor: pointer;
-		font-size: var(--text-base-size);
+		font-family: var(--font-monospace-family);
+		font-weight: var(--font-monospace-weight);
+		font-size: var(--step--1);
+		text-transform: uppercase;
+		letter-spacing: var(--kerning-caps);
 		line-height: 1;
-		font-family: inherit;
+		transition: background 0.15s ease;
 
 		&:hover {
-			background: var(--color-surface-primary);
+			background: var(--color-surface-secondary);
 		}
 	}
 
 	// No-hero modifier — backdrop uses the page surface colour (light/dark aware)
 	// and is always visible. Logo and toggle colour follow content-primary.
 	@media (max-width: #{bp.$bp-lg - 1px}) {
-		.site-nav--primary .menu-primary-navigation-container {
-			display: none;
-		}
-
-		// Hide link items but keep the dark/light toggle button.
-		.site-nav--secondary .nav-menu li:has(a) {
-			display: none;
-		}
-
-		// With nav links hidden, toggle should be a standalone full pill.
-		.site-nav--secondary .color-mode-toggle {
-			border-radius: 999px;
-		}
+		.site-nav--primary { display: none; }
+		.site-nav--secondary .nav-menu li:has(a) { display: none; }
 	}
 
 	&--no-hero {
-		&::before {
-			background: linear-gradient(to bottom, var(--color-surface-primary) 0%, transparent 100%);
+		.site-logo { color: var(--color-content-primary); }
+		.nav-menu a { color: var(--color-content-primary); }
+	}
+
+	// Drawer — positioned by syncDrawer() to match the wrapper's bounds.
+	// padding-block-start (set by JS) equals the wrapper height, pushing links
+	// below the pill. The wrapper's higher z-index covers the top portion.
+	&__drawer {
+		position: absolute;
+		z-index: 1;
+		border-radius: var(--corner-radius-s);
+		padding-block-end: var(--space-2xs);
+		background-color: transparent;
+		opacity: 0;
+		clip-path: inset(0 0 100% 0 round var(--corner-radius-s));
+		pointer-events: none;
+		transition: opacity 0.3s ease, clip-path 0.3s ease, background-color 0.3s ease;
+
+		&.is-open {
+			opacity: 1;
+			clip-path: inset(0 0 0% 0 round var(--corner-radius-s));
+			background-color: var(--color-surface-primary);
+			pointer-events: auto;
 		}
 
-		.site-logo {
-			color: var(--color-content-primary);
-		}
+		// Theme-tinted hover on drawer links.
+		&.nav-theme-forest .sub-menu a:hover { background: var(--color-forest-200); color: var(--color-forest-600); }
+		&.nav-theme-maroon .sub-menu a:hover { background: var(--color-maroon-200); color: var(--color-maroon-600); }
+		&.nav-theme-purple .sub-menu a:hover { background: var(--color-purple-200); color: var(--color-purple-600); }
+	}
 
-		.nav-menu a,
-		.nav-menu button {
-			color: var(--color-content-primary);
+	&__drawer-links {
+		display: flex;
+		align-items: center;
+		// padding-inline-start synced to primary nav left edge by syncDrawer().
+		padding-block-end: var(--space-2xs);
+		opacity: 1;
+		transition: opacity 0.15s ease;
+
+		&.is-fading { opacity: 0; }
+
+		.sub-menu {
+			display: flex;
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			gap: var(--space-3xs);
+
+			a {
+				display: block;
+				padding: var(--space-3xs) var(--space-xs);
+				border-radius: var(--corner-radius-xs);
+				color: var(--color-content-primary);
+				background: transparent;
+				text-decoration: none;
+				font-family: var(--font-monospace-family);
+				font-weight: var(--font-monospace-weight);
+				font-size: var(--step--1);
+				text-transform: uppercase;
+				letter-spacing: var(--kerning-caps);
+				line-height: 1;
+				cursor: pointer;
+				transition: background 0.15s ease, color 0.15s ease;
+
+				&:hover {
+					background: var(--color-surface-secondary);
+				}
+			}
 		}
+	}
+
+	// Full-screen backdrop — dims the page when the drawer is open.
+	&::after {
+		content: '';
+		position: fixed;
+		inset: 0;
+		background: linear-gradient(to bottom, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.08) 40%, transparent 100%);
+		z-index: 0; // above the page, below drawer (z-index: 1) and pill (z-index: 2)
+		pointer-events: none;
+		opacity: 0;
+		transition: opacity 0.35s ease;
+	}
+
+	&:has(.site-header__drawer.is-open)::after {
+		opacity: 1;
 	}
 
 	// On hero pages, once scrolled past the hero, switch to dark logo colours.

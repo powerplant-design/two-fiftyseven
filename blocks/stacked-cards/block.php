@@ -68,7 +68,7 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 			style="--card-index: <?php echo esc_attr( $index ); ?>;"
 		>
 			<?php if ( $tab_label ) : ?>
-				<?php if ( $index === 0 ) : ?>
+			<?php if ( $index === $card_count - 1 ) : ?>
 					<div class="stacked-cards__tab | text-monospace">
 						<?php echo esc_html( $tab_label ); ?>
 					</div>
