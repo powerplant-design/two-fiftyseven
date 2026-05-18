@@ -42,7 +42,7 @@ function updateUrl() {
 
 function scrollToContainer( immediate = false ) {
 	if ( ! _container ) return;
-	const y = _container.getBoundingClientRect().top + window.scrollY - 150;
+	const y = _container.getBoundingClientRect().top + window.scrollY - 320;
 	const scroll = getScrollInstance();
 	if ( scroll?.lenisInstance ) {
 		scroll.lenisInstance.scrollTo( y, { immediate, duration: immediate ? undefined : 1 } );
