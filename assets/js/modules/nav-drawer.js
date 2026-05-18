@@ -30,7 +30,9 @@ export function initNavDrawer() {
 	const primaryNav = header.querySelector( '.site-nav--primary' );
 
 	// Top-level items in the primary + secondary nav menus.
-	const topLevelItems   = Array.from( header.querySelectorAll( '.nav-menu > li' ) );
+	// Explicitly scoped to the desktop navs — the mobile panel has its own
+	// accordion logic and must not receive is-active from the drawer system.
+	const topLevelItems   = Array.from( header.querySelectorAll( '.site-nav--primary .nav-menu > li, .site-nav--secondary .nav-menu > li' ) );
 	const parentItems     = topLevelItems.filter( li => li.classList.contains( 'menu-item-has-children' ) );
 
 	if ( ! parentItems.length ) return;

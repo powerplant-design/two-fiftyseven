@@ -74,10 +74,55 @@ if ( $has_hero && has_block( 'acf/hero-page', $current_post_id ) ) {
 				] );
 				?>
 			</nav>
-			
+			<button
+				class="nav-mobile-toggle"
+				data-js="nav-mobile-toggle"
+				aria-expanded="false"
+				aria-label="<?php esc_attr_e( 'Open navigation', 'two-fiftyseven' ); ?>"
+				type="button"
+			>
+				<span class="nav-mobile-toggle__bar"></span>
+				<span class="nav-mobile-toggle__bar"></span>
+				<span class="nav-mobile-toggle__bar"></span>
+			</button>
 		</div>
 
 	</div>
+
+	<div class="site-header__mobile-panel" aria-hidden="true">
+		<div class="site-header__mobile-panel__scroll">
+			<nav class="site-nav site-nav--mobile-primary" aria-label="<?php esc_attr_e( 'Primary', 'two-fiftyseven' ); ?>">
+				<?php
+				wp_nav_menu( [
+					'theme_location' => 'primary',
+					'menu_class'     => 'nav-menu',
+					'fallback_cb'    => false,
+				] );
+				?>
+			</nav>
+		</div>
+		<div class="site-header__mobile-panel__footer">
+			<nav class="site-nav site-nav--mobile-secondary" aria-label="<?php esc_attr_e( 'Secondary', 'two-fiftyseven' ); ?>">
+				<?php
+				wp_nav_menu( [
+					'theme_location' => 'secondary',
+					'menu_class'     => 'nav-menu',
+					'fallback_cb'    => false,
+				] );
+				?>
+			</nav>
+			<button
+				class="color-mode-toggle color-mode-toggle--mobile"
+				data-js="color-mode-toggle"
+				aria-label="<?php esc_attr_e( 'Toggle light/dark mode', 'two-fiftyseven' ); ?>"
+				aria-pressed="false"
+				type="button"
+			>
+				<span data-mode-label></span>
+			</button>
+		</div>
+	</div>
+
 </header>
 
 <div id="swup">

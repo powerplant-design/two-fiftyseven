@@ -17,6 +17,7 @@ import { initImpact }        from './modules/impact.js';
 import { initTestimonials }  from './modules/testimonial.js';
 import { initGallerySlider } from './modules/gallery-slider.js';
 import { initNavDrawer }     from './modules/nav-drawer.js';
+import { initNavMobile }     from './modules/nav-mobile.js';
 
 initColorTheme();
 initScroll();
@@ -33,3 +34,4 @@ initImpact();
 initGallerySlider();
 initTestimonials();
 initNavDrawer();
+initNavMobile();

@@ -37,7 +37,8 @@
 		.site-logo { color: var(--color-content-primary); }
 	}
 
-	&:has(.site-header__drawer.is-open) {
+	&:has(.site-header__drawer.is-open),
+	&:has(.site-header__mobile-panel.is-open) {
 		.site-logo { color: var(--color-content-primary); }
 	}
 
@@ -141,11 +142,266 @@
 		}
 	}
 
-	// No-hero modifier — backdrop uses the page surface colour (light/dark aware)
-	// and is always visible. Logo and toggle colour follow content-primary.
+	// Hamburger — hidden on desktop; display: flex overridden inside the mobile MQ.
+	.nav-mobile-toggle {
+		display: none;
+		width: 36px;
+		height: 36px;
+		padding: 0;
+		border: none;
+		background: var(--color-surface-primary);
+		color: var(--color-content-primary);
+		border-radius: var(--corner-radius-xs);
+		cursor: pointer;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 5px;
+		flex-shrink: 0;
+		transition: background 0.15s ease;
+
+		&:hover { background: var(--color-surface-secondary); }
+
+		&__bar {
+			display: block;
+			width: 16px;
+			height: 2px;
+			background: currentColor;
+			border-radius: 2px;
+			transition: transform 0.25s ease, opacity 0.25s ease;
+			transform-origin: center;
+		}
+
+		// Animate to X when panel is open.
+		&.is-open {
+			.nav-mobile-toggle__bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+			.nav-mobile-toggle__bar:nth-child(2) { opacity: 0; transform: scaleX(0); }
+			.nav-mobile-toggle__bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+		}
+	}
+
+	// Mobile panel — hidden on desktop; revealed via display: flex inside the mobile MQ.
+	&__mobile-panel { display: none; }
+
+	// Mobile breakpoint — hide desktop nav, reveal hamburger + full-screen panel.
 	@media (max-width: #{bp.$bp-lg - 1px}) {
 		.site-nav--primary { display: none; }
 		.site-nav--secondary .nav-menu li:has(a) { display: none; }
+		.color-mode-toggle:not(.color-mode-toggle--mobile)  { display: none; }
+		.color-mode-toggle--mobile { background: var(--color-surface-secondary); }
+		.nav-mobile-toggle  { display: flex; }
+
+		// Primary nav is display:none, so __end auto-places into column 2 (center).
+		// Force it back to column 3 so the hamburger stays right-aligned.
+		&__end { grid-column: 3; }
+
+		&__wrapper { padding-inline: var(--space-xs); }
+		left: var(--space-2xs);
+		right: var(--space-2xs);
+
+		// ── Mobile panel ─────────────────────────────────────────────────────────
+		&__mobile-panel {
+			display: flex;
+			flex-direction: column;
+			position: fixed;
+			inset: 0;
+			z-index: 1;
+			background-color: var(--color-surface-primary);
+			transform: translateX(100%);
+			transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+			pointer-events: none;
+
+			&.is-open {
+				transform: translateX(0);
+				pointer-events: auto;
+			}
+		}
+
+		&__mobile-panel__scroll {
+			flex: 1;
+			overflow-y: auto;
+			padding: var(--space-s) var(--space-m);
+			display: flex;
+			flex-direction: column;
+		}
+
+		.site-nav--mobile-primary {
+			margin-block-start: auto; // pushes nav to bottom; collapses to 0 when content overflows so scroll works
+		}
+
+		&__mobile-panel__footer {
+			padding: var(--space-s) var(--space-m) var(--space-m) var(--space-m);
+
+			display: flex;
+			justify-content: space-between;
+			gap: var(--space-s);
+			align-items: center;
+			flex-wrap: wrap;
+			// background-color: var(--color-surface-unchanged);
+		}
+
+		// ── Primary nav: vertical accordion items ─────────────────────────────────
+		.site-nav--mobile-primary .nav-menu {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			display: flex;
+			flex-direction: column;
+
+			// Leaf items — single-row link.
+			> li:not(.menu-item-has-children) > a {
+				display: block;
+				padding: var(--space-xs);
+				color: var(--color-content-primary);
+				text-decoration: none;
+				font-family: var(--font-monospace-family);
+				font-weight: var(--font-monospace-weight);
+				font-size: var(--step-0);
+				text-transform: uppercase;
+				letter-spacing: var(--kerning-caps);
+				line-height: 1;
+			}
+
+			// Parent items — <a> is the full-width flex row; chevron span lives inside it.
+			.accordion-header {
+				> a {
+					display: flex;
+					align-items: center;
+					justify-content: space-between;
+					width: 100%;
+					padding: var(--space-2xs)  0 var(--space-2xs) var(--space-xs);
+					color: var(--color-content-primary);
+					text-decoration: none;
+					font-family: var(--font-monospace-family);
+					font-weight: var(--font-monospace-weight);
+					font-size: var(--step-0);
+					text-transform: uppercase;
+					letter-spacing: var(--kerning-caps);
+					line-height: 1;
+					cursor: pointer;
+					border: 1px solid var(--color-border-tertiary);
+				}
+			}
+
+			.accordion-toggle {
+				flex-shrink: 0;
+				width: 36px;
+				height: 36px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+
+				&::after {
+					content: '';
+					display: block;
+					width: 8px;
+					height: 8px;
+					border-right: 2px solid currentColor;
+					border-bottom: 2px solid currentColor;
+					transform: rotate(45deg) translate(-2px, -2px);
+					transition: transform 0.2s ease;
+				}
+
+				&.is-open::after {
+					transform: rotate(-135deg) translate(-2px, -2px);
+				}
+			}
+
+			// grid-template-rows: 0fr → 1fr animates to natural content height.
+			.sub-menu-wrap {
+				display: grid;
+				grid-template-rows: 0fr;
+				visibility: hidden;
+				transition: grid-template-rows 0.3s ease, visibility 0s 0.3s; // visibility hides after collapse finishes
+				margin-block-start: var(--space-3xs);
+				margin-block-end: var(--space-2xs);
+
+				.sub-menu {
+					// Override the desktop rule: .nav-menu .sub-menu { display: none; }
+					display: flex;
+					flex-direction: column;
+					overflow: hidden;
+					min-height: 0;
+					list-style: none;
+					padding: 0 0 var(--space-xs);
+					margin: 0;
+
+					li:not(:last-child) {
+						border-bottom: 1px solid var(--color-border-tertiary);
+					}
+
+					a {
+						display: block;
+						padding: var(--space-s) var(--space-s);
+						border-radius: 0;
+						color: var(--color-content-primary);
+						text-decoration: none;
+						font-family: var(--font-monospace-family);
+						font-weight: var(--font-monospace-weight);
+						font-size: var(--step--1);
+						text-transform: uppercase;
+						letter-spacing: var(--kerning-caps);
+						line-height: 1;
+
+						@media (hover: hover) {
+							&:hover { background: var(--color-surface-secondary); }
+						}
+					}
+				}
+			}
+
+			// Injected parent-page link — first item in sub-menu for items with a real href.
+			li.mobile-nav-parent-link a::after {
+				content: ' →';
+			}
+
+			li.is-expanded > .sub-menu-wrap {
+				grid-template-rows: 1fr;
+				visibility: visible;
+				transition: grid-template-rows 0.3s ease; // visibility snaps visible immediately on open
+			}
+		}
+
+		// ── Secondary nav: CTA buttons in panel footer ────────────────────────────
+		.site-nav--mobile-secondary .nav-menu {
+			list-style: none;
+			padding: 0;
+			margin: 0;
+			display: flex;
+			gap: var(--space-3xs);
+			flex-wrap: wrap;
+
+			a {
+				display: block;
+				padding: var(--space-3xs) var(--space-xs);
+				border-radius: var(--corner-radius-xs);
+				text-decoration: none;
+				font-family: var(--font-monospace-family);
+				font-weight: var(--font-monospace-weight);
+				font-size: var(--step--1);
+				text-transform: uppercase;
+				letter-spacing: var(--kerning-caps);
+				line-height: 1;
+			}
+
+			li:first-child a {
+				background: var(--color-btn-secondary-bg);
+				color: var(--color-btn-secondary-text);
+
+				@media (hover: hover) {
+					&:hover { filter: brightness(0.94); }
+				}
+			}
+
+			li:last-child:not(:first-child) a {
+				background: var(--color-btn-primary-bg);
+				color: var(--color-btn-primary-text);
+
+				@media (hover: hover) {
+					&:hover { filter: brightness(0.88); }
+				}
+			}
+		}
 	}
 
 	&--no-hero {
