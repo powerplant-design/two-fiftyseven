@@ -1,6 +1,6 @@
 # AI + MCP Integration Plan
 
-Enable AI tools (Claude, opencode) to manage content on this site using natural language — no WP Admin required for day-to-day work. Built on native WordPress 7.0 + ACF 6.8 infrastructure with no third-party MCP plugin.
+Enable AI tools (Claude, opencode) to manage content on this site using natural language — no WP Admin required. Uses Royal MCP (free plugin, 4K+ installs, dedicated ACF integration, 72 tools) as the MCP server.
 
 ---
 
@@ -8,10 +8,10 @@ Enable AI tools (Claude, opencode) to manage content on this site using natural 
 
 ```
 AI tool (Claude Desktop / Claude Code / opencode)
-        │ MCP protocol
+        │ MCP protocol (HTTP or stdio via mcp-remote bridge)
         ▼
-wordpress/mcp-adapter  (official WP plugin — the MCP bridge)
-        │ Abilities API
+Royal MCP plugin  —  MCP server (OAuth 2.0 + API key, 72 tools)
+        │ WP REST API + Abilities API
         ▼
 WordPress 7.0 Core  ←→  ACF 6.8 (enable_acf_ai filter)
                               │
@@ -22,13 +22,11 @@ WordPress 7.0 Core  ←→  ACF 6.8 (enable_acf_ai filter)
                               └── Schema.org mappings
 ```
 
-Every box except the AI tool is free and open-source. No third-party MCP plugin required.
-
 ---
 
 ## How It Works
 
-1. The `wordpress/mcp-adapter` plugin exposes WordPress via the MCP protocol
+1. The Royal MCP plugin exposes WordPress content and ACF data via the MCP protocol
 2. ACF 6.8's `enable_acf_ai` filter registers ACF-specific abilities into WordPress's native Abilities API — field groups, CPTs, taxonomies, and per-post-type CRUD operations
 3. AI tools connect to the site via MCP and discover these abilities automatically
 4. The AI can read/write structured ACF content, list posts, manage CPTs, and inspect the data model
@@ -59,11 +57,11 @@ Ian Pollson (ACF Product Manager) demoed this exact setup at Decode 2026 — Cla
 
 ---
 
-## Why Native (ACF 6.8 + `wordpress/mcp-adapter`) Over Third-Party
+## Why Royal MCP
 
 ACF 6.8 registers its own abilities into the Abilities API — this is not theoretical, it shipped in March 2026:
 
-| Capability | Native (ACF 6.8 + mcp-adapter) | Third-party MCP plugin |
+| Capability | Royal MCP | Other MCP plugins |
 |---|---|---|
 | Read field groups & field structure | Yes — auto-registered | Yes |
 | Register post types & taxonomies | Yes — via abilities | Varies |
@@ -72,10 +70,10 @@ ACF 6.8 registers its own abilities into the Abilities API — this is not theor
 | Schema.org field mapping | Yes — ACF 6.8 feature | No |
 | WP CLI JSON sync | Yes — ACF 6.8 feature | No |
 | Future AI field suggestions | ACF roadmap feature | No |
-| Additional plugin required | Only `wordpress/mcp-adapter` (official) | Additional third-party plugin |
-| Maintenance surface | Two plugins (mcp-adapter is tiny, ACF you already have) | One extra plugin |
+| Additional plugin required | Only `royal-mcp` (official) | Additional third-party plugin |
+| Maintenance surface | One free plugin (Royal MCP) + ACF you already have | Additional plugin to maintain |
 
-**Bottom line:** The native stack is simpler, has fewer moving parts, and aligns with ACF's roadmap.
+**Bottom line:** Royal MCP is the practical choice — 4K+ active installs, tested with WP 7.0, built-in ACF integration, actively maintained.
 
 ---
 
@@ -150,7 +148,7 @@ No change to the front-end appearance — the JSON-LD is embedded in a `<script>
 
 ### Phase 1 — Plugin Setup (Developer)
 
-1. Install **wordpress/mcp-adapter** on staging from the WordPress.org plugin repo
+1. Install **Royal MCP** on staging via WP Admin → Plugins → Add New
 2. Add two filters to `functions.php` (or an MU plugin):
 
 ```php
@@ -161,26 +159,26 @@ add_filter( 'acf/settings/enable_acf_ai', '__return_true' );
 add_filter( 'acf/settings/enable_schema', '__return_true' );
 ```
 
-3. Configure `wordpress/mcp-adapter` — set the authentication method (application password recommended) and capability requirements
+3. Go to Royal MCP → Settings — enable the plugin, note the API key, enable ACF integration
 4. Verify abilities are registered — the AI should discover field groups, CPTs, and CRUD operations when connecting
 5. Test all operations on staging before enabling on live
 
 ### Phase 2 — Environment Configuration
 
-Each AI tool connects differently. The `wordpress/mcp-adapter` exposes a standard MCP endpoint at `https://yoursite.com/wp-json/mcp/v1`.
+Each AI tool connects differently. Royal MCP exposes the MCP endpoint at `https://yoursite.com/wp-json/royal-mcp/v1`.
 
 **Claude Desktop:**
 ```json
 {
   "mcpServers": {
-    "two-fiftyseven-staging": {
+    "royal-mcp": {
       "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-wordpress"],
-      "env": {
-        "WORDPRESS_URL": "https://staging.two-fiftyseven.com",
-        "WORDPRESS_USERNAME": "ai-assistant",
-        "WORDPRESS_APPLICATION_PASSWORD": "xxxx-xxxx-xxxx-xxxx"
-      }
+      "args": [
+        "-y", "mcp-remote",
+        "https://stg-twofiftyseven-staging.kinsta.cloud/wp-json/royal-mcp/v1",
+        "--header",
+        "X-Royal-MCP-API-Key:YOUR_KEY"
+      ]
     }
   }
 }
@@ -191,12 +189,10 @@ Each AI tool connects differently. The `wordpress/mcp-adapter` exposes a standar
 {
   "mcpServers": {
     "two-fiftyseven-staging": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-wordpress"],
-      "env": {
-        "WORDPRESS_URL": "https://staging.two-fiftyseven.com",
-        "WORDPRESS_USERNAME": "ai-assistant",
-        "WORDPRESS_APPLICATION_PASSWORD": "xxxx-xxxx-xxxx-xxxx"
+      "type": "http",
+      "url": "https://stg-twofiftyseven-staging.kinsta.cloud/wp-json/royal-mcp/v1",
+      "headers": {
+        "X-Royal-MCP-API-Key": "YOUR_KEY"
       }
     }
   }
@@ -208,11 +204,12 @@ Each AI tool connects differently. The `wordpress/mcp-adapter` exposes a standar
 {
   "mcp": {
     "two-fiftyseven-staging": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/mcp-server-wordpress"],
-      "env": {
-        "WORDPRESS_URL": "https://staging.two-fiftyseven.com",
-        "WORDPRESS_APPLICATION_PASSWORD": "xxxx-xxxx-xxxx-xxxx"
+      "type": "remote",
+      "url": "https://stg-twofiftyseven-staging.kinsta.cloud/wp-json/royal-mcp/v1",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "X-Royal-MCP-API-Key": "{env:ROYAL_MCP_STAGING_KEY}"
       }
     }
   }
@@ -242,7 +239,7 @@ This isolates AI actions from human users in the activity log and allows precise
 
 ### Phase 5 — Deploy to Live
 
-1. Install `wordpress/mcp-adapter` on live
+1. Install **Royal MCP** on live (same as staging setup)
 2. Add the same `enable_acf_ai` and `enable_schema` filters
 3. Create the `ai-assistant` user on live
 4. Update MCP configs to point to the live URL
@@ -259,7 +256,7 @@ A system-level instruction set that gives AI tools full awareness of this site's
 - Four CPTs: Organisation, Person, Event, Media Item
 - 12 custom ACF blocks (Hero, CTA, FAQ, etc.)
 - Colour engine with 4 colour spaces × 2 modes (8 themes)
-- Live: TBD | Staging: TBD
+- Live: `twofiftyseven.kinsta.cloud` (will change at launch) | Staging: `stg-twofiftyseven-staging.kinsta.cloud` (will change at launch)
 
 ### Custom Post Types
 
@@ -347,4 +344,4 @@ Unpublish the event called [X] — confirm before doing it
 | AI-generated block markup is malformed | Medium | Standing instructions: never generate block markup; edit field values only |
 | ACF field type mismatch | Low | ACF 6.8 abilities API exposes field structure — AI knows the types before writing |
 | Application password leaked | Low | Rotate passwords periodically; the AI user has Editor role, not Administrator |
-| `wordpress/mcp-adapter` abandoned | Low | Official WordPress.org plugin, maintained by core contributors |
+| Royal MCP abandoned | Low | Free plugin with 4K+ active installs; fallback is direct WP Admin access |

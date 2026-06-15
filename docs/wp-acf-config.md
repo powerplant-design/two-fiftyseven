@@ -191,7 +191,7 @@ When the `enable_acf_ai` filter is active, ACF registers the following abilities
 - Register new post types and taxonomies
 - Per-post-type CRUD abilities automatically registered for each CPT
 
-These abilities are discoverable by any MCP-compatible AI tool connected via `wordpress/mcp-adapter`. For the full integration plan, see [AI + MCP Integration Plan](./wp-mcp-plan.md).
+These abilities are discoverable by any MCP-compatible AI tool connected via Royal MCP. For the full integration plan, see [AI + MCP Integration Plan](./wp-mcp-plan.md).
 
 ### Schema.org Mapping
 

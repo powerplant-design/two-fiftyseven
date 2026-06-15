@@ -200,6 +200,15 @@ add_filter( 'acf/settings/load_json', function ( array $paths ): array {
 	return $paths;
 } );
 
+// ACF 6.8 — Expose field groups, CPTs, and taxonomies to the Abilities API.
+// Required for MCP integration. Registers ACF data model as discoverable
+// abilities that AI tools can read, write, and manage.
+add_filter( 'acf/settings/enable_acf_ai', '__return_true' );
+
+// ACF 6.8 — Enable automatic Schema.org JSON-LD output.
+// Maps ACF fields to schema.org types for AI crawler discoverability.
+add_filter( 'acf/settings/enable_schema', '__return_true' );
+
 
 /**
  * Add type="module" to Vite scripts so ES modules load correctly.
