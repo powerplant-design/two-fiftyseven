@@ -101,7 +101,7 @@ Add to `opencode.json`:
 {
   "mcp": {
     "two-fiftyseven-local": {
-      "url": "https://two-fiftyseven.local/wp-json/royal-mcp/v1",
+      "url": "http://two-fiftyseven.local/wp-json/royal-mcp/v1",
       "transport": "http",
       "headers": {
         "X-Royal-MCP-Key": "your-api-key-here"
@@ -111,8 +111,8 @@ Add to `opencode.json`:
 }
 ```
 
-> DevKinsta uses self-signed SSL. Set `NODE_TLS_REJECT_UNAUTHORIZED=0` in
-> your shell environment before running opencode (local dev only).
+> Local DevKinsta uses HTTP (no SSL) to avoid self-signed cert issues.
+> Staging and production use HTTPS with Kinsta's Let's Encrypt certificates.
 
 ### 0e. Verify Local MCP Works
 
@@ -143,6 +143,93 @@ Create 3 test organisations on two-fiftyseven-local with different use types (ba
 
 All local content is disposable. Pull production DB down when you need
 the real dataset. The local DB is **never** pushed to any other environment.
+
+### 0g. Enable ACF `show_in_rest` on All Field Groups
+
+Royal MCP's `acf_get_fields` and `acf_update_field` tools need ACF field
+groups registered in the REST API. All 24 `acf-json/group_*.json` files
+must have `"show_in_rest": 1` (default is 0).
+
+**Bulk change** — edit all files in `acf-json/`:
+
+```bash
+sed -i '' 's/"show_in_rest": 0/"show_in_rest": 1/g' acf-json/*.json
+```
+
+Then sync the JSON changes to the database. If `wp acf json sync` is
+unavailable, use a one-time PHP snippet:
+
+```php
+$json_dir = get_template_directory() . '/acf-json';
+foreach ( glob( "$json_dir/*.json" ) as $file ) {
+    $json = json_decode( file_get_contents( $file ), true );
+    if ( $json && ! empty( $json['key'] ) ) {
+        $existing = acf_get_field_group( $json['key'] );
+        if ( $existing ) {
+            $json['ID'] = $existing['ID'];
+            $json['show_in_rest'] = 1;
+            acf_update_field_group( $json );
+        }
+    }
+}
+```
+
+**Verified:** 25 field groups synced with `show_in_rest=1`.
+
+### 0h. Install the MCP Block Field Bridge
+
+Block ACF fields (Hero headline, CTA text, FAQ items, etc.) are stored
+inside `post_content` as block-comment JSON, not in `wp_postmeta`. Royal
+MCP's standard tools cannot see or edit them.
+
+**The bridge** (`inc/class-mcp-block-bridge.php`) solves this:
+
+| Direction | Hook | What happens |
+|---|---|---|
+| **Read** (WP Admin → postmeta) | `save_post` | Parses `post_content` blocks, extracts field values, writes to `wp_postmeta` as `_mcp_b_{field_name}` |
+| **Write** (MCP → post_content) | `added_post_meta` / `updated_post_meta` | Detects `_mcp_b_*` changes, finds the matching block in `post_content`, updates the JSON, re-serializes safely |
+
+**Bridge is installed at** `inc/class-mcp-block-bridge.php` and loaded via
+`functions.php`:
+
+```php
+require_once get_template_directory() . '/inc/class-mcp-block-bridge.php';
+Two57_MCP_Block_Bridge::init();
+```
+
+**Verified on Home page (ID 10):**
+- 372 `_mcp_b_*` postmeta entries synced across 17 blocks
+- Read → write → front-end render confirmed
+- Full round-trip: `wp_get_post_meta` → `wp_update_post_meta` → value visible on site
+
+**Bridge field naming:** `_mcp_b_{original_field_name}`
+(e.g. `_mcp_b_page_hero_headline`, `_mcp_b_cta_link`, `_mcp_b_faq_items`).
+
+Discover all block fields on a page with `wp_get_post_meta(post_id)` and
+filter for the `_mcp_b_` prefix.
+
+### 0i. Verify Rollback via Revisions
+
+Every `wp_update_post` or `wp_update_post_meta` write creates a WordPress
+revision automatically. MCP can rollback to any revision:
+
+```
+# List revisions
+wp_get_post_revisions(post_id=10)
+→ 237 revisions with dates and authors
+
+# Rollback to a safe revision
+wp_restore_revision(post_id=10, revision_id=980)
+→ { success: true, restored_revision_id: 980 }
+
+# The current content becomes the previous revision (nothing is lost)
+```
+
+**Verified:** Rollback from corrupted content (7.8K) → revision 980 (27.2K),
+all 17 blocks intact, front-end 200 OK.
+
+> Never use raw MySQL to restore content — it corrupts block JSON when
+> `\r\n` or special characters are present. Always use `wp_restore_revision`.
 
 ---
 
@@ -199,7 +286,7 @@ from Phase 0. The full config with all three environments:
 {
   "mcp": {
     "two-fiftyseven-local": {
-      "url": "https://two-fiftyseven.local/wp-json/royal-mcp/v1",
+      "url": "http://two-fiftyseven.local/wp-json/royal-mcp/v1",
       "transport": "http",
       "headers": {
         "X-Royal-MCP-Key": "your-local-api-key"
@@ -238,13 +325,20 @@ Then test the MCP connection:
 1. Restart opencode so it picks up the MCP config
 2. Ask it to list events, organisations, and pages on staging
 3. Test creating a draft event
-4. Test editing an existing page's hero headline
+4. **Test editing a block field on an existing page:**
+   - `wp_get_post_meta(post_id, key="_mcp_b_page_hero_headline")` — read
+   - `wp_update_post_meta(post_id, key="_mcp_b_page_hero_headline", value="New")` — write
+   - Verify the new headline renders on the front-end
 5. Test creating an organisation with a logo (upload to media library first, then reference the attachment ID)
 6. Test updating an ACF repeater field (FAQ questions)
-7. Verify everything renders correctly on the staging front-end
+7. **Test revision rollback:**
+   - `wp_get_post_revisions(post_id)` — list revisions
+   - `wp_restore_revision(post_id, revision_id=N)` — rollback
+   - Verify content is restored and pages load clean
 
-**Key test:** If the AI can read and write ACF repeater, relationship, and
-image fields correctly, the integration is working properly.
+**Key test:** If the AI can read and write ACF block fields via
+`_mcp_b_*` postmeta keys, and rollback via `wp_restore_revision`,
+the integration is working properly.
 
 ---
 
@@ -329,10 +423,47 @@ For the first week after go-live:
 
 ### Content Editing via MCP (Day-to-Day)
 
-1. Connect opencode / Claude Desktop to `two-fiftyseven-production`
-2. Edit content directly: "Update the hero headline on the home page to..."
-3. Content is saved to production DB immediately
-4. For new pages that need block layouts, create a draft on staging first, build the block structure in the editor, then Push to Live (files only — the page content IS in the DB, but since it was created on staging with production data pulled down, it's safe)
+**CPT content (events, orgs, people, media):** Full CRUD via MCP tools.
+`wp_create_post` / `wp_update_post` / `acf_update_field` handle everything.
+
+**Page block fields:** Use the bridge's `_mcp_b_*` postmeta keys:
+
+```
+# Discover all block fields on a page
+wp_get_post_meta(post_id=10)  → filter for _mcp_b_ prefix
+
+# Read a specific block field
+wp_get_post_meta(post_id=10, key="_mcp_b_page_hero_headline")
+
+# Write a block field (bridge auto-rebuilds post_content)
+wp_update_post_meta(post_id=10, key="_mcp_b_page_hero_headline", value="New headline")
+
+# Create a new page with blocks (template clone pattern)
+content = wp_get_post(id=TEMPLATE_PAGE_ID).content
+wp_create_page(title="New Page", content=content, status="draft")
+→ bridge syncs all block fields to postmeta on save
+→ wp_update_post_meta for each field you want to change
+→ wp_update_page(id=NEW_ID, status="publish")
+```
+
+**Revision rollback (if anything breaks):**
+
+```
+# List recent revisions
+wp_get_post_revisions(post_id=10)
+
+# Rollback to a known-good revision
+wp_restore_revision(post_id=10, revision_id=980)
+
+# Verify
+curl http://two-fiftyseven.local/
+```
+
+**Never use raw database queries** for content operations. MySQL can
+corrupt block JSON when special characters (`\r\n`, unicode escapes)
+are present. Always use MCP tools (`wp_restore_revision`,
+`wp_update_post_meta`, `wp_get_post`) — they use WordPress core functions
+that handle serialization safely.
 
 ### Local MCP Rapid Prototyping (Dev)
 
@@ -383,11 +514,26 @@ Per the README runbook: update plugins directly on Kinsta staging, test, then Pu
 
 ## Rollback
 
-If the MCP integration causes a critical issue:
+### Per-Page Rollback (MCP Revision Restore)
+
+If a single page is broken by an MCP content update:
+
+1. `wp_get_post_revisions(post_id=N)` — list all revisions
+2. Find the last known-good revision (check date, author)
+3. `wp_restore_revision(post_id=N, revision_id=GOOD_ID)` — instant rollback
+4. Verify the page renders correctly
+
+WordPress revisions are created automatically on every save, so every
+MCP write creates a rollback point. No MySQL access needed.
+
+### Full MCP Rollback
+
+If the MCP integration itself causes issues:
 
 1. Disable the `enable_acf_ai` filter (set return to `__return_false` or comment it out)
 2. Deploy the disabled version to production via normal workflow
 3. Optionally deactivate `royal-mcp` plugin on production
 4. Investigate, fix on staging, re-enable
 
-No database changes are needed for rollback — the feature flags are pure code.
+No database changes are needed for rollback — the feature flags and
+bridge are pure code.

@@ -1,320 +1,343 @@
 {
-	"key": "group_two57_block_hero_page",
-	"title": "Hero Page Block",
-	"fields": [
-		{
-			"key": "field_two57_page_hero_layout",
-			"label": "Layout",
-			"name": "page_hero_layout",
-			"aria-label": "",
-			"type": "select",
-			"instructions": "Full-bleed fills the section with a background image. Split shows a right-column photo on a plain background.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"choices": {
-				"full-bleed": "Full-bleed background image",
-				"split": "Split \u2014 image in right column"
-			},
-			"default_value": "full-bleed",
-			"return_format": "value",
-			"multiple": 0,
-			"allow_null": 0,
-			"ui": 0,
-			"ajax": 0,
-			"placeholder": ""
-		},
-		{
-			"key": "field_two57_page_hero_eyebrow",
-			"label": "Eyebrow",
-			"name": "page_hero_eyebrow",
-			"aria-label": "",
-			"type": "text",
-			"instructions": "Optional short label displayed above the headline, e.g. \"Workspace\".",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"default_value": "",
-			"maxlength": "",
-			"placeholder": "Workspace"
-		},
-		{
-			"key": "field_two57_page_hero_headline",
-			"label": "Headline",
-			"name": "page_hero_headline",
-			"aria-label": "",
-			"type": "textarea",
-			"instructions": "Main display heading. Use Shift+Enter for a line break.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": {
-				"width": "",
-				"class": "",
-				"id": ""
-			},
-			"default_value": "",
-			"new_lines": "br",
-			"maxlength": "",
-			"rows": 2
-		},
-		{
-			"key": "field_two57_page_hero_subtitle",
-			"label": "Subtitle",
-			"name": "page_hero_subtitle",
-			"aria-label": "",
-			"type": "textarea",
-			"instructions": "Optional supporting paragraph beneath the headline.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": {
-				"width": "",
-				"class": "",
-				"id": ""
-			},
-			"default_value": "",
-			"new_lines": "br",
-			"maxlength": "",
-			"rows": 3
-		},
-		{
-			"key": "field_two57_page_hero_primary_button",
-			"label": "Primary Button",
-			"name": "page_hero_primary_button",
-			"aria-label": "",
-			"type": "link",
-			"instructions": "Optional CTA button displayed below the subtitle.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": {
-				"width": "40",
-				"class": "",
-				"id": ""
-			},
-			"return_format": "array"
-		},
-		{
-			"key": "field_two57_page_hero_secondary_button",
-			"label": "Secondary Button",
-			"name": "page_hero_secondary_button",
-			"aria-label": "",
-			"type": "link",
-			"instructions": "Optional secondary CTA (outline style) displayed beside the primary button.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": {
-				"width": "40",
-				"class": "",
-				"id": ""
-			},
-			"return_format": "array"
-		},
-		{
-			"key": "field_two57_page_hero_bg_image",
-			"label": "Background Image",
-			"name": "page_hero_background_image",
-			"aria-label": "",
-			"type": "image",
-			"instructions": "Full-bleed hero background. Aim for at least 1920\u00d71080px.",
-			"required": 0,
-			"conditional_logic": [
-				[
-					{
-						"field": "field_two57_page_hero_layout",
-						"operator": "==",
-						"value": "full-bleed"
-					}
-				]
-			],
-			"wrapper": {
-				"width": "",
-				"class": "",
-				"id": ""
-			},
-			"return_format": "array",
-			"library": "all",
-			"min_width": "",
-			"min_height": "",
-			"min_size": "",
-			"max_width": "",
-			"max_height": "",
-			"max_size": "",
-			"mime_types": "",
-			"preview_size": "medium"
-		},
-		{
-			"key": "field_two57_page_hero_column_image",
-			"label": "Column Image",
-			"name": "page_hero_column_image",
-			"aria-label": "",
-			"type": "image",
-			"instructions": "Photo displayed in the right column. Split layout only. Portrait or square crops work best.",
-			"required": 0,
-			"conditional_logic": [
-				[
-					{
-						"field": "field_two57_page_hero_layout",
-						"operator": "==",
-						"value": "split"
-					}
-				]
-			],
-			"wrapper": { "width": "", "class": "", "id": "" },
-			"return_format": "array",
-			"library": "all",
-			"min_width": "",
-			"min_height": "",
-			"min_size": "",
-			"max_width": "",
-			"max_height": "",
-			"max_size": "",
-			"mime_types": "",
-			"preview_size": "medium"
-		},
-		{
-			"key": "field_two57_page_hero_marquee_enabled",
-			"label": "Marquee",
-			"name": "page_hero_marquee_enabled",
-			"aria-label": "",
-			"type": "true_false",
-			"instructions": "Show or hide the logo marquee strip at the bottom of the hero.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": {
-				"width": "",
-				"class": "",
-				"id": ""
-			},
-			"message": "",
-			"default_value": 1,
-			"ui": 1,
-			"ui_on_text": "Show",
-			"ui_off_text": "Hide"
-		},
-		{
-			"key": "field_two57_page_hero_marquee_label",
-			"label": "Marquee Label",
-			"name": "page_hero_marquee_label",
-			"aria-label": "",
-			"type": "text",
-			"instructions": "Optional eyebrow text above the marquee strip, e.g. \"As used by\".",
-			"required": 0,
-			"conditional_logic": [
-				[
-					{
-						"field": "field_two57_page_hero_marquee_enabled",
-						"operator": "==",
-						"value": "1"
-					}
-				]
-			],
-			"wrapper": {
-				"width": "50%",
-				"class": "",
-				"id": ""
-			},
-			"default_value": "",
-			"maxlength": "",
-			"placeholder": "As used by"
-		},
-		{
-			"key": "field_two57_page_hero_marquee_mode",
-			"label": "Logo Source",
-			"name": "page_hero_marquee_mode",
-			"aria-label": "",
-			"type": "radio",
-			"instructions": "Default auto-populates logos based on which page this block is on. Custom lets you hand-pick, reorder, and remove logos from any Organisations, People, or Events.",
-			"required": 0,
-			"conditional_logic": [
-				[
-					{
-						"field": "field_two57_page_hero_marquee_enabled",
-						"operator": "==",
-						"value": "1"
-					}
-				]
-			],
-			"wrapper": {
-				"width": "50%",
-				"class": "",
-				"id": ""
-			},
-			"choices": {
-				"default": "Default (auto-populate by page)",
-				"custom": "Custom (hand-pick and reorder)"
-			},
-			"default_value": "default",
-			"return_format": "value",
-			"allow_null": 0,
-			"other_choice": 0,
-			"layout": "vertical",
-			"save_other_choice": 0
-		},
-		{
-			"key": "field_two57_page_hero_marquee_logos",
-			"label": "Logos",
-			"name": "page_hero_marquee_logos",
-			"aria-label": "",
-			"type": "relationship",
-			"instructions": "Select logos from Organisations, People, or Events. Drag to reorder. Each post's Brand Logo field is used in the marquee.",
-			"required": 0,
-			"conditional_logic": [
-				[
-					{
-						"field": "field_two57_page_hero_marquee_enabled",
-						"operator": "==",
-						"value": "1"
-					},
-					{
-						"field": "field_two57_page_hero_marquee_mode",
-						"operator": "==",
-						"value": "custom"
-					}
-				]
-			],
-			"wrapper": {
-				"width": "",
-				"class": "",
-				"id": ""
-			},
-			"post_type": [
-				"organisation",
-				"person",
-				"event"
-			],
-			"post_status": [
-				"publish"
-			],
-			"taxonomy": "",
-			"filters": [
-				"search"
-			],
-			"return_format": "id",
-			"min": 0,
-			"max": 0,
-			"elements": [
-				"featured_image"
-			],
-			"bidirectional": 0,
-			"bidirectional_target": []
-		}
-	],
-	"location": [
-		[
-			{
-				"param": "block",
-				"operator": "==",
-				"value": "acf/hero-page"
-			}
-		]
-	],
-	"menu_order": 0,
-	"position": "normal",
-	"style": "default",
-	"label_placement": "top",
-	"instruction_placement": "label",
-	"hide_on_screen": "",
-	"active": true,
-	"description": "Controls the headline, subtitle, background image, and logo marquee for the Hero Page block.",
-	"show_in_rest": 0,
-	"modified": 1776278093
+    "key": "group_two57_block_hero_page",
+    "title": "Hero Page Block",
+    "fields": [
+        {
+            "key": "field_two57_page_hero_layout",
+            "label": "Layout",
+            "name": "page_hero_layout",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Full-bleed fills the section with a background image. Split shows a right-column photo on a plain background.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "full-bleed": "Full-bleed background image",
+                "split": "Split — image in right column"
+            },
+            "default_value": "full-bleed",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_two57_page_hero_eyebrow",
+            "label": "Eyebrow",
+            "name": "page_hero_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional short label displayed above the headline, e.g. \"Workspace\".",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "Workspace",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_page_hero_headline",
+            "label": "Headline",
+            "name": "page_hero_headline",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Main display heading. Use Shift+Enter for a line break.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "new_lines": "br",
+            "maxlength": "",
+            "rows": 2,
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_page_hero_subtitle",
+            "label": "Subtitle",
+            "name": "page_hero_subtitle",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Optional supporting paragraph beneath the headline.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "new_lines": "br",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_page_hero_primary_button",
+            "label": "Primary Button",
+            "name": "page_hero_primary_button",
+            "aria-label": "",
+            "type": "link",
+            "instructions": "Optional CTA button displayed below the subtitle.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "40",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array"
+        },
+        {
+            "key": "field_two57_page_hero_secondary_button",
+            "label": "Secondary Button",
+            "name": "page_hero_secondary_button",
+            "aria-label": "",
+            "type": "link",
+            "instructions": "Optional secondary CTA (outline style) displayed beside the primary button.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "40",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array"
+        },
+        {
+            "key": "field_two57_page_hero_bg_image",
+            "label": "Background Image",
+            "name": "page_hero_background_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Full-bleed hero background. Aim for at least 1920×1080px.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_two57_page_hero_layout",
+                        "operator": "==",
+                        "value": "full-bleed"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_two57_page_hero_column_image",
+            "label": "Column Image",
+            "name": "page_hero_column_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Photo displayed in the right column. Split layout only. Portrait or square crops work best.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_two57_page_hero_layout",
+                        "operator": "==",
+                        "value": "split"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_two57_page_hero_marquee_enabled",
+            "label": "Marquee",
+            "name": "page_hero_marquee_enabled",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Show or hide the logo marquee strip at the bottom of the hero.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "",
+            "default_value": 1,
+            "ui": 1,
+            "ui_on_text": "Show",
+            "ui_off_text": "Hide"
+        },
+        {
+            "key": "field_two57_page_hero_marquee_label",
+            "label": "Marquee Label",
+            "name": "page_hero_marquee_label",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional eyebrow text above the marquee strip, e.g. \"As used by\".",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_two57_page_hero_marquee_enabled",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "50%",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "As used by",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_page_hero_marquee_mode",
+            "label": "Logo Source",
+            "name": "page_hero_marquee_mode",
+            "aria-label": "",
+            "type": "radio",
+            "instructions": "Default auto-populates logos based on which page this block is on. Custom lets you hand-pick, reorder, and remove logos from any Organisations, People, or Events.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_two57_page_hero_marquee_enabled",
+                        "operator": "==",
+                        "value": "1"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "50%",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "default": "Default (auto-populate by page)",
+                "custom": "Custom (hand-pick and reorder)"
+            },
+            "default_value": "default",
+            "return_format": "value",
+            "allow_null": 0,
+            "other_choice": 0,
+            "layout": "vertical",
+            "save_other_choice": 0
+        },
+        {
+            "key": "field_two57_page_hero_marquee_logos",
+            "label": "Logos",
+            "name": "page_hero_marquee_logos",
+            "aria-label": "",
+            "type": "relationship",
+            "instructions": "Select logos from Organisations, People, or Events. Drag to reorder. Each post's Brand Logo field is used in the marquee.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_two57_page_hero_marquee_enabled",
+                        "operator": "==",
+                        "value": "1"
+                    },
+                    {
+                        "field": "field_two57_page_hero_marquee_mode",
+                        "operator": "==",
+                        "value": "custom"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [
+                "organisation",
+                "person",
+                "event"
+            ],
+            "post_status": [
+                "publish"
+            ],
+            "taxonomy": "",
+            "filters": [
+                "search"
+            ],
+            "return_format": "id",
+            "min": 0,
+            "max": 0,
+            "elements": [
+                "featured_image"
+            ],
+            "bidirectional": 0,
+            "bidirectional_target": []
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/hero-page"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the headline, subtitle, background image, and logo marquee for the Hero Page block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781561902
 }

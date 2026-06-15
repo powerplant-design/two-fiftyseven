@@ -209,6 +209,12 @@ add_filter( 'acf/settings/enable_acf_ai', '__return_true' );
 // Maps ACF fields to schema.org types for AI crawler discoverability.
 add_filter( 'acf/settings/enable_schema', '__return_true' );
 
+// MCP Block Field Bridge — syncs ACF block field values between
+// post_content and wp_postmeta so Royal MCP tools can discover and
+// edit every field on pages, posts, and CPTs.
+require_once get_template_directory() . '/inc/class-mcp-block-bridge.php';
+Two57_MCP_Block_Bridge::init();
+
 
 /**
  * Add type="module" to Vite scripts so ES modules load correctly.

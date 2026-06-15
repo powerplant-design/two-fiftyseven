@@ -1,203 +1,272 @@
 {
-	"key": "group_two57_block_testimonial",
-	"title": "Testimonial Block",
-	"fields": [
-		{
-			"key": "field_two57_testimonial_slides",
-			"label": "Testimonial Quotes",
-			"name": "testimonial_slides",
-			"aria-label": "",
-			"type": "repeater",
-			"instructions": "Add one or more testimonial quotes. Multiple quotes will display as a horizontal carousel.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
-			"layout": "block",
-			"button_label": "Add Quote",
-			"min": 0,
-			"max": 0,
-			"collapsed": "field_two57_testimonial_slide_quote",
-			"sub_fields": [
-				{
-					"key": "field_two57_testimonial_slide_quote",
-					"label": "Quote",
-					"name": "slide_quote",
-					"aria-label": "",
-					"type": "textarea",
-					"instructions": "The quote text. Use line breaks for typographic control.",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "", "class": "", "id": "" },
-					"default_value": "",
-					"placeholder": "",
-					"maxlength": "",
-					"rows": 4,
-					"new_lines": "br"
-				},
-				{
-					"key": "field_two57_testimonial_slide_name",
-					"label": "Person Name",
-					"name": "slide_name",
-					"aria-label": "",
-					"type": "text",
-					"instructions": "",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "33%", "class": "", "id": "" },
-					"default_value": "",
-					"placeholder": "e.g. Jane Smith"
-				},
-				{
-					"key": "field_two57_testimonial_slide_role",
-					"label": "Person Role",
-					"name": "slide_role",
-					"aria-label": "",
-					"type": "text",
-					"instructions": "",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "33%", "class": "", "id": "" },
-					"default_value": "",
-					"placeholder": "e.g. Design Director"
-				},
-				{
-					"key": "field_two57_testimonial_slide_organisation",
-					"label": "Organisation",
-					"name": "slide_organisation",
-					"aria-label": "",
-					"type": "text",
-					"instructions": "",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "34%", "class": "", "id": "" },
-					"default_value": "",
-					"placeholder": "e.g. Acme Studio"
-				},
-				{
-					"key": "field_two57_testimonial_slide_person_post",
-					"label": "Link Person Name To",
-					"name": "slide_person_post",
-					"aria-label": "",
-					"type": "post_object",
-					"instructions": "Optional. Link the person name to a Person post.",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "50%", "class": "", "id": "" },
-					"post_type": [ "person" ],
-					"taxonomy": "",
-					"return_format": "id",
-					"multiple": 0,
-					"allow_null": 1,
-					"ui": 1,
-					"ui_on_text": "",
-					"ui_off_text": ""
-				},
-				{
-					"key": "field_two57_testimonial_slide_organisation_post",
-					"label": "Link Organisation To",
-					"name": "slide_organisation_post",
-					"aria-label": "",
-					"type": "post_object",
-					"instructions": "Optional. Link the organisation name to an Organisation post.",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "50%", "class": "", "id": "" },
-					"post_type": [ "organisation" ],
-					"taxonomy": "",
-					"return_format": "id",
-					"multiple": 0,
-					"allow_null": 1,
-					"ui": 1,
-					"ui_on_text": "",
-					"ui_off_text": ""
-				}
-			]
-		},
-		{
-			"key": "field_two57_testimonial_image",
-			"label": "Decorative Image",
-			"name": "testimonial_image",
-			"aria-label": "",
-			"type": "image",
-			"instructions": "Optional background graphic (ink splat, etc.). Renders behind the quote, aria-hidden.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
-			"return_format": "array",
-			"library": "all",
-			"min_width": "",
-			"min_height": "",
-			"min_size": "",
-			"max_width": "",
-			"max_height": "",
-			"max_size": "",
-			"mime_types": "",
-			"preview_size": "medium"
-		},
-		{
-			"key": "field_two57_testimonial_alignment",
-			"label": "Content Alignment",
-			"name": "testimonial_alignment",
-			"aria-label": "",
-			"type": "select",
-			"instructions": "Align the quote and attribution. Defaults to centred.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"choices": {
-				"center": "Centre",
-				"left": "Left"
-			},
-			"default_value": "center",
-			"return_format": "value",
-			"multiple": 0,
-			"allow_null": 0,
-			"ui": 0,
-			"ajax": 0,
-			"placeholder": ""
-		},
-		{
-			"key": "field_two57_testimonial_colour_space",
-			"label": "Colour Space",
-			"name": "testimonial_colour_space",
-			"aria-label": "",
-			"type": "select",
-			"instructions": "Override the colour palette for this block. Leave blank to inherit from the page.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
-			"choices": {
-				"neutral": "Neutral",
-				"maroon": "Maroon",
-				"forest": "Forest",
-				"purple": "Purple"
-			},
-			"default_value": "",
-			"return_format": "value",
-			"multiple": 0,
-			"allow_null": 1,
-			"ui": 0,
-			"ajax": 0,
-			"placeholder": "Inherit from page"
-		}
-	],
-	"location": [
-		[
-			{
-				"param": "block",
-				"operator": "==",
-				"value": "acf/testimonial"
-			}
-		]
-	],
-	"menu_order": 0,
-	"position": "normal",
-	"style": "default",
-	"label_placement": "top",
-	"instruction_placement": "label",
-	"hide_on_screen": "",
-	"active": true,
-	"description": "Controls the fields for the 257 Testimonial block.",
-	"show_in_rest": 0,
-	"modified": 1745193600
+    "key": "group_two57_block_testimonial",
+    "title": "Testimonial Block",
+    "fields": [
+        {
+            "key": "field_two57_testimonial_slides",
+            "label": "Testimonial Quotes",
+            "name": "testimonial_slides",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Add one or more testimonial quotes. Multiple quotes will display as a horizontal carousel.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "button_label": "Add Quote",
+            "min": 0,
+            "max": 0,
+            "collapsed": "field_two57_testimonial_slide_quote",
+            "sub_fields": [
+                {
+                    "key": "field_two57_testimonial_slide_quote",
+                    "label": "Quote",
+                    "name": "slide_quote",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "The quote text. Use line breaks for typographic control.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "",
+                    "maxlength": "",
+                    "rows": 4,
+                    "new_lines": "br",
+                    "parent_repeater": "field_two57_testimonial_slides"
+                },
+                {
+                    "key": "field_two57_testimonial_slide_name",
+                    "label": "Person Name",
+                    "name": "slide_name",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "33%",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "e.g. Jane Smith",
+                    "maxlength": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_two57_testimonial_slides"
+                },
+                {
+                    "key": "field_two57_testimonial_slide_role",
+                    "label": "Person Role",
+                    "name": "slide_role",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "33%",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "e.g. Design Director",
+                    "maxlength": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_two57_testimonial_slides"
+                },
+                {
+                    "key": "field_two57_testimonial_slide_organisation",
+                    "label": "Organisation",
+                    "name": "slide_organisation",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "34%",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "e.g. Acme Studio",
+                    "maxlength": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_two57_testimonial_slides"
+                },
+                {
+                    "key": "field_two57_testimonial_slide_person_post",
+                    "label": "Link Person Name To",
+                    "name": "slide_person_post",
+                    "aria-label": "",
+                    "type": "post_object",
+                    "instructions": "Optional. Link the person name to a Person post.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50%",
+                        "class": "",
+                        "id": ""
+                    },
+                    "post_type": [
+                        "person"
+                    ],
+                    "taxonomy": "",
+                    "return_format": "id",
+                    "multiple": 0,
+                    "allow_null": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "bidirectional_target": [],
+                    "parent_repeater": "field_two57_testimonial_slides"
+                },
+                {
+                    "key": "field_two57_testimonial_slide_organisation_post",
+                    "label": "Link Organisation To",
+                    "name": "slide_organisation_post",
+                    "aria-label": "",
+                    "type": "post_object",
+                    "instructions": "Optional. Link the organisation name to an Organisation post.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50%",
+                        "class": "",
+                        "id": ""
+                    },
+                    "post_type": [
+                        "organisation"
+                    ],
+                    "taxonomy": "",
+                    "return_format": "id",
+                    "multiple": 0,
+                    "allow_null": 1,
+                    "ui": 1,
+                    "ui_on_text": "",
+                    "ui_off_text": "",
+                    "bidirectional_target": [],
+                    "parent_repeater": "field_two57_testimonial_slides"
+                }
+            ],
+            "rows_per_page": 20
+        },
+        {
+            "key": "field_two57_testimonial_image",
+            "label": "Decorative Image",
+            "name": "testimonial_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Optional background graphic (ink splat, etc.). Renders behind the quote, aria-hidden.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_two57_testimonial_alignment",
+            "label": "Content Alignment",
+            "name": "testimonial_alignment",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Align the quote and attribution. Defaults to centred.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "center": "Centre",
+                "left": "Left"
+            },
+            "default_value": "center",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_two57_testimonial_colour_space",
+            "label": "Colour Space",
+            "name": "testimonial_colour_space",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Override the colour palette for this block. Leave blank to inherit from the page.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "neutral": "Neutral",
+                "maroon": "Maroon",
+                "forest": "Forest",
+                "purple": "Purple"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 1,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "Inherit from page",
+            "create_options": 0,
+            "save_options": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/testimonial"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the fields for the 257 Testimonial block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781561902
 }

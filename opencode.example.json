@@ -3,7 +3,7 @@
   "mcp": {
     "two-fiftyseven-local": {
       "type": "remote",
-      "url": "https://two-fiftyseven.local/wp-json/royal-mcp/v1",
+      "url": "http://two-fiftyseven.local/wp-json/royal-mcp/v1",
       "enabled": true,
       "oauth": false,
       "headers": {

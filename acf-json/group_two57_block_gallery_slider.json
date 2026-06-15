@@ -1,63 +1,76 @@
 {
-	"key": "group_two57_block_gallery_slider",
-	"title": "Gallery Slider Block",
-	"fields": [
-		{
-			"key": "field_two57_gallery_slider_images",
-			"label": "Images",
-			"name": "gallery_slider_images",
-			"aria-label": "",
-			"type": "gallery",
-			"instructions": "Add one image per slide. The first image is always visible; each additional image slides in from the right on scroll.",
-			"required": 1,
-			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
-			"return_format": "array",
-			"library": "all",
-			"min": 1,
-			"max": 0,
-			"min_width": "",
-			"min_height": "",
-			"min_size": "",
-			"max_width": "",
-			"max_height": "",
-			"max_size": "",
-			"mime_types": "jpg,jpeg,png,webp,svg",
-			"insert": "append",
-			"preview_size": "medium"
-		},
-		{
-			"key": "field_two57_gallery_slider_anchor_id",
-			"label": "Section ID",
-			"name": "gallery_slider_anchor_id",
-			"aria-label": "",
-			"type": "text",
-			"instructions": "Optional. Adds an HTML id to this block so it can be linked to with #section-id in a URL.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"default_value": "",
-			"maxlength": "",
-			"placeholder": "e.g. gallery"
-		}
-	],
-	"location": [
-		[
-			{
-				"param": "block",
-				"operator": "==",
-				"value": "acf/gallery-slider"
-			}
-		]
-	],
-	"menu_order": 0,
-	"position": "normal",
-	"style": "default",
-	"label_placement": "top",
-	"instruction_placement": "label",
-	"hide_on_screen": "",
-	"active": true,
-	"description": "Controls the images in the Gallery Slider block.",
-	"show_in_rest": 0,
-	"modified": 1747526400
+    "key": "group_two57_block_gallery_slider",
+    "title": "Gallery Slider Block",
+    "fields": [
+        {
+            "key": "field_two57_gallery_slider_images",
+            "label": "Images",
+            "name": "gallery_slider_images",
+            "aria-label": "",
+            "type": "gallery",
+            "instructions": "Add one image per slide. The first image is always visible; each additional image slides in from the right on scroll.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min": 1,
+            "max": 0,
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "jpg,jpeg,png,webp,svg",
+            "insert": "append",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_two57_gallery_slider_anchor_id",
+            "label": "Section ID",
+            "name": "gallery_slider_anchor_id",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional. Adds an HTML id to this block so it can be linked to with #section-id in a URL.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "e.g. gallery",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/gallery-slider"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the images in the Gallery Slider block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781561902
 }

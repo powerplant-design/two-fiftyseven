@@ -87,9 +87,47 @@ ACF 6.8 registers its own abilities into the Abilities API — this is not theor
 
 ### Page Content Editing
 - Read the current content of any page
-- Update text inside ACF blocks (headlines, body copy, CTA text, FAQ items)
+- **Update any ACF block field** on existing pages (Hero headline, CTA text, FAQ items, image IDs, etc.)
 - Update linked URLs, button labels, image alt text
 - Review revisions (WP 7.0 visual revisions)
+- Create new pages by cloning templates with pre-placed blocks
+
+### Block Field Editing via MCP (Bridge)
+The `Two57_MCP_Block_Bridge` (`inc/class-mcp-block-bridge.php`) syncs block
+field values between `post_content` and `wp_postmeta`, making all 60+ block-level
+ACF fields discoverable and editable via standard Royal MCP tools.
+
+**Verified on local (June 2026):**
+- Home page: 372 `_mcp_b_*` entries across 17 blocks
+- Workspace page: 400+ entries
+- Full round-trip: read → write → post_content rebuild → front-end renders ✓
+- `parse_blocks()` / `serialize_blocks()` preserves all block data ✓
+
+**Read block fields:**
+```
+wp_get_post_meta(post_id=10, key="_mcp_b_page_hero_headline")
+→ "where good work finds good company"
+```
+
+**Write block fields:**
+```
+wp_update_post_meta(post_id=10, key="_mcp_b_page_hero_headline", value="New headline")
+→ auto-rebuilds post_content, front-end updates immediately
+```
+
+**Field naming:** `_mcp_b_{field_name}` — prefix `_mcp_b_` indicates a bridge-synced
+block field. Use `wp_get_post_meta(post_id)` to discover all available block fields
+for a page.
+
+**Create page with blocks:** Clone template content via `wp_get_post(id=TEMPLATE)`,
+pass to `wp_create_page(content=...)`, then fill block fields via
+`wp_update_post_meta`.
+
+**Rollback broken edits:**
+```
+wp_get_post_revisions(post_id=10)  → list all revisions
+wp_restore_revision(post_id=10, revision_id=980)  → instant rollback
+```
 
 ### Data Model Work (Developer — via Claude Code / opencode)
 - Register new field groups with typed fields
@@ -121,10 +159,11 @@ The AI can edit **data inside blocks** via ACF field values, but it cannot place
 | Task | Where |
 |---|---|
 | Add/edit/delete CPT content (orgs, people, events, media) | **Live directly** — content, not code |
-| Edit text/images on an existing page | **Live directly** — visual revisions available for rollback |
+| Edit text/images on an existing page (via bridge `_mcp_b_*` keys) | **Live directly** — every write creates an auto-revision for rollback |
 | Build a new page layout (block structure) | **Staging first** — place blocks in editor, test, push to live |
 | Create new field groups / CPTs / taxonomies | **Staging first** — data model changes should be tested |
 | Any theme or plugin changes | **Staging always** |
+| Recover a broken page after a bad edit | **Live directly** — `wp_restore_revision` rolls back in seconds |
 
 The client works live for normal content. Staging is for structural changes and page layouts.
 
@@ -160,8 +199,10 @@ add_filter( 'acf/settings/enable_schema', '__return_true' );
 ```
 
 3. Go to Royal MCP → Settings — enable the plugin, note the API key, enable ACF integration
-4. Verify abilities are registered — the AI should discover field groups, CPTs, and CRUD operations when connecting
-5. Test all operations on staging before enabling on live
+4. **Set `show_in_rest: 1`** on all ACF field groups in `acf-json/` and sync to DB
+5. **Deploy the Block Field Bridge** (`inc/class-mcp-block-bridge.php`) so block ACF fields are editable via MCP
+6. Verify abilities are registered — the AI should discover field groups, CPTs, and CRUD operations when connecting
+7. Test all operations on staging before enabling on live
 
 ### Phase 2 — Environment Configuration
 
@@ -313,6 +354,8 @@ A system-level instruction set that gives AI tools full awareness of this site's
 - Never modify theme files, plugin files, or wp-config.php
 - When adding an event, always ask whether it is recurring or one-off before creating
 - For image fields, ensure the media item exists before referencing its ID
+- **Block field editing**: read via `wp_get_post_meta(post_id)` to discover `_mcp_b_*` keys. Write via `wp_update_post_meta(post_id, key, value)`. The bridge rebuilds `post_content` automatically.
+- **Block field naming**: prefix `_mcp_b_` + original field name (e.g. `_mcp_b_cta_heading`). ACF internal `_`-prefixed keys are skipped.
 
 ---
 
@@ -330,6 +373,14 @@ Create a draft page called [X] — I will add the block layout in the editor
 Show me all field groups for the Event post type
 Map the event_date field to schema.org startDate
 Unpublish the event called [X] — confirm before doing it
+
+# Block field editing via bridge:
+Show me all block fields on the Home page
+  → wp_get_post_meta(post_id=10) — filter for _mcp_b_ prefix
+Change the Hero headline on the Home page to "Welcome"
+  → wp_update_post_meta(post_id=10, key="_mcp_b_page_hero_headline", value="Welcome")
+Update the CTA button URL on the Workspace page
+  → wp_update_post_meta(post_id=36, key="_mcp_b_cta_link", value='{"title":"Book","url":"/book","target":""}')
 ```
 
 ---
@@ -345,3 +396,44 @@ Unpublish the event called [X] — confirm before doing it
 | ACF field type mismatch | Low | ACF 6.8 abilities API exposes field structure — AI knows the types before writing |
 | Application password leaked | Low | Rotate passwords periodically; the AI user has Editor role, not Administrator |
 | Royal MCP abandoned | Low | Free plugin with 4K+ active installs; fallback is direct WP Admin access |
+| Block field write corrupts page | Low | `wp_restore_revision` via MCP restores any broken page in seconds; every write creates an auto-revision |
+| `serialize_blocks()` round-trip alters content | Low | Tested round-trip preserves 17/17 blocks on Home page; revisions provide rollback safety net |
+| Raw MySQL operations corrupt block JSON | Medium | **Never use raw MySQL for content.** Always use MCP tools — they call WP core functions that handle serialization safely. Bridge + `wp_restore_revision` eliminate the need for direct DB access. |
+
+---
+
+## Current State (June 2026)
+
+### Done (Local)
+
+| Item | Status |
+|---|---|
+| Royal MCP 1.4.27 installed and enabled | ✓ |
+| ACF Pro 6.8.4 with `enable_acf_ai` + `enable_schema` | ✓ |
+| `opencode.json` configured with `mcp-remote` stdio bridge | ✓ |
+| 72 MCP tools verified (wp_*, acf_*) | ✓ |
+| 24 ACF field groups: `show_in_rest: 1` synced to DB | ✓ |
+| Block Field Bridge (`inc/class-mcp-block-bridge.php`) | ✓ |
+| 372 block fields synced on Home page, 400+ on Workspace | ✓ |
+| Full read/write cycle: postmeta → post_content → front-end | ✓ |
+| Revision rollback via `wp_restore_revision` | ✓ |
+| Events, Organisations, People, Media CRUD via MCP | ✓ |
+| Site review: list/filter events, orgs, check passed vs upcoming | ✓ |
+
+### Still to Do
+
+| Item | Phase |
+|---|---|
+| Deploy `enable_acf_ai` + `enable_schema` + bridge to staging | Phase 1 |
+| Install Royal MCP on Kinsta staging | Phase 2 |
+| Create `ai-assistant` user on staging | Phase 3 |
+| Connect opencode to staging | Phase 4 |
+| Pull production DB → staging, test all operations | Phase 5 |
+| Deploy to production (files only, no DB push) | Phase 6 |
+| Production monitoring (1 week) | Phase 7 |
+
+### Known Limitations
+
+- **No block placement:** MCP cannot insert new blocks onto pages. Template clone pattern covers new pages; existing pages need block layout built in editor first.
+- **No ACF Options page write:** `acf_get_fields(post_id="option")` returns error. Options page fields (archive headings, colour spaces) are readable via `wp_get_post_meta` with option-specific keys.
+- **Field name discovery:** Use `wp_get_post_meta(post_id)` to discover `_mcp_b_*` keys. `acf_get_fields` only returns post-level fields, not block fields.
