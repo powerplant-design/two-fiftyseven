@@ -18,7 +18,7 @@ $title = get_field( 'post_header_title' ) ?: __( 'Get in touch', 'two-fiftyseven
 ?>
 
 <section class="post-header | block">
-    <header class="post-index-header text-center">
+    <header class="post-index-header text-align-center">
         <h1 class="post-index-header__title"><?php echo esc_html( $title ); ?></h1>
     </header>
 </section>

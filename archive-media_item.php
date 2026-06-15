@@ -20,7 +20,7 @@ $initial_query = new WP_Query( two57_get_cpt_query_args( $post_type, '', 1 ) );
 
 <div class="page-layout">
 
-	<header class="post-index-header text-center">
+	<header class="post-index-header text-align-center">
 		<h1 class="post-index-header__title"><?php echo esc_html( ( function_exists( 'get_field' ) ? get_field( 'media_item_archive_heading', 'option' ) : '' ) ?: post_type_archive_title( false ) ); ?></h1>
 	</header>
 

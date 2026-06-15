@@ -8,13 +8,13 @@
 				<h2 class="">
 					<a href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 				</h2>
-				<div class="entry-meta text-sm text-gray-500 mb-4">
+				<div class="entry-meta text-xs" style="color:var(--color-content-tertiary);margin-bottom:var(--space-s)">
 					<time datetime="<?php the_date( 'c' ); ?>"><?php the_date(); ?></time>
 				</div>
 				<div class="entry-content prose">
 					<?php the_excerpt(); ?>
 				</div>
-				<a href="<?php the_permalink(); ?>" class="read-more mt-4 inline-block">
+				<a href="<?php the_permalink(); ?>" class="read-more" style="display:inline-block;margin-top:var(--space-s)">
 					<?php esc_html_e( 'Read more', 'two-fiftyseven' ); ?>
 				</a>
 			</article>

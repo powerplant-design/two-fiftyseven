@@ -1,13 +1,9 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'path';
-import tailwindcss from '@tailwindcss/postcss';
 
 export default defineConfig({
   css: {
     devSourcemap: true,
-    postcss: {
-      plugins: [tailwindcss()],
-    },
     preprocessorOptions: {
       scss: {
         silenceDeprecations: ['legacy-js-api'],
