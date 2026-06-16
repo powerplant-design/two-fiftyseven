@@ -32,6 +32,7 @@ class Two57_MCP_Block_Bridge {
 	 */
 	public static function init(): void {
 		add_action( 'save_post', [ __CLASS__, 'sync_blocks_to_postmeta' ], 20, 1 );
+		add_action( 'save_post', [ __CLASS__, 'compute_event_sort_date' ], 100, 1 );
 		add_action( 'updated_post_meta', [ __CLASS__, 'rebuild_post_content' ], 10, 4 );
 		add_action( 'added_post_meta', [ __CLASS__, 'rebuild_post_content' ], 10, 4 );
 	}
@@ -113,6 +114,46 @@ class Two57_MCP_Block_Bridge {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Compute event_sort_date for event posts on every save.
+	 *
+	 * The existing acf/save_post hook (functions.php:1030) only fires
+	 * when ACF saves fields via update_field().  When MCP sets fields
+	 * via wp_update_post_meta, acf/save_post does not fire.  This hook
+	 * runs on WordPress's save_post (priority 100, after all other
+	 * processing) so it always has the final field values.
+	 */
+	public static function compute_event_sort_date( int $post_id ): void {
+		if ( wp_is_post_revision( $post_id ) || wp_is_post_autosave( $post_id ) ) {
+			return;
+		}
+		if ( get_post_type( $post_id ) !== 'event' ) {
+			return;
+		}
+		if ( ! function_exists( 'get_field' ) ) {
+			return;
+		}
+
+		$recurring = (bool) get_post_meta( $post_id, 'event_recurring', true );
+
+		if ( $recurring ) {
+			$day_abbr  = (string) ( get_post_meta( $post_id, 'event_day_of_week', true ) ?: '' );
+			$sort_date = $day_abbr ? two57_next_weekday_ymd( $day_abbr ) : '99991231';
+		} else {
+			$sort_date = (string) ( get_post_meta( $post_id, 'event_date', true ) ?: '99991231' );
+		}
+
+		$time_start = (string) ( get_post_meta( $post_id, 'event_time_start', true ) ?: '' );
+		if ( $time_start ) {
+			$dt_time = \DateTime::createFromFormat( 'H:i', $time_start );
+			if ( $dt_time ) {
+				$sort_date .= $dt_time->format( 'Hi' );
+			}
+		}
+
+		update_post_meta( $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
 	}
 
 	/**

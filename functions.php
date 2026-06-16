@@ -1053,7 +1053,7 @@ add_action( 'acf/save_post', function ( $post_id ): void {
 	}
 
 	update_post_meta( $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
-}, 20 );
+}, 100 );
 
 
 /**

@@ -426,6 +426,91 @@ For the first week after go-live:
 **CPT content (events, orgs, people, media):** Full CRUD via MCP tools.
 `wp_create_post` / `wp_update_post` / `acf_update_field` handle everything.
 
+**Event creation — full recipe:**
+
+```
+# 1. Create the event post
+wp_create_post(post_type="event", title="Summer Social", status="publish",
+  content="Join us for an evening of drinks and good company.")
+
+# 2. Set ACF fields (one per call via wp_update_post_meta)
+wp_update_post_meta(post_id=X, key="event_subheading", value="An evening of connection")
+wp_update_post_meta(post_id=X, key="event_recurring", value="")            # "" = one-off, "1" = recurring
+# For recurring:  wp_update_post_meta(post_id=X, key="event_day_of_week", value="THU")
+# For one-off:    wp_update_post_meta(post_id=X, key="event_date", value="20260715")  # Ymd
+wp_update_post_meta(post_id=X, key="event_time_start", value="17:30")     # H:i
+wp_update_post_meta(post_id=X, key="event_time_end", value="20:00")
+wp_update_post_meta(post_id=X, key="event_location_type", value="two_fiftyseven")
+# For offsite:  wp_update_post_meta(post_id=X, key="event_location_name", value="Venue")
+# For offsite:  wp_update_post_meta(post_id=X, key="event_location_map_link",
+#                  value='{"title":"Map","url":"https://maps...","target":"_blank"}')
+wp_update_post_meta(post_id=X, key="event_cost_type", value="free")
+# For paid:  wp_update_post_meta(post_id=X, key="event_cost_price", value="25")
+# Optional:  wp_update_post_meta(post_id=X, key="event_add_to_calendar",
+#                value='{"title":"Add to Calendar","url":"https://cal...","target":"_blank"}')
+# Optional:  wp_update_post_meta(post_id=X, key="post_links",
+#                value='[{"link":{"title":"Tickets","url":"https://...","target":"_blank"}}]')
+# event_sort_date is auto-computed at priority 100 on acf/save_post
+# event_has_passed is auto-set by twice-daily cron for one-off events
+
+# CRITICAL: After setting all fields, trigger a save to compute event_sort_date
+wp_update_post(id=X)  → fires save_post, bridge computes event_sort_date
+
+# 3. Assign event category (use term IDs for reliability)
+wp_add_post_terms(post_id=X, taxonomy="event_category", terms=[11])
+
+# 4. Verify
+wp_get_post_meta(post_id=X)  → check all fields are set
+curl http://two-fiftyseven.local/event/summer-social/  → 200 OK
+
+# ── Admin-only tasks (not available via MCP) ──
+# SVG brand logo: upload via WP Admin → Media → Add New (Safe SVG required)
+#   Then reference the attachment ID via:
+#   wp_update_post_meta(post_id=X, key="brand_logo", value=media_id)
+#
+# Featured image: can be set via MCP for non-SVG images:
+#   media = wp_upload_media_from_url(url="https://...", alt_text="...")
+#   wp_set_featured_image(post_id=X, media_id=media.id)
+#   For SVG featured images, upload via WP Admin first, then use
+#   wp_set_featured_image with the media ID.
+```
+
+**Event field reference:**
+
+| Field | Type | Format | Required for |
+|---|---|---|---|
+| `event_subheading` | text | string | All events |
+| `event_recurring` | true_false | `"1"` or `""`  | All events |
+| `event_has_passed` | true_false | `"1"` or `""` | Auto-set by cron — never set manually on recurring |
+| `event_day_of_week` | select | `"MON"`–`"SUN"` | Recurring only |
+| `event_date` | date_picker | `"20260715"` (Ymd) | One-off only |
+| `event_time_start` | time_picker | `"17:30"` (H:i) | All events |
+| `event_time_end` | time_picker | `"20:00"` (H:i) | Optional |
+| `event_add_to_calendar` | link | JSON array string | Optional |
+| `event_location_type` | radio | `"two_fiftyseven"` / `"offsite"` | All events |
+| `event_location_name` | text | string | Offsite only |
+| `event_location_map_link` | link | JSON array string | Offsite only |
+| `event_cost_type` | radio | `"free"` / `"paid"` | All events |
+| `event_cost_price` | text | `"69"` | Paid only |
+| `event_sort_date` | computed | `"202607151730"` (YmdHi) | **Auto-computed** — do not set manually |
+| `brand_logo` | image | media ID (int) | Optional — SVG via WP Admin only |
+| `show_featured_image` | true_false | `"1"` or `""` | Optional |
+| `image_orientation` | select | `"portrait"` / `"landscape"` | Optional |
+| `post_links` | repeater | JSON array of link objects | Optional |
+
+**Image upload:**
+
+| Method | Tool | Format | SVG? |
+|---|---|---|---|
+| From URL | `wp_upload_media_from_url(url=…)` | Public HTTPS URL | No |
+| Base64 | `wp_upload_media(filename, content_base64)` | Base64-encoded bytes | No |
+| WP Admin | Media → Add New | Upload directly | Yes (Safe SVG) |
+
+**SVG brand logos** must be uploaded via WP Admin — Safe SVG only hooks into
+the admin upload flow. After uploading, reference the attachment ID in
+`brand_logo` via `wp_update_post_meta`.  Let the user know they need to
+handle SVG uploads in the admin before you can set the field.
+
 **Page block fields:** Use the bridge's `_mcp_b_*` postmeta keys:
 
 ```

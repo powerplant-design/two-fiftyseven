@@ -356,6 +356,8 @@ A system-level instruction set that gives AI tools full awareness of this site's
 - For image fields, ensure the media item exists before referencing its ID
 - **Block field editing**: read via `wp_get_post_meta(post_id)` to discover `_mcp_b_*` keys. Write via `wp_update_post_meta(post_id, key, value)`. The bridge rebuilds `post_content` automatically.
 - **Block field naming**: prefix `_mcp_b_` + original field name (e.g. `_mcp_b_cta_heading`). ACF internal `_`-prefixed keys are skipped.
+- **SVG logos and featured images**: tell the user to upload SVGs via WP Admin → Media (Safe SVG is required). After upload, use the attachment ID with `wp_update_post_meta` or `wp_set_featured_image`. Non-SVG images can be uploaded via `wp_upload_media_from_url`.
+- **Term assignment**: use term IDs (e.g. `terms=[11]`) with `wp_add_post_terms`, not slugs. Slugs can fail silently with case mismatches.
 
 ---
 
@@ -381,6 +383,37 @@ Change the Hero headline on the Home page to "Welcome"
   → wp_update_post_meta(post_id=10, key="_mcp_b_page_hero_headline", value="Welcome")
 Update the CTA button URL on the Workspace page
   → wp_update_post_meta(post_id=36, key="_mcp_b_cta_link", value='{"title":"Book","url":"/book","target":""}')
+
+# Full event creation via MCP (with all conditional fields):
+Create a new event. Ask for: title, one-off/recurring, date/day, start/end time,
+location (if offsite → venue name + map link), cost (if paid → price),
+category, subheading, calendar link, ticket/host links.
+  → wp_create_post(post_type="event", title="...", status="publish")
+  → wp_update_post_meta(post_id=X, key="event_subheading", value="...")
+  → wp_update_post_meta(post_id=X, key="event_recurring", value="1")          # "1" or ""
+  → wp_update_post_meta(post_id=X, key="event_day_of_week", value="THU")     # recurring only
+  → wp_update_post_meta(post_id=X, key="event_date", value="20260715")       # one-off only (Ymd)
+  → wp_update_post_meta(post_id=X, key="event_time_start", value="17:30")    # H:i
+  → wp_update_post_meta(post_id=X, key="event_time_end", value="20:00")
+  → wp_update_post_meta(post_id=X, key="event_location_type", value="offsite")
+  → wp_update_post_meta(post_id=X, key="event_location_name", value="Venue")  # offsite only
+  → wp_update_post_meta(post_id=X, key="event_location_map_link",             # offsite only
+        value='{"title":"Map","url":"https://maps...","target":"_blank"}')
+  → wp_update_post_meta(post_id=X, key="event_cost_type", value="paid")
+  → wp_update_post_meta(post_id=X, key="event_cost_price", value="25")       # paid only
+  → wp_update_post_meta(post_id=X, key="event_add_to_calendar",              # optional
+        value='{"title":"Add to Calendar","url":"https://cal...","target":"_blank"}')
+  → wp_update_post_meta(post_id=X, key="post_links",                        # optional
+        value='[{"link":{"title":"Tickets","url":"https://...","target":"_blank"}}]')
+  → wp_add_post_terms(post_id=X, taxonomy="event_category", terms=[11])     # use term ID
+  → wp_update_post(id=X)                                                     # triggers sort date compute
+
+Upload a featured image for the event
+  → wp_upload_media_from_url(url="https://example.com/photo.jpg")
+  → wp_set_featured_image(post_id=X, media_id=Y)
+
+Add the event to a category
+  → wp_add_post_terms(post_id=X, taxonomy="event_category", terms=["kai"])
 ```
 
 ---
