@@ -214,8 +214,6 @@ add_filter( 'acf/settings/enable_schema', '__return_true' );
 require_once get_template_directory() . '/inc/mcp-event-helper.php';
 
 
-
-
 /**
  * Add type="module" to Vite scripts so ES modules load correctly.
  */
