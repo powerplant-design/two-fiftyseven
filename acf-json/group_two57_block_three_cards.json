@@ -40,6 +40,8 @@
             "max": 3,
             "layout": "block",
             "button_label": "Add Card",
+            "rows_per_page": 20,
+            "collapsed": "",
             "sub_fields": [
                 {
                     "key": "field_two57_tc_card_title",
@@ -157,9 +159,7 @@
                     "preview_size": "medium",
                     "parent_repeater": "field_two57_tc_cards"
                 }
-            ],
-            "rows_per_page": 20,
-            "collapsed": ""
+            ]
         }
     ],
     "location": [
@@ -183,5 +183,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781561902
+    "modified": 1781578123
 }

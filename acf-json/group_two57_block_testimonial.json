@@ -21,6 +21,7 @@
             "min": 0,
             "max": 0,
             "collapsed": "field_two57_testimonial_slide_quote",
+            "rows_per_page": 20,
             "sub_fields": [
                 {
                     "key": "field_two57_testimonial_slide_quote",
@@ -160,8 +161,7 @@
                     "bidirectional_target": [],
                     "parent_repeater": "field_two57_testimonial_slides"
                 }
-            ],
-            "rows_per_page": 20
+            ]
         },
         {
             "key": "field_two57_testimonial_image",
@@ -268,5 +268,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781561902
+    "modified": 1781578123
 }

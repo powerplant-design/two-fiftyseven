@@ -176,60 +176,44 @@ foreach ( glob( "$json_dir/*.json" ) as $file ) {
 
 **Verified:** 25 field groups synced with `show_in_rest=1`.
 
-### 0h. Install the MCP Block Field Bridge
+### 0h. MCP Event Sort Date Helper
 
-Block ACF fields (Hero headline, CTA text, FAQ items, etc.) are stored
-inside `post_content` as block-comment JSON, not in `wp_postmeta`. Royal
-MCP's standard tools cannot see or edit them.
+`event_sort_date` is a computed field that drives the Events archive ordering.
+The existing `acf/save_post` hook (functions.php:1030) computes it during
+WP Admin saves, but `acf/save_post` does not fire when fields are set via
+`wp_update_post_meta` (MCP's standard approach).
 
-**The bridge** (`inc/class-mcp-block-bridge.php`) solves this:
+**The helper** (`inc/mcp-event-helper.php`) hooks into WordPress's `save_post`
+action (priority 100) and computes `event_sort_date` for any event save,
+covering both admin and MCP paths.
 
-| Direction | Hook | What happens |
-|---|---|---|
-| **Read** (WP Admin → postmeta) | `save_post` | Parses `post_content` blocks, extracts field values, writes to `wp_postmeta` as `_mcp_b_{field_name}` |
-| **Write** (MCP → post_content) | `added_post_meta` / `updated_post_meta` | Detects `_mcp_b_*` changes, finds the matching block in `post_content`, updates the JSON, re-serializes safely |
-
-**Bridge is installed at** `inc/class-mcp-block-bridge.php` and loaded via
-`functions.php`:
+Loaded via `functions.php`:
 
 ```php
-require_once get_template_directory() . '/inc/class-mcp-block-bridge.php';
-Two57_MCP_Block_Bridge::init();
+require_once get_template_directory() . '/inc/mcp-event-helper.php';
 ```
 
-**Verified on Home page (ID 10):**
-- 372 `_mcp_b_*` postmeta entries synced across 17 blocks
-- Read → write → front-end render confirmed
-- Full round-trip: `wp_get_post_meta` → `wp_update_post_meta` → value visible on site
-
-**Bridge field naming:** `_mcp_b_{original_field_name}`
-(e.g. `_mcp_b_page_hero_headline`, `_mcp_b_cta_link`, `_mcp_b_faq_items`).
-
-Discover all block fields on a page with `wp_get_post_meta(post_id)` and
-filter for the `_mcp_b_` prefix.
-
-### 0i. Verify Rollback via Revisions
-
-Every `wp_update_post` or `wp_update_post_meta` write creates a WordPress
-revision automatically. MCP can rollback to any revision:
+**CRITICAL:** After setting all event fields via MCP, trigger a `save_post`:
 
 ```
-# List revisions
-wp_get_post_revisions(post_id=10)
-→ 237 revisions with dates and authors
-
-# Rollback to a safe revision
-wp_restore_revision(post_id=10, revision_id=980)
-→ { success: true, restored_revision_id: 980 }
-
-# The current content becomes the previous revision (nothing is lost)
+wp_update_post(id=X) → fires save_post → helper computes event_sort_date
 ```
 
-**Verified:** Rollback from corrupted content (7.8K) → revision 980 (27.2K),
-all 17 blocks intact, front-end 200 OK.
+Without this final save, `event_sort_date` is empty and the event won't
+appear in the upcoming archive listing.
 
-> Never use raw MySQL to restore content — it corrupts block JSON when
-> `\r\n` or special characters are present. Always use `wp_restore_revision`.
+### 0i. What MCP Cannot Do (Page Block Content)
+
+Block ACF fields (Hero headlines, CTA text, FAQ items) are stored inside
+`post_content` as block-comment JSON. WordPress 7.0's `serialize_block_attributes()`
+encodes `< > & "` as `\u003c \u003e \u0026 \u0022` for XSS protection, and
+`wp_update_post()` calls `wp_unslash()` which strips the leading backslash,
+breaking the unicode escapes. Every programmatic save through the WordPress
+pipeline risks corruption.
+
+**Page block content editing via MCP is not supported.** Pages should be
+edited in WP Admin. CPTs (events, organisations, people, media) use plain
+postmeta with no serialization pipeline and are fully supported.
 
 ---
 
@@ -324,21 +308,20 @@ Then test the MCP connection:
 
 1. Restart opencode so it picks up the MCP config
 2. Ask it to list events, organisations, and pages on staging
-3. Test creating a draft event
-4. **Test editing a block field on an existing page:**
-   - `wp_get_post_meta(post_id, key="_mcp_b_page_hero_headline")` — read
-   - `wp_update_post_meta(post_id, key="_mcp_b_page_hero_headline", value="New")` — write
-   - Verify the new headline renders on the front-end
-5. Test creating an organisation with a logo (upload to media library first, then reference the attachment ID)
-6. Test updating an ACF repeater field (FAQ questions)
-7. **Test revision rollback:**
-   - `wp_get_post_revisions(post_id)` — list revisions
-   - `wp_restore_revision(post_id, revision_id=N)` — rollback
-   - Verify content is restored and pages load clean
+3. Test creating a draft event with all ACF fields:
+   - `wp_create_post(post_type="event", ...)` → set all fields via `wp_update_post_meta`
+   - Assign event category via `wp_add_post_terms`
+   - `wp_update_post(id=X)` → triggers `event_sort_date` computation
+   - Verify the event appears in the `/events/` archive
+4. Test creating an organisation:
+   - Set `post_subheading`, `organisation_use_type`, `colour_space`
+   - Assign category, add `post_links`
+   - Verify renders at `/organisation/{slug}/` and `/organisations/`
+5. Test uploading a non-SVG image via `wp_upload_media_from_url`
+6. Test assigning the uploaded image as featured via `wp_set_featured_image`
 
-**Key test:** If the AI can read and write ACF block fields via
-`_mcp_b_*` postmeta keys, and rollback via `wp_restore_revision`,
-the integration is working properly.
+**Key test:** If the AI can create events and organisations end-to-end
+with all ACF fields, categories, and links, the integration is working.
 
 ---
 
@@ -428,6 +411,25 @@ For the first week after go-live:
 
 **Event creation — full recipe:**
 
+**Required question flow (branching by answers):**
+
+```
+1. Event title?
+2. One-off or recurring?
+   → If one-off:     ask for date (only suggest calendar dates like "July 15")
+   → If recurring:   ask for day of week (MON–SUN)
+3. Start time? End time? (H:i format)
+4. Location?
+   → If offsite:     ask for venue name AND map link URL
+5. Free or paid?
+   → If paid:        ask for ticket price
+6. Event category? (use term ID matching)
+7. Calendar link? (optional)
+8. External links? (optional — title + URL pairs, stored as post_links)
+```
+
+**MCP commands:**
+
 ```
 # 1. Create the event post
 wp_create_post(post_type="event", title="Summer Social", status="publish",
@@ -450,11 +452,11 @@ wp_update_post_meta(post_id=X, key="event_cost_type", value="free")
 #                value='{"title":"Add to Calendar","url":"https://cal...","target":"_blank"}')
 # Optional:  wp_update_post_meta(post_id=X, key="post_links",
 #                value='[{"link":{"title":"Tickets","url":"https://...","target":"_blank"}}]')
-# event_sort_date is auto-computed at priority 100 on acf/save_post
+# event_sort_date is auto-computed by mcp-event-helper.php on save_post
 # event_has_passed is auto-set by twice-daily cron for one-off events
 
 # CRITICAL: After setting all fields, trigger a save to compute event_sort_date
-wp_update_post(id=X)  → fires save_post, bridge computes event_sort_date
+wp_update_post(id=X)  → fires save_post → mcp-event-helper computes event_sort_date
 
 # 3. Assign event category (use term IDs for reliability)
 wp_add_post_terms(post_id=X, taxonomy="event_category", terms=[11])
@@ -511,25 +513,104 @@ the admin upload flow. After uploading, reference the attachment ID in
 `brand_logo` via `wp_update_post_meta`.  Let the user know they need to
 handle SVG uploads in the admin before you can set the field.
 
-**Page block fields:** Use the bridge's `_mcp_b_*` postmeta keys:
+---
+
+**Organisation creation — full recipe:**
+
+**Required question flow:**
 
 ```
-# Discover all block fields on a page
-wp_get_post_meta(post_id=10)  → filter for _mcp_b_ prefix
-
-# Read a specific block field
-wp_get_post_meta(post_id=10, key="_mcp_b_page_hero_headline")
-
-# Write a block field (bridge auto-rebuilds post_content)
-wp_update_post_meta(post_id=10, key="_mcp_b_page_hero_headline", value="New headline")
-
-# Create a new page with blocks (template clone pattern)
-content = wp_get_post(id=TEMPLATE_PAGE_ID).content
-wp_create_page(title="New Page", content=content, status="draft")
-→ bridge syncs all block fields to postmeta on save
-→ wp_update_post_meta for each field you want to change
-→ wp_update_page(id=NEW_ID, status="publish")
+1. Organisation name?
+2. Short description? (post_subheading — displayed below title on cards)
+3. Use type? (base / hub / desk / meet / events)
+4. Category? (Design / EDU / Energy / Food / Govt / Tech / "create new")
+   → If "create new": ask for new category name, then:
+     wp_create_term(name="FinTech", taxonomy="organisation_category")
+5. External links? (website, social — optional, title + URL pairs)
+6. Full description? (post_content — body text)
 ```
+
+**MCP commands:**
+
+```
+# 1. Create the organisation post
+wp_create_post(post_type="organisation", title="Acme Corp", status="publish",
+  content="Full description of the organisation...")
+
+# 2. Set ACF fields
+wp_update_post_meta(post_id=X, key="post_subheading", value="Accounting + Finance")
+wp_update_post_meta(post_id=X, key="organisation_use_type", value="base")      # base/hub/desk/meet/events
+wp_update_post_meta(post_id=X, key="colour_space", value="forest")             # always set — default fails to render
+
+# 3. Assign category (use term ID)
+wp_add_post_terms(post_id=X, taxonomy="organisation_category", terms=[14])
+
+# 4. Optional: external links (repeater — store as JSON)
+wp_update_post_meta(post_id=X, key="post_links",
+  value='[{"link":{"title":"Website","url":"https://...","target":"_blank"}}]')
+
+# 5. Verify
+wp_get_post_meta(post_id=X) → check fields
+curl http://two-fiftyseven.local/organisation/acme-corp/ → 200 OK
+
+# Admin-only: SVG brand logo via WP Admin → Media → then:
+wp_update_post_meta(post_id=X, key="brand_logo", value=MEDIA_ID)
+
+### Bulk import (JSON/CSV):
+# Provide a JSON array of organisations. The AI loops each row.
+
+**JSON format:**
+[
+  {
+    "name": "Acme Corp",
+    "subheading": "Accounting + Finance",
+    "use_type": "base",
+    "category": "Tech",
+    "website": "https://acme.com",
+    "description": "Full description..."
+  }
+]
+
+**MCP loop (for each record):**
+id = wp_create_post(post_type="organisation", title=rec.name,
+  status="publish", content=rec.description)
+wp_update_post_meta(post_id=id, key="post_subheading", value=rec.subheading)
+wp_update_post_meta(post_id=id, key="organisation_use_type", value=rec.use_type)
+wp_update_post_meta(post_id=id, key="colour_space", value="forest")
+# If website present: build post_links JSON and set via wp_update_post_meta
+# Match category name → term ID using the term list below
+wp_add_post_terms(post_id=id, taxonomy="organisation_category", terms=[TERM_ID])
+
+# Category name → ID mapping:
+# Design=14, EDU=16, Energy=15, Food=9, Govt=7, Tech=8
+# If category not found: wp_create_term(name="...", taxonomy="organisation_category")
+```
+
+**Organisation field reference:**
+
+| Field | Type | Choices/Format | Default |
+|---|---|---|---|
+| `post_subheading` | text | String | — |
+| `organisation_use_type` | select | `base`, `hub`, `desk`, `meet`, `events` | — |
+| `colour_space` | select | `neutral`, `maroon`, `forest`, `purple` | `forest` — **always set explicitly** |
+| `brand_logo` | image | Media attachment ID | Admin-only (SVG) |
+| `show_featured_image` | true_false | `"1"` or `""` | `"1"` (show) |
+| `image_orientation` | select | `portrait`, `landscape` | `landscape` |
+| `image_contain` | true_false | `"1"` or `""` | `""` (cover) |
+| `post_links` | repeater | JSON array of link objects | — |
+
+**Category terms:**
+
+| ID | Name |
+|---|---|
+| 14 | Design |
+| 16 | EDU |
+| 15 | Energy |
+| 9 | Food |
+| 7 | Govt |
+| 8 | Tech |
+
+**Page block content:** MCP does not edit page content. Pages must be edited in WP Admin. WordPress 7.0's `serialize_block_attributes()` + `wp_unslash()` pipeline makes every programmatic save a corruption risk for block-level ACF fields.
 
 **Revision rollback (if anything breaks):**
 
@@ -621,4 +702,4 @@ If the MCP integration itself causes issues:
 4. Investigate, fix on staging, re-enable
 
 No database changes are needed for rollback — the feature flags and
-bridge are pure code.
+`mcp-event-helper.php` are pure code.

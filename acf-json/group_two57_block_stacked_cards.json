@@ -60,6 +60,8 @@
             "max": 0,
             "layout": "block",
             "button_label": "Add Card",
+            "rows_per_page": 20,
+            "collapsed": "",
             "sub_fields": [
                 {
                     "key": "field_two57_stacked_cards_tab_label",
@@ -244,9 +246,7 @@
                     "preview_size": "medium",
                     "parent_repeater": "field_two57_stacked_cards_items"
                 }
-            ],
-            "rows_per_page": 20,
-            "collapsed": ""
+            ]
         }
     ],
     "location": [
@@ -270,5 +270,5 @@
     "display_title": "",
     "allow_ai_access": false,
     "ai_description": "",
-    "modified": 1781561902
+    "modified": 1781578123
 }

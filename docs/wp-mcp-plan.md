@@ -92,42 +92,16 @@ ACF 6.8 registers its own abilities into the Abilities API — this is not theor
 - Review revisions (WP 7.0 visual revisions)
 - Create new pages by cloning templates with pre-placed blocks
 
-### Block Field Editing via MCP (Bridge)
-The `Two57_MCP_Block_Bridge` (`inc/class-mcp-block-bridge.php`) syncs block
-field values between `post_content` and `wp_postmeta`, making all 60+ block-level
-ACF fields discoverable and editable via standard Royal MCP tools.
+### Page Content — Not Supported
 
-**Verified on local (June 2026):**
-- Home page: 372 `_mcp_b_*` entries across 17 blocks
-- Workspace page: 400+ entries
-- Full round-trip: read → write → post_content rebuild → front-end renders ✓
-- `parse_blocks()` / `serialize_blocks()` preserves all block data ✓
+Page block content cannot be edited via MCP. Block ACF fields (Hero headlines,
+CTA text, FAQ items) are stored inside `post_content` as block-comment JSON.
+WordPress 7.0's `serialize_block_attributes()` encodes `< > & "` for XSS
+protection, and `wp_update_post()` calls `wp_unslash()` which strips escapes —
+making every programmatic save a corruption risk.
 
-**Read block fields:**
-```
-wp_get_post_meta(post_id=10, key="_mcp_b_page_hero_headline")
-→ "where good work finds good company"
-```
-
-**Write block fields:**
-```
-wp_update_post_meta(post_id=10, key="_mcp_b_page_hero_headline", value="New headline")
-→ auto-rebuilds post_content, front-end updates immediately
-```
-
-**Field naming:** `_mcp_b_{field_name}` — prefix `_mcp_b_` indicates a bridge-synced
-block field. Use `wp_get_post_meta(post_id)` to discover all available block fields
-for a page.
-
-**Create page with blocks:** Clone template content via `wp_get_post(id=TEMPLATE)`,
-pass to `wp_create_page(content=...)`, then fill block fields via
-`wp_update_post_meta`.
-
-**Rollback broken edits:**
-```
-wp_get_post_revisions(post_id=10)  → list all revisions
-wp_restore_revision(post_id=10, revision_id=980)  → instant rollback
-```
+**Pages must be edited in WP Admin.** CPTs (events, organisations, people, media)
+use plain postmeta and are fully supported via MCP.
 
 ### Data Model Work (Developer — via Claude Code / opencode)
 - Register new field groups with typed fields
@@ -159,11 +133,10 @@ The AI can edit **data inside blocks** via ACF field values, but it cannot place
 | Task | Where |
 |---|---|
 | Add/edit/delete CPT content (orgs, people, events, media) | **Live directly** — content, not code |
-| Edit text/images on an existing page (via bridge `_mcp_b_*` keys) | **Live directly** — every write creates an auto-revision for rollback |
+| Edit block content on pages | **WP Admin only** — block JSON in post_content is fragile to programmatic saves |
 | Build a new page layout (block structure) | **Staging first** — place blocks in editor, test, push to live |
 | Create new field groups / CPTs / taxonomies | **Staging first** — data model changes should be tested |
 | Any theme or plugin changes | **Staging always** |
-| Recover a broken page after a bad edit | **Live directly** — `wp_restore_revision` rolls back in seconds |
 
 The client works live for normal content. Staging is for structural changes and page layouts.
 
@@ -200,9 +173,8 @@ add_filter( 'acf/settings/enable_schema', '__return_true' );
 
 3. Go to Royal MCP → Settings — enable the plugin, note the API key, enable ACF integration
 4. **Set `show_in_rest: 1`** on all ACF field groups in `acf-json/` and sync to DB
-5. **Deploy the Block Field Bridge** (`inc/class-mcp-block-bridge.php`) so block ACF fields are editable via MCP
-6. Verify abilities are registered — the AI should discover field groups, CPTs, and CRUD operations when connecting
-7. Test all operations on staging before enabling on live
+5. Verify abilities are registered — the AI should discover field groups, CPTs, and CRUD operations when connecting
+6. Test all operations on staging before enabling on live
 
 ### Phase 2 — Environment Configuration
 
@@ -354,10 +326,11 @@ A system-level instruction set that gives AI tools full awareness of this site's
 - Never modify theme files, plugin files, or wp-config.php
 - When adding an event, always ask whether it is recurring or one-off before creating
 - For image fields, ensure the media item exists before referencing its ID
-- **Block field editing**: read via `wp_get_post_meta(post_id)` to discover `_mcp_b_*` keys. Write via `wp_update_post_meta(post_id, key, value)`. The bridge rebuilds `post_content` automatically.
-- **Block field naming**: prefix `_mcp_b_` + original field name (e.g. `_mcp_b_cta_heading`). ACF internal `_`-prefixed keys are skipped.
 - **SVG logos and featured images**: tell the user to upload SVGs via WP Admin → Media (Safe SVG is required). After upload, use the attachment ID with `wp_update_post_meta` or `wp_set_featured_image`. Non-SVG images can be uploaded via `wp_upload_media_from_url`.
 - **Term assignment**: use term IDs (e.g. `terms=[11]`) with `wp_add_post_terms`, not slugs. Slugs can fail silently with case mismatches.
+- **Page content**: never attempt to edit page block content via MCP. WordPress 7.0's serialization pipeline makes it unreliable. Direct users to WP Admin for page edits.
+- **Colour space on organisations**: always set explicitly to `forest` via `wp_update_post_meta`. The ACF default does not render when set via MCP.
+- **Event sort date**: always call `wp_update_post(id=X)` after setting all event fields — this triggers `save_post` which fires `mcp-event-helper.php` to compute `event_sort_date`.
 
 ---
 
@@ -376,18 +349,14 @@ Show me all field groups for the Event post type
 Map the event_date field to schema.org startDate
 Unpublish the event called [X] — confirm before doing it
 
-# Block field editing via bridge:
-Show me all block fields on the Home page
-  → wp_get_post_meta(post_id=10) — filter for _mcp_b_ prefix
-Change the Hero headline on the Home page to "Welcome"
-  → wp_update_post_meta(post_id=10, key="_mcp_b_page_hero_headline", value="Welcome")
-Update the CTA button URL on the Workspace page
-  → wp_update_post_meta(post_id=36, key="_mcp_b_cta_link", value='{"title":"Book","url":"/book","target":""}')
+# Pages are edited in WP Admin — MCP does not touch page block content.
 
-# Full event creation via MCP (with all conditional fields):
-Create a new event. Ask for: title, one-off/recurring, date/day, start/end time,
-location (if offsite → venue name + map link), cost (if paid → price),
-category, subheading, calendar link, ticket/host links.
+# Full event creation via MCP — question flow:
+# 1. Title?  2. One-off or recurring?  3. Date (one-off) or day (recurring)?
+# 4. Start/end time?  5. Location? → if offsite: venue + map link
+# 6. Free/paid? → if paid: price  7. Category?  8. Calendar link?  9. External links?
+#
+# Never suggest recurring dates when event is one-off, and vice versa.
   → wp_create_post(post_type="event", title="...", status="publish")
   → wp_update_post_meta(post_id=X, key="event_subheading", value="...")
   → wp_update_post_meta(post_id=X, key="event_recurring", value="1")          # "1" or ""
@@ -414,6 +383,23 @@ Upload a featured image for the event
 
 Add the event to a category
   → wp_add_post_terms(post_id=X, taxonomy="event_category", terms=["kai"])
+
+# Organisation creation:
+Ask for: name, subheading, use type (base/hub/desk/meet/events),
+category (or create new), external links (optional), description.
+  → wp_create_post(post_type="organisation", title="...", status="publish")
+  → wp_update_post_meta(post_id=X, key="post_subheading", value="...")
+  → wp_update_post_meta(post_id=X, key="organisation_use_type", value="base")
+  → wp_update_post_meta(post_id=X, key="colour_space", value="forest")       # always set explicitly
+  → wp_create_term(name="FinTech", taxonomy="organisation_category")  # if new
+  → wp_add_post_terms(post_id=X, taxonomy="organisation_category", terms=[ID])
+  → wp_update_post_meta(post_id=X, key="post_links", value='[{"link":{"title":"...","url":"...","target":"_blank"}}]')
+
+# Bulk import organisations from JSON:
+Give me a JSON array of organisations with: name, subheading, use_type,
+category, website, description.
+  → loop each record: wp_create_post → set fields → assign category
+  → category name→ID: Design=14, EDU=16, Energy=15, Food=9, Govt=7, Tech=8
 ```
 
 ---
@@ -444,20 +430,19 @@ Add the event to a category
 | Royal MCP 1.4.27 installed and enabled | ✓ |
 | ACF Pro 6.8.4 with `enable_acf_ai` + `enable_schema` | ✓ |
 | `opencode.json` configured with `mcp-remote` stdio bridge | ✓ |
-| 72 MCP tools verified (wp_*, acf_*) | ✓ |
-| 24 ACF field groups: `show_in_rest: 1` synced to DB | ✓ |
-| Block Field Bridge (`inc/class-mcp-block-bridge.php`) | ✓ |
-| 372 block fields synced on Home page, 400+ on Workspace | ✓ |
-| Full read/write cycle: postmeta → post_content → front-end | ✓ |
+| MCP event helper (`inc/mcp-event-helper.php`) — computes `event_sort_date` on save_post | ✓ |
+| Events CRUD via MCP: create, all 17 fields, categories, sort date, archive listing | ✓ |
+| Organisation CRUD via MCP: create, all fields, categories, external links | ✓ |
+| Bulk import organisations from JSON | ✓ |
+| Image upload via `wp_upload_media_from_url` (non-SVG) | ✓ |
 | Revision rollback via `wp_restore_revision` | ✓ |
-| Events, Organisations, People, Media CRUD via MCP | ✓ |
-| Site review: list/filter events, orgs, check passed vs upcoming | ✓ |
+| Page block content editing | ✗ Not supported — see "Page Content — Not Supported" above |
 
 ### Still to Do
 
 | Item | Phase |
 |---|---|
-| Deploy `enable_acf_ai` + `enable_schema` + bridge to staging | Phase 1 |
+| Deploy `enable_acf_ai` + `enable_schema` + `mcp-event-helper.php` to staging | Phase 1 |
 | Install Royal MCP on Kinsta staging | Phase 2 |
 | Create `ai-assistant` user on staging | Phase 3 |
 | Connect opencode to staging | Phase 4 |
@@ -467,6 +452,8 @@ Add the event to a category
 
 ### Known Limitations
 
-- **No block placement:** MCP cannot insert new blocks onto pages. Template clone pattern covers new pages; existing pages need block layout built in editor first.
-- **No ACF Options page write:** `acf_get_fields(post_id="option")` returns error. Options page fields (archive headings, colour spaces) are readable via `wp_get_post_meta` with option-specific keys.
-- **Field name discovery:** Use `wp_get_post_meta(post_id)` to discover `_mcp_b_*` keys. `acf_get_fields` only returns post-level fields, not block fields.
+- **Page block content:** Cannot be edited via MCP. WordPress 7.0's `serialize_block_attributes()` + `wp_unslash()` makes programmatic saves unreliable. Pages stay in WP Admin.
+- **SVG uploads:** Safe SVG only hooks into the admin upload flow. SVGs must be uploaded via WP Admin → Media, then reference the attachment ID via MCP.
+- **Event sort date:** Must call `wp_update_post(id=X)` after setting all event fields to trigger `save_post` for `mcp-event-helper.php` to compute `event_sort_date`.
+- **Organisation colour space:** Must be set explicitly to `forest` — the ACF default does not render when fields are set via MCP.
+- **Category assignment:** Use term IDs (not slugs) with `wp_add_post_terms` for reliability.
