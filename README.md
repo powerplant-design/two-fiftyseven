@@ -247,8 +247,8 @@ If a critical issue appears after launch:
 
 | Branch | Purpose |
 |--------|---------|
-| `feature/xxx` | New features and bug fixes — branch off `main` |
-| `main` | Stable, tested code — merge feature branches here |
+| `feature/xxx` | New features, fixes, and docs work — branch off `main` |
+| `main` | Stable, reviewed code — merge feature branches here |
 | `deploy/staging` | Triggers automatic deploy to Kinsta staging |
 
 There is no `production` branch — live is updated manually via Kinsta's Push to Live.
@@ -256,15 +256,44 @@ There is no `production` branch — live is updated manually via Kinsta's Push t
 ### Standard dev cycle
 
 ```
-1. Create feature branch   — git checkout -b feature/my-feature
-2. Develop with HMR        — npm run dev
-3. Commit changes          — git add . && git commit -m "feat: ..."
-4. Merge to main           — git checkout main && git merge feature/my-feature && git push
-5. Deploy to staging       — git checkout deploy/staging && git merge main && git push && git checkout main
-6. GitHub Action fires     — builds theme assets, rsyncs to Kinsta staging automatically
-7. Test on staging URL
-8. Push staging → live     — MyKinsta → Staging → Push to Live (themes + plugins, no uploads, no db)
+1. Create a feature branch  — `git checkout -b feature/my-feature`
+2. Develop locally          — run `npm run dev`
+3. Commit in small chunks    — keep each commit focused and descriptive
+4. Open a pull request      — review the diff before merging to `main`
+5. Merge to main           — only after the branch is tested and approved
+6. Deploy to staging       — merge `main` into `deploy/staging` and push
+7. GitHub Action fires     — builds theme assets, rsyncs to Kinsta staging automatically
+8. Test on staging URL     — confirm the change in the browser
+9. Push staging → live     — MyKinsta → Staging → Push to Live (themes + plugins, no uploads, no db)
 ```
+
+### Collaboration guide
+
+Use branches for every piece of work, even small fixes. One developer should not commit directly to `main`.
+
+Recommended workflow:
+
+1. Create a feature branch from `main`.
+2. Make one logical change per commit.
+3. Push the branch and open a pull request.
+4. Review the diff for only the intended files.
+5. Merge into `main` once the branch is clean and verified.
+6. Merge `main` into `deploy/staging` to publish to Kinsta staging.
+
+Branch naming:
+
+- `feature/...` for new work
+- `fix/...` for bug fixes
+- `docs/...` for documentation changes
+
+Before merging, check:
+
+- The branch contains only the intended changes.
+- The theme builds successfully.
+- The site still works locally and on staging.
+- No unrelated files are included in the commit.
+
+If multiple developers are working at once, keep branches short-lived and rebase or merge from `main` frequently so the staging deploy stays close to what is actually reviewed.
 
 ### How environment detection works
 
