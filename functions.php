@@ -200,6 +200,19 @@ add_filter( 'acf/settings/load_json', function ( array $paths ): array {
 	return $paths;
 } );
 
+// ACF 6.8 — Expose field groups, CPTs, and taxonomies to the Abilities API.
+// Required for MCP integration. Registers ACF data model as discoverable
+// abilities that AI tools can read, write, and manage.
+add_filter( 'acf/settings/enable_acf_ai', '__return_true' );
+
+// ACF 6.8 — Enable automatic Schema.org JSON-LD output.
+// Maps ACF fields to schema.org types for AI crawler discoverability.
+add_filter( 'acf/settings/enable_schema', '__return_true' );
+
+// MCP Event Helper — computes event_sort_date on every save_post,
+// covering MCP API saves where acf/save_post does not fire.
+require_once get_template_directory() . '/inc/mcp-event-helper.php';
+
 
 /**
  * Add type="module" to Vite scripts so ES modules load correctly.
@@ -1038,7 +1051,7 @@ add_action( 'acf/save_post', function ( $post_id ): void {
 	}
 
 	update_post_meta( $post_id, 'event_sort_date', sanitize_text_field( $sort_date ) );
-}, 20 );
+}, 100 );
 
 
 /**

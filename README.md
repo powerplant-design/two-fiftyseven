@@ -7,8 +7,8 @@ Custom WordPress theme by [Powerplant Design](https://powerplant.design).
 - **WordPress** — local development via [DevKinsta](https://kinsta.com/devkinsta/)
 - **Vite 6** — JS/CSS bundling with HMR
 - **SCSS** — compiled via Vite's built-in Sass support
-- **Tailwind CSS 4** — utility-first CSS, CSS-first config via `assets/css/tailwind.css`
-- **`@tailwindcss/postcss`** — PostCSS integration, configured inline in `vite.config.js`
+- **CUBE CSS** — methodology (Composition, Utility, Block, Exception) for scalable, predictable styles
+- **Utopia** — fluid type and space scales via `utopia-core-scss`
 - **CSSNano** — minification in production builds
 - **ES modules** — no jQuery
 
@@ -67,6 +67,58 @@ Vite runs at `http://localhost:5173`. Do not open that URL directly — it only 
 
 ---
 
+## Troubleshooting: Site Not Loading Locally
+
+### Port conflict — DevKinsta nginx starts with wrong ports
+
+**Symptom:** `https://two-fiftyseven.local` returns `ERR_CONNECTION_RESET` or no response. Other projects (e.g. Bento) use port 80, and if DevKinsta launches while that port is occupied Docker creates `devkinsta_nginx` with an arbitrary port mapping (e.g. `61447→61447`) instead of `80→80`. Nginx inside the container always listens on port 80 internally, so the mismatch makes the site unreachable.
+
+**This is a recurring issue** — it happens any time DevKinsta is opened while another project's stack is running on port 80.
+
+**Diagnosis:**
+```bash
+docker inspect devkinsta_nginx --format '{{json .HostConfig.PortBindings}}'
+# Broken: {"61447/tcp":[{"HostIp":"","HostPort":"61447"}]}
+# Correct: {"80/tcp":[{"HostIp":"","HostPort":"80"}],"443/tcp":[...]}
+```
+
+**Fix — recreate the container with correct port bindings:**
+
+```bash
+# 1. Stop anything else using port 80 first, then:
+docker stop devkinsta_nginx && docker rm devkinsta_nginx
+
+# 2. Recreate with correct mappings
+docker create \
+  --name devkinsta_nginx \
+  --restart always \
+  --network devkinsta_network \
+  -p 80:80 \
+  -p 443:443 \
+  -v /Users/powerplant/DevKinsta/nginx_sites:/etc/nginx/sites \
+  -v /Users/powerplant/DevKinsta/kinsta:/kinsta/ \
+  -v /Users/powerplant/DevKinsta/public:/www/kinsta/public/ \
+  -v /Users/powerplant/DevKinsta/ssl:/www/kinsta/ssl/ \
+  -v /Users/powerplant/DevKinsta/private:/www/kinsta/private/ \
+  -v /Users/powerplant/DevKinsta/logs:/www/kinsta/logs/ \
+  kinsta/devkinsta_nginx:1.3.6
+
+# 3. Start and re-add the network alias (required so PHP-FPM can self-resolve the hostname)
+docker start devkinsta_nginx
+docker network disconnect devkinsta_network devkinsta_nginx
+docker network connect --alias two-fiftyseven.local devkinsta_network devkinsta_nginx
+```
+
+**Verify:**
+```bash
+curl -sI http://two-fiftyseven.local/ | head -3
+# Should return: HTTP/1.1 200 OK
+```
+
+**Prevention:** Before opening DevKinsta, stop any other project's stack that uses port 80 (e.g. run `bento stop` or equivalent).
+
+---
+
 ## How Asset Loading Works
 
 `functions.php` checks `WP_ENVIRONMENT_TYPE`:
@@ -86,16 +138,34 @@ Remove it when you're done testing.
 
 ## How CSS Compiles
 
-`main.js` imports both CSS entry points, which Vite processes through PostCSS on every build:
+`main.js` imports the SCSS entry point, which Vite compiles through its built-in Sass support:
 
-1. `assets/css/tailwind.css` — `@import "tailwindcss"` pulls in Tailwind's base, components, and utilities. `@tailwindcss/postcss` scans all `.php` and `.js` files and generates only the utility classes that are actually used.
-2. `assets/css/styles.scss` — custom SCSS compiled via Vite's built-in Sass support. Tailwind utilities and CSS custom properties are available here.
+```scss
+// assets/css/styles.scss — CUBE CSS orchestrator
+// Imports follow CUBE's layer order for correct specificity:
+// 1. Reset → 2. Tokens → 3. Elements → 4. WP Overrides
+// → 5. Layouts → 6. Components → 7. Parts → 8. Pages → 9. Utilities
+```
 
-Both are merged into a single hashed CSS file in `assets/dist/assets/`, e.g. `main-Dh9v1Y0m.css`.
+Each layer is a folder with an `_index.scss` that forwards to individual partials. The nine layers are:
 
-**Tailwind configuration** is CSS-first in Tailwind v4 — no `tailwind.config.js`. Theme tokens, custom utilities, and plugins are added directly in `assets/css/tailwind.css` using `@theme`, `@utility`, and `@plugin` directives.
+| Layer | Folder | Purpose |
+|---|---|---|
+| Reset | `01-reset/` | Box-sizing, font smoothing, font-face declarations |
+| Tokens | `02-tokens/` | Design tokens — primitive colours, semantic colours, colour themes, type scale, space scale, breakpoints |
+| Elements | `03-elements/` | Bare HTML element styles — headings, links, images, forms, tables, etc. |
+| WP Overrides | `04-wp-overrides/` | Overrides for WordPress core/Gutenberg block spacing and alignment |
+| Layouts | `05-layouts/` | Reusable layout primitives — grid, wrapper, stack, cluster, sidebar, frame, repel |
+| Components | `06-components/` | Discrete UI components — buttons, cards, hero, CTA, testimonials, etc. |
+| Parts | `07-parts/` | Site-wide sections — header, footer, main |
+| Pages | `08-pages/` | Page-specific styles — archive, post index, 404, transitions |
+| Utilities | `09-utilities/` | High-specificity single-purpose classes — text styles, flow, gap, margin, padding, text-wrap, line-clamp, etc. |
 
-**PostCSS** is configured inline in `vite.config.js` via the `css.postcss` option. There is no separate `postcss.config.js` — if one exists, Vite will use it exclusively and ignore the inline config, which would break the build.
+Vite merges all partials into a single hashed CSS file in `assets/dist/assets/`, e.g. `main-Dh9v1Y0m.css`.
+
+**Utopia** (`utopia-core-scss`) generates fluid type and space scales from min/max viewport breakpoints defined in `assets/css/02-tokens/_breakpoints.scss`. These scales drive all font-size and spacing tokens.
+
+**CSSNano** minifies the output in production builds. There is no `postcss.config.js` — minification is handled by Vite's default CSS processing.
 
 ---
 
@@ -177,8 +247,8 @@ If a critical issue appears after launch:
 
 | Branch | Purpose |
 |--------|---------|
-| `feature/xxx` | New features and bug fixes — branch off `main` |
-| `main` | Stable, tested code — merge feature branches here |
+| `feature/xxx` | New features, fixes, and docs work — branch off `main` |
+| `main` | Stable, reviewed code — merge feature branches here |
 | `deploy/staging` | Triggers automatic deploy to Kinsta staging |
 
 There is no `production` branch — live is updated manually via Kinsta's Push to Live.
@@ -186,15 +256,44 @@ There is no `production` branch — live is updated manually via Kinsta's Push t
 ### Standard dev cycle
 
 ```
-1. Create feature branch   — git checkout -b feature/my-feature
-2. Develop with HMR        — npm run dev
-3. Commit changes          — git add . && git commit -m "feat: ..."
-4. Merge to main           — git checkout main && git merge feature/my-feature && git push
-5. Deploy to staging       — git checkout deploy/staging && git merge main && git push && git checkout main
-6. GitHub Action fires     — builds theme assets, rsyncs to Kinsta staging automatically
-7. Test on staging URL
-8. Push staging → live     — MyKinsta → Staging → Push to Live (themes + plugins, no uploads, no db)
+1. Create a feature branch  — `git checkout -b feature/my-feature`
+2. Develop locally          — run `npm run dev`
+3. Commit in small chunks    — keep each commit focused and descriptive
+4. Open a pull request      — review the diff before merging to `main`
+5. Merge to main           — only after the branch is tested and approved
+6. Deploy to staging       — merge `main` into `deploy/staging` and push
+7. GitHub Action fires     — builds theme assets, rsyncs to Kinsta staging automatically
+8. Test on staging URL     — confirm the change in the browser
+9. Push staging → live     — MyKinsta → Staging → Push to Live (themes + plugins, no uploads, no db)
 ```
+
+### Collaboration guide
+
+Use branches for every piece of work, even small fixes. One developer should not commit directly to `main`.
+
+Recommended workflow:
+
+1. Create a feature branch from `main`.
+2. Make one logical change per commit.
+3. Push the branch and open a pull request.
+4. Review the diff for only the intended files.
+5. Merge into `main` once the branch is clean and verified.
+6. Merge `main` into `deploy/staging` to publish to Kinsta staging.
+
+Branch naming:
+
+- `feature/...` for new work
+- `fix/...` for bug fixes
+- `docs/...` for documentation changes
+
+Before merging, check:
+
+- The branch contains only the intended changes.
+- The theme builds successfully.
+- The site still works locally and on staging.
+- No unrelated files are included in the commit.
+
+If multiple developers are working at once, keep branches short-lived and rebase or merge from `main` frequently so the staging deploy stays close to what is actually reviewed.
 
 ### How environment detection works
 
@@ -305,8 +404,7 @@ two-fiftyseven/
 ├── acf-json/                 # ACF field group JSON (committed to git)
 ├── assets/
 │   ├── css/
-│   │   ├── tailwind.css      # Tailwind v4 entry point (@import "tailwindcss")
-│   │   └── styles.scss       # Custom SCSS
+│   │   └── styles.scss       # CUBE CSS entry point (9 layers in numbered folders)
 │   ├── dist/                 # Built assets (gitignored except manifest.json)
 │   └── js/
 │       └── main.js           # JS entry point (imports both CSS files)

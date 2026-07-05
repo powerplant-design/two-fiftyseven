@@ -20,7 +20,7 @@ $initial_query = new WP_Query( two57_get_event_query_args( 'upcoming', 1 ) );
 
 <div class="page-layout">
 
-	<header class="post-index-header text-center">
+	<header class="post-index-header text-align-center">
 		<h1 class="post-index-header__title"><?php echo esc_html( ( function_exists( 'get_field' ) ? get_field( 'event_archive_heading', 'option' ) : '' ) ?: __( 'Events', 'two-fiftyseven' ) ); ?></h1>
 	</header>
 

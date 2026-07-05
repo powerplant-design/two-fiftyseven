@@ -14,3 +14,6 @@ assets/dist/*
 .vscode/
 *.sublime-project
 *.sublime-workspace
+
+# MCP config — contains per-developer API keys
+opencode.json

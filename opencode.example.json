@@ -1,0 +1,32 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "two-fiftyseven-local": {
+      "type": "remote",
+      "url": "http://two-fiftyseven.local/wp-json/royal-mcp/v1",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "X-Royal-MCP-API-Key": "{env:ROYAL_MCP_LOCAL_KEY}"
+      }
+    },
+    "two-fiftyseven-staging": {
+      "type": "remote",
+      "url": "https://stg-twofiftyseven-staging.kinsta.cloud/wp-json/royal-mcp/v1",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "X-Royal-MCP-API-Key": "{env:ROYAL_MCP_STAGING_KEY}"
+      }
+    },
+    "two-fiftyseven-production": {
+      "type": "remote",
+      "url": "https://twofiftyseven.kinsta.cloud/wp-json/royal-mcp/v1",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "X-Royal-MCP-API-Key": "{env:ROYAL_MCP_PRODUCTION_KEY}"
+      }
+    }
+  }
+}

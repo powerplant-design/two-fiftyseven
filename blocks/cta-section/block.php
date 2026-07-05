@@ -111,7 +111,7 @@ foreach ( $attrs as $key => $value ) {
 
 			<div class="stack" style="--stack-gap: var(--space-xs);">
 				<?php if ( $heading ) : ?>
-					<h2 class="cta-section__heading | text-3xl text-balance" style="--delay: <?php echo esc_attr( $heading_delay ); ?>"><?php echo esc_html( $heading ); ?></h2>
+					<h2 class="cta-section__heading | text-3xl text-wrap-balance" style="--delay: <?php echo esc_attr( $heading_delay ); ?>"><?php echo esc_html( $heading ); ?></h2>
 				<?php elseif ( $is_preview ) : ?>
 					<p class="cta-section__preview-hint">Add a CTA heading in the block settings.</p>
 				<?php endif; ?>

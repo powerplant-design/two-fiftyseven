@@ -58,7 +58,7 @@ $has_thumb     = has_post_thumbnail( $post_id );
                 <?php if ( $title ) :
 				$title_size = mb_strlen( $title ) > 34 ? 'text-l' : 'text-xl';
                 ?>
-				<h2 class="event-card__title | <?php echo esc_attr( $title_size ); ?> text-balance line-clamp-2"><?php echo esc_html( $title ); ?></h2>
+				<h2 class="event-card__title | <?php echo esc_attr( $title_size ); ?> text-wrap-balance line-clamp-2"><?php echo esc_html( $title ); ?></h2>
                 <?php endif; ?>
                 
                 <?php if ( $excerpt ) : ?>
