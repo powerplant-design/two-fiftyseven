@@ -31,7 +31,7 @@ $use_types = [
 
 <div class="page-layout">
 
-	<header class="post-index-header text-center">
+	<header class="post-index-header text-align-center">
 		<h1 class="post-index-header__title"><?php echo esc_html( ( function_exists( 'get_field' ) ? get_field( 'organisation_archive_heading', 'option' ) : '' ) ?: post_type_archive_title( false ) ); ?></h1>
 	</header>
 

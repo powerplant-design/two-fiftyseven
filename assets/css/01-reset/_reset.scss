@@ -141,6 +141,17 @@ address {
 =================================================================== */
 
 /*
+Remove default list styling. Use the `.list-unstyled` utility to opt back in where needed,
+which is already included in the 09-utilities layer.
+*/
+
+ul,
+ol {
+	list-style: none;
+	padding-inline-start: 0;
+}
+
+/*
 1. Prevent content from overflowing while preserving its formatting. (ref. https://github.com/jensimmons/cssremedy/issues/81).
 2. Prevent scroll chaining because of 1.
 3. Fix the inheritance and scaling of the font size in all browsers. Refs.:

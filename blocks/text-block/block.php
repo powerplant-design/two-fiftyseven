@@ -72,10 +72,10 @@ $attr_string .= ' data-block="full"';
 		<?php if ( $heading || $intro ) : ?>
 			<div class="text-block__header" data-scroll data-scroll-repeat>
 				<?php if ( $heading ) : ?>
-					<h2 class="text-block__heading | text-3xl measure-narrow text-balance"><?php echo esc_html( $heading ); ?></h2>
+					<h2 class="text-block__heading | text-3xl measure-narrow text-wrap-balance"><?php echo esc_html( $heading ); ?></h2>
 				<?php endif; ?>
 				<?php if ( $intro ) : ?>
-					<p class="text-block__intro | text-xl text-balance"><?php echo esc_html( $intro ); ?></p>
+					<p class="text-block__intro | text-xl text-wrap-balance"><?php echo esc_html( $intro ); ?></p>
 				<?php endif; ?>
 			</div>
 		<?php elseif ( $is_preview ) : ?>

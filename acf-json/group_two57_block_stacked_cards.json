@@ -1,205 +1,274 @@
 {
-	"key": "group_two57_block_stacked_cards",
-	"title": "Stacked Cards Block",
-	"fields": [
-		{
-			"key": "field_two57_stacked_cards_section_title",
-			"label": "Stacked Cards Section Title",
-			"name": "stacked_cards_section_title",
-			"aria-label": "",
-			"type": "text",
-			"instructions": "Optional centred heading shown above the cards. Scrolls away as the cards stick.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"default_value": "",
-			"maxlength": "",
-			"placeholder": "e.g. Three ways to work here"
-		},
-		{
-			"key": "field_two57_stacked_cards_anchor_id",
-			"label": "Section ID",
-			"name": "stacked_cards_anchor_id",
-			"aria-label": "",
-			"type": "text",
-			"instructions": "Optional. Adds an HTML id to this block so it can be linked to with #section-id in a URL.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"default_value": "",
-			"maxlength": "",
-			"placeholder": "e.g. hot-desking"
-		},
-		{
-			"key": "field_two57_stacked_cards_items",
-			"label": "Stacked Cards",
-			"name": "stacked_cards_items",
-			"aria-label": "",
-			"type": "repeater",
-			"instructions": "Add one item per card. Cards reveal on scroll.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
-			"min": 0,
-			"max": 0,
-			"layout": "block",
-			"button_label": "Add Card",
-			"sub_fields": [
-				{
-					"key": "field_two57_stacked_cards_tab_label",
-					"label": "Tab Label",
-					"name": "tab_label",
-					"aria-label": "",
-					"type": "text",
-					"instructions": "Short label shown on the card tab, e.g. \"Teams\".",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "50%", "class": "", "id": "" },
-					"default_value": "",
-					"maxlength": 30,
-					"placeholder": "e.g. For Teams"
-				},
-				{
-					"key": "field_two57_stacked_cards_heading",
-					"label": "Heading",
-					"name": "heading",
-					"aria-label": "",
-					"type": "text",
-					"instructions": "H3 card heading.",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "50%", "class": "", "id": "" },
-					"default_value": "",
-					"maxlength": "",
-					"placeholder": ""
-				},
-				{
-					"key": "field_two57_stacked_cards_colour_space",
-					"label": "Colour Space Override",
-					"name": "colour_space",
-					"aria-label": "",
-					"type": "select",
-					"instructions": "Optional. Leave empty to inherit the page or section theme.",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "50%", "class": "", "id": "" },
-					"choices": {
-						"neutral": "Neutral",
-						"maroon": "Maroon",
-						"forest": "Forest",
-						"purple": "Purple"
-					},
-					"default_value": "",
-					"return_format": "value",
-					"multiple": 0,
-					"allow_null": 1,
-					"ui": 0,
-					"ajax": 0,
-					"placeholder": ""
-				},
-				{
-					"key": "field_two57_stacked_cards_body_size",
-					"label": "Body Font Size",
-					"name": "body_size",
-					"aria-label": "",
-					"type": "select",
-					"instructions": "Regular uses the base body size; Large uses the larger step-up size (default).",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "50%", "class": "", "id": "" },
-					"choices": {
-						"large": "Large",
-						"regular": "Regular"
-					},
-					"default_value": "large",
-					"return_format": "value",
-					"multiple": 0,
-					"allow_null": 0,
-					"ui": 0,
-					"ajax": 0,
-					"placeholder": ""
-				},
-				{
-					"key": "field_two57_stacked_cards_content",
-					"label": "Content",
-					"name": "content",
-					"aria-label": "",
-					"type": "wysiwyg",
-					"instructions": "Body copy for this card.",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "", "class": "", "id": "" },
-					"default_value": "",
-					"tabs": "all",
-					"toolbar": "basic",
-					"media_upload": 0,
-					"delay": 0
-				},
-				{
-					"key": "field_two57_stacked_cards_button",
-					"label": "Primary Button",
-					"name": "button",
-					"aria-label": "",
-					"type": "link",
-					"instructions": "Optional CTA. The link title becomes the button text.",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "50", "class": "", "id": "" },
-					"return_format": "array"
-				},
-				{
-					"key": "field_two57_stacked_cards_secondary_button",
-					"label": "Secondary Button",
-					"name": "secondary_button",
-					"aria-label": "",
-					"type": "link",
-					"instructions": "Optional secondary button shown alongside the primary.",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "50", "class": "", "id": "" },
-					"return_format": "array"
-				},
-				{
-					"key": "field_two57_stacked_cards_image",
-					"label": "Image",
-					"name": "image",
-					"aria-label": "",
-					"type": "image",
-					"instructions": "Card image. Aim for at least 800×600px.",
-					"required": 0,
-					"conditional_logic": 0,
-					"wrapper": { "width": "", "class": "", "id": "" },
-					"return_format": "array",
-					"library": "all",
-					"min_width": "",
-					"min_height": "",
-					"min_size": "",
-					"max_width": "",
-					"max_height": "",
-					"max_size": "",
-					"mime_types": "",
-					"preview_size": "medium"
-				}
-			]
-		}
-	],
-	"location": [
-		[
-			{
-				"param": "block",
-				"operator": "==",
-				"value": "acf/stacked-cards"
-			}
-		]
-	],
-	"menu_order": 0,
-	"position": "normal",
-	"style": "default",
-	"label_placement": "top",
-	"instruction_placement": "label",
-	"hide_on_screen": "",
-	"active": true,
-	"description": "Controls the cards in the Stacked Cards block.",
-	"show_in_rest": 0,
-	"modified": 1774310400
+    "key": "group_two57_block_stacked_cards",
+    "title": "Stacked Cards Block",
+    "fields": [
+        {
+            "key": "field_two57_stacked_cards_section_title",
+            "label": "Stacked Cards Section Title",
+            "name": "stacked_cards_section_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional centred heading shown above the cards. Scrolls away as the cards stick.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "e.g. Three ways to work here",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_stacked_cards_anchor_id",
+            "label": "Section ID",
+            "name": "stacked_cards_anchor_id",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional. Adds an HTML id to this block so it can be linked to with #section-id in a URL.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "e.g. hot-desking",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_stacked_cards_items",
+            "label": "Stacked Cards",
+            "name": "stacked_cards_items",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Add one item per card. Cards reveal on scroll.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "min": 0,
+            "max": 0,
+            "layout": "block",
+            "button_label": "Add Card",
+            "rows_per_page": 20,
+            "collapsed": "",
+            "sub_fields": [
+                {
+                    "key": "field_two57_stacked_cards_tab_label",
+                    "label": "Tab Label",
+                    "name": "tab_label",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "Short label shown on the card tab, e.g. \"Teams\".",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50%",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": 30,
+                    "placeholder": "e.g. For Teams",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_two57_stacked_cards_items"
+                },
+                {
+                    "key": "field_two57_stacked_cards_heading",
+                    "label": "Heading",
+                    "name": "heading",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "H3 card heading.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50%",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_two57_stacked_cards_items"
+                },
+                {
+                    "key": "field_two57_stacked_cards_colour_space",
+                    "label": "Colour Space Override",
+                    "name": "colour_space",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "Optional. Leave empty to inherit the page or section theme.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50%",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "neutral": "Neutral",
+                        "maroon": "Maroon",
+                        "forest": "Forest",
+                        "purple": "Purple"
+                    },
+                    "default_value": "",
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 1,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0,
+                    "parent_repeater": "field_two57_stacked_cards_items"
+                },
+                {
+                    "key": "field_two57_stacked_cards_body_size",
+                    "label": "Body Font Size",
+                    "name": "body_size",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "Regular uses the base body size; Large uses the larger step-up size (default).",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50%",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "large": "Large",
+                        "regular": "Regular"
+                    },
+                    "default_value": "large",
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0,
+                    "parent_repeater": "field_two57_stacked_cards_items"
+                },
+                {
+                    "key": "field_two57_stacked_cards_content",
+                    "label": "Content",
+                    "name": "content",
+                    "aria-label": "",
+                    "type": "wysiwyg",
+                    "instructions": "Body copy for this card.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "tabs": "all",
+                    "toolbar": "basic",
+                    "media_upload": 0,
+                    "delay": 0,
+                    "parent_repeater": "field_two57_stacked_cards_items"
+                },
+                {
+                    "key": "field_two57_stacked_cards_button",
+                    "label": "Primary Button",
+                    "name": "button",
+                    "aria-label": "",
+                    "type": "link",
+                    "instructions": "Optional CTA. The link title becomes the button text.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "parent_repeater": "field_two57_stacked_cards_items"
+                },
+                {
+                    "key": "field_two57_stacked_cards_secondary_button",
+                    "label": "Secondary Button",
+                    "name": "secondary_button",
+                    "aria-label": "",
+                    "type": "link",
+                    "instructions": "Optional secondary button shown alongside the primary.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "50",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "parent_repeater": "field_two57_stacked_cards_items"
+                },
+                {
+                    "key": "field_two57_stacked_cards_image",
+                    "label": "Image",
+                    "name": "image",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "Card image. Aim for at least 800×600px.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "library": "all",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "",
+                    "preview_size": "medium",
+                    "parent_repeater": "field_two57_stacked_cards_items"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/stacked-cards"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the cards in the Stacked Cards block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781578123
 }

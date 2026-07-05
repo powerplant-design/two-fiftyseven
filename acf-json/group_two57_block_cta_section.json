@@ -1,218 +1,276 @@
 {
-	"key": "group_two57_block_cta_section",
-	"title": "CTA Section Block",
-	"fields": [
-		{
-			"key": "field_two57_cta_label",
-			"label": "CTA Label",
-			"name": "cta_label",
-			"aria-label": "",
-			"type": "text",
-			"instructions": "Optional small label displayed above the heading.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"default_value": "",
-			"maxlength": "",
-			"placeholder": "Optional label"
-		},
-		{
-			"key": "field_two57_cta_colour_space",
-			"label": "Colour Space Override",
-			"name": "cta_colour_space",
-			"aria-label": "",
-			"type": "select",
-			"instructions": "Optional. Leave empty to inherit the page or section theme.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"choices": {
-				"neutral": "Neutral",
-				"maroon": "Maroon",
-				"forest": "Forest",
-				"purple": "Purple"
-			},
-			"default_value": "",
-			"return_format": "value",
-			"multiple": 0,
-			"allow_null": 1,
-			"ui": 0,
-			"ajax": 0,
-			"placeholder": ""
-		},
-		{
-			"key": "field_two57_cta_no_background",
-			"label": "No Background",
-			"name": "cta_no_background",
-			"aria-label": "",
-			"type": "true_false",
-			"instructions": "Remove the panel background and background SVG.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"default_value": 0,
-			"ui": 1,
-			"ui_on_text": "Yes",
-			"ui_off_text": "No"
-		},
-		{
-			"key": "field_two57_cta_heading",
-			"label": "CTA Heading",
-			"name": "cta_heading",
-			"aria-label": "",
-			"type": "text",
-			"instructions": "Large h3 heading shown in the CTA panel.",
-			"required": 1,
-			"conditional_logic": 0,
-			"wrapper": { "width": "100", "class": "", "id": "" },
-			"default_value": "",
-			"maxlength": "",
-			"placeholder": "Book a call and lets talk out your need for space."
-		},
-		{
-			"key": "field_two57_cta_body",
-			"label": "CTA Text",
-			"name": "cta_body",
-			"aria-label": "",
-			"type": "wysiwyg",
-			"instructions": "Optional rich text shown below the heading.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "", "class": "", "id": "" },
-			"default_value": "",
-			"tabs": "all",
-			"toolbar": "basic",
-			"media_upload": 0,
-			"delay": 0
-		},
-		{
-			"key": "field_two57_cta_link",
-			"label": "Primary Button Link",
-			"name": "cta_link",
-			"aria-label": "",
-			"type": "link",
-			"instructions": "Label and URL for the primary button. Set target to open in a new window.",
-			"required": 1,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"return_format": "array"
-		},
-		{
-			"key": "field_two57_cta_secondary_link",
-			"label": "Secondary Button Link",
-			"name": "cta_secondary_link",
-			"aria-label": "",
-			"type": "link",
-			"instructions": "Optional secondary button shown alongside the primary button.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"return_format": "array"
-		},
-		{
-			"key": "field_two57_cta_image",
-			"label": "Image",
-			"name": "cta_image",
-			"aria-label": "",
-			"type": "image",
-			"instructions": "Optional. When set the block switches to a two-column layout.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"return_format": "array",
-			"library": "all",
-			"min_width": "",
-			"min_height": "",
-			"min_size": "",
-			"max_width": "",
-			"max_height": "",
-			"max_size": "",
-			"mime_types": "",
-			"preview_size": "medium"
-		},
-		{
-			"key": "field_two57_cta_image_position",
-			"label": "Image Position",
-			"name": "cta_image_position",
-			"aria-label": "",
-			"type": "select",
-			"instructions": "Which column the image appears in (only applies when an image is set).",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"choices": {
-				"left": "Left",
-				"right": "Right"
-			},
-			"default_value": "left",
-			"return_format": "value",
-			"multiple": 0,
-			"allow_null": 0,
-			"ui": 0,
-			"ajax": 0,
-			"placeholder": ""
-		},
-		{
-			"key": "field_two57_cta_background_svg",
-			"label": "Background SVG",
-			"name": "cta_background_svg",
-			"aria-label": "",
-			"type": "image",
-			"instructions": "Optional SVG background image that covers the CTA container.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"return_format": "array",
-			"library": "all",
-			"min_width": "",
-			"min_height": "",
-			"min_size": "",
-			"max_width": "",
-			"max_height": "",
-			"max_size": "",
-			"mime_types": "svg",
-			"preview_size": "medium"
-		},
-		{
-			"key": "field_two57_cta_svg_fit",
-			"label": "SVG Fit",
-			"name": "cta_svg_fit",
-			"aria-label": "",
-			"type": "select",
-			"instructions": "Optional fit mode for the background SVG.",
-			"required": 0,
-			"conditional_logic": 0,
-			"wrapper": { "width": "50", "class": "", "id": "" },
-			"choices": {
-				"cover": "Cover",
-				"contain": "Contain"
-			},
-			"default_value": "cover",
-			"return_format": "value",
-			"multiple": 0,
-			"allow_null": 0,
-			"ui": 0,
-			"ajax": 0,
-			"placeholder": ""
-		}
-	],
-	"location": [
-		[
-			{
-				"param": "block",
-				"operator": "==",
-				"value": "acf/cta-section"
-			}
-		]
-	],
-	"menu_order": 0,
-	"position": "normal",
-	"style": "default",
-	"label_placement": "top",
-	"instruction_placement": "label",
-	"hide_on_screen": "",
-	"active": true,
-	"description": "Wrapper-contained CTA section with heading, primary link button, and optional SVG background.",
-	"show_in_rest": 0,
-	"modified": 1774396800
+    "key": "group_two57_block_cta_section",
+    "title": "CTA Section Block",
+    "fields": [
+        {
+            "key": "field_two57_cta_label",
+            "label": "CTA Label",
+            "name": "cta_label",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional small label displayed above the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "Optional label",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_cta_colour_space",
+            "label": "Colour Space Override",
+            "name": "cta_colour_space",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Optional. Leave empty to inherit the page or section theme.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "neutral": "Neutral",
+                "maroon": "Maroon",
+                "forest": "Forest",
+                "purple": "Purple"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 1,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_two57_cta_no_background",
+            "label": "No Background",
+            "name": "cta_no_background",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Remove the panel background and background SVG.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 0,
+            "ui": 1,
+            "ui_on_text": "Yes",
+            "ui_off_text": "No",
+            "message": ""
+        },
+        {
+            "key": "field_two57_cta_heading",
+            "label": "CTA Heading",
+            "name": "cta_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Large h3 heading shown in the CTA panel.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "100",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "Book a call and lets talk out your need for space.",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_cta_body",
+            "label": "CTA Text",
+            "name": "cta_body",
+            "aria-label": "",
+            "type": "wysiwyg",
+            "instructions": "Optional rich text shown below the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "tabs": "all",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "delay": 0
+        },
+        {
+            "key": "field_two57_cta_link",
+            "label": "Primary Button Link",
+            "name": "cta_link",
+            "aria-label": "",
+            "type": "link",
+            "instructions": "Label and URL for the primary button. Set target to open in a new window.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array"
+        },
+        {
+            "key": "field_two57_cta_secondary_link",
+            "label": "Secondary Button Link",
+            "name": "cta_secondary_link",
+            "aria-label": "",
+            "type": "link",
+            "instructions": "Optional secondary button shown alongside the primary button.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array"
+        },
+        {
+            "key": "field_two57_cta_image",
+            "label": "Image",
+            "name": "cta_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Optional. When set the block switches to a two-column layout.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_two57_cta_image_position",
+            "label": "Image Position",
+            "name": "cta_image_position",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Which column the image appears in (only applies when an image is set).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "left": "Left",
+                "right": "Right"
+            },
+            "default_value": "left",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_two57_cta_background_svg",
+            "label": "Background SVG",
+            "name": "cta_background_svg",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Optional SVG background image that covers the CTA container.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_width": "",
+            "min_height": "",
+            "min_size": "",
+            "max_width": "",
+            "max_height": "",
+            "max_size": "",
+            "mime_types": "svg",
+            "preview_size": "medium"
+        },
+        {
+            "key": "field_two57_cta_svg_fit",
+            "label": "SVG Fit",
+            "name": "cta_svg_fit",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Optional fit mode for the background SVG.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "cover": "Cover",
+                "contain": "Contain"
+            },
+            "default_value": "cover",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/cta-section"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Wrapper-contained CTA section with heading, primary link button, and optional SVG background.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1781578123
 }
