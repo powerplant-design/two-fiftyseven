@@ -134,6 +134,9 @@ $section_class = 'hero-page' . ( 'split' === $layout ? ' hero-page--split' : '' 
 			// Map page slug → use-type filter for organisation logos.
 			$page_slug    = get_post_field( 'post_name', $post_id );
 			$use_type_map = [
+				'work'        => [ 'base', 'hub', 'desk' ],
+				'meet'        => [ 'meet' ],
+				'host'        => [ 'events' ],
 				'workspace'   => [ 'base', 'hub', 'desk' ],
 				'meetings'    => [ 'meet' ],
 				'host-events' => [ 'events' ],
@@ -163,8 +166,8 @@ $section_class = 'hero-page' . ( 'split' === $layout ? ' hero-page--split' : '' 
 			$logo_query        = new WP_Query( $query_args );
 			$selected_post_ids = $logo_query->posts;
 
-			// host-events: also include all event CPT posts with logos.
-			if ( 'host-events' === $page_slug ) {
+			// Host page: also include all event CPT posts with logos.
+			if ( in_array( $page_slug, [ 'host', 'host-events' ], true ) ) {
 				$event_query = new WP_Query( [
 					'post_type'      => 'event',
 					'post_status'    => 'publish',
