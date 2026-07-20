@@ -9,6 +9,7 @@
  * glance without becoming a spec sheet.
  *
  * ACF fields:
+ *   ig_eyebrow      — short label above the heading (text, optional)
  *   ig_heading      — H2 heading (text)
  *   ig_intro        — supporting paragraph (textarea)
  *   ig_layout       — select: 'intro-left' (default) or 'intro-top'
@@ -23,6 +24,7 @@
  * @var int    $post_id    The current post/page ID.
  */
 
+$eyebrow      = get_field( 'ig_eyebrow' );
 $heading      = get_field( 'ig_heading' );
 $intro        = get_field( 'ig_intro' );
 $layout       = get_field( 'ig_layout' ) ?: 'intro-left';
@@ -48,8 +50,11 @@ foreach ( $attrs as $key => $value ) {
 <section<?php echo $attr_string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?>>
 	<div class="included-grid__inner | wrapper">
 
-		<?php if ( $heading || $intro ) : ?>
+		<?php if ( $heading || $intro || $eyebrow ) : ?>
 			<div class="included-grid__intro | stack" data-scroll data-scroll-repeat>
+				<?php if ( $eyebrow ) : ?>
+					<p class="included-grid__eyebrow | text-monospace text-s"><?php echo esc_html( $eyebrow ); ?></p>
+				<?php endif; ?>
 				<?php if ( $heading ) : ?>
 					<h2 class="included-grid__heading | text-3xl text-wrap-balance"><?php echo esc_html( $heading ); ?></h2>
 				<?php endif; ?>
@@ -73,7 +78,7 @@ foreach ( $attrs as $key => $value ) {
 						style="--delay: <?php echo (int) $delay_ms; ?>ms;"
 					>
 						<?php if ( $title ) : ?>
-							<h3 class="included-grid__card-title"><?php echo esc_html( $title ); ?></h3>
+							<h3 class="included-grid__card-title | text-xl"><?php echo esc_html( $title ); ?></h3>
 						<?php endif; ?>
 						<?php if ( $body ) : ?>
 							<p class="included-grid__card-body"><?php echo esc_html( $body ); ?></p>

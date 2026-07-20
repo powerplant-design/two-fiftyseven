@@ -10,7 +10,6 @@
 	}
 
 	&__heading {
-		text-transform: uppercase !important;
 		opacity: 0;
 		transform: translateY(1.5rem);
 		transition: opacity 0.4s ease-out, transform 0.8s ease-out;
@@ -28,7 +27,7 @@
 
 	&__card {
 		background-color: var(--color-surface-secondary);
-		border-radius: var(--corner-radius-xl);
+		border-radius: var(--corner-radius-card);
 		overflow: hidden;
 		opacity: 0;
 		transform: translateY(3rem);
@@ -38,7 +37,7 @@
 		background-color var(--transition-speed) ease;
 		
 		a {
-			border-radius: var(--corner-radius-xl);
+			border-radius: var(--corner-radius-card);
 			padding-block-end: var(--space-s);
 		}
 
@@ -63,7 +62,7 @@
 		justify-content: center;
 		color: var(--color-content-secondary);
 		min-block-size: clamp(var(--space-l), 9vw, var(--space-3xl));
-		border-radius: var(--corner-radius-m);
+		border-radius: var(--corner-radius-card-inner);
 
 		svg {
 			block-size: var(--space-3xl);

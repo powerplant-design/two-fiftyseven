@@ -8,6 +8,7 @@
  * rows stay level even when headings wrap.
  *
  * ACF fields:
+ *   text_block_eyebrow      — short label above the heading (text, optional)
  *   text_block_heading      — optional large H2 above the grid
  *   text_block_layout       — select: 'two-col' (default) or 'three-col'
  *   text_block_dark          — bool: force dark colour mode on the block
@@ -24,6 +25,7 @@
  * @var int    $post_id    The current post/page ID.
  */
 
+$eyebrow       = get_field( 'text_block_eyebrow' );
 $heading       = get_field( 'text_block_heading' );
 $intro         = get_field( 'text_block_intro' );
 $layout        = get_field( 'text_block_layout' ) ?: 'two-col';
@@ -69,8 +71,11 @@ $attr_string .= ' data-block="full"';
 <section<?php echo $attr_string; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?>>
 	<div class="text-block__inner | wrapper">
 
-		<?php if ( $heading || $intro ) : ?>
+		<?php if ( $heading || $intro || $eyebrow ) : ?>
 			<div class="text-block__header" data-scroll data-scroll-repeat>
+				<?php if ( $eyebrow ) : ?>
+					<p class="text-block__eyebrow | text-monospace text-s"><?php echo esc_html( $eyebrow ); ?></p>
+				<?php endif; ?>
 				<?php if ( $heading ) : ?>
 					<h2 class="text-block__heading | text-3xl measure-narrow text-wrap-balance"><?php echo esc_html( $heading ); ?></h2>
 				<?php endif; ?>
@@ -84,7 +89,7 @@ $attr_string .= ' data-block="full"';
 
 		<?php if ( ! empty( $items ) ) : ?>
 			<ul
-				class="text-block__items | text-block__items--<?php echo esc_attr( $layout ); ?>"
+				class="stack text-block__items | text-block__items--<?php echo esc_attr( $layout ); ?>"
 				data-scroll
 				data-scroll-repeat
 				role="list"

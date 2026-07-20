@@ -3,6 +3,22 @@
     "title": "257 Included Grid Block",
     "fields": [
         {
+            "key": "field_two57_ig_eyebrow",
+            "label": "Eyebrow",
+            "name": "ig_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Short label above the heading in monospace, e.g. \"Inclusions\" or \"What you get\".",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "e.g. Inclusions",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_two57_ig_heading",
             "label": "Heading",
             "name": "ig_heading",

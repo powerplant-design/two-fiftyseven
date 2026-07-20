@@ -58,6 +58,123 @@ function two_fiftyseven_get_colour_space(): string {
 
 
 /**
+ * Returns the colour space for a given post ID (post, page, or CPT).
+ *
+ * Reads the 'colour_space' ACF field directly from the post. Events fall
+ * back to 'purple' (matching the front-end behaviour for single events);
+ * all other post types fall back to 'neutral' when no field is set.
+ *
+ * Used by nav menu items to resolve the *destination* page's colour space
+ * so hover styles can tint with the destination palette, not the current
+ * page's palette.
+ *
+ * @param int $post_id
+ * @return string
+ */
+function two_fiftyseven_get_post_colour_space( int $post_id ): string {
+	if ( ! $post_id || ! function_exists( 'get_field' ) ) {
+		return 'neutral';
+	}
+
+	// Events are always purple by design.
+	if ( 'event' === get_post_type( $post_id ) ) {
+		return 'purple';
+	}
+
+	$space = get_field( 'colour_space', $post_id );
+	return $space ? sanitize_key( $space ) : 'neutral';
+}
+
+
+/**
+ * Returns the colour space for a CPT archive (post type archive).
+ *
+ * Mirrors the front-end `is_post_type_archive()` branch of
+ * `two_fiftyseven_get_colour_space()`, reading from ACF Options.
+ * Used by the nav menu filter to tint archive links (Organisations,
+ * People, Media) with their destination palette on hover.
+ *
+ * @param string $post_type Post type slug, e.g. 'organisation', 'person'.
+ * @return string
+ */
+function two_fiftyseven_get_archive_colour_space( string $post_type ): string {
+	if ( ! function_exists( 'get_field' ) ) {
+		return 'neutral';
+	}
+
+	$archive_fields = [
+		'event'        => 'event_colour_space',
+		'organisation' => 'organisation_colour_space',
+		'person'       => 'person_colour_space',
+		'media_item'   => 'media_item_colour_space',
+	];
+
+	if ( ! isset( $archive_fields[ $post_type ] ) ) {
+		return 'neutral';
+	}
+
+	$space = get_field( $archive_fields[ $post_type ], 'option' );
+	// Events default to purple; other CPT archives default to neutral.
+	if ( ! $space ) {
+		return 'event' === $post_type ? 'purple' : 'neutral';
+	}
+	return sanitize_key( $space );
+}
+
+
+/**
+ * Auto-apply a `nav-theme-{colour-space}` class to each primary nav menu item
+ * based on the destination page's `colour_space` ACF field. This drives the
+ * CSS hover tints in _site-header.scss so hovering "Work" on a maroon page
+ * still shows forest (because the Work page is forest), not maroon.
+ *
+ * Handles single-post links (reads `colour_space` from the post), post-type-
+ * archive links (reads from ACF Options for that CPT), and event archives
+ * (always purple).
+ *
+ * Existing manual `nav-theme-*` classes on a menu item are preserved — if an
+ * editor sets one explicitly in WP Admin → Appearance → Menus, it wins.
+ */
+add_filter( 'wp_nav_menu_objects', function ( array $items, stdClass $args ): array {
+	if ( 'primary' !== ( $args->theme_location ?? '' ) ) {
+		return $items;
+	}
+
+	foreach ( $items as $item ) {
+		// Skip if a manual nav-theme-* class is already set.
+		$has_manual = false;
+		foreach ( (array) $item->classes as $c ) {
+			if ( is_string( $c ) && 0 === strpos( $c, 'nav-theme-' ) ) {
+				$has_manual = true;
+				break;
+			}
+		}
+		if ( $has_manual ) {
+			continue;
+		}
+
+		$space = 'neutral';
+
+		if ( 'post_type' === $item->type && ! empty( $item->object_id ) ) {
+			// Single-post link → read 'colour_space' from the destination post.
+			$space = two_fiftyseven_get_post_colour_space( (int) $item->object_id );
+		} elseif ( 'post_type_archive' === $item->type && ! empty( $item->object ) ) {
+			// Post-type archive link → read from ACF Options for that CPT.
+			$space = two_fiftyseven_get_archive_colour_space( (string) $item->object );
+		} else {
+			continue;
+		}
+
+		if ( in_array( $space, [ 'forest', 'maroon', 'purple' ], true ) ) {
+			$item->classes[] = 'nav-theme-' . $space;
+		}
+	}
+
+	return $items;
+}, 10, 2 );
+
+
+/**
  * Theme setup
  */
 function two_fiftyseven_setup(): void {
@@ -972,11 +1089,27 @@ function two57_format_event_badge( int $post_id ): string {
 		}
 	}
 
-	if ( $location_type === 'offsite' && $location_name ) {
-		$badge .= ' @ ' . strtoupper( $location_name );
-	}
-
 	return $badge;
+}
+
+/**
+ * Events — Helper: get location badge text for offsite events.
+ *
+ * Returns e.g. "@ FAULTLINE" or empty string if on-site / no location set.
+ *
+ * @param int $post_id
+ * @return string
+ */
+function two57_get_event_location_badge( int $post_id ): string {
+	if ( ! function_exists( 'get_field' ) ) {
+		return '';
+	}
+	$location_type = (string) ( get_field( 'event_location_type', $post_id ) ?: 'two_fiftyseven' );
+	$location_name = (string) ( get_field( 'event_location_name', $post_id ) ?: '' );
+	if ( $location_type === 'offsite' && $location_name ) {
+		return '@ ' . strtoupper( $location_name );
+	}
+	return '';
 }
 
 
@@ -1401,12 +1534,23 @@ add_shortcode( 'two57_events', function ( array $atts = [] ): string {
 			echo '<table style="width:100%;border-collapse:collapse;" role="presentation">';
 			while ( $query->have_posts() ) {
 				$query->the_post();
-				$badge    = function_exists( 'two57_format_event_badge' ) ? two57_format_event_badge( get_the_ID() ) : '';
-				$excerpt  = has_excerpt() ? get_the_excerpt() : '';
-				$output  .= '<tr><td style="padding:16px 0;border-bottom:1px solid #e5e5e5;">';
-				$output  .= '<h3 style="margin:0 0 4px;font-size:18px;">' . esc_html( get_the_title() ) . '</h3>';
-				if ( $badge ) {
-					$output .= '<p style="margin:0 0 8px;font-size:13px;color:#6b7280;">' . esc_html( $badge ) . '</p>';
+				$badge          = function_exists( 'two57_format_event_badge' ) ? two57_format_event_badge( get_the_ID() ) : '';
+				$location_badge = function_exists( 'two57_get_event_location_badge' ) ? two57_get_event_location_badge( get_the_ID() ) : '';
+				$excerpt        = has_excerpt() ? get_the_excerpt() : '';
+				$output        .= '<tr><td style="padding:16px 0;border-bottom:1px solid #e5e5e5;">';
+				$output        .= '<h3 style="margin:0 0 4px;font-size:18px;">' . esc_html( get_the_title() ) . '</h3>';
+				if ( $badge || $location_badge ) {
+					$output .= '<p style="margin:0 0 8px;font-size:13px;color:#6b7280;">';
+					if ( $badge ) {
+						$output .= esc_html( $badge );
+					}
+					if ( $badge && $location_badge ) {
+						$output .= '<br>';
+					}
+					if ( $location_badge ) {
+						$output .= esc_html( $location_badge );
+					}
+					$output .= '</p>';
 				}
 				if ( $excerpt ) {
 					$output .= '<p style="margin:0 0 8px;font-size:15px;line-height:1.5;">' . esc_html( $excerpt ) . '</p>';

@@ -14,7 +14,7 @@
 		background-color: var(--color-surface-secondary);
 		position: relative;
 		overflow: hidden;
-		border-radius: var(--corner-radius-2xl);
+		border-radius: var(--corner-radius-card);
 		padding: var(--space-m);
         
 		&:has(.btn:hover) .cta-section__bg,
@@ -22,11 +22,12 @@
             opacity: 1;
 		}
 
-		// No background: transparent panel, no rounded box
+		// No background: transparent panel, no rounded box, no padding.
 		&--no-bg {
 			background-color: transparent;
 			outline: none;
 			border-radius: 0;
+			padding: 0;
 		}
 
 		// Two-column layout when an image is present
@@ -131,7 +132,7 @@
 
 	&__media {
 		--frame-aspect-ratio: 3 / 4;
-		border-radius: var(--corner-radius-m);
+		border-radius: var(--corner-radius-card-inner);
 		overflow: hidden;
 		position: relative;
 		z-index: 1;

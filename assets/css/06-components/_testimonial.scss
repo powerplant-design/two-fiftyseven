@@ -107,7 +107,7 @@
 .testimonial--left {
 	.swiper-slide {
 		align-items: flex-start;
-		padding-inline-start: calc( var(--space-xl) + var(--global-padding-inline, 1rem) );
+		padding-inline-start: calc( var(--space-m-l) + var(--global-padding-inline, 1rem) );
 	}
 
 	.testimonial__quote {
@@ -123,6 +123,7 @@
 .testimonial__quote {
 	margin: 0;
 	text-align: center;
+	line-height: 1.1 !important;
 	color: var(--color-content-primary);
 	max-inline-size: var(--layout-wide-size);
 	width: 100%;

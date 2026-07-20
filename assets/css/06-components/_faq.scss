@@ -17,8 +17,8 @@
 		background-color: var(--color-surface-secondary);
 		color: var(--color-content-primary);
 		border-block-end: none;
-		border-start-start-radius: var(--corner-radius-l);
-		border-start-end-radius: var(--corner-radius-l);
+		border-start-start-radius: var(--corner-radius-card);
+		border-start-end-radius: var(--corner-radius-card);
 		border-end-start-radius: 0;
 		border-end-end-radius: 0;
 		position: relative;
@@ -34,7 +34,7 @@
 		width: 100%;
 		background-color: var(--color-surface-secondary);
 		color: var(--color-content-primary);
-		border-radius: var(--corner-radius-2xl);
+		border-radius: var(--corner-radius-card);
 		border-start-start-radius: 0;
 		padding: var(--space-m) var(--space-s-xl);
 	}
@@ -120,8 +120,8 @@
         ul {
             padding-inline-start: var(--space-m);
             margin-block-end: var(--block-gap);
-            list-style-type: "/  ";
-
+			list-style-type: "/ ";
+			
 			li::marker {
 				font-family: var(--font-monospace-family);
 				color: var(--color-content-secondary);

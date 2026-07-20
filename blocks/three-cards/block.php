@@ -75,7 +75,7 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 									<h3 class="three-cards__card-title | line-clamp-1"><?php echo esc_html( $title ); ?></h3>
 								<?php endif; ?>
 								<?php if ( $description ) : ?>
-									<p class="three-cards__card-desc | line-clamp-3"><?php echo esc_html( $description ); ?></p>
+									<p class="three-cards__card-desc | line-clamp-5"><?php echo esc_html( $description ); ?></p>
 								<?php endif; ?>
 							</div>
 						</a>

@@ -15,7 +15,7 @@
 // ── Inner: switches between intro-left and intro-top ─────────
 .included-grid__inner {
 	display: grid;
-	gap: var(--space-l);
+	gap: var(--space-m-l);
 	grid-template-columns: 1fr;
 }
 
@@ -23,7 +23,7 @@
 .included-grid--intro-left .included-grid__inner {
 	@media (min-width: #{bp.$bp-md}) {
 		grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-		gap: var(--space-xl);
+		gap: var(--space-m-l);
 		align-items: start;
 	}
 }
@@ -40,6 +40,11 @@
 	}
 }
 
+.included-grid__eyebrow {
+	text-transform: uppercase;
+	color: var(--color-content-primary);
+}
+
 .included-grid__body {
 	color: var(--color-content-secondary);
 }
@@ -48,7 +53,7 @@
 .included-grid__cards {
 	--list-indent: 0;
 	display: grid;
-	gap: var(--space-s);
+	gap: var(--space-xs-s);
 	grid-template-columns: 1fr;
 
 	@media (min-width: #{bp.$bp-sm}) {
@@ -60,7 +65,7 @@
 .included-grid__card {
 	position: relative;
 	overflow: hidden;
-	border-radius: var(--corner-radius-xl);
+	border-radius: var(--corner-radius-card);
 	padding: var(--space-s) var(--space-s-m);
 	background-color: var(--color-surface-secondary);
 	color: var(--color-content-primary);
@@ -83,12 +88,9 @@
 }
 
 .included-grid__card-title {
-	font-weight: 700;
-	line-height: 1.2;
 	color: var(--color-content-primary);
 }
 
 .included-grid__card-body {
 	color: var(--color-content-secondary);
-	line-height: 1.45;
 }
