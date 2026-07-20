@@ -1,27 +1,249 @@
 @use '../02-tokens/breakpoints' as bp;
-/* Site footer */
 
 .site-footer {
+	--footer-muted: color-mix(in srgb, var(--color-content-unchanged) 65%, transparent);
+	--footer-line: color-mix(in srgb, var(--color-content-unchanged) 20%, transparent);
+
 	position: fixed;
 	inset-inline: 0;
 	bottom: 0;
 	z-index: 1;
-	padding-block-start: var(--space-2xl);
-	padding-block-end: var(--space-l);
+	padding-block: var(--space-3xl) var(--space-s);
+	background: var(--color-surface-unchanged);
+	color: var(--color-content-unchanged);
 	font-size: var(--text-s-size, 0.875rem);
-	color: var(--color-content-primary);
-    background-color: var(--color-surface-primary);
-	
+	min-height: 100vh;
+
 	a {
-		color: var(--color-content-primary);
+		color: var(--color-content-unchanged);
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
 	}
 
-	&__logo {
+		h4 {
+		margin: 0 0 var(--space-s);
+		font-size: var(--text-s-size, 0.875rem);
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+		color: var(--color-content-unchanged);
+	}
+
+	/* ── Top: nav columns + signup ──────────────────────────────── */
+	&__top {
+		display: grid;
+		grid-template-columns: 2fr 1fr 1fr 1fr 3fr;
+		gap: var(--space-l);
+		padding-block-end: var(--space-2xs);
+		// border-bottom: 1px solid var(--footer-line);
+		// margin-block-end: var(--space-xl);
+
+		@media (max-width: bp.$bp-md) {
+			grid-template-columns: 1fr 1fr;
+		}
+
+		@media (max-width: bp.$bp-sm) {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	&__nav {
+		display: contents;
+	}
+
+	&__col {
+		ul {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		li {
+			margin-block-end: var(--space-xs);
+		}
+
+		a {
+			color: var(--footer-muted);
+
+			&:hover {
+				color: var(--color-content-unchanged);
+			}
+		}
+	}
+
+	&__address {
+		font-style: normal;
+		margin-block-end: var(--space-s);
+		color: var(--footer-muted);
+	}
+
+	&__note {
+		font-size: var(--text-xs-size, 0.75rem);
+		color: var(--footer-muted);
+		margin-block-end: var(--space-s);
+	}
+
+	&__maplink {
+		font-weight: 600;
+		font-size: var(--text-xs-size, 0.75rem);
+		text-transform: uppercase;
+		letter-spacing: 0.05em;
+	}
+
+	/* ── Signup form ────────────────────────────────────────────── */
+	&__signup {
+		p {
+			color: var(--footer-muted);
+			font-size: var(--text-xs-size, 0.75rem);
+			margin-block-end: var(--space-s);
+		}
+
+		.mailpoet_form {
+			display: flex;
+			flex-wrap: wrap;
+			gap: var(--space-xs);
+		}
+
+		.mailpoet_paragraph {
+			margin: 0;
+			flex: 1 1 180px;
+			display: grid;
+			gap: var(--space-2xs);
+		}
+
+		.mailpoet_text {
+			width: 100%;
+			padding: var(--space-xs) var(--space-s);
+			font-size: var(--text-s-size, 0.875rem);
+			border: var(--border-width-thin) solid var(--footer-line);
+			border-radius: var(--corner-radius-l);
+			background: color-mix(in srgb, var(--color-surface-unchanged) 85%, var(--color-content-unchanged));
+			color: var(--color-content-unchanged);
+
+			&::placeholder {
+				color: var(--footer-muted);
+			}
+
+			&:focus-visible {
+				outline: 2px solid var(--color-content-unchanged);
+				outline-offset: 2px;
+			}
+		}
+
+		.mailpoet_submit {
+			width: 100%;
+			padding: var(--space-s) var(--space-l);
+			font-family: var(--font-monospace-family);
+			font-size: var(--text-xs-size, 0.75rem);
+			font-weight: 400;
+			letter-spacing: var(--kerning-caps);
+			text-transform: uppercase;
+			border: var(--border-width-thin) solid transparent;
+			border-radius: var(--corner-radius-round);
+			color: var(--color-btn-primary-text);
+			background-color: var(--color-btn-primary-bg);
+			background-image:
+				linear-gradient(
+					var(--color-btn-primary-bg),
+					var(--color-btn-primary-bg)
+				),
+				linear-gradient(
+					156.52deg,
+					hsl(0 0% 100% / 0.22) 2%,
+					hsl(0 0% 100% / 0.00) 40%,
+					hsl(0 0% 100% / 0.00) 54%,
+					hsl(0 0% 100% / 0.06) 93%
+				);
+			background-origin: padding-box, border-box;
+			background-clip: padding-box, border-box;
+			cursor: pointer;
+			transition:
+				opacity 0.2s ease,
+				filter 0.2s ease;
+
+			&:hover {
+				filter: brightness(1.15);
+			}
+
+			&:active {
+				filter: brightness(0.94);
+			}
+
+			&:focus-visible {
+				outline: 2px solid var(--color-border-button);
+				outline-offset: 3px;
+			}
+		}
+
+		.mailpoet_message {
+			flex: 0 0 100%;
+			font-size: var(--text-xs-size, 0.75rem);
+		}
+
+		.mailpoet_validate_success {
+			color: var(--color-content-unchanged);
+		}
+	}
+
+	/* ── Beliefs ticker ─────────────────────────────────────────── */
+	&__beliefs {
+		overflow: hidden;
+		padding-block: var(--space-m);
+		border-top: 1px solid var(--footer-line);
+		border-bottom: 1px solid var(--footer-line);
+		margin-block-end: var(--space-l);
+	}
+
+	&__beliefs-track {
+		display: flex;
+		gap: var(--space-xl);
+		width: max-content;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		font-family: var(--font-monospace-family);
+		font-size: var(--text-s-size, 0.75rem);
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+		color: var(--footer-muted);
+		animation: footer-beliefs-scroll 30s linear infinite;
+
+		li {
+			white-space: nowrap;
+
+			&::before {
+				content: '/';
+				margin-inline-end: var(--space-xl);
+				color: var(--footer-muted);
+				opacity: 0.4;
+			}
+		}
+	}
+
+	@keyframes footer-beliefs-scroll {
+		from { transform: translateX(0); }
+		to { transform: translateX(-50%); }
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&__beliefs-track {
+			animation: none;
+			flex-wrap: wrap;
+			justify-content: center;
+		}
+	}
+
+	/* ── Large wordmark ─────────────────────────────────────────── */
+	&__wordmark {
 		display: block;
-		width: 100%;
-		color: var(--color-content-primary);
+		width: 85%;
+		margin: 0 auto;
+		color: var(--color-content-unchanged);
+		margin-block-end: 0;
 		transition: none;
-		will-change: transform;
 
 		svg {
 			display: block;
@@ -30,9 +252,13 @@
 		}
 	}
 
-	@media (max-width: #{bp.$bp-sm}) {
-		.site-footer__links {
-			--repel-horizontal-alignment: center;
-		}
+	/* ── Bottom bar ─────────────────────────────────────────────── */
+	&__bottom {
+		display: flex;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: var(--space-s);
+		font-size: var(--text-xs-size, 0.75rem);
+		color: var(--footer-muted);
 	}
 }

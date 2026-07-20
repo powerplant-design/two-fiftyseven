@@ -19,6 +19,7 @@ let scrollListener = null;
 export function initFooter() {
 	const footer = document.querySelector( '.site-footer' );
 	const logo   = document.querySelector( '.site-footer__logo' );
+	const brain  = document.querySelector( '.page-layout__bg' );
 	if ( ! footer ) return;
 
 	// ── 1. Height tracking ─────────────────────────────────────────────────
@@ -32,8 +33,8 @@ export function initFooter() {
 	setHeight();
 	new ResizeObserver( setHeight ).observe( footer );
 
-	// ── 2. Logo parallax via Lenis scroll event ────────────────────────────
-	if ( ! logo ) return;
+	// ── 2. Logo parallax + brain coral scroll-out via Lenis ────────────────
+	if ( ! logo && ! brain ) return;
 
 	const onScroll = ( { scroll } ) => {
 		const docHeight    = document.documentElement.scrollHeight;
@@ -43,14 +44,22 @@ export function initFooter() {
 		// The scroll position at which the footer first starts to peek out.
 		const revealStart = docHeight - winHeight - footerHeight;
 
-		if ( scroll <= revealStart ) {
-			logo.style.transform = '';
-			return;
-		}
+		if ( scroll > revealStart ) {
+			const progress = Math.min( ( scroll - revealStart ) / footerHeight, 1 );
 
-		// progress: 0 → footer just appearing, 1 → fully revealed.
-		const progress = Math.min( ( scroll - revealStart ) / footerHeight, 1 );
-		logo.style.transform = `translateY(${ -progress * PARALLAX_DISTANCE }px)`;
+			// Logo parallax: float up as footer reveals.
+			if ( logo ) {
+				logo.style.transform = `translateY(${ -progress * PARALLAX_DISTANCE }px)`;
+			}
+
+			// Brain coral: scroll upward out of the way of the entering footer.
+			if ( brain ) {
+				brain.style.transform = `translateY(${ -progress * footerHeight }px)`;
+			}
+		} else {
+			if ( logo ) logo.style.transform = '';
+			if ( brain ) brain.style.transform = '';
+		}
 	};
 
 	// Lenis may not be ready immediately — poll until it is then attach.
