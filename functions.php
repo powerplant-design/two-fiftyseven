@@ -67,8 +67,12 @@ function two_fiftyseven_setup(): void {
 	add_theme_support( 'align-wide' );
 
 	register_nav_menus( [
-		'primary'   => __( 'Primary Navigation', 'two-fiftyseven' ),
-		'secondary' => __( 'Secondary Navigation', 'two-fiftyseven' ),
+		'primary'          => __( 'Primary Navigation', 'two-fiftyseven' ),
+		'secondary'        => __( 'Secondary Navigation', 'two-fiftyseven' ),
+		'footer_work'      => __( 'Footer Work', 'two-fiftyseven' ),
+		'footer_meet_host' => __( 'Footer Meet + Host', 'two-fiftyseven' ),
+		'footer_about'     => __( 'Footer About', 'two-fiftyseven' ),
+		'footer_fine_print' => __( 'Footer Fine Print', 'two-fiftyseven' ),
 	] );
 
 	load_theme_textdomain( 'two-fiftyseven', get_template_directory() . '/languages' );
@@ -440,6 +444,21 @@ add_action( 'acf/init', function (): void {
 		'category'        => 'media',
 		'icon'            => 'format-gallery',
 		'keywords'        => [ 'gallery', 'slider', 'images', 'fullscreen', 'scroll' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'included-grid',
+		'title'           => __( '257 Included Grid', 'two-fiftyseven' ),
+		'description'     => __( '"What\'s included" panel: heading and intro beside a grid of tile cards. For room, membership, and event inclusions.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/included-grid/block.php',
+		'category'        => 'layout',
+		'icon'            => 'screenoptions',
+		'keywords'        => [ 'included', 'inclusions', 'tiles', 'what', 'features', 'list' ],
 		'mode'            => 'edit',
 		'supports'        => [
 			'innerBlocks' => false,
@@ -1345,3 +1364,84 @@ function two57_cpt_archive_ajax(): void {
 }
 add_action( 'wp_ajax_two57_cpt_archive',        'two57_cpt_archive_ajax' );
 add_action( 'wp_ajax_nopriv_two57_cpt_archive', 'two57_cpt_archive_ajax' );
+
+
+/**
+ * [two57_events] — Shortcode for MailPoet email templates.
+ *
+ * Renders a list of upcoming events suitable for embedding in newsletters.
+ * Each event shows: title, date badge, excerpt, and a "Read more" link.
+ *
+ * Attributes:
+ *   limit     — Number of events to show (default: 5).
+ *   show_past — Set to "1" to show past events instead (default: 0).
+ *
+ * Usage in MailPoet template:
+ *   [two57_events limit="3"]
+ */
+add_shortcode( 'two57_events', function ( array $atts = [] ): string {
+	$atts = shortcode_atts( [
+		'limit'     => 5,
+		'show_past' => '0',
+	], $atts );
+
+	$args = two57_get_event_query_args( $atts['show_past'] === '1' ? 'past' : 'upcoming', 1 );
+	$args['posts_per_page'] = max( 1, (int) $atts['limit'] );
+
+	$query    = new WP_Query( $args );
+	$output   = '';
+	$template = get_template_directory() . '/inc/email-events-shortcode.php';
+
+	if ( $query->have_posts() ) {
+		ob_start();
+		if ( file_exists( $template ) ) {
+			include $template;
+		} else {
+			// Fallback inline rendering if template file is missing.
+			echo '<table style="width:100%;border-collapse:collapse;" role="presentation">';
+			while ( $query->have_posts() ) {
+				$query->the_post();
+				$badge    = function_exists( 'two57_format_event_badge' ) ? two57_format_event_badge( get_the_ID() ) : '';
+				$excerpt  = has_excerpt() ? get_the_excerpt() : '';
+				$output  .= '<tr><td style="padding:16px 0;border-bottom:1px solid #e5e5e5;">';
+				$output  .= '<h3 style="margin:0 0 4px;font-size:18px;">' . esc_html( get_the_title() ) . '</h3>';
+				if ( $badge ) {
+					$output .= '<p style="margin:0 0 8px;font-size:13px;color:#6b7280;">' . esc_html( $badge ) . '</p>';
+				}
+				if ( $excerpt ) {
+					$output .= '<p style="margin:0 0 8px;font-size:15px;line-height:1.5;">' . esc_html( $excerpt ) . '</p>';
+				}
+				$output .= '<a href="' . esc_url( get_permalink() ) . '" style="font-size:14px;font-weight:600;color:#1a1a1a;text-decoration:underline;">Read more →</a>';
+				$output .= '</td></tr>';
+			}
+			echo '</table>';
+		}
+		$output = ob_get_clean();
+	}
+
+	wp_reset_postdata();
+
+	return $output;
+} );
+
+/**
+ * Render a MailPoet signup form by name instead of numeric ID.
+ *
+ * Makes the theme portable across environments — as long as the form has
+ * the same name on staging/production, the correct ID is resolved at runtime.
+ */
+function two57_mailpoet_form( string $form_name = 'Newsletter Signup' ): string {
+	if ( ! class_exists( '\MailPoet\DI\ContainerWrapper' ) ) {
+		return '';
+	}
+	try {
+		$repository = \MailPoet\DI\ContainerWrapper::getInstance()->get( \MailPoet\Form\FormsRepository::class );
+		$form       = $repository->findOneBy( [ 'name' => $form_name ] );
+		if ( ! $form ) {
+			return '';
+		}
+		return do_shortcode( '[mailpoet_form id="' . (int) $form->getId() . '"]' );
+	} catch ( \Exception $e ) {
+		return '';
+	}
+}

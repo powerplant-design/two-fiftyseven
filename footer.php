@@ -1,31 +1,94 @@
 
 
-
 </main>
 
 <footer class="site-footer">
 	<div class="wrapper">
-		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-footer__logo" aria-label="<?php bloginfo( 'name' ); ?>">
+
+		<div class="site-footer__top">
+			<nav class="site-footer__nav" aria-label="Footer">
+				<div class="site-footer__col">
+					<h4>Find us</h4>
+					<address class="site-footer__address">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara</address>
+					<p class="site-footer__note">Central lift access from both the Willis Street and Victoria Street entrances. The Victoria Street entrance is opposite Matapihi ki te Ao Nui.</p>
+					<a class="site-footer__maplink" href="https://www.google.com/maps/search/?api=1&query=57+Willis+Street+Te+Whanganui-a-Tara" target="_blank" rel="noopener">View on map</a>
+				</div>
+				<div class="site-footer__col">
+					<h4>Workspace</h4>
+					<?php wp_nav_menu( [
+						'theme_location' => 'footer_work',
+						'container'      => false,
+						'menu_class'     => '',
+						'fallback_cb'    => false,
+					] ); ?>
+				</div>
+				<div class="site-footer__col">
+					<h4>Meet &amp; Host</h4>
+					<?php wp_nav_menu( [
+						'theme_location' => 'footer_meet_host',
+						'container'      => false,
+						'menu_class'     => '',
+						'fallback_cb'    => false,
+					] ); ?>
+				</div>
+				<div class="site-footer__col site-footer__col--two-col">
+					<h4>About</h4>
+					<?php wp_nav_menu( [
+						'theme_location' => 'footer_about',
+						'container'      => false,
+						'menu_class'     => '',
+						'fallback_cb'    => false,
+					] ); ?>
+				</div>
+			</nav>
+
+			<div class="site-footer__signup">
+				<h4>Pānui</h4>
+				<p>Occasional notes from inside two/fiftyseven · what's on, what's changed, what we're thinking about.</p>
+				<?php echo two57_mailpoet_form( 'Newsletter Signup' ); ?>
+			</div>
+		</div>
+
+		<div class="site-footer__beliefs" aria-label="What we believe">
+			<ul class="site-footer__beliefs-track">
+				<li>diversity is resilience</li>
+				<li>radical equality is good for all</li>
+				<li>complete decolonisation is a necessary future</li>
+				<li>climate justice is a human and environmental imperative</li>
+				<li aria-hidden="true">diversity is resilience</li>
+				<li aria-hidden="true">radical equality is good for all</li>
+				<li aria-hidden="true">complete decolonisation is a necessary future</li>
+				<li aria-hidden="true">climate justice is a human and environmental imperative</li>
+			</ul>
+		</div>
+
+		<a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="site-footer__wordmark" aria-label="<?php bloginfo( 'name' ); ?>">
 			<?php
 			$logo = get_template_directory() . '/assets/images/logo-257.svg';
 			if ( file_exists( $logo ) ) {
-				// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 				echo file_get_contents( $logo );
 			} else {
 				bloginfo( 'name' );
 			}
 			?>
 		</a>
-		<div class="site-footer__links repel">
-			<p>&copy; <?php echo esc_html( date( 'Y' ) ); ?> <?php bloginfo( 'name' ); ?></p>
-			<a href="/privacy-policy/" >Privacy Policy</a>
-			<a href="https://powerplant.design" target="_blank" rel="noopener">Site 💚 Power Plant</a>
-		</div>
-	</div>
 
+		<div class="site-footer__bottom">
+			<span>&copy; <?php echo esc_html( date( 'Y' ) ); ?> two/fiftyseven Limited</span>
+			<?php wp_nav_menu( [
+				'theme_location' => 'footer_fine_print',
+				'container'      => false,
+				'menu_class'     => '',
+				'fallback_cb'    => false,
+				'depth'          => 1,
+			] ); ?>
+			<span>Aotearoa / New Zealand</span>
+		</div>
+
+	</div>
 </footer>
 </div><!-- /#swup -->
 
-<?php wp_footer(); ?> 
+<?php wp_footer(); ?>
 </body>
 </html>

@@ -8,6 +8,10 @@
 	border-end-start-radius: var(--corner-radius-xl);
 	border-end-end-radius: var(--corner-radius-xl);
 	padding-block-end: var(--space-xl-3xl);
-	margin-block-end: var(--footer-height, 20rem);
+	margin-block-end: var(--footer-height, 100vh);
 	outline: var(--border-tertiary);
+
+	@media (max-width: 640px) {
+		margin-block-end: 0;
+	}
 }

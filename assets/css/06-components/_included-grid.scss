@@ -1,0 +1,94 @@
+@use '../02-tokens/breakpoints' as bp;
+
+// ============================================================
+// Included Grid Block
+// ============================================================
+// "What's included" panel: heading + intro beside a grid of
+// chrome'd tiles. Used on room, membership and event pages to
+// list inclusions without becoming a spec sheet.
+// ============================================================
+
+.included-grid {
+	padding-block: var(--space-xl-3xl);
+}
+
+// ── Inner: switches between intro-left and intro-top ─────────
+.included-grid__inner {
+	display: grid;
+	gap: var(--space-l);
+	grid-template-columns: 1fr;
+}
+
+// Intro-left layout: 1fr intro, 2fr tiles at medium+ screens.
+.included-grid--intro-left .included-grid__inner {
+	@media (min-width: #{bp.$bp-md}) {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+		gap: var(--space-xl);
+		align-items: start;
+	}
+}
+
+// ── Intro block ──────────────────────────────────────────────
+.included-grid__intro {
+	opacity: 0;
+	transform: translateY(1.5rem);
+	transition: opacity 0.4s ease-out, transform 0.8s ease-out;
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.included-grid__body {
+	color: var(--color-content-secondary);
+}
+
+// ── Tile grid ────────────────────────────────────────────────
+.included-grid__cards {
+	--list-indent: 0;
+	display: grid;
+	gap: var(--space-s);
+	grid-template-columns: 1fr;
+
+	@media (min-width: #{bp.$bp-sm}) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+// ── Tile ─────────────────────────────────────────────────────
+.included-grid__card {
+	position: relative;
+	overflow: hidden;
+	border-radius: var(--corner-radius-xl);
+	padding: var(--space-s) var(--space-s-m);
+	background-color: var(--color-surface-secondary);
+	color: var(--color-content-primary);
+
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+
+	opacity: 0;
+	transform: translateY(2rem);
+	transition:
+		opacity 0.4s ease-out var(--delay, 0ms),
+		transform 0.8s ease-out var(--delay, 0ms),
+		background-color var(--transition-speed) ease;
+
+	.included-grid__cards.is-inview & {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.included-grid__card-title {
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--color-content-primary);
+}
+
+.included-grid__card-body {
+	color: var(--color-content-secondary);
+	line-height: 1.45;
+}

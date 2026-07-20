@@ -1,0 +1,163 @@
+{
+    "key": "group_two57_block_included_grid",
+    "title": "257 Included Grid Block",
+    "fields": [
+        {
+            "key": "field_two57_ig_heading",
+            "label": "Heading",
+            "name": "ig_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "The question or promise, e.g. \"what's included with every room booking?\".",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "e.g. what's included with every room booking?",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_ig_intro",
+            "label": "Intro",
+            "name": "ig_intro",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Two or three sentences of supporting copy. Sits below the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "default_value": "",
+            "new_lines": "",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_ig_layout",
+            "label": "Layout",
+            "name": "ig_layout",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Intro-left puts heading + intro beside the tile grid. Intro-top stacks them above the grid.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "50%", "class": "", "id": "" },
+            "choices": {
+                "intro-left": "Intro Left (default)",
+                "intro-top": "Intro Top"
+            },
+            "default_value": "intro-left",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_two57_ig_colour_space",
+            "label": "Colour Space",
+            "name": "ig_colour_space",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Optional override. Leave blank to inherit the page's colour space.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": { "width": "50%", "class": "", "id": "" },
+            "choices": {
+                "neutral": "Neutral",
+                "maroon": "Maroon",
+                "forest": "Forest",
+                "purple": "Purple"
+            },
+            "default_value": "",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 1,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_two57_ig_items",
+            "label": "Tiles",
+            "name": "ig_items",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Add between 2 and 8 tiles. Each tile is a short \"you get X\" claim.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": { "width": "", "class": "", "id": "" },
+            "min": 2,
+            "max": 8,
+            "layout": "block",
+            "button_label": "Add Tile",
+            "rows_per_page": 20,
+            "collapsed": "",
+            "sub_fields": [
+                {
+                    "key": "field_two57_ig_item_title",
+                    "label": "Title",
+                    "name": "item_title",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "Short bold tile heading, e.g. \"AV, ready to go\".",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": { "width": "40%", "class": "", "id": "" },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "e.g. AV, ready to go",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_two57_ig_items"
+                },
+                {
+                    "key": "field_two57_ig_item_body",
+                    "label": "Body",
+                    "name": "item_body",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "One or two sentences describing what's included.",
+                    "required": 1,
+                    "conditional_logic": 0,
+                    "wrapper": { "width": "60%", "class": "", "id": "" },
+                    "default_value": "",
+                    "new_lines": "",
+                    "maxlength": "",
+                    "rows": 2,
+                    "placeholder": "",
+                    "parent_repeater": "field_two57_ig_items"
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf/included-grid"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the heading, intro and tiles in the 257 Included Grid block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1783296000
+}

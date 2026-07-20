@@ -330,15 +330,27 @@ The corresponding public key (`~/.ssh/kinsta_deploy.pub`) must be added to Kinst
 
 MyKinsta → Two-Fiftyseven → **Staging** tab → **"Push to Live"** → select **Specific files or folders**:
 - ✅ themes
-- ✅ plugins
+- ☐ plugins (only tick if plugin files were intentionally changed on staging)
 - ☐ uploads (always untick — never overwrite live media)
 - ☐ Database (untick unless intentionally migrating content)
+
+### Theme-only push (default collaborator workflow)
+
+For normal code releases, push **theme files only** from staging to live.
+
+1. Open MyKinsta → Site → Staging → Push to Live.
+2. Select **Files** → **Specific files or folders**.
+3. Tick only **wp-content/themes**.
+4. Leave **plugins**, **uploads**, and **Database** unticked.
+5. Confirm and run the push.
+
+Use this as the default workflow for all developers unless there is a deliberate plugin or media migration.
 
 ### Files only vs. files + database
 
 Once the client is adding content on live, always push **files only** — never overwrite the database:
 
-- **Files only** — theme, plugins → use for all routine deploys
+- **Files only** — theme only by default, add plugins only when intentionally updated
 - **Files + database** — use only for initial launch, or when migrating a full content rebuild from local
 
 ### Plugin updates

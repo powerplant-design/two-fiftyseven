@@ -42,9 +42,8 @@ Usage:
 .page-layout__bg {
 	position: fixed;
 	top: 0;
-    left: 0;
-    right: 0;
-	grid-column: 1 / -1;
+	left: 0;
+	right: 0;
 	z-index: -1;
 	overflow: hidden;
 	pointer-events: none;
@@ -52,7 +51,7 @@ Usage:
 	mask-image: linear-gradient(to bottom, black 0%, transparent 40%);
 	-webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 40%);
 	opacity: 0.5;
-	
+
 	svg {
 		fill: currentColor;
 		width: 100%;
