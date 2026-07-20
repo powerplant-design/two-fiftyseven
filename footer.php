@@ -15,25 +15,30 @@
 				</div>
 				<div class="site-footer__col">
 					<h4>Workspace</h4>
-					<ul>
-						<li><a href="<?php echo esc_url( home_url( '/base/' ) ); ?>">Base</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/hub/' ) ); ?>">Hub</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/desk/' ) ); ?>">Desk</a></li>
-					</ul>
+					<?php wp_nav_menu( [
+						'theme_location' => 'footer_work',
+						'container'      => false,
+						'menu_class'     => '',
+						'fallback_cb'    => false,
+					] ); ?>
 				</div>
 				<div class="site-footer__col">
 					<h4>Meet &amp; Host</h4>
-					<ul>
-						<li><a href="<?php echo esc_url( home_url( '/meetings/' ) ); ?>">Meetings</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/host-events/' ) ); ?>">Events</a></li>
-					</ul>
+					<?php wp_nav_menu( [
+						'theme_location' => 'footer_meet_host',
+						'container'      => false,
+						'menu_class'     => '',
+						'fallback_cb'    => false,
+					] ); ?>
 				</div>
-				<div class="site-footer__col">
+				<div class="site-footer__col site-footer__col--two-col">
 					<h4>About</h4>
-					<ul>
-						<li><a href="<?php echo esc_url( home_url( '/korero/' ) ); ?>">Kōrero</a></li>
-						<li><a href="<?php echo esc_url( home_url( '/contact/' ) ); ?>">Contact</a></li>
-					</ul>
+					<?php wp_nav_menu( [
+						'theme_location' => 'footer_about',
+						'container'      => false,
+						'menu_class'     => '',
+						'fallback_cb'    => false,
+					] ); ?>
 				</div>
 			</nav>
 
@@ -70,6 +75,13 @@
 
 		<div class="site-footer__bottom">
 			<span>&copy; <?php echo esc_html( date( 'Y' ) ); ?> two/fiftyseven Limited</span>
+			<?php wp_nav_menu( [
+				'theme_location' => 'footer_fine_print',
+				'container'      => false,
+				'menu_class'     => '',
+				'fallback_cb'    => false,
+				'depth'          => 1,
+			] ); ?>
 			<span>Aotearoa / New Zealand</span>
 		</div>
 
