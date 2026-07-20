@@ -172,6 +172,49 @@ the original URLs. No need to update historical content.
 
 ---
 
+## Local → Staging/Production Deployment
+
+MailPoet stores its configuration *in the database* (settings, forms, templates,
+subscribers, campaigns). Theme code deploys via git; MailPoet data must be
+recreated on the target environment.
+
+### What to Deploy
+
+| Asset | How | Notes |
+|---|---|---|
+| Theme files (footer, CSS, shortcode) | Git push | Includes `[two57_events]` shortcode and signup form styling |
+| MailPoet plugin | Sync `wp-content/plugins/mailpoet/` | Or install fresh via WP Admin → Plugins |
+
+### What to Set Up on Target
+
+1. **Install & activate MailPoet** — via WP Admin
+2. **Run setup wizard** — connect to the same MailPoet.net account (API key is auto-synced from MailPoet's servers, not stored in the local DB)
+3. **Create signup form** — MailPoet → Forms → New Form
+   - Name it **"Newsletter Signup"** (important — the theme looks up the form by this name, not by numeric ID)
+   - Add fields: Name (optional), Email (required)
+   - Enable double opt-in
+4. **Create segments** — MailPoet → Lists → Add a "Newsletter mailing list" segment
+   - Assign the signup form to this segment
+5. **Design email template** — MailPoet → Emails → New Email → Standard newsletter
+6. **Import subscribers** — MailPoet → Subscribers → Import → From Mailchimp (API key)
+7. **Configure DNS** — SPF/DKIM records for sending domain (MailPoet provides values)
+
+### Why Not Export/Import the DB Tables?
+
+MailPoet stores data across ~15 tables (`wp_mailpoet_*`). Selective table export
+is possible but fragile — the setup wizard on the target environment needs to run
+anyway to establish the MailPoet.net connection. Recreating the one form and
+running the Mailchimp import is simpler and more reliable.
+
+### Form ID Portability
+
+The theme uses `two57_mailpoet_form( 'Newsletter Signup' )` (defined in
+`functions.php`), which looks up the form by name via the MailPoet API.
+This means the form can have any numeric ID on any environment — the theme
+will find it automatically as long as the name matches.
+
+---
+
 ## Kinsta Considerations
 
 | Concern | Resolution |

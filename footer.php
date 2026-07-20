@@ -45,7 +45,7 @@
 			<div class="site-footer__signup">
 				<h4>Pānui</h4>
 				<p>Occasional notes from inside two/fiftyseven · what's on, what's changed, what we're thinking about.</p>
-				<?php echo do_shortcode( '[mailpoet_form id="3"]' ); ?>
+				<?php echo two57_mailpoet_form( 'Newsletter Signup' ); ?>
 			</div>
 		</div>
 

@@ -1408,3 +1408,27 @@ add_shortcode( 'two57_events', function ( array $atts = [] ): string {
 
 	return $output;
 } );
+
+/**
+ * Render a MailPoet signup form by name instead of numeric ID.
+ *
+ * Makes the theme portable across environments — as long as the form has
+ * the same name on staging/production, the correct ID is resolved at runtime.
+ */
+function two57_mailpoet_form( string $form_name = 'Newsletter Signup' ): string {
+	if ( ! class_exists( '\MailPoet\API\API' ) ) {
+		return '';
+	}
+	try {
+		$api   = \MailPoet\API\API::MP( 'v1' );
+		$forms = $api->getForms();
+		foreach ( $forms as $form ) {
+			if ( isset( $form['name'] ) && $form['name'] === $form_name ) {
+				return do_shortcode( '[mailpoet_form id="' . (int) $form['id'] . '"]' );
+			}
+		}
+	} catch ( \Exception $e ) {
+		return '';
+	}
+	return '';
+}
