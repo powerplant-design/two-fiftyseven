@@ -28,8 +28,8 @@
 }
 
 @mixin btn-secondary-invert {
-	color: var(--color-btn-secondary-bg);
-	border-color: var(--color-btn-secondary-bg);
+	color: var(--color-btn-primary-invert-bg);
+	border-color: var(--color-btn-primary-invert-bg);
 	background-color: color-mix(in srgb, var(--color-btn-secondary-text) 20%, transparent);
 	backdrop-filter: blur(30px);
 	-webkit-backdrop-filter: blur(30px);

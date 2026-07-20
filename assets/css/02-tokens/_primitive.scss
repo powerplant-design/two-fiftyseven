@@ -69,6 +69,8 @@ html {
 	--corner-radius-2xl: 2rem;
 	--corner-radius-3xl: 3rem;
 	--corner-radius-round: 9999rem;
+	--corner-radius-card: clamp(0.5rem, 0.32rem + 0.89vw, 0.75rem);
+	--corner-radius-card-inner: clamp(0.25rem, 0.07rem + 0.89vw, 0.5rem);
 
 	/* -----------------------------------------------
 	Fonts

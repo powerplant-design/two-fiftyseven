@@ -22,9 +22,8 @@ if ( ! $post_id ) {
 $title         = get_the_title( $post_id );
 $permalink     = get_permalink( $post_id );
 $excerpt       = get_the_excerpt( $post_id );
-$badge         = function_exists( 'two57_format_event_badge' ) ? two57_format_event_badge( $post_id ) : '';
-$location_type = function_exists( 'get_field' ) ? (string) ( get_field( 'event_location_type', $post_id ) ?: 'two_fiftyseven' ) : 'two_fiftyseven';
-$location_name = function_exists( 'get_field' ) ? (string) ( get_field( 'event_location_name', $post_id ) ?: '' ) : '';
+$badge          = function_exists( 'two57_format_event_badge' ) ? two57_format_event_badge( $post_id ) : '';
+$location_badge = function_exists( 'two57_get_event_location_badge' ) ? two57_get_event_location_badge( $post_id ) : '';
 
 $show_cat_badges = ! empty( $args['show_cat_badges'] );
 $cat_names       = [];
@@ -42,10 +41,13 @@ $has_thumb     = has_post_thumbnail( $post_id );
 
 		<div class="event-card__body | stack">
 
-			<?php if ( $badge || $cat_names ) : ?>
+			<?php if ( $badge || $location_badge || $cat_names ) : ?>
 				<div class="cluster badge-cluster">
 					<?php if ( $badge ) : ?>
 						<span class="badge event-card__badge" data-size="medium"<?php if ( $badge_color ) : ?> data-color="<?php echo esc_attr( $badge_color ); ?>"<?php endif; ?>><?php echo esc_html( $badge ); ?></span>
+					<?php endif; ?>
+					<?php if ( $location_badge ) : ?>
+						<span class="badge" data-size="medium" data-color="purple"><?php echo esc_html( $location_badge ); ?></span>
 					<?php endif; ?>
 					<?php foreach ( $cat_names as $cat_name ) : ?>
 						<span class="badge" data-size="medium" data-color="forest"><?php echo esc_html( $cat_name ); ?></span>

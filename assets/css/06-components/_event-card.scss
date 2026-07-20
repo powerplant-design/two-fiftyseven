@@ -25,7 +25,7 @@
 		opacity  0.4s ease-out var(--delay, 0ms),
 		transform 0.8s ease-out var(--delay, 0ms),
 		background-color var(--transition-speed) ease;
-	border-radius: var(--corner-radius-xl);
+	border-radius: var(--corner-radius-card);
 	overflow: hidden;
 	backdrop-filter: blur(4px);
 	background-color: var(--color-surface-secondary);
@@ -52,7 +52,7 @@
 	text-decoration: none;
 	color: inherit;
 	block-size: 100%;
-	border-radius: var(--corner-radius-xl);
+	border-radius: var(--corner-radius-card);
 	overflow: hidden;
 	transition: background-color var(--transition-speed) ease;
 	
@@ -80,12 +80,11 @@
 .event-card__body {
 	flex: 1 1 0;
 	min-width: 0;
-	padding: var(--space-s);
-	padding-block-start: var(--space-xs);
+	padding: var(--space-xs);
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-xs);
-	border-radius: var(--corner-radius-l);
+	border-radius: var(--corner-radius-card);
 	color: var(--color-content-primary);
 
 }
@@ -101,7 +100,7 @@
 	max-width: 200px;
 	aspect-ratio: 210 / 297;
 	overflow: hidden;
-	border-radius: var(--corner-radius-m);
+	border-radius: var(--corner-radius-card-inner);
 
 	img {
 		inline-size: 100%;
@@ -125,7 +124,7 @@
 	}
 	
 	.event-card__body {
-		padding: var(--space-xs);
+		padding: var(--space-2xs);
 		background: none;
 	}
 
@@ -133,7 +132,7 @@
 		display: block;
 		max-width: 100%;
 		aspect-ratio: 16 / 9;
-		border-radius: var(--corner-radius-m);
+		border-radius: var(--corner-radius-card-inner);
 
 		&:not(:has(img)) {
 			display: none;

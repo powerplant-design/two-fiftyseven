@@ -21,7 +21,7 @@ Description: Card grid for the posts index page (home.php).
 
 .post-index__item {
 	background-color: var(--color-surface-secondary);
-	border-radius: var(--corner-radius-xl);
+	border-radius: var(--corner-radius-card);
 	overflow: hidden;
 	padding: var(--space-2xs);
 	display: flex;
@@ -57,7 +57,7 @@ Description: Card grid for the posts index page (home.php).
 
 .post-index__image {
 	// background: linear-gradient(to left, var(--color-surface-primary), var(--color-trans));
-	border-radius: var(--corner-radius-m);
+	border-radius: var(--corner-radius-card-inner);
     --frame-aspect-ratio: 16 / 9;
 
 	&:not(.post-index__image--logo) img {
@@ -106,7 +106,7 @@ Description: Card grid for the posts index page (home.php).
 
 	.post-index__body {
 		flex: 1;
-		align-self: center;
+		align-self: stretch;
 	}
 
 	@media (max-width: #{bp.$bp-sm}) {

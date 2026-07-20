@@ -368,7 +368,7 @@
 			padding: 0;
 			margin: 0;
 			display: flex;
-			gap: var(--space-3xs);
+			gap: var(--space-2xs);
 			flex-wrap: wrap;
 
 			a {
@@ -473,6 +473,14 @@
 					background: var(--color-surface-secondary);
 				}
 			}
+
+			// Per-item destination tints — each sub-menu item resolves its own
+			// nav-theme-* class (auto-applied by the wp_nav_menu_objects filter
+			// in functions.php). This lets mixed drawers like "Network"
+			// (Organisations=forest + People=maroon) show per-item colours.
+			li.nav-theme-forest a:hover { background: var(--color-forest-200);  color: var(--color-forest-600); }
+			li.nav-theme-maroon a:hover { background: var(--color-maroon-200);  color: var(--color-maroon-600); }
+			li.nav-theme-purple a:hover { background: var(--color-purple-200);  color: var(--color-purple-600); }
 		}
 	}
 

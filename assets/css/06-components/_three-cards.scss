@@ -29,9 +29,8 @@
 
 // ── Card ─────────────────────────────────────────────────────
 .three-cards__card {
-	border-radius: var(--corner-radius-xl);
+	border-radius: var(--corner-radius-card);
 	backdrop-filter: blur(4px);
-
 	overflow: hidden;
 	opacity: 0;
 	transform: translateY(3rem);
@@ -49,7 +48,7 @@
 
 // ── Card link — fills the full card ──────────────────────────
 .three-cards__card-link {		
-	border-radius: var(--corner-radius-xl);
+	border-radius: var(--corner-radius-card);
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-xs);
@@ -88,7 +87,7 @@
 
 // ── Card image ────────────────────────────────────────────────
 .three-cards__card-image {
-	border-radius: var(--corner-radius-m);
+	border-radius: var(--corner-radius-card-inner);
 	overflow: hidden;
 	--frame-aspect-ratio: 4 / 3;
 

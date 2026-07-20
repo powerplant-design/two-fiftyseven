@@ -16,12 +16,13 @@
 	}
 }
 
-// ── Header (heading + optional intro, above the divider) ──────
+// ── Header (eyebrow, heading + optional intro, above the divider) ──────
 .text-block__header {
 	padding-block-end: var(--space-s-xl);
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-s);
+
 	opacity: 0;
 	transform: translateY(2rem);
 	transition:
@@ -34,10 +35,13 @@
 	}
 }
 
-// ── Heading ───────────────────────────────────────────────────
-.text-block__heading {
-    text-transform: uppercase !important;
+// ── Eyebrow ──────────────────────────────────────────────────
+.text-block__eyebrow {
+	text-transform: uppercase;
+	color: var(--color-content-primary);
 }
+
+// ── Heading ───────────────────────────────────────────────────
 
 // ── Intro text ────────────────────────────────────────────────
 .text-block__intro {
@@ -56,10 +60,10 @@
 	padding: 0;
 	margin: 0;
 	display: grid;
+	gap: var(--space-s) var(--space-m);
     
 	// Two-column (default)
 	&--two-col {
-		gap: var(--space-l) var(--space-m);
 		@media (min-width: #{bp.$bp-md}) {
 			grid-template-columns: 1fr 1fr;
 		}
@@ -67,7 +71,6 @@
     
 	// Three-column
 	&--three-col {
-		gap: var(--space-l) var(--space-m);
 		@media (min-width: #{bp.$bp-md}) {
 			grid-template-columns: 1fr 1fr 1fr;
 		}
@@ -86,7 +89,7 @@
 	display: grid;
 	grid-row: span 2;
 	grid-template-rows: subgrid;
-	border-radius: var(--corner-radius-m);
+	border-radius: var(--corner-radius-card);
 	--stack-gap: var(--space-xs);
 
 	// Reveal animation — triggered by parent .is-inview
@@ -147,8 +150,8 @@
 		}
 	}
 
-    li {
-        margin-top: var(--space-m);
+    li:not(:first-child) {
+        margin-top: var(--space-s);
     }
 }
 

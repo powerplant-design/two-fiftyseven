@@ -3,6 +3,26 @@
     "title": "257 Text Block",
     "fields": [
         {
+            "key": "field_two57_tb_eyebrow",
+            "label": "Eyebrow",
+            "name": "text_block_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Short label above the heading in monospace, e.g. \"Why choose us\".",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "100",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "e.g. Why choose us",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_two57_tb_heading",
             "label": "Text Block Heading",
             "name": "text_block_heading",

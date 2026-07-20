@@ -5,10 +5,10 @@
 .card {
     color: var(--color-content-primary);
     background-color: var(--color-surface-secondary);
-    border-radius: var(--corner-radius-m);
-    
-    a {
-        border-radius: var(--corner-radius-m);
+	border-radius: var(--corner-radius-card);
+	
+	a {
+		border-radius: var(--corner-radius-card);
         display: flex;
         flex-direction: column;
         padding: var(--space-2xs);
