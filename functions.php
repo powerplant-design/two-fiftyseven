@@ -450,6 +450,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'included-grid',
+		'title'           => __( '257 Included Grid', 'two-fiftyseven' ),
+		'description'     => __( '"What\'s included" panel: heading and intro beside a grid of tile cards. For room, membership, and event inclusions.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/included-grid/block.php',
+		'category'        => 'layout',
+		'icon'            => 'screenoptions',
+		'keywords'        => [ 'included', 'inclusions', 'tiles', 'what', 'features', 'list' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 
@@ -1416,19 +1431,17 @@ add_shortcode( 'two57_events', function ( array $atts = [] ): string {
  * the same name on staging/production, the correct ID is resolved at runtime.
  */
 function two57_mailpoet_form( string $form_name = 'Newsletter Signup' ): string {
-	if ( ! class_exists( '\MailPoet\API\API' ) ) {
+	if ( ! class_exists( '\MailPoet\DI\ContainerWrapper' ) ) {
 		return '';
 	}
 	try {
-		$api   = \MailPoet\API\API::MP( 'v1' );
-		$forms = $api->getForms();
-		foreach ( $forms as $form ) {
-			if ( isset( $form['name'] ) && $form['name'] === $form_name ) {
-				return do_shortcode( '[mailpoet_form id="' . (int) $form['id'] . '"]' );
-			}
+		$repository = \MailPoet\DI\ContainerWrapper::getInstance()->get( \MailPoet\Form\FormsRepository::class );
+		$form       = $repository->findOneBy( [ 'name' => $form_name ] );
+		if ( ! $form ) {
+			return '';
 		}
+		return do_shortcode( '[mailpoet_form id="' . (int) $form->getId() . '"]' );
 	} catch ( \Exception $e ) {
 		return '';
 	}
-	return '';
 }
