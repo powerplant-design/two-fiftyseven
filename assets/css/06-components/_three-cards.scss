@@ -11,7 +11,7 @@
 }
 
 // ── Heading ───────────────────────────────────────────────────
-.three-cards__heading {
+.three-cards__intro {
 	opacity: 0;
 	transform: translateY(1.5rem);
 	transition: opacity 0.4s ease-out, transform 0.8s ease-out;
@@ -20,6 +20,20 @@
 		opacity: 1;
 		transform: translateY(0);
 	}
+}
+
+.three-cards__eyebrow {
+	text-transform: uppercase;
+	color: var(--color-content-primary);
+}
+
+.three-cards__heading {
+	// Animates via parent .three-cards__intro scroll reveal.
+	max-width: 15ch;
+}
+
+.three-cards__body {
+	color: var(--color-content-secondary);
 }
 
 // ── Grid ─────────────────────────────────────────────────────

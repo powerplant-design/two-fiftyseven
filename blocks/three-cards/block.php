@@ -7,7 +7,9 @@
  * An optional centred H2 heading sits above the grid.
  *
  * ACF fields:
+ *   tc_eyebrow  — optional small label above the heading (text)
  *   tc_heading  — optional H2 heading (text)
+ *   tc_intro    — optional body copy below the heading (textarea)
  *   tc_cards    — repeater (max 3):
  *     card_title        — card heading (text)
  *     card_description  — optional body copy (textarea)
@@ -21,7 +23,9 @@
  * @var int    $post_id    The current post/page ID.
  */
 
+$eyebrow        = get_field( 'tc_eyebrow' );
 $heading        = get_field( 'tc_heading' );
+$intro          = get_field( 'tc_intro' );
 $cards          = get_field( 'tc_cards' ) ?: [];
 $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 ?>
@@ -30,8 +34,22 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 
 	<div class="three-cards__inner | stack">
 
-		<?php if ( $heading ) : ?>
-			<h2 class="three-cards__heading | text-3xl" data-scroll data-scroll-repeat><?php echo esc_html( $heading ); ?></h2>
+		<?php if ( $eyebrow || $heading || $intro ) : ?>
+			<div class="three-cards__intro | stack" data-scroll data-scroll-repeat>
+				<?php if ( $eyebrow ) : ?>
+					<p class="three-cards__eyebrow | text-monospace text-s">
+						<?php echo esc_html( $eyebrow ); ?>
+					</p>
+				<?php endif; ?>
+				<?php if ( $heading ) : ?>
+					<h2 class="three-cards__heading | text-3xl text-wrap-balance"><?php echo esc_html( $heading ); ?></h2>
+				<?php endif; ?>
+				<?php if ( $intro ) : ?>
+					<p class="three-cards__body | text-l text-wrap-balance">
+						<?php echo esc_html( $intro ); ?>
+					</p>
+				<?php endif; ?>
+			</div>
 		<?php elseif ( $is_preview ) : ?>
 			<p style="opacity:0.5;text-align:center;padding:1rem;">Add a heading in the block settings →</p>
 		<?php endif; ?>
@@ -87,8 +105,5 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 		<?php endif; ?>
 
 	</div>
-
-</section><!-- /.three-cards -->
-
 
 </section><!-- /.three-cards -->
