@@ -104,8 +104,14 @@
 		mask-position: right center;
 		-webkit-mask-size: contain;
 		mask-size: contain;
-		background-color: var(--color-content-inverse);
+		background-color: var(--color-surface-inverse-primary);
+		opacity: 0.1;
 		pointer-events: none;
+		transition: opacity 500ms ease;
+	}
+
+	&--has-svg:hover::before {
+		opacity: 0.25;
 	}
 }
 

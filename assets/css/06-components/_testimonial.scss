@@ -11,7 +11,7 @@
 	padding-block: var(--space-xl-3xl);
     min-height: 80svh;
     display: flex;
-    align-items: center;
+    align-items: stretch;
     
     @media (max-width: #{bp.$bp-sm}) {
 		overflow: clip;
@@ -47,13 +47,24 @@
 	flex-direction: column;
 	gap: var(--space-s-xl);
 	width: 100%;
+	flex: 1;
+	block-size: 100%;
+	min-height: 0;
 }
 
 // ── Swiper shell ──────────────────────────────────────────────────────────────
 .testimonial__swiper {
 	cursor: grab;
 	width: 100%;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
 	overflow: hidden; // clip slides — prevents horizontal page overflow
+
+	.swiper-wrapper {
+		flex: 1;
+		align-items: stretch;
+	}
 
 	// Swiper colour overrides — use active colour-space tokens
 	--swiper-pagination-color: var(--color-content-primary);
@@ -87,10 +98,12 @@
 .swiper-slide {
 	display: flex;
 	flex-direction: column;
+	justify-content: space-between;
 	align-items: center;
-	// margin-top: auto;
 	gap: var(--space-s-xl);
 	box-sizing: border-box;
+	block-size: 100%;
+	height: 100%;
 	// Side padding mirrors the wrapper — content is bounded but swiper is full-width
 	// so text freely slides off the viewport edge rather than a narrower container
 	padding-inline: var(--wrapper-padding-inline, var(--global-padding-inline, 1rem));
@@ -130,6 +143,18 @@
 	overflow-wrap: break-word;
 	opacity: 0;
 	transition: opacity var(--transition-duration) ease-out;
+
+	&::before {
+		content: '\201C';
+		display: inline;
+		margin: 0;
+	}
+
+	&::after {
+		content: '\201D';
+		display: inline;
+		margin: 0;
+	}
 
 		@media (max-width: #{bp.$bp-sm}) {
 			text-align: left;
@@ -177,6 +202,8 @@
 	@media (max-width: #{bp.$bp-sm}) {
 		flex-direction: column;
 		align-items: flex-start;
+		justify-content: flex-start;
+		text-align: left;
         font-size: var(--text-s-size);
 	}
 }

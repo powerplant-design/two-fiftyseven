@@ -73,7 +73,7 @@ $attr_string .= ' data-block="full"';
 	<div class="text-block__inner | wrapper">
 
 		<?php if ( $heading || $intro || $eyebrow ) : ?>
-			<div class="text-block__header" data-scroll data-scroll-repeat>
+			<div class="text-block__header | stack" data-scroll data-scroll-repeat>
 				<?php if ( $eyebrow ) : ?>
 					<p class="text-block__eyebrow | text-monospace text-s"><?php echo esc_html( $eyebrow ); ?></p>
 				<?php endif; ?>

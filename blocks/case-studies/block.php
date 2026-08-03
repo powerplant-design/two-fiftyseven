@@ -8,7 +8,7 @@
  * - Post subheading (ACF post_subheading)
  * - Excerpt
  *
- * Also renders an editable heading and a secondary CTA button to the
+ * Also renders an editable eyebrow, heading and a secondary CTA button to the
  * Organisations archive.
  *
  * @var array  $block      Block settings and attributes from ACF.
@@ -17,6 +17,7 @@
  * @var int    $post_id    The current post/page ID.
  */
 
+$eyebrow          = get_field( 'case_studies_eyebrow' );
 $heading          = get_field( 'case_studies_heading' ) ?: __( 'Case Studies', 'two-fiftyseven' );
 $selected_ids_raw = get_field( 'case_studies_items' ) ?: [];
 $archive_link     = get_field( 'case_studies_archive_link' ) ?: [];
@@ -50,8 +51,15 @@ if ( ! empty( $archive_link['url'] ) ) {
 
 <section class="case-studies | block">
 	<div class="case-studies__inner | stack">
-		<?php if ( $heading ) : ?>
-			<h2 class="case-studies__heading | text-3xl" data-scroll data-scroll-repeat><?php echo esc_html( $heading ); ?></h2>
+		<?php if ( $eyebrow || $heading ) : ?>
+			<div class="case-studies__header | stack" data-scroll data-scroll-repeat>
+				<?php if ( $eyebrow ) : ?>
+					<p class="case-studies__eyebrow | text-monospace text-s"><?php echo esc_html( $eyebrow ); ?></p>
+				<?php endif; ?>
+				<?php if ( $heading ) : ?>
+					<h2 class="case-studies__heading | text-3xl text-wrap-balance"><?php echo esc_html( $heading ); ?></h2>
+				<?php endif; ?>
+			</div>
 		<?php endif; ?>
 
 		<?php if ( $items ) : ?>

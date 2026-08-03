@@ -1,5 +1,5 @@
 import Swiper from 'swiper';
-import { Navigation, Pagination } from 'swiper/modules';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
 
 const instances = new Map();
 
@@ -12,8 +12,12 @@ export function initTestimonials() {
 		if ( count < 2 ) return; // Single slide — no carousel needed
 
 		const swiper = new Swiper( el, {
-			modules: [ Navigation, Pagination ],
+			modules: [ Navigation, Pagination, Autoplay ],
 			loop: true,
+			autoplay: {
+				delay: 5000,
+				disableOnInteraction: false,
+			},
 			navigation: {
 				nextEl: el.querySelector( '.swiper-button-next' ),
 				prevEl: el.querySelector( '.swiper-button-prev' ),

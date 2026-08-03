@@ -19,7 +19,7 @@
         
 		&:has(.btn:hover) .cta-section__bg,
 		&:has(.btn:focus-visible) .cta-section__bg {
-            opacity: 1;
+            opacity: 0.25;
 		}
 
 		// No background: transparent panel, no rounded box, no padding.
@@ -80,10 +80,10 @@
 		inset: 0;
 		scale: 1.4;
 		z-index: 0;
-		color: var(--color-surface-primary);
-		opacity: 0.55;
+		color: var(--color-surface-inverse-primary);
+		opacity: 0.1;
 		overflow: hidden;
-		transition: opacity 220ms ease;
+		transition: opacity 500ms ease;
 	}
 
 	&__content {
