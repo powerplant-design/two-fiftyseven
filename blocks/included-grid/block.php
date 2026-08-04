@@ -17,6 +17,7 @@
  *   ig_items        — repeater (min 2, max 8):
  *     item_title    — bold tile heading (text, required)
  *     item_body     — supporting text (textarea, required)
+ *     item_svg      — optional decorative SVG shown as background on right side (image)
  *
  * @var array  $block      Block settings and attributes from ACF.
  * @var string $content    Rendered inner blocks HTML (unused).
@@ -68,22 +69,26 @@ foreach ( $attrs as $key => $value ) {
 
 		<?php if ( ! empty( $items ) ) : ?>
 			<ul class="included-grid__cards | grid" data-scroll data-scroll-repeat role="list">
-				<?php foreach ( $items as $index => $item ) :
-					$title    = $item['item_title'] ?? '';
-					$body     = $item['item_body'] ?? '';
-					$delay_ms = ( $index * 80 );
-				?>
-					<li
-						class="included-grid__card"
-						style="--delay: <?php echo (int) $delay_ms; ?>ms;"
-					>
+			<?php foreach ( $items as $index => $item ) :
+				$title    = $item['item_title'] ?? '';
+				$body     = $item['item_body'] ?? '';
+				$svg_data = $item['item_svg'] ?? [];
+				$svg_url  = ! empty( $svg_data['url'] ) ? $svg_data['url'] : '';
+				$delay_ms = ( $index * 80 );
+			?>
+				<li
+					class="included-grid__card<?php if ( $svg_url ) : ?> included-grid__card--has-svg<?php endif; ?>"
+					style="--delay: <?php echo (int) $delay_ms; ?>ms;<?php if ( $svg_url ) : ?> --shape-url: url(<?php echo esc_url( $svg_url ); ?>);<?php endif; ?>"
+				>
+					<div class="included-grid__card-content">
 						<?php if ( $title ) : ?>
-							<h3 class="included-grid__card-title | text-xl"><?php echo esc_html( $title ); ?></h3>
+							<h3 class="included-grid__card-title | text-l font-bold"><?php echo esc_html( $title ); ?></h3>
 						<?php endif; ?>
 						<?php if ( $body ) : ?>
 							<p class="included-grid__card-body"><?php echo esc_html( $body ); ?></p>
 						<?php endif; ?>
-					</li>
+					</div>
+				</li>
 				<?php endforeach; ?>
 			</ul>
 		<?php elseif ( $is_preview ) : ?>

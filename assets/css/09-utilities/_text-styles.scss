@@ -92,6 +92,16 @@ Text Styles
 	letter-spacing: var(--text-s-kerning);
 }
 
+.text-s-m {
+	font-family: var(--text-s-m-family);
+	font-size: var(--text-s-m-size);
+	font-weight: var(--text-s-m-weight);
+	font-feature-settings: var(--text-s-m-features);
+	line-height: var(--text-s-m-leading);
+	text-transform: var(--text-s-m-transform);
+	letter-spacing: var(--text-s-m-kerning);
+}
+
 .text-xs {
 	font-family: var(--text-xs-family);
 	font-size: var(--text-xs-size);

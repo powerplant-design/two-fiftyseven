@@ -1,15 +1,35 @@
+@use '../02-tokens/breakpoints' as bp;
+@use 'button';
+
+// Swiper core + modules
+@import 'swiper/css';
+@import 'swiper/css/navigation';
+
 // ============================================================
 // 257 Case Studies Block
 // ============================================================
 
-.case-studies {
+.case-studies-wrapper {
+	overflow: hidden;
 	padding-block: var(--space-xl-3xl);
+}
+
+.swiper {
+	overflow: visible !important;
+}
+
+.case-studies {
+	@media (max-width: #{bp.$bp-md}) {
+		overflow-x: hidden;
+		padding-inline: var(--global-padding-inline);
+	}
 
 	&__inner {
 		--stack-gap: var(--space-s-xl);
 	}
 
-	&__heading {
+	&__header {
+		--stack-gap: var(--space-m-l);
 		opacity: 0;
 		transform: translateY(1.5rem);
 		transition: opacity 0.4s ease-out, transform 0.8s ease-out;
@@ -20,22 +40,60 @@
 		}
 	}
 
-	&__cards {
-		padding-inline: 0;
-		list-style: none;
+	&__eyebrow {
+		text-transform: uppercase;
+		color: var(--color-content-primary);
 	}
 
+	&__heading {
+		max-width: 15ch;
+	}
+
+	// ── Swiper shell ──────────────────────────────────────────────
+	&__swiper {
+		position: relative;
+		overflow: visible;
+		cursor: grab;
+		width: 100%;
+	}
+
+	// ── Slide — 3 cards fill the wrapper width ────────────────────
+	&__swiper .swiper-slide {
+		--_gap: 1.5rem;
+		--_card-width: calc((82rem - 2 * var(--_gap)) / 3);
+		inline-size: var(--_card-width);
+		width: var(--_card-width) !important;
+		flex-shrink: 0;
+		block-size: auto !important;
+		height: auto !important;
+		padding-inline: 0 !important;
+		gap: 0 !important;
+		justify-content: flex-start !important;
+
+		@media (max-width: #{bp.$bp-sm}) {
+			--_card-width: calc(100% / 1.2);
+		}
+	}
+
+	// ── Card link wrapper ──────────────────────────────────────────
+	&__card-link {
+		display: block;
+		min-block-size: 100%;
+		text-decoration: none;
+	}
+
+	// ── Card ───────────────────────────────────────────────────────
 	&__card {
+		position: relative;
+		padding: var(--space-xl) var(--space-s) var(--space-m);
 		background-color: var(--color-surface-secondary);
 		border-radius: var(--corner-radius-card);
 		overflow: hidden;
-		opacity: 0;
-		transform: translateY(3rem);
-		transition:
-		opacity 0.4s ease-out var(--delay),
-		transform 0.8s ease-out var(--delay),
-		background-color var(--transition-speed) ease;
-		
+		block-size: 100%;
+		box-sizing: border-box;
+		transition: background-color 500ms ease;
+		border: 2px solid var(--color-surface-primary);
+
 		a {
 			border-radius: var(--corner-radius-card);
 			padding-block-end: var(--space-s);
@@ -44,15 +102,14 @@
 		&:hover {
 			background-color: color-mix(in srgb, var(--color-surface-secondary) 95%, var(--color-content-primary));
 		}
-
-		.case-studies__cards.is-inview & {
-			opacity: 1;
-			transform: translateY(0);
-		}
 	}
 
-	&__card-link {
-		min-block-size: 100%;
+	// ── Badges — top-left corner ────────────────────────────────
+	&__badges {
+		position: absolute;
+		top: var(--space-s);
+		left: var(--space-s);
+		z-index: 1;
 	}
 
 	&__logo {
@@ -72,12 +129,11 @@
 	}
 
 	&__card-copy {
-		--stack-gap: var(--space-s);		
-		padding: var(--space-xs);
+		--stack-gap: var(--space-s);
 	}
 
 	&__card-title {
-		color: var(--color-content-primary);
+		color: var(--color-content-secondary);
 		text-align: center;
 	}
 
@@ -85,16 +141,49 @@
 		color: var(--color-content-primary);
 	}
 
-	&__cta {
+	// ── Controls row — CTA left, arrows right ─────────────────────
+	&__controls {
 		display: flex;
-		justify-content: center;
-		opacity: 0;
-		transform: translateY(1rem);
-		transition: opacity 0.4s ease-out 0.2s, transform 0.8s ease-out 0.2s;
+		justify-content: space-between;
+		align-items: center;
+		padding-block-start: var(--space-m-l);
 
-		&.is-inview {
-			opacity: 1;
-			transform: translateY(0);
+		.btn {
+			align-self: center;
 		}
+	}
+
+	&__nav {
+		display: flex;
+		align-items: center;
+		gap: var(--space-s-m);
+
+		.swiper-button-prev,
+		.swiper-button-next {
+			position: static !important;
+			width: var(--space-l);
+			height: var(--space-l);
+			top: auto !important;
+			bottom: auto !important;
+			left: auto !important;
+			right: auto !important;
+			margin: 0 !important;
+			color: var(--color-link);
+			transform: none !important;
+
+			&::after {
+				font-size: 1rem;
+			}
+
+			&:hover,
+			&:active {
+				color: var(--color-content-link-hover);
+			}
+		}
+	}
+
+	&__preview-hint {
+		color: var(--color-content-primary);
+		opacity: 0.75;
 	}
 }

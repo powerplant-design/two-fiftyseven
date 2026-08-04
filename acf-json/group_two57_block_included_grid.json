@@ -150,6 +150,28 @@
                     "rows": 2,
                     "placeholder": "",
                     "parent_repeater": "field_two57_ig_items"
+                },
+                {
+                    "key": "field_two57_ig_item_svg",
+                    "label": "Icon (SVG)",
+                    "name": "item_svg",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "Optional SVG icon displayed on the right side of the tile.",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": { "width": "", "class": "", "id": "" },
+                    "return_format": "array",
+                    "library": "uploadedTo",
+                    "min_width": "",
+                    "min_height": "",
+                    "min_size": "",
+                    "max_width": "",
+                    "max_height": "",
+                    "max_size": "",
+                    "mime_types": "svg",
+                    "preview_size": "medium",
+                    "parent_repeater": "field_two57_ig_items"
                 }
             ]
         }

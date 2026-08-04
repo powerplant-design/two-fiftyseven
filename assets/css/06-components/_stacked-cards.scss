@@ -103,8 +103,7 @@
 	gap: var(--space-m);
 	pointer-events: all; // re-enable for panel contents (buttons, links) on the active card
 	background-color: var(--color-surface-secondary);
-	// outline: 1px solid var(--color-surface-primary);
-	outline: 1px solid var(--color-surface-primary);
+	outline: 2px solid var(--color-surface-primary);
 	margin-inline: 1px;
 	border-radius: var(--corner-radius-card);
 	overflow: hidden;

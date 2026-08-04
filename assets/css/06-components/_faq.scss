@@ -21,6 +21,8 @@
 		border-start-end-radius: var(--corner-radius-card);
 		border-end-start-radius: 0;
 		border-end-end-radius: 0;
+		border: 2px solid var(--color-surface-primary);
+		border-bottom: 0;
 		position: relative;
 		z-index: 1;
 		margin-block-end: -3px;
@@ -31,6 +33,7 @@
 	// Matches .stacked-cards__panel: border + square top-left to meet the tab.
 	&__panel {
 		box-sizing: border-box;
+		border: 2px solid var(--color-surface-primary);
 		width: 100%;
 		background-color: var(--color-surface-secondary);
 		color: var(--color-content-primary);

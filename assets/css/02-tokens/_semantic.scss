@@ -141,6 +141,17 @@ html {
 	--text-s-kerning: var(--kerning-regular);
 	--text-s-transform: none;
 
+	/* S→M — body font, S on mobile, M on desktop.
+	   clamp derived from step--1 min (0.9375rem) → step-0 max (1.125rem)
+	   across the 360px–1740px viewport range. */
+	--text-s-m-family: var(--font-body-family);
+	--text-s-m-features: normal;
+	--text-s-m-weight: var(--font-body-weight-normal);
+	--text-s-m-size: clamp(0.9375rem, 0.916rem + 0.107vw, 1.125rem);
+	--text-s-m-leading: var(--leading-base);
+	--text-s-m-kerning: var(--kerning-regular);
+	--text-s-m-transform: none;
+
 	/* XS — extra small text, body font */
 	--text-xs-family: var(--font-body-family);
 	--text-xs-features: normal;

@@ -26,6 +26,7 @@ import { initEventsArchive, destroyEventsArchive } from './events-archive.js';
 import { initCptArchive, destroyCptArchive } from './cpt-archive.js';
 import { initImpact, destroyImpact } from './impact.js';
 import { initTestimonials, destroyTestimonials } from './testimonial.js';
+import { initCaseStudies, destroyCaseStudies } from './case-studies.js';
 import { initGallerySlider, destroyGallerySlider } from './gallery-slider.js';
 
 function resetScrollRevealState() {
@@ -51,6 +52,7 @@ export function initTransitions() {
 			destroyCptArchive();
 			destroyImpact();
 			destroyTestimonials();
+			destroyCaseStudies();
 			destroyScroll();
 			resetScrollRevealState();
 			requestAnimationFrame( () => {
@@ -66,6 +68,7 @@ export function initTransitions() {
 					initCptArchive();
 					initImpact();
 					initTestimonials();
+					initCaseStudies();
 				} );
 			} );
 		}
@@ -151,6 +154,7 @@ export function initTransitions() {
 		initCptArchive();
 		initImpact();
 		initTestimonials();
+		initCaseStudies();
 		syncHeader();
 
 		// Safety net: if animation:in:end never fires (e.g. transitionend

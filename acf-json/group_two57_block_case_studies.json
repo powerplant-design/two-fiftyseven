@@ -3,6 +3,26 @@
     "title": "257 Case Studies Block",
     "fields": [
         {
+            "key": "field_two57_case_studies_eyebrow",
+            "label": "Eyebrow",
+            "name": "case_studies_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional small label above the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "e.g. Partners",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_two57_case_studies_heading",
             "label": "Case Studies Heading",
             "name": "case_studies_heading",

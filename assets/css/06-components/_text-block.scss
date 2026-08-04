@@ -18,10 +18,8 @@
 
 // ── Header (eyebrow, heading + optional intro, above the divider) ──────
 .text-block__header {
+	--stack-gap: var(--space-m-l);
 	padding-block-end: var(--space-s-xl);
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-s);
 
 	opacity: 0;
 	transform: translateY(2rem);
@@ -60,7 +58,7 @@
 	padding: 0;
 	margin: 0;
 	display: grid;
-	gap: var(--space-s) var(--space-m);
+	gap: var(--space-s-m);
     
 	// Two-column (default)
 	&--two-col {
@@ -85,11 +83,15 @@
 .text-block__item {
 	// Subgrid: inherit the parent row tracks so same-row items align.
 	background-color: var(--color-surface-secondary);
-	padding: var(--space-m);
+	padding: var(--space-m) var(--space-m-l);
+	position: relative;
+	overflow: hidden;
 	display: grid;
 	grid-row: span 2;
 	grid-template-rows: subgrid;
 	border-radius: var(--corner-radius-card);
+			border: 2px solid var(--color-surface-primary);
+
 	--stack-gap: var(--space-xs);
 
 	// Reveal animation — triggered by parent .is-inview
@@ -103,12 +105,38 @@
 		opacity: 1;
 		transform: translateY(0);
 	}
+
+	&--has-svg::before {
+		content: '';
+		position: absolute;
+		inset: -25% -18% -25% 35%;
+		z-index: 0;
+		background: none;
+		-webkit-mask-image: var(--shape-url, none);
+		mask-image: var(--shape-url, none);
+		-webkit-mask-repeat: no-repeat;
+		mask-repeat: no-repeat;
+		-webkit-mask-position: right center;
+		mask-position: right center;
+		-webkit-mask-size: contain;
+		mask-size: contain;
+		background-color: var(--color-surface-inverse-primary);
+		opacity: 0.1;
+		pointer-events: none;
+		transition: opacity 500ms ease;
+	}
+
+	&--has-svg:hover::before {
+		opacity: 0.25;
+	}
 }
 
 // ── Subheading ────────────────────────────────────────────────
 .text-block__subheading {
 	color: var(--color-content-secondary);
 	margin: 0;
+	position: relative;
+	z-index: 1;
 	// Sits in row 1 of the subgrid — aligns with other items' headings
 	align-self: start;
 
@@ -133,6 +161,8 @@
 // ── Body ──────────────────────────────────────────────────────
 .text-block__body {
 	color: var(--color-content-primary);
+	position: relative;
+	z-index: 1;
 	// Sits in row 2 of the subgrid
 	align-self: start;
 

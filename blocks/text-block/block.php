@@ -18,6 +18,7 @@
  *     heading                — text (shown when heading_level != none)
  *     body                   — wysiwyg
  *     text_size              — select: 'large' (default) / 'medium'
+ *     item_svg               — optional decorative SVG shown as background on right side (image)
  *
  * @var array  $block      Block settings and attributes from ACF.
  * @var string $content    Rendered inner blocks HTML (unused).
@@ -72,7 +73,7 @@ $attr_string .= ' data-block="full"';
 	<div class="text-block__inner | wrapper">
 
 		<?php if ( $heading || $intro || $eyebrow ) : ?>
-			<div class="text-block__header" data-scroll data-scroll-repeat>
+			<div class="text-block__header | stack" data-scroll data-scroll-repeat>
 				<?php if ( $eyebrow ) : ?>
 					<p class="text-block__eyebrow | text-monospace text-s"><?php echo esc_html( $eyebrow ); ?></p>
 				<?php endif; ?>
@@ -97,9 +98,11 @@ $attr_string .= ' data-block="full"';
 				<?php foreach ( $items as $index => $item ) :
 					$subheading = $item['heading'] ?? '';
 					$body       = $item['body'] ?? '';
+					$svg_data   = $item['item_svg'] ?? [];
+					$svg_url    = ! empty( $svg_data['url'] ) ? $svg_data['url'] : '';
 					$delay      = ( $index * 100 ) . 'ms';
 				?>
-					<li class="text-block__item | stack" style="--delay: <?php echo esc_attr( $delay ); ?>">
+					<li class="text-block__item<?php if ( $svg_url ) : ?> text-block__item--has-svg<?php endif; ?> | stack" style="--delay: <?php echo esc_attr( $delay ); ?><?php if ( $svg_url ) : ?>; --shape-url: url(<?php echo esc_url( $svg_url ); ?>)<?php endif; ?>">
 
                     <?php if ( $subheading ) : ?>
 						<h3 class="text-block__subheading text-block__subheading--<?php echo esc_attr( $heading_size ); ?>">
