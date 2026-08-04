@@ -12,6 +12,7 @@
 
 // ── Heading ───────────────────────────────────────────────────
 .three-cards__intro {
+	--stack-gap: var(--space-m-l);
 	opacity: 0;
 	transform: translateY(1.5rem);
 	transition: opacity 0.4s ease-out, transform 0.8s ease-out;

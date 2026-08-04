@@ -2,14 +2,14 @@
 /**
  * 257 Case Studies — ACF block render template.
  *
- * Renders three selected Organisation posts as cards with:
- * - SVG logo (inline, currentColor aware)
- * - Post title
- * - Post subheading (ACF post_subheading)
- * - Excerpt
+ * Renders Organisation posts as a horizontal Swiper slider.
+ * Three cards fill the central wrapper width; additional cards overflow right.
  *
- * Also renders an editable eyebrow, heading and a secondary CTA button to the
- * Organisations archive.
+ * ACF fields:
+ *   case_studies_eyebrow        — small label above heading (text)
+ *   case_studies_heading        — section heading (text)
+ *   case_studies_items          — selected Organisation post IDs (relationship)
+ *   case_studies_archive_link   — optional CTA button (link)
  *
  * @var array  $block      Block settings and attributes from ACF.
  * @var string $content    Rendered inner blocks HTML (unused).
@@ -47,9 +47,12 @@ if ( ! empty( $archive_link['url'] ) ) {
 	$archive_url   = get_post_type_archive_link( 'organisation' );
 	$archive_title = __( 'Explore organisations', 'two-fiftyseven' );
 }
+
+$slide_count = count( $items );
 ?>
 
-<section class="case-studies | block">
+<section class="case-studies-wrapper | block" data-block="full">
+<div class="case-studies | wrapper">
 	<div class="case-studies__inner | stack">
 		<?php if ( $eyebrow || $heading ) : ?>
 			<div class="case-studies__header | stack" data-scroll data-scroll-repeat>
@@ -63,63 +66,63 @@ if ( ! empty( $archive_link['url'] ) ) {
 		<?php endif; ?>
 
 		<?php if ( $items ) : ?>
-			<ul class="case-studies__cards | grid cards" data-grid-layout="thirds" data-scroll data-scroll-repeat>
-				<?php foreach ( $items as $index => $item ) :
-					$item_id       = (int) $item->ID;
-					$item_title    = get_the_title( $item_id );
-					$item_link     = get_permalink( $item_id );
-					$item_excerpt  = get_the_excerpt( $item_id );
-					$brand_logo_id = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo', $item_id ) : 0;
-					$brand_logo    = $brand_logo_id ? two_fiftyseven_get_inline_svg( $brand_logo_id ) : '';
-					$delay_ms      = $index * 160;
-
-					$use_type   = function_exists( 'get_field' ) ? ( get_field( 'organisation_use_type', $item_id ) ?: '' ) : '';
-					$badge_term = '';
-					$terms      = get_the_terms( $item_id, 'organisation_category' );
-					if ( $terms && ! is_wp_error( $terms ) ) {
-						foreach ( $terms as $t ) {
-							if ( $t->slug !== 'uncategorized' ) {
-								$badge_term = $t->name;
-								break;
-							}
-						}
-					}
-				?>
-				<li class="case-studies__card | card" style="--delay: <?php echo $delay_ms; ?>ms">
+			<div class="swiper case-studies__swiper" data-slides="<?php echo esc_attr( $slide_count ); ?>">
+				<div class="swiper-wrapper">
+					<?php foreach ( $items as $item ) :
+						$item_id       = (int) $item->ID;
+						$item_title    = get_the_title( $item_id );
+						$item_link     = get_permalink( $item_id );
+						$item_excerpt  = get_the_excerpt( $item_id );
+						$brand_logo_id = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo', $item_id ) : 0;
+						$brand_logo    = $brand_logo_id ? two_fiftyseven_get_inline_svg( $brand_logo_id ) : '';
+					?>
+					<div class="swiper-slide">
 						<a class="case-studies__card-link" href="<?php echo esc_url( $item_link ); ?>">
-						<div class="case-studies__logo" aria-hidden="true">
-							<?php if ( $brand_logo ) : ?>
-								<?php echo $brand_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by two_fiftyseven_get_inline_svg() ?>
-							<?php endif; ?>
-						</div>
-							<div class="case-studies__card-copy | stack">
-								<?php if ( $item_title ) : ?>
-									<h3 class="case-studies__card-title | card-title text-xl"><?php echo esc_html( $item_title ); ?></h3>
-								<?php endif; ?>
-								
-								<?php if ( $item_excerpt ) : ?>
-									<p class="case-studies__card-excerpt card-desc | text-m line-clamp-3"><?php echo esc_html( $item_excerpt ); ?></p>
-								<?php endif; ?>
+							<div class="case-studies__card | card">
+								<div class="case-studies__logo" aria-hidden="true">
+									<?php if ( $brand_logo ) : ?>
+										<?php echo $brand_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by two_fiftyseven_get_inline_svg() ?>
+									<?php endif; ?>
+								</div>
+								<div class="case-studies__card-copy | stack">
+									<?php if ( $item_title ) : ?>
+										<h3 class="case-studies__card-title | card-title text-xl"><?php echo esc_html( $item_title ); ?></h3>
+									<?php endif; ?>
+									<?php if ( $item_excerpt ) : ?>
+										<p class="case-studies__card-excerpt card-desc | text-s-m line-clamp-3"><?php echo esc_html( $item_excerpt ); ?></p>
+									<?php endif; ?>
+								</div>
 							</div>
 						</a>
-					</li>
-				<?php endforeach; ?>
-			</ul>
+					</div>
+					<?php endforeach; ?>
+				</div>
+
+			<?php if ( $slide_count > 1 || $archive_url ) : ?>
+				<div class="case-studies__controls">
+					<?php if ( $archive_url ) : ?>
+						<a
+							class="btn"
+							data-type="secondary"
+							href="<?php echo esc_url( $archive_url ); ?>"
+							<?php if ( $archive_target ) : ?>target="<?php echo esc_attr( $archive_target ); ?>" rel="noopener noreferrer"<?php endif; ?>
+						>
+							<?php echo esc_html( $archive_title ); ?>
+						</a>
+					<?php endif; ?>
+					<div class="case-studies__nav">
+						<?php if ( $slide_count > 1 ) : ?>
+							<button class="swiper-button-prev" aria-label="<?php esc_attr_e( 'Previous case studies', 'two-fiftyseven' ); ?>"></button>
+							<button class="swiper-button-next" aria-label="<?php esc_attr_e( 'Next case studies', 'two-fiftyseven' ); ?>"></button>
+						<?php endif; ?>
+					</div>
+				</div>
+			<?php endif; ?>
+			</div>
+
 		<?php elseif ( $is_preview ) : ?>
 			<p class="case-studies__preview-hint">Select up to 6 Organisation posts in the block settings &rarr;</p>
 		<?php endif; ?>
-
-		<?php if ( $archive_url ) : ?>
-			<div class="case-studies__cta" data-scroll data-scroll-repeat>
-				<a
-					class="btn"
-					data-type="secondary"
-					href="<?php echo esc_url( $archive_url ); ?>"
-					<?php if ( $archive_target ) : ?>target="<?php echo esc_attr( $archive_target ); ?>" rel="noopener noreferrer"<?php endif; ?>
-				>
-					<?php echo esc_html( $archive_title ); ?>
-				</a>
-			</div>
-		<?php endif; ?>
 	</div>
+</div>
 </section>

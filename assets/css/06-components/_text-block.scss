@@ -18,6 +18,7 @@
 
 // ── Header (eyebrow, heading + optional intro, above the divider) ──────
 .text-block__header {
+	--stack-gap: var(--space-m-l);
 	padding-block-end: var(--space-s-xl);
 
 	opacity: 0;
