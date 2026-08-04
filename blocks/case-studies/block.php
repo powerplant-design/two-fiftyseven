@@ -68,33 +68,49 @@ $slide_count = count( $items );
 		<?php if ( $items ) : ?>
 			<div class="swiper case-studies__swiper" data-slides="<?php echo esc_attr( $slide_count ); ?>">
 				<div class="swiper-wrapper">
-					<?php foreach ( $items as $item ) :
-						$item_id       = (int) $item->ID;
-						$item_title    = get_the_title( $item_id );
-						$item_link     = get_permalink( $item_id );
-						$item_excerpt  = get_the_excerpt( $item_id );
-						$brand_logo_id = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo', $item_id ) : 0;
-						$brand_logo    = $brand_logo_id ? two_fiftyseven_get_inline_svg( $brand_logo_id ) : '';
-					?>
-					<div class="swiper-slide">
-						<a class="case-studies__card-link" href="<?php echo esc_url( $item_link ); ?>">
-							<div class="case-studies__card | card">
-								<div class="case-studies__logo" aria-hidden="true">
-									<?php if ( $brand_logo ) : ?>
-										<?php echo $brand_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by two_fiftyseven_get_inline_svg() ?>
+				<?php foreach ( $items as $item ) :
+					$item_id       = (int) $item->ID;
+					$item_title    = get_the_title( $item_id );
+					$item_link     = get_permalink( $item_id );
+					$item_excerpt  = get_the_excerpt( $item_id );
+					$brand_logo_id = function_exists( 'get_field' ) ? (int) get_field( 'brand_logo', $item_id ) : 0;
+					$brand_logo    = $brand_logo_id ? two_fiftyseven_get_inline_svg( $brand_logo_id ) : '';
+					$use_type      = function_exists( 'get_field' ) ? get_field( 'organisation_use_type', $item_id ) : '';
+					$categories    = get_the_terms( $item_id, 'organisation_category' );
+				?>
+				<div class="swiper-slide">
+					<a class="case-studies__card-link" href="<?php echo esc_url( $item_link ); ?>">
+						<div class="case-studies__card | card">
+							<?php if ( $use_type || ( $categories && ! is_wp_error( $categories ) ) ) : ?>
+								<div class="cluster badge-cluster case-studies__badges">
+									<?php if ( $use_type ) : ?>
+										<span class="badge" data-color="purple"><?php echo esc_html( strtoupper( $use_type ) ); ?></span>
+									<?php endif; ?>
+									<?php if ( $categories && ! is_wp_error( $categories ) ) :
+										foreach ( $categories as $cat ) :
+											if ( 'uncategorized' === $cat->slug ) { continue; }
+										?>
+											<span class="badge"><?php echo esc_html( $cat->name ); ?></span>
+										<?php endforeach; ?>
 									<?php endif; ?>
 								</div>
-								<div class="case-studies__card-copy | stack">
-									<?php if ( $item_title ) : ?>
-										<h3 class="case-studies__card-title | card-title text-xl"><?php echo esc_html( $item_title ); ?></h3>
-									<?php endif; ?>
-									<?php if ( $item_excerpt ) : ?>
-										<p class="case-studies__card-excerpt card-desc | text-s-m line-clamp-3"><?php echo esc_html( $item_excerpt ); ?></p>
-									<?php endif; ?>
-								</div>
+							<?php endif; ?>
+							<div class="case-studies__logo" aria-hidden="true">
+								<?php if ( $brand_logo ) : ?>
+									<?php echo $brand_logo; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized by two_fiftyseven_get_inline_svg() ?>
+								<?php endif; ?>
 							</div>
-						</a>
-					</div>
+							<div class="case-studies__card-copy | stack">
+								<?php if ( $item_title ) : ?>
+									<h3 class="case-studies__card-title | card-title text-xl font-bold"><?php echo esc_html( $item_title ); ?></h3>
+								<?php endif; ?>
+								<?php if ( $item_excerpt ) : ?>
+									<p class="case-studies__card-excerpt card-desc | text-s-m line-clamp-3"><?php echo esc_html( $item_excerpt ); ?></p>
+								<?php endif; ?>
+							</div>
+						</div>
+					</a>
+				</div>
 					<?php endforeach; ?>
 				</div>
 

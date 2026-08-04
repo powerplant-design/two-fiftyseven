@@ -57,9 +57,9 @@
 .included-grid__cards {
 	--list-indent: 0;
 	display: grid;
-	gap: var(--space-xs-s);
+	gap: var(--space-s);
 	grid-template-columns: 1fr;
-
+	
 	@media (min-width: #{bp.$bp-sm}) {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
@@ -73,6 +73,7 @@
 	padding: var(--space-s) var(--space-s-m);
 	background-color: var(--color-surface-secondary);
 	color: var(--color-content-primary);
+	border: 2px solid var(--color-surface-primary);
 
 	display: flex;
 	flex-direction: column;

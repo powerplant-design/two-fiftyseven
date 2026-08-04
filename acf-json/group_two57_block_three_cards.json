@@ -63,6 +63,54 @@
             "placeholder": "Brief description of this section"
         },
         {
+            "key": "field_two57_tc_heading_size",
+            "label": "Heading Size",
+            "name": "tc_heading_size",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Controls the size of the H2 heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "heading-l": "Large",
+                "heading-m": "Medium"
+            },
+            "default_value": "heading-m",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_two57_tc_filled_cards",
+            "label": "Filled Cards",
+            "name": "tc_filled_cards",
+            "aria-label": "",
+            "type": "true_false",
+            "instructions": "Show the hover background colour on cards by default. Only the image zooms on hover.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 0,
+            "message": "Enable filled card style",
+            "ui": 1,
+            "ui_on_text": "On",
+            "ui_off_text": "Off"
+        },
+        {
             "key": "field_two57_tc_cards",
             "label": "Three Cards",
             "name": "tc_cards",

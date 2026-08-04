@@ -7,10 +7,12 @@
  * An optional centred H2 heading sits above the grid.
  *
  * ACF fields:
- *   tc_eyebrow  — optional small label above the heading (text)
- *   tc_heading  — optional H2 heading (text)
- *   tc_intro    — optional body copy below the heading (textarea)
- *   tc_cards    — repeater (max 3):
+ *   tc_eyebrow      — optional small label above the heading (text)
+ *   tc_heading      — optional H2 heading (text)
+ *   tc_intro        — optional body copy below the heading (textarea)
+ *   tc_heading_size — heading-l (4xl) or heading-m (3xl), default heading-m (select)
+ *   tc_filled_cards — show hover bg by default, only image zooms on hover (bool)
+ *   tc_cards        — repeater (max 3):
  *     card_title        — card heading (text)
  *     card_description  — optional body copy (textarea)
  *     card_link         — CTA link (link, array)
@@ -26,11 +28,14 @@
 $eyebrow        = get_field( 'tc_eyebrow' );
 $heading        = get_field( 'tc_heading' );
 $intro          = get_field( 'tc_intro' );
+$heading_size   = get_field( 'tc_heading_size' ) ?: 'heading-m';
+$heading_size   = in_array( $heading_size, [ 'heading-l', 'heading-m' ], true ) ? $heading_size : 'heading-m';
+$filled         = (bool) get_field( 'tc_filled_cards' );
 $cards          = get_field( 'tc_cards' ) ?: [];
 $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 ?>
 
-<section class="three-cards | block">
+<section class="three-cards | block<?php echo $filled ? ' is-filled' : ''; ?>">
 
 	<div class="three-cards__inner | stack">
 
@@ -42,7 +47,7 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 					</p>
 				<?php endif; ?>
 				<?php if ( $heading ) : ?>
-					<h2 class="three-cards__heading | text-3xl text-wrap-balance"><?php echo esc_html( $heading ); ?></h2>
+					<h2 class="three-cards__heading | text-<?php echo 'heading-l' === $heading_size ? '4xl' : '3xl'; ?> text-wrap-balance"><?php echo esc_html( $heading ); ?></h2>
 				<?php endif; ?>
 				<?php if ( $intro ) : ?>
 					<p class="three-cards__body | text-l text-wrap-balance">
@@ -80,17 +85,31 @@ $allowed_spaces = [ 'neutral', 'maroon', 'forest', 'purple' ];
 							class="three-cards__card-link"
 							<?php if ( $link_target ) : ?>target="<?php echo esc_attr( $link_target ); ?>" rel="noopener noreferrer"<?php endif; ?>
 								>
-								<?php if ( $image_id ) : ?>
-									<div class="three-cards__card-image | frame">
-										<?php echo wp_get_attachment_image( $image_id, 'large', false, [
-											'alt'     => $image_alt,
-											'loading' => 'lazy',
-										] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
-									</div>
-								<?php endif; ?>
+						<?php if ( $image_id ) :
+							$image_mime = get_post_mime_type( $image_id );
+							$is_svg     = ( $image_mime === 'image/svg+xml' );
+							if ( $is_svg ) :
+								$image_url = wp_get_attachment_url( $image_id );
+							?>
+								<div
+									class="three-cards__card-image three-cards__card-image--has-svg | frame"
+									<?php if ( $image_url ) : ?>style="--shape-url: url(<?php echo esc_url( $image_url ); ?>)"<?php endif; ?>
+									aria-hidden="true"
+								>
+									<?php echo two_fiftyseven_get_inline_svg( $image_id ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- sanitized inline SVG ?>
+								</div>
+							<?php else : ?>
+								<div class="three-cards__card-image | frame">
+									<?php echo wp_get_attachment_image( $image_id, 'large', false, [
+										'alt'     => $image_alt,
+										'loading' => 'lazy',
+									] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+								</div>
+							<?php endif; ?>
+						<?php endif; ?>
 							<div class="three-cards__card-body">
 								<?php if ( $title ) : ?>
-									<h3 class="three-cards__card-title | line-clamp-1"><?php echo esc_html( $title ); ?></h3>
+									<h3 class="three-cards__card-title | text-xl font-bold line-clamp-2"><?php echo esc_html( $title ); ?></h3>
 								<?php endif; ?>
 								<?php if ( $description ) : ?>
 									<p class="three-cards__card-desc | line-clamp-5"><?php echo esc_html( $description ); ?></p>

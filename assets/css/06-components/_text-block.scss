@@ -58,7 +58,7 @@
 	padding: 0;
 	margin: 0;
 	display: grid;
-	gap: var(--space-xs-s) var(--space-m);
+	gap: var(--space-s-m);
     
 	// Two-column (default)
 	&--two-col {
@@ -83,13 +83,15 @@
 .text-block__item {
 	// Subgrid: inherit the parent row tracks so same-row items align.
 	background-color: var(--color-surface-secondary);
-	padding: var(--space-s) var(--space-s-m);
+	padding: var(--space-m) var(--space-m-l);
 	position: relative;
 	overflow: hidden;
 	display: grid;
 	grid-row: span 2;
 	grid-template-rows: subgrid;
 	border-radius: var(--corner-radius-card);
+			border: 2px solid var(--color-surface-primary);
+
 	--stack-gap: var(--space-xs);
 
 	// Reveal animation — triggered by parent .is-inview

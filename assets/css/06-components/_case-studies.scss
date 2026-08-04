@@ -84,12 +84,15 @@
 
 	// ── Card ───────────────────────────────────────────────────────
 	&__card {
+		position: relative;
+		padding: var(--space-xl) var(--space-s) var(--space-m);
 		background-color: var(--color-surface-secondary);
 		border-radius: var(--corner-radius-card);
 		overflow: hidden;
 		block-size: 100%;
 		box-sizing: border-box;
 		transition: background-color 500ms ease;
+		border: 2px solid var(--color-surface-primary);
 
 		a {
 			border-radius: var(--corner-radius-card);
@@ -99,6 +102,14 @@
 		&:hover {
 			background-color: color-mix(in srgb, var(--color-surface-secondary) 95%, var(--color-content-primary));
 		}
+	}
+
+	// ── Badges — top-left corner ────────────────────────────────
+	&__badges {
+		position: absolute;
+		top: var(--space-s);
+		left: var(--space-s);
+		z-index: 1;
 	}
 
 	&__logo {
@@ -119,11 +130,10 @@
 
 	&__card-copy {
 		--stack-gap: var(--space-s);
-		padding: var(--space-s) var(--space-m);
 	}
 
 	&__card-title {
-		color: var(--color-content-primary);
+		color: var(--color-content-secondary);
 		text-align: center;
 	}
 
