@@ -356,3 +356,148 @@
 	color: var(--color-content-secondary);
 	opacity: 0.7;
 }
+
+// ── Share row (email + copy link) ───────────────────────────
+.calc__share {
+	--stack-gap: var(--space-m);
+	max-inline-size: var(--layout-wide-size);
+	margin-inline: auto;
+
+	// Sits inside the .calc__body grid root (so the shared JS can find it via
+	// querySelector on the data-js root) — span the full grid, not a column.
+	grid-column: 1 / -1;
+}
+
+.calc__share-eyebrow {
+	color: var(--color-content-secondary);
+}
+
+.calc__share-title {
+	max-width: 22ch;
+}
+
+.calc__share-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--space-m);
+
+	@media (max-width: #{bp.$bp-lg}) {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: #{bp.$bp-sm}) {
+	// Full-width actions on small screens: the Send and Copy link buttons
+	// stretch across the card instead of hugging their content.
+	.calc__share-form .btn,
+	.calc__share-card > .btn {
+		inline-size: 100%;
+		justify-content: center;
+	}
+}
+
+.calc__share-card {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: var(--space-m);
+	border-radius: var(--corner-radius-card);
+	background-color: var(--color-surface-secondary);
+}
+
+.calc__share-card-title {
+	color: var(--color-content-primary);
+}
+
+.calc__share-card-body {
+	color: var(--color-content-secondary);
+	max-width: 42ch;
+}
+
+.calc__share-form {
+	display: flex;
+	gap: var(--space-xs);
+	flex-wrap: wrap;
+	margin-block-start: auto;
+	width: 100%;
+}
+
+.calc__share-form .calc__share-input {
+	flex: 1 1 14rem;
+	min-inline-size: 12rem;
+	inline-size: auto;
+	field-sizing: fixed;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-s);
+	border-radius: var(--corner-radius-xs);
+	border: 1px solid var(--color-border-tertiary);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	font-size: var(--text-m-size);
+
+	&:focus {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.calc__share-honeypot {
+	// visually hidden — see markup: class="calc__share-honeypot visually-hidden"
+	// (the utility is preferred over a duplicate @extend here because utilities
+	// load after components and @extend cannot cross those module scopes).
+}
+
+.calc__share-consent {
+	// Live inside the .cluster form — take the full row so the checkbox drops
+	// beneath the Send button instead of sitting inline with it.
+	flex: 1 1 100%;
+	color: var(--color-content-secondary);
+	display: flex;
+	justify-content: flex-end;
+}
+
+.calc__share-check {
+	align-items: center !important;
+	cursor: pointer;
+
+	a {
+		color: var(--color-content-primary);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+}
+
+.calc__share-status {
+	display: flex;
+	flex-grow: 1;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	min-block-size: 1lh;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-m);
+	border-radius: var(--corner-radius-xs);
+	font-family: var(--font-monospace-family);
+	text-align: center;
+	color: var(--color-content-inverse);
+	background-color: var(--color-surface-inverse-primary);
+	opacity: 0.85;
+
+	// Empty state: keep the box invisible until we have something to say.
+	&:empty {
+		background-color: transparent;
+	}
+
+	&[data-calc-share-status="error"] {
+		color: var(--color-content-inverse);
+		background-color: var(--color-surface-inverse-secondary);
+		opacity: 1;
+	}
+
+	&[data-calc-share-status="success"] {
+		color: var(--color-content-inverse);
+		background-color: var(--color-surface-inverse-primary);
+		opacity: 1;
+	}
+}

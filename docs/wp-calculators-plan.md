@@ -203,19 +203,205 @@ Every calculator block creates these files (following existing theme conventions
 
 ---
 
-## 6. Quote email backend (deferred to first calc that needs it)
+## 6. Share + email backend (reusable across calculator blocks)
 
-Workspace pricing (C1) and Meet pricing (C2) have quote email forms. Build a WP REST endpoint:
+Several calculators have a "share your calculation" row (C6 hours-to-impact, C1 workspace pricing, C2 meet pricing, plus future C3–C5). Two actions are provided — **email the calculation** and **copy a shareable link**. PDF download is deliberately out of scope.
 
-1. `register_rest_route('two57/v1', '/quote-email')` in `functions.php`
-2. Receives: name, email, comments (optional), calc type, calc state (JSON)
-3. **Recomputes the quote server-side** from `get_field(..., 'option')` — the emailed figure can't be spoofed
-4. Sends via MailPoet (theme already has `two57_mailpoet_form()` helper) or `wp_mail()` as fallback
-5. Returns success/error JSON to the block's JS
+This section defines a single reusable backend + frontend pattern used by every calculator that needs it. Build it once (on whichever calc lands first that needs it), then each subsequent calc adds the markup + an engine call — no per-calc backend.
 
-Form fields per calculator:
-- **Workspace pricing**: name (required), email (required)
-- **Meet pricing**: name (required), email (required), comments (textarea, optional), honeypot `website` (hidden)
+### 6.1 Share row markup (all calcs)
+
+A section inside the calc's `[data-js="calc-<name>"]` root, after the breakdown `<details>`. Uses shared `.calc__share-*` classes (defined in `_calc-base.scss`, §11) so it's styled consistently across calculators:
+
+```html
+<div class="calc__share | stack" data-calc-share>
+  <p class="calc__share-eyebrow | text-monospace text-s">Take this with you</p>
+  <h2 class="calc__share-title | text-3xl text-wrap-balance">save your number, share it, send it on</h2>
+  <div class="calc__share-row">
+
+    <!-- Email card -->
+    <div class="calc__share-card | stack">
+      <h3 class="calc__share-card-title">Email me these numbers</h3>
+      <p class="calc__share-card-body">Get the numbers and a one-line summary in your inbox, ready to forward to your team.</p>
+      <form class="calc__share-form | cluster" data-calc-share-email novalidate>
+        <input class="calc__share-input" type="email" name="email" placeholder="you@example.com" autocomplete="email" data-calc-share-email-input aria-label="Your email" required>
+        <!-- honeypot — hidden from real users, rejected server-side -->
+        <input class="calc__share-honeypot visually-hidden" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" data-calc-share-honeypot>
+        <button class="btn" data-type="primary" type="submit" data-calc-share-submit>Send →</button>
+        <p class="calc__share-consent | text-s">
+          <label class="calc__share-check">
+            <input type="checkbox" name="consent" checked data-calc-share-consent>
+            By submitting I agree to the <a href="/contact-policy/">Contact policy</a>
+          </label>
+        </p>
+      </form>
+      <p class="calc__share-status | text-xs text-monospace" data-calc-share-status role="status" aria-live="polite"></p>
+    </div>
+
+    <!-- Copy link card -->
+    <div class="calc__share-card | stack">
+      <h3 class="calc__share-card-title">Share the numbers</h3>
+      <p class="calc__share-card-body">Same numbers, any browser, your team clicks and sees the exact same numbers.</p>
+      <button class="btn" data-type="secondary" type="button" data-calc-share-copy>Copy link →</button>
+    </div>
+
+  </div>
+</div>
+```
+
+Data-attr contract (shared module `calc-share.js`): `data-calc-share` (section), `data-calc-share-email` (form), `-email-input`, `-honeypot`, `-consent` (checkbox), `-submit` (button), `-status` (email status), `-copy` (button). There is **no copy-status element** — copy feedback lives on the button label (see §6.2).
+
+> **Gotchas learned in QA (2026-08-11):** the consent `<p>` must live **inside** the `<form>` — the module reads it via `form.querySelector('[data-calc-share-consent]')`; when it sat outside, consent gating silently broke. Buttons use the theme `.btn` system (`data-type="primary|secondary"`), **not** a dedicated `.calc__share-btn` class (removed during review). The `novalidate` form disables native constraint validation; JS gating does the job.
+
+#### Consent + contact policy (required)
+
+The submit button is gated by a **consent checkbox** with a link to a **contact policy page** — and, per the standard gating pattern implemented during review (2026-08-11), by the **email field being non-empty** too. The policy page (slug: `/contact-policy/`, page titled "Contact policy") must be created by the site admin once and exist in the WP install. The checkbox is **checked by default** — the lead is opt-out, not opt-in, because the lead is explicitly opting into a transactional send + potential follow-up from the client. If the consent checkbox is unchecked at submit (or the email is empty), the endpoint returns an error and no email/lead is created.
+
+The contact policy link is a normal internal `<a href="/contact-policy/">`. Site admin creates the page once. If the page is missing, the link 404s visibly (don't silently swallow — the client must publish the policy before the share row goes live).
+
+### 6.2 Copy link (client-side, no backend)
+
+The "Copy link" button uses `navigator.clipboard.writeText(window.location.href)`. The calc engine already keeps the URL in sync via `writeURL(state)` (team/days/weeks/hours in the query string), so the copied link reproduces the exact numbers when opened in any browser. **Feedback lives entirely on the button label** — on success it flips to "Link copied ✓", on failure (fallback path) to "Copy your browser address bar to share.", then reverts to "Copy link →" after ~4 s (`REVERT_MS`). Falls back to a hidden input + `document.execCommand('copy')` when `navigator.clipboard` is unavailable. There is no `data-calc-share-copy-status` element — a separate copy status box was removed during review because the button already communicates the state (2026-08-11).
+
+> **Built as a shared module** — `assets/js/modules/calc-share.js` exports `initCalcShare(root, { slug, getState })`. Each calc's engine imports it and calls it in `init<Calc>()`; there is no per-calc copy of the submit/copy/consent/honeypot logic (revised from an earlier draft that duplicated the handler in each engine). See §6.5.
+
+### 6.3 Email backend — WP REST endpoint (reusable)
+
+One endpoint serves all calculators. The `calc` field tells the server which recompute logic + email template to use.
+
+```
+POST /wp-json/two57/v1/calc-share-email
+
+Body (JSON):
+{
+  "calc":     "hours-to-impact" | "workspace-pricing" | "meet-pricing" | ...,
+  "email":    "you@example.com",
+  "consent":  true,                  // must be true — server rejects if false/missing
+  "website":  "",                    // honeypot — if non-empty, fake success
+  "page":     "/calculator/hours-to-impact/",  // window.location.pathname
+  "state":    { /* calc-specific params, e.g. team/daysPerWeek/weeksPerYear/hoursPerDay */ }
+}
+```
+
+`page` is the pathname of the page the calc sits on. The server needs it to build the "open the calculation" link in the email (the endpoint is shared across pages/calcs and can't know its own URL).
+
+Server flow (`functions.php`, `rest_api_init` → `register_rest_route('two57/v1', '/calc-share-email')`):
+
+1. **Honeypot**: if `website` non-empty → respond `{success: true}` but do nothing (waste bots silently).
+2. **Validate email** via `is_email()`. Reject if invalid.
+3. **Consent**: if `consent !== true` → `{success: false, message: "You must accept the contact policy to send."}`. No email, no lead.
+4. **Sanitise + bound-check state** per calc (integers/floats within the same min/max the engine uses; e.g. team 1–30, days 1–5, weeks 1–52, hours 1–24 for hours-to-impact). Server **clamps** out-of-range values to the engine bounds rather than rejecting (matches `Math.min/Math.max` clamping in the engines).
+5. **Recompute the figures server-side** using `get_field(..., 'option')` for the SSOT values (giving rate for C6, room rates for C2, memberships for C1, etc.). The figure in the email is authoritative — never trust the client. A `switch ($calc)` dispatches to a per-calc recompute function (e.g. `two57_calc_figures_hours_to_impact($state)`).
+6. **Compose the email** — subject + plain + HTML variants with a calc-specific summary block:
+   - One-line summary ("A team of 2 at 5 days a week funds $3,680 of subsidised space a year.")
+   - The figures (the bound input state + the computed outcomes)
+   - A link back to the page with the same query strings so the recipient reproduces the numbers
+   - Footer: contact policy link, the two/fiftyseven address
+7. **Send**: prefer MailPoet's `MailerFactory` (uses the configured MailPoet sending method — keeps bounce/unsubscribe handling consistent). Fallback to `wp_mail()` if MailPoet isn't active.
+8. **Lead capture** (always, regardless of which calc) — see §6.4.
+9. **Respond** `{success: true}` or `{success: false, message}`.
+
+### 6.4 Lead capture — MailPoet list "Calculator leads"
+
+Every email-submit also writes a lead to a MailPoet list named **"Calculator leads"** so the client can follow up. This is a single list shared across all calculators — each lead is stamped with a `calc_source` custom field so the client can filter "leads from hours-to-impact" vs "leads from workspace pricing" etc.
+
+#### Subscribers
+
+MailPoet exposes the APIs to do this without a confirmation email:
+- `MailPoet\Subscribers\SubscribersRepository` — find-or-create by email (WP users and existing subscribers are deduped automatically)
+- `MailPoet\Segments\SegmentsRepository` — look up the "Calculator leads" list by name
+- `MailPoet\Subscribers\SubscriberSegmentRepository` — attach the subscriber to the list
+- `MailPoet\Subscribers\SubscriberSaveController` — wraps the whole create-or-update flow including custom fields
+
+Implementation:
+1. Find "Calculator leads" list by name. If it doesn't exist yet, **create it** (`SegmentsRepository::createOrUpdate('Calculator leads', '', SegmentEntity::TYPE_DEFAULT)` — note the **positional** signature `(string $name, string $description, string $type, …)`, not an array). This keeps demo/local working without manual setup, and on first production deploy the list appears automatically.
+2. Find an existing subscriber by email, or create a new one (`SubscriberSaveController::createOrUpdate(['email' => $email, 'first_name' => '', 'last_name' => '', 'status' => SubscriberEntity::STATUS_SUBSCRIBED], $existing)`).
+3. Attach to "Calculator leads" if not already attached.
+4. Stamp `calc_source` custom field with the calc slug (`'hours-to-impact'`, `'workspace-pricing'`, etc.). The custom field is auto-created on first use. This is the analytics hook — "how many leads came from each calculator".
+5. No double-opt-in confirmation email is sent — this is a transactional send to a lead who explicitly consented to the contact policy. The follow-up newsletter pipeline is up to the client's MailPoet automation on that list; we just deposit the lead.
+
+#### Why one shared list
+
+- Simpler for the client — one list to monitor/manage, one place to attach a "Welcome / follow-up" automation.
+- The `calc_source` custom field gives per-calc segmentation when the client wants it (MailPoet supports filtering segments by custom field value).
+- If the same email submits from two different calculators, both calc_source values accumulate (or overwrite — TBD by client preference; default: latest wins, but the lead's first submission date is preserved).
+
+### 6.5 Calc adaptors
+
+Each calculator that needs the share row implements:
+- **Markup**: inserts the share section (above) inside its root, with calc-appropriate copy.
+- **Engine**: imports `initCalcShare` from `assets/js/modules/calc-share.js` and calls `initCalcShare(root, { slug: '<slug>', getState: () => state })` once inside `init<Calc>()`. The shared module wires the email submit (POST), consent gating, honeypot, status UI, and copy button — no per-calc handler code.
+- **Server recompute**: a `two57_calc_figures_<slug>($state): array` helper returning the **figures** (the one-line summary is composed separately in the `<slug>` compose function). Lives in `inc/calc-share-email.php`; a `switch ($calc)` in the endpoint dispatches to it.
+
+Calcs that don't need email (none currently planned — every calc that has a share row wants email) simply don't insert the share markup.
+
+### 6.6 Frontend behaviour (shared module `calc-share.js`)
+
+Implemented once in `assets/js/modules/calc-share.js`; per-calc engines only call `initCalcShare(root, { slug, getState })`:
+- **Email form submit**: `e.preventDefault()` (the form is `novalidate` — native validation is bypassed, JS gates). Honeypot filled → fake success. Else `fetch(POST)` with `{ calc, email, consent: true, website, page: location.pathname, state: getState() }`; on success status "Sent, check your inbox"; on error show the returned message. Inline loading state ("Sending…") then re-enable + revert after 4 s.
+- **Copy button**: as per §6.2 — feedback on the button label, no status element.
+- **Gating (consent + email)**: the submit button is `disabled` until **both** the consent checkbox is checked **and** the email field is non-empty (listeners on `input` + `change`). This is the standard gating pattern shared with other gates. If a submission somehow arrives with consent unchecked → "Tick the box to agree to the contact policy first."; with an empty email (button bypassed) → "Enter your email address to send." + focus the field. Either state also short-circuits before the `fetch`. The disabled visual comes from the `.btn` `:disabled` rule added to `_button.scss` (opacity 0.4, `not-allowed`, hover/active suppressed).
+- **Honeypot**: hidden via `class="calc__share-honeypot visually-hidden"` (off-screen, not `display:none` — bots that respect `display:none` won't fill it). Module checks before submit; server double-checks.
+
+### 6.7 SCSS — shared share row styling
+
+Add to `_calc-base.scss` (so it's shared, not per-calc):
+
+| Class | Element |
+|---|---|
+| `.calc__share` | Container `<div>` (the section) — `--stack-gap: var(--space-m)`, full width (`grid-column: 1 / -1`) so it spans the calc body grid |
+| `.calc__share-eyebrow` | "Take this with you" |
+| `.calc__share-title` | "save your number, share it, send it on" (no closing full stop) |
+| `.calc__share-row` | 2-col grid (email card + copy card); stacks to 1-col ≤ `bp-lg` |
+| `.calc__share-card` | Card — `--color-surface-secondary` bg, `--corner-radius-card`, `padding: var(--space-m)`, button pinned to bottom via `margin-block-start: auto` |
+| `.calc__share-card-title` | Card title (h3) |
+| `.calc__share-card-body` | Card body copy |
+| `.calc__share-form` | `flex` + `gap: var(--space-xs)` + `flex-wrap` (a `.cluster`, not `.stack`) — input + send on one row, consent wraps beneath |
+| `.calc__share-input` | Email input — NOT `.calc__input`; custom `.calc__share-form .calc__share-input` override of the theme-wide form input rule (`_forms.scss` `inline-size:100%` + `field-sizing:content`) → `inline-size:auto` + `field-sizing:fixed` so it sizes to its content inside the flex row |
+| `.calc__share-honeypot` | Visually hidden — the markup applies the `visually-hidden` utility class directly (`class="calc__share-honeypot visually-hidden"`); no `@extend` across SCSS module scopes (utilities load after components) |
+| *(buttons)* | Use the theme `.btn` system — `class="btn" data-type="primary"` (Send) / `data-type="secondary"` (Copy link). No `.calc__share-btn` class. Disabled gating visual from `.btn:disabled` in `_button.scss` |
+| `.calc__share-consent` | Consent `<p>` — `flex: 1 1 100%` so it takes its own row under Send; colour `--color-content-secondary` |
+| `.calc__share-check` | Checkbox + label styling; policy link underlined, `--color-content-primary` |
+| `.calc__share-status` | Email status box — monospace, centred, `1lh` min-height, `--color-surface-inverse-primary` bg (error `--color-surface-inverse-secondary`), transparent while `:empty`; carries `data-calc-share-status="error|success"` |
+
+**Responsive:** at ≤ `bp-sm` (640px) the Send and Copy link buttons go **full-width** across their card (`.calc__share-form .btn, .calc__share-card > .btn { inline-size: 100%; justify-content: center; }`).
+
+### 6.8 Files to touch (when share is built)
+
+| File | Change |
+|---|---|
+| `inc/calc-share-email.php` | **Backend lives here** (loaded from `functions.php`): `rest_api_init` endpoint + per-calc `two57_calc_figures_<slug>()` recompute helpers + MailPoet lead capture + rate limit + send (MailerFactory → `wp_mail`). Built once, shared by every calc. |
+| `functions.php` | `wp_localize_script` adds `two57CalcShare.emailEndpoint` (the REST URL). No per-calc code. |
+| `blocks/<calc>/block.php` | Insert the share markup inside the calc root, after the breakdown `<details>` |
+| `assets/js/modules/calc-share.js` | **Shared handler module** (built once): email submit (POST + consent + honeypot + status), copy button (clipboard → `execCommand` fallback) |
+| `assets/js/modules/<calc>.js` | `import { initCalcShare } from './calc-share.js'` + call `initCalcShare(root, { slug, getState })` in `init<Calc>()` |
+| `assets/css/06-components/_calc-base.scss` | `.calc__share-*` shared classes (one addition, reused by every calc) |
+| `assets/css/06-components/_button.scss` | `.btn:disabled` state (opacity 0.4, `not-allowed`, hover/active suppressed) — enables the gated-submit visual |
+| `docs/wp-calculators-plan.md` | This section |
+| WP admin (one-time) | Create the "Contact policy" page at `/contact-policy/`. The "Calculator leads" MailPoet list + `calc_source` custom field auto-create on first submit. |
+
+MailPoet API notes verified against the installed plugin (v5.x):
+- `SegmentsRepository::createOrUpdate()` takes **positional args** `(name, description, type, …)` — not an array.
+- `SubscriberSaveController::createOrUpdate(array $data, ?SubscriberEntity)` upserts by email; pass `'status' => SubscriberEntity::STATUS_SUBSCRIBED` to skip double-opt-in.
+- `SubscriberSegmentRepository::createOrUpdate(SubscriberEntity, SegmentEntity, status)` attaches to a list.
+- `CustomFieldsRepository::createOrUpdate(['name' => 'calc_source', 'type' => 'text', 'params' => ['label' => ...]])` find-or-creates the custom field; then `SubscriberSaveController::updateCustomFields(['cf_<id>' => $calc], $subscriber)` stamps it.
+- `MailerFactory::getDefaultMailer()->send($newsletter, $subscriber)` where `$newsletter = ['subject' => ..., 'body' => ['html' => ..., 'text' => ...]]`.
+
+### 6.9 Anti-abuse + rate limiting
+
+- Honeypot catches naive bots.
+- Per-IP rate limit via transients: max 3 calc-share-email submits per IP per 10 minutes. Returns 429 + a polite "Try again in a few minutes" message.
+- Email address is validated but no captcha (keeps UX light); the consent + honeypot + rate-limit combo is sufficient for a small business calc.
+
+### 6.10 Build sequencing
+
+The share row can be built on any of the calculators that need it. **Built on C6 (hours-to-impact)** because it was already live with the complete `.calc__*` system; the backend is generic so C1–C5 retrofit cleanly. Order of operations when a calc gets the share row:
+
+1. `inc/calc-share-email.php` holds the `rest_api_init` endpoint + the per-calc recompute helpers (shared; the `calc` switch dispatches to the right recompute) — **built once**, no per-calc backend
+2. Build the calc's share markup in `block.php` (calc-specific copy)
+3. The `.calc__share-*` classes live in `_calc-base.scss` — **built once**, no per-calc SCSS
+4. Wire the calc engine: `import { initCalcShare }` + `initCalcShare(root, { slug, getState })`
+5. Test sends against a local mail trap (DevKinsta's Mailhog if available); otherwise define `TWO57_CALC_EMAIL_LOG` so composed emails are written to `error_log` for QA
 
 ---
 
@@ -235,9 +421,9 @@ Form fields per calculator:
 
 Suggested order (simplest → most complex):
 
-1. **C6 — Giving (hours→impact)** — simplest: 4 inputs, 1 ratio, no email, no comparison table
-2. **C1 — Workspace pricing** — most finished, proves quote email backend
-3. **C2 — Meet pricing** — proves colour swap (same block, different `colour_space` + `room_set`)
+1. **C6 — Giving (hours→impact)** — ✅ done. 4 inputs, 1 ratio, no comparison table. **Also ships the §6 share row + email backend + MailPoet lead capture as the reference implementation** (built on C6 rather than C1 — C6 already had the complete `.calc__*` system, §6.10). C1+ simply reuse it.
+2. **C1 — Workspace pricing** — retrofits the §6 share row (no backend work); proves a second calc's `two57_calc_figures_workspace_pricing()` + email template.
+3. **C2 — Meet pricing** — proves colour swap (same block, different `colour_space` + `room_set`). Reuses the §6 backend.
 4. **C5 — Office carbon** — medium, emission factors stay in code
 5. **C4 — Meeting costs** — high complexity, industry bands comparison
 6. **C3 — Office costs v2** — highest complexity, 7 config cards, scenario slots
@@ -426,6 +612,12 @@ assets/css/06-components/
 | `.calc__breakdown-trigger` / `__breakdown-caret` | Trigger button + CSS chevron (rotates when open) | C3, C4, C5, C6 |
 | `.calc__breakdown` / `__breakdown-summary` / `__breakdown-body` / `__breakdown-grid` / `__breakdown-col` / `__breakdown-heading` / `__breakdown-prose` | Full-width disclosure panel | C3, C4, C5, C6 |
 | `.calc__stat` / `__stat-label` / `__stat-value` / `__stat-unit` | Label/value/unit stat row | C6 (extensible) |
+| `.calc__share` / `__share-eyebrow` / `__share-title` / `__share-row` | Share section (email + copy cards) | All with a share row |
+| `.calc__share-card` / `__share-card-title` / `__share-card-body` | Share card | All with a share row |
+| `.calc__share-form` / `__share-input` / `__share-btn` | Email form row | All with a share row |
+| `.calc__share-honeypot` | Visually hidden honeypot (uses `visually-hidden` utility in markup) | All with a share row |
+| `.calc__share-consent` / `__share-check` | Consent checkbox + label + policy link | All with a share row |
+| `.calc__share-status` | Status output (`data-calc-share-status` error/success) | All with a share row |
 
 ### How to use it in a new calculator
 
@@ -451,14 +643,83 @@ Last updated: 2026-08-11 (all work on `feature/calculators` branch)
 - [x] **F2** — `window.twofiftyseven` injector ✅ committed (`2ee8788`)
 - [x] **P0** — Port `inject-prices.js` ✅ committed (`2ee8788`)
 - [x] **Review checkpoint** ✅ passed — `window.twofiftyseven` populated, `data-price="dedicated"` renders `$659`
-- [x] **C6** — Giving (hours→impact) ✅ committed (`3331d48`) + refactored to shared `.calc__*` system (uncommitted)
-- [ ] **C1** — Workspace pricing ← **next up**
+- [x] **C6** — Giving (hours→impact) ✅ committed (`3331d48`) + refactored to shared `.calc__*` system (committed `ef0d2cb`)
+- [x] **C6 share row + email/copy backend** — first calculator to ship the §6 reusable system (uncommitted — review/pending)
+- [ ] **C1** — Workspace pricing ← **next up** (retrofits share row + `calc_source` `workspace-pricing`; no backend work needed)
 - [ ] **C2** — Meet pricing (+ Host variant)
 - [ ] **C5** — Office carbon
 - [ ] **C4** — Meeting costs
 - [ ] **C3** — Office costs v2
 - [ ] **T1** — Quick quote teaser
 - [ ] **T2** — Impact stats partial
+
+### C6 share row + email/copy link (built on C6, not C1)
+
+The §6 share/email system was built on C6 (hours-to-impact) instead of the originally suggested C1 — C6 is already live with the full `.calc__*` system, and the backend is fully generic, so C1–C5 now just add markup + a one-line `initCalcShare()` call. Decision recorded per §6.10's flexibility.
+
+**Implemented:**
+- `inc/calc-share-email.php` — REST endpoint `POST /wp-json/two57/v1/calc-share-email` (honeypot → `is_email` → consent gate → per-calc state sanitise/clamp → server-side recompute from ACF → email compose → send → MailPoet lead capture, all in one file, loaded from `functions.php`)
+- Lead capture on shared **"Calculator leads"** MailPoet list + `calc_source` custom field, both auto-created on first send
+- Send via MailPoet `MailerFactory` with `wp_mail()` fallback; QA log hook `TWO57_CALC_EMAIL_LOG` (defined → email body written to `error_log` instead of sent)
+- Per-IP rate limit 3/10min via transient
+- `assets/js/modules/calc-share.js` — **shared** handler module (`initCalcShare(root, { slug, getState })`): email submit (POST + honeypot + consent **and** email gating on the disabled submit + status UI), copy-link with `navigator.clipboard` → `execCommand` fallback, feedback on the button label (no copy status element)
+- `.calc__share-*` classes added to `_calc-base.scss` (email + copy cards; honeypot uses the `visually-hidden` utility directly, no `@extend` across module scopes); buttons use the theme `.btn` system; `.btn:disabled` added to `_button.scss`
+- `block.php` share markup inside the calc root after the breakdown `<details>` (consent `<p>` **inside** the `<form>` — required by the module)
+- REST endpoint URL exposed to JS via `wp_localize_script` → `window.two57CalcShare.emailEndpoint`
+
+**Client copy note:** email form copy (card titles "Email me these numbers" / "Share the numbers", "By submitting I agree to the Contact policy" ← `/contact-policy/`) matches §6.1; PDF card intentionally dropped; em-dashes removed from all user-facing copy (their design guide).
+
+**Imports:** `two57CalcShare` localized in `functions.php`; `calc-share.js` imported only by `hours-to-impact.js` (runs via existing `initHoursToImpact` wiring in `main.js` + `transitions.js` — no new registrations).
+
+**QA verified locally (DevKinsta + Mailhog, 2026-08-11):**
+- REST route registered (`OPTIONS /wp-json/two57/v1/calc-share-email` → 200); honeypot → fake `{success:true}`; no-consent / invalid-email / unknown-calc all reject with clean messages
+- Happy path → `{success:true}`; send verified end-to-end into **DevKinsta Mailhog** after pointing MailPoet at local SMTP (see "Local mail testing" below; the email arrived: subject "Your two/fiftyseven impact calculation" → recipient in Mailhog UI at `http://localhost:15400`)
+- Lead captured: subscriber `subscribed` on **"Calculator leads"** list + `calc_source = "hours-to-impact"` custom field (list + field auto-created on first send)
+- State clamping verified: `{team:99, days:0, weeks:60, hours:99}` → `{30,1,52,24}`; empty state → engine defaults `{1,5,46,8}`
+- Rate limit: 3 ok then "blocked on 4"
+- Composed email verified: summary "$3,680", per-person figures, shareable link `…?team=2&days=5&weeks=46&hours=8`, contact-policy footer
+- Test lead cleaned up afterwards; `TWO57_CALC_EMAIL_LOG` remains as the no-Mailer diagnostic hook
+- **Venue note (local)**: `home_url()` resolves to the WP-configured vanity domain (`two-fiftyseven.local:61448`) — the email "open the calculation" link uses whatever `WP_HOME`/siteurl is set to, so it's correct in production automatically. Test page currently 404s locally because no `/calculator/hours-to-impact/` page exists in this install (the demo lives on Cloudflare Pages).
+
+**Post-review refinements (2026-08-11):**
+- Gating extended to a **standard dual gate**: submit stays `disabled` until consent ticked **and** email non-empty; empty-email submits now show "Enter your email address to send." instead of the generic failure (review feedback — the generic "Couldn't send…" masked a missing-email submission). `sync()` re-runs on `input`/`change` and after the send attempt's revert.
+- Copy-link simplified per review: no `[data-calc-share-copy-status]` box — the button label communicates state ("Link copied ✓" / fallback message) and reverts after 4 s.
+- `.btn:disabled` visual added to `_button.scss` (opacity 0.4 + `not-allowed` + hover/active suppressed) so the gated submit reads as disabled.
+- Minor plan-vs-code corrections folded into §6: reply-to "site admin" never shipped (removed from plan); client and server clamp floors differ at the degenerate edge (engine `Math.max(0,…)` vs server min 1) — harmless, values below 1 are nonsense and the plan documents server bounds.
+
+### Local mail testing (DevKinsta) + go-live MailPoet setup
+
+**How local email testing works.** In DevKinsta, real email delivery is unreliable (MailPoet's cloud Sending Service silently drops mail from a local vanity domain, and the free tier has sender-verification rules). DevKinsta ships a **Mailhog** as a mail trap. The compose + send code in `inc/calc-share-email.php` is **environment-agnostic** — it asks MailPoet for its default mailer and only falls back to `wp_mail()`, so no SMTP host/IP is hardcoded anywhere in the theme. All local mail config lives **in the local DB + container only, not in git, not deployed** (the theme ships zero mail-sending config; verified by grep for `devkinsta|mailhog|10501|172.172` — the only hits are the pre-existing Vite HMR block, which is gated to `.local`/`.localhost` hosts).
+
+**Local mail config that was set (re-create after a DevKinsta stack restart):**
+1. **MailPoet → Settings → Send with…** → **Your own SMTP** (not the Sending Service). Host `devkinsta-mailhog`, port `1025`, Auth **No**, encryption **None**.
+   - `localhost:10501` does NOT work — that host-port mapping is Mac-side only; `1025` is the port *inside* the Docker network where the send actually runs.
+2. The hostname must be `devkinsta-mailhog` (hyphen), **not** `devkinsta_mailhog` (underscore) — MailPoet's bundled PHPMailer rejects the underscore as an invalid hostname (`Invalid host:` error).
+3. The hyphenated name needs resolving inside the fpm container. This `/etc/hosts` entry is ephemeral (resets with the container), re-add on restart:
+   ```
+   docker exec devkinsta_fpm sh -c 'echo "172.172.0.5 devkinsta-mailhog" >> /etc/hosts'
+   ```
+   The `172.172.0.5` is the Mailhog container IP on the Docker bridge — it's stable as long as the Mailhog container isn't recreated, but verify with `docker exec devkinsta_fpm getent hosts devkinsta_mailhog` if unsure.
+4. Sanity-check the mailer is configured as expected:
+   ```
+   docker exec devkinsta_fpm php -r 'chdir("/www/kinsta/public/two-fiftyseven"); include "wp-load.php"; global $wpdb; $m=unserialize($wpdb->get_var("SELECT value FROM {$wpdb->prefix}mailpoet_settings WHERE name=\"mta\"")); echo json_encode(["method"=>$m["method"],"host"=>$m["host"],"port"=>$m["port"],"auth"=>$m["authentication"]]);'
+   ```
+   Expect `{"method":"SMTP","host":"devkinsta-mailhog","port":"1025","auth":"0"}`.
+
+**Testing locally:** submit the calc's Send form and view the email at the **Mailhog UI** `http://localhost:15400` (or via API `http://localhost:15400/api/v2/messages`). Remember the per-IP rate limit (3/10 min) will block repeated test sends — clear it with:
+```
+docker exec devkinsta_fpm php -r 'chdir("/www/kinsta/public/two-fiftyseven"); include "wp-load.php"; global $wpdb; $wpdb->query("DELETE FROM {$wpdb->options} WHERE option_name LIKE \"%two57_calc_share_rl_%\"");'
+```
+Alternative without Mailhog: define `TWO57_CALC_EMAIL_LOG` in `wp-config.php` → composed email written to `error_log` instead of sent. The two-fiftyseven site needs a WP page with the `257 Calc Hours to Impact` block to test in the browser (no such page exists locally yet — `/calculator/hours-to-impact/` 404s; the demo is on Cloudflare Pages).
+
+**Go-live checklist (nothing code-related in the theme):**
+1. **MailPoet plugin** installed + activated on the live site (must be the same/dot-compat API; the theme auto-detects it and falls back to `wp_mail()` if absent, so email still works without MailPoet — lead capture just won't happen).
+2. In **MailPoet → Settings → Send with…** choose the real method:
+   - **Cloud Sending Service** (MailPoet's) — recommended for deliverability; requires a **verified sender address** (`kiaora@…`) under **MailPoet → Settings → Sender/Key**, and a valid API key. Emails then send from MailPoet's servers.
+   - or **Your own SMTP** (e.g. host SMTP, port 587, STARTTLS, auth On) from the host/ESP.
+3. Sender name/email under Settings must be a real address the client checks (currently `kiaora@twofiftyseven.co`).
+4. **Create the "Contact policy" page** at `/contact-policy/` (the email footer + consent checkbox link to it). The **"Calculator leads"** MailPoet list + `calc_source` custom field auto-create on the first calculator email submit — no manual setup.
+5. **Test after deploy:** load a page with a calc block → Send a calculator email to a real inbox → confirm (a) the inbox receives "Your two/fiftyseven impact calculation", and (b) the sender appears in MailPoet → Subscribers, on the "Calculator leads" list, with `calc_source` = the calc slug. Copy-link needs no config.
 
 ### C6 details (committed `3331d48`, then refactored to shared system)
 

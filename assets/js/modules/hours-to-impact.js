@@ -17,6 +17,8 @@
  * ============================================================================
  */
 
+import { initCalcShare } from './calc-share.js';
+
 // --- Methodology constants (cited, stay in code) ---
 const M = {
 	HOURS_PER_DAY:  8,
@@ -273,6 +275,17 @@ function initCalc( root ) {
 
 	const rerender = bindEvents( root, state, givingRate );
 	rerender();
+
+	// Share row (email + copy link) — shared handler module.
+	initCalcShare( root, {
+		slug: 'hours-to-impact',
+		getState: () => ( {
+			team:         state.team,
+			daysPerWeek:  state.daysPerWeek,
+			weeksPerYear: state.weeksPerYear,
+			hoursPerDay:  state.hoursPerDay,
+		} ),
+	} );
 }
 
 export function initHoursToImpact() {

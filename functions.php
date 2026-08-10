@@ -304,6 +304,11 @@ function two_fiftyseven_enqueue_assets(): void {
 		'nonce'    => wp_create_nonce( 'two57_events' ),
 		'cptNonce' => wp_create_nonce( 'two57_cpt_archive' ),
 	] );
+
+	// Expose the calc share/email REST endpoint to the calc-share module.
+	wp_localize_script( 'two-fiftyseven-main', 'two57CalcShare', [
+		'emailEndpoint' => rest_url( 'two57/v1/calc-share-email' ),
+	] );
 }
 add_action( 'wp_enqueue_scripts', 'two_fiftyseven_enqueue_assets' );
 
@@ -333,6 +338,10 @@ add_filter( 'acf/settings/enable_schema', '__return_true' );
 // MCP Event Helper — computes event_sort_date on every save_post,
 // covering MCP API saves where acf/save_post does not fire.
 require_once get_template_directory() . '/inc/mcp-event-helper.php';
+
+// Calculators — shared "email this calculation" REST endpoint + MailPoet
+// lead capture (reusable across every calculator block's share row).
+require_once get_template_directory() . '/inc/calc-share-email.php';
 
 
 /**

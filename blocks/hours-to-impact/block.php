@@ -94,7 +94,7 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 							aria-label="Working weeks per year"
 							placeholder="46"
 						>
-						<small class="calc__microcopy | text-xs">NZ standard: 46 (52 minus 4 leave minus 11 stat hols)</small>
+						<small class="calc__microcopy | text-s">NZ standard: 46 (52 minus 4 leave minus 11 stat hols)</small>
 					</div>
 
 					<div class="calc__field">
@@ -106,7 +106,7 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 							aria-label="Hours per day"
 							placeholder="8"
 						>
-						<small class="calc__microcopy | text-xs">8 default: Adjust if your team runs longer</small>
+						<small class="calc__microcopy | text-s">8 default: Adjust if your team runs longer</small>
 					</div>
 				</div>
 			</div>
@@ -183,6 +183,53 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 
 				</div>
 			</details>
+
+			<div class="calc__share | stack" data-calc-share>
+			<p class="calc__share-eyebrow | text-monospace text-s">Take this with you</p>
+			<h2 class="calc__share-title | text-3xl text-wrap-balance">save your number, share it, send it on</h2>
+
+			<div class="calc__share-row">
+
+				<!-- Email card -->
+				<div class="calc__share-card | stack">
+					<h3 class="calc__share-card-title | text-l font-bold">Email me these numbers</h3>
+					<p class="calc__share-card-body">Get the numbers and a one-line summary in your inbox, ready to forward to your team.</p>
+					<form class="calc__share-form | cluster" data-calc-share-email novalidate>
+						<input
+							class="calc__share-input"
+							type="email" name="email"
+							placeholder="you@example.com"
+							autocomplete="email"
+							data-calc-share-email-input
+							aria-label="Your email"
+							required
+						>
+						<input
+							class="calc__share-honeypot visually-hidden"
+							type="text" name="website" tabindex="-1" autocomplete="off"
+							aria-hidden="true"
+							data-calc-share-honeypot
+						>
+						<button class="btn" data-type="primary" type="submit" data-calc-share-submit>Send →</button>
+						<p class="calc__share-consent | text-s">
+							<label class="calc__share-check">
+								<input type="checkbox" name="consent" checked data-calc-share-consent>
+								By submitting I agree to the <a href="/contact-policy/">Contact policy</a>
+							</label>
+						</p>
+					</form>
+					<p class="calc__share-status | text-xs text-monospace" data-calc-share-status role="status" aria-live="polite"></p>
+				</div>
+
+				<!-- Copy link card -->
+				<div class="calc__share-card | stack">
+					<h3 class="calc__share-card-title | text-l font-bold">Share the numbers</h3>
+					<p class="calc__share-card-body">Same numbers, any browser, your team clicks and sees the exact same numbers.</p>
+					<button class="btn" data-type="secondary" type="button" data-calc-share-copy>Copy link →</button>
+				</div>
+
+			</div>
+		</div>
 
 		</div>
 
