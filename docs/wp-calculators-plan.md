@@ -247,6 +247,21 @@ Suggested order (simplest → most complex):
 7. **T1 — Quick quote teaser** — small widget, hands off to meet pricing
 8. **T2 — Impact stats partial** — `[data-countup]` reads `window.twofiftyseven.stats`
 
+### Radio / segmented controls — keyboard pattern
+
+Use `<button role="radio">` (not hidden native radios) for all segmented/radio-group controls in calculators. This pattern, established in the hours-to-impact calc, provides:
+
+- All buttons `tabindex="0"` so users can **Tab** through each option
+- **Arrow keys** (Left/Right/Up/Down) cycle between options and select
+- **Enter or Space** selects the focused option
+- **Click** works with mouse
+- `aria-checked="true|false"` on each button for screen readers
+- `role="radiogroup"` + `aria-label` on the container
+- Keydown listener attached per-button with `{ capture: true }` + `stopPropagation()` so Locomotive Scroll can't intercept arrow keys
+- Visible `:focus-visible` outline using `--color-border-primary`
+
+Reference implementation: `assets/js/modules/hours-to-impact.js` + `blocks/hours-to-impact/block.php`
+
 ---
 
 ## 8. Integration patterns (follow existing theme conventions)
@@ -361,15 +376,32 @@ docs/257-calculators-wp/
 
 ## Status
 
-- [ ] **F1** — ACF Options SSOT
-- [ ] **F2** — `window.twofiftyseven` injector
-- [ ] **P0** — Port `inject-prices.js`
-- [ ] **Review checkpoint**
-- [ ] **C6** — Giving (hours→impact)
-- [ ] **C1** — Workspace pricing
+Last updated: 2026-08-10 (all work on `feature/calculators` branch)
+
+- [x] **F1** — ACF Options SSOT ✅ committed (`2ee8788`)
+- [x] **F2** — `window.twofiftyseven` injector ✅ committed (`2ee8788`)
+- [x] **P0** — Port `inject-prices.js` ✅ committed (`2ee8788`)
+- [x] **Review checkpoint** ✅ passed — `window.twofiftyseven` populated, `data-price="dedicated"` renders `$659`
+- [ ] **C6** — Giving (hours→impact) 🔨 implemented, staged, **not yet committed**
+- [ ] **C1** — Workspace pricing ← **next up**
 - [ ] **C2** — Meet pricing (+ Host variant)
 - [ ] **C5** — Office carbon
 - [ ] **C4** — Meeting costs
 - [ ] **C3** — Office costs v2
 - [ ] **T1** — Quick quote teaser
 - [ ] **T2** — Impact stats partial
+
+### C6 details (implemented, staged)
+
+Demo: `https://twofiftyseven.pages.dev/calculator/hours-to-impact/`
+
+All §4 checklist items done: `block.php` (data-color-space, whitelist, `$is_preview`), ACF field group `group_two57_block_hours_to_impact.json` (eyebrow/heading/tagline + `colour_space`), engine module, SCSS, `@forward`, `main.js` import + init, `transitions.js` Swup re-init, `acf_register_block_type` in `functions.php`.
+
+Behaviour: `readURL()` cold-load defaults 46/8; radio-group keyboard pattern (§7 relayed) via `<button role="radio">`; breakdown `<details>` inside the `data-js` root so per-person stats update live; `scroll-margin-top` on breakdown so it clears the fixed header when auto-scrolled; BREAKDOWN heading only shown when open; weeks/hours inputs in a 2-col grid; left card types bumped +1 step.
+
+**Remaining for C6**: final visual QA on demo → commit staged changes → mark C6 done.
+
+### Code-review notes (2026-08-10)
+
+- Fixed invalid token `--layout-content-wide` → `--layout-wide-size` (token doesn't exist in theme).
+- Re-indented `block.php` (fields-grid wrapper + `<details>` had broken leading whitespace). Tags verified balanced.

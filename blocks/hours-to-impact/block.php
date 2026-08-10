@@ -1,0 +1,191 @@
+<?php
+/**
+ * 257 Hours to Impact Calculator — ACF block render template.
+ *
+ * Translates a team's hours at two/fiftyseven into the dollar value of
+ * subsidised space funded via the Impact Discount ($1/person-hour).
+ *
+ * ACF fields:
+ *   ht_eyebrow     — optional small label above the heading (text)
+ *   ht_heading     — H1 heading (text)
+ *   ht_tagline     — intro paragraph below the heading (textarea)
+ *   colour_space   — neutral / forest / purple / maroon (select)
+ *
+ * Engine: assets/js/modules/hours-to-impact.js
+ * Root selector: [data-js="calc-hours-to-impact"]
+ *
+ * @var array  $block      Block settings and attributes from ACF.
+ * @var string $content    Rendered inner blocks HTML (unused).
+ * @var bool   $is_preview True when rendering the block preview in the editor.
+ * @var int    $post_id    The current post/page ID.
+ */
+
+$eyebrow      = get_field( 'ht_eyebrow' );
+$heading      = get_field( 'ht_heading' );
+$tagline      = get_field( 'ht_tagline' );
+$colour_space = get_field( 'colour_space' ) ?: 'forest';
+$allowed      = [ 'neutral', 'forest', 'purple', 'maroon' ];
+if ( ! in_array( $colour_space, $allowed, true ) ) {
+	$colour_space = 'forest';
+}
+
+// Read SSOT values for server-side fallback / no-JS display
+$giving_rate = function_exists( 'get_field' ) ? (float) get_field( 'giving_rate_per_person_hour', 'option' ) : 1;
+$paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_display', 'option' ) : '$450,000+';
+?>
+
+<section
+	class="hours-to-impact | block"
+	data-color-space="<?php echo esc_attr( $colour_space ); ?>"
+>
+
+	<div class="wrapper">
+
+		<?php if ( $eyebrow || $heading || $tagline ) : ?>
+			<div class="hours-to-impact__intro | stack" data-scroll data-scroll-repeat>
+				<?php if ( $eyebrow ) : ?>
+					<p class="hours-to-impact__eyebrow | text-monospace text-s">
+						<?php echo esc_html( $eyebrow ); ?>
+					</p>
+				<?php endif; ?>
+				<?php if ( $heading ) : ?>
+					<h1 class="hours-to-impact__heading | text-3xl text-wrap-balance"><?php echo esc_html( $heading ); ?></h1>
+				<?php endif; ?>
+				<?php if ( $tagline ) : ?>
+					<p class="hours-to-impact__tagline | text-l text-wrap-balance">
+						<?php echo nl2br( esc_html( $tagline ) ); ?>
+					</p>
+				<?php endif; ?>
+			</div>
+		<?php elseif ( $is_preview ) : ?>
+			<p style="opacity:0.5;text-align:center;padding:1rem;">Add a heading in the block settings →</p>
+		<?php endif; ?>
+
+		<div class="hours-to-impact__body" data-js="calc-hours-to-impact">
+
+			<div class="hours-to-impact__inputs | stack" data-scroll data-scroll-repeat>
+				<div class="hours-to-impact__field">
+					<span class="hours-to-impact__field-label | text-monospace text-m">Team size</span>
+					<div class="hours-to-impact__stepper">
+						<button type="button" data-calc-team-dec aria-label="Decrease team size">&minus;</button>
+						<output data-calc-team-out aria-live="polite">0</output>
+						<button type="button" data-calc-team-inc aria-label="Increase team size">&plus;</button>
+					</div>
+				</div>
+
+				<div class="hours-to-impact__field">
+					<span class="hours-to-impact__field-label | text-monospace text-m">Days per week in office</span>
+					<div class="hours-to-impact__days | cluster" role="radiogroup" aria-label="Days per week in office" data-calc-days-group>
+						<button type="button" role="radio" class="hours-to-impact__radio-label" data-calc-days="1" aria-checked="false">1</button>
+						<button type="button" role="radio" class="hours-to-impact__radio-label" data-calc-days="2" aria-checked="false">2</button>
+						<button type="button" role="radio" class="hours-to-impact__radio-label" data-calc-days="3" aria-checked="false">3</button>
+						<button type="button" role="radio" class="hours-to-impact__radio-label" data-calc-days="4" aria-checked="false">4</button>
+						<button type="button" role="radio" class="hours-to-impact__radio-label" data-calc-days="5" aria-checked="false">5</button>
+					</div>
+				</div>
+
+				<div class="hours-to-impact__fields-grid">
+					<div class="hours-to-impact__field">
+						<span class="hours-to-impact__field-label | text-monospace text-m">Working weeks p/year</span>
+						<input
+							class="hours-to-impact__input"
+							type="number" min="1" max="52" value=""
+							data-calc-weeks
+							aria-label="Working weeks per year"
+							placeholder="46"
+						>
+						<small class="hours-to-impact__microcopy | text-s">NZ standard: 46 (52 minus 4 leave minus 11 stat holidays)</small>
+					</div>
+
+					<div class="hours-to-impact__field">
+						<span class="hours-to-impact__field-label | text-monospace text-m">Hours p/day</span>
+						<input
+							class="hours-to-impact__input"
+							type="number" min="1" max="24" value=""
+							data-calc-hours
+							aria-label="Hours per day"
+							placeholder="8"
+						>
+						<small class="hours-to-impact__microcopy | text-s">8 default; adjust if your team runs longer</small>
+					</div>
+				</div>
+			</div>
+
+			<aside class="hours-to-impact__result | stack" aria-label="Live result">
+				<div class="hours-to-impact__result-grid" role="status" aria-live="polite">
+					<div class="hours-to-impact__result-col">
+						<span class="hours-to-impact__result-label | text-l">Your team's hours, a year</span>
+						<span class="hours-to-impact__result-figure | text-3xl" data-calc-result-hours>0 hrs</span>
+						<span class="hours-to-impact__result-unit | text-monospace text-xs">person-hours combined</span>
+					</div>
+					<div class="hours-to-impact__result-col hours-to-impact__result-col--accent">
+						<span class="hours-to-impact__result-label | text-l">Subsidised space funded</span>
+						<span class="hours-to-impact__result-figure | text-3xl" data-calc-giving>$0</span>
+						<span class="hours-to-impact__result-unit | text-monospace text-xs">at $<?php echo esc_html( number_format( $giving_rate, 0 ) ); ?> per person-hour</span>
+					</div>
+				</div>
+
+				<button
+					type="button"
+					class="hours-to-impact__breakdown-trigger"
+					data-breakdown-trigger
+					aria-controls="methodology"
+					aria-expanded="false"
+				>
+					<span class="text-monospace">Show working</span>
+					<span class="hours-to-impact__breakdown-caret" aria-hidden="true">&darr;</span>
+				</button>
+			</aside>
+
+			<details class="hours-to-impact__breakdown" id="methodology">
+				<summary aria-hidden="true" class="hours-to-impact__breakdown-summary | text-monospace text-s">Breakdown</summary>
+				<div class="hours-to-impact__breakdown-body">
+
+					<div class="hours-to-impact__breakdown-grid">
+						<!-- Left column: methodology + per-person rate -->
+						<div class="hours-to-impact__breakdown-col | stack">
+							<h3 class="hours-to-impact__breakdown-heading | text-l">How the figure is calculated</h3>
+							<p class="hours-to-impact__breakdown-prose | text-m">
+								The ratio is derived from five years of measured revenue versus measured discount given at two/fiftyseven. The $<?php echo esc_html( number_format( $giving_rate, 0 ) ); ?> per person-hour figure sits below the actual realised ratio in each of those years &middot; so the calculator under-promises by design. Reality has consistently outpaced this figure.
+							</p>
+
+							<h3 class="hours-to-impact__breakdown-heading | text-l">Per-person rate this year</h3>
+							<div class="hours-to-impact__stat">
+								<span class="hours-to-impact__stat-label | text-monospace text-xs">One person at two/fiftyseven funds</span>
+								<span class="hours-to-impact__stat-value | text-l" data-calc-per-person-hours>0</span>
+								<span class="hours-to-impact__stat-unit | text-s">hours of subsidised space per working year</span>
+							</div>
+							<div class="hours-to-impact__stat">
+								<span class="hours-to-impact__stat-label | text-monospace text-xs">Roughly</span>
+								<span class="hours-to-impact__stat-value | text-l" data-calc-per-person-giving>$0</span>
+								<span class="hours-to-impact__stat-unit | text-s">in dollar terms per person, per year</span>
+							</div>
+						</div>
+
+						<!-- Right column: the rest -->
+						<div class="hours-to-impact__breakdown-col | stack">
+							<h3 class="hours-to-impact__breakdown-heading | text-l">Working year defaults</h3>
+							<p class="hours-to-impact__breakdown-prose | text-m">
+								46 weeks &times; 5 days &times; 8 hours = 1,840 hrs per person per year. NZ standard: 52 weeks minus 4 weeks annual leave minus 11 stat holidays.
+							</p>
+
+							<h3 class="hours-to-impact__breakdown-heading | text-l">Ratio source</h3>
+							<p class="hours-to-impact__breakdown-prose | text-m">
+								$<?php echo esc_html( number_format( $giving_rate, 2 ) ); ?> per person-hour, verified across 5 years of two/fiftyseven internal usage and subsidy records. Reality has consistently outpaced this figure.
+							</p>
+
+							<h3 class="hours-to-impact__breakdown-heading | text-l">All-time redistributed</h3>
+							<p class="hours-to-impact__breakdown-prose | text-m">
+								<?php echo esc_html( $paid_forward ); ?> across 5,000 meetings + events and 1,500 workdays (current as of Marketing Association mihi 2026).
+							</p>
+						</div>
+					</div>
+
+				</div>
+			</details>
+
+		</div>
+
+	</div>
+
+</section>

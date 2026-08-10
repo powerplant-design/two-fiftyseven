@@ -582,6 +582,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'hours-to-impact',
+		'title'           => __( '257 Hours to Impact Calculator', 'two-fiftyseven' ),
+		'description'     => __( 'Calculator that translates a team\'s hours at two/fiftyseven into the dollar value of subsidised space funded.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/hours-to-impact/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'giving', 'impact', 'hours', 'subsidised' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 

@@ -29,6 +29,7 @@ import { initTestimonials, destroyTestimonials } from './testimonial.js';
 import { initCaseStudies, destroyCaseStudies } from './case-studies.js';
 import { initGallerySlider, destroyGallerySlider } from './gallery-slider.js';
 import { initInjectPrices }  from './inject-prices.js';
+import { initHoursToImpact } from './hours-to-impact.js';
 
 function resetScrollRevealState() {
 	document.querySelectorAll( '[data-scroll].is-inview' ).forEach( ( el ) => {
@@ -71,6 +72,7 @@ export function initTransitions() {
 				initTestimonials();
 				initCaseStudies();
 				initInjectPrices();
+				initHoursToImpact();
 				} );
 			} );
 		}
@@ -158,6 +160,7 @@ export function initTransitions() {
 		initTestimonials();
 		initCaseStudies();
 		initInjectPrices();
+		initHoursToImpact();
 		syncHeader();
 
 		// Safety net: if animation:in:end never fires (e.g. transitionend
