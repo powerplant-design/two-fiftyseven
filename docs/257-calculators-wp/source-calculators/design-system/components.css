@@ -1,0 +1,4589 @@
+/* ============================================================================
+   two/fiftyseven · Phase 2 design system · components
+   ----------------------------------------------------------------------------
+   Direction 2 (Common) · soft-modernist · photo-led · generous · warm
+   ----------------------------------------------------------------------------
+   Order:
+     1. Reset + base
+     2. Typography
+     3. Layout primitives (container, sections)
+     4. Button + link + form primitives
+     5. Site header / nav
+     6. Hero (4 variants: lobby, deep, brand, story)
+     7. Section banner + dark section variant
+     8. Trust marquee
+     9. Card (universal + tier + value + case-study + sector + resource)
+    10. Comparison table
+    11. Quote / testimonial / pull-quote / live numbers strip
+    12. FAQ accordion
+    13. Footer
+    14. Utilities + a11y
+   ========================================================================== */
+
+/* 1. RESET + BASE -------------------------------------------------------- */
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  font-size: var(--type-base);
+  font-weight: 400;
+  line-height: var(--leading-normal);
+  letter-spacing: var(--kerning-body);
+  color: var(--colour-text);
+  background: var(--colour-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "ss02" 1, "calt" 1;
+}
+
+img, svg, video { display: block; max-width: 100%; height: auto; }
+
+/* 2. TYPOGRAPHY ---------------------------------------------------------- */
+/* Typography restraint rule (locked, Ash 2026-05-07):
+   - Gopher Display ONLY for large heading text, sparingly:
+     .display, .hero__display, page-level <h1>, .pull-quote, .saving__figure,
+     .live-numbers__figure, .section-banner__num.
+   - Overused Grotesk weights for everything else — H2, H3, H4, eyebrows,
+     body, navigation, buttons, cards, FAQ, footer, calc microcopy.
+   - Within Overused Grotesk, hierarchy comes from weight (400/500/600/700)
+     and size, not from reaching for the display face.                    */
+
+/* Display class — opt-in for Gopher (rare) */
+.display, h1.display, .hero-display {
+  font-family: var(--font-display);
+  font-size: var(--type-hero);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+}
+
+/* Page-level H1 — Gopher (rare; one per page) */
+h1, .h1 {
+  font-family: var(--font-display);
+  font-size: var(--type-h1);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+}
+
+/* H2 / H3 / H4 — Overused Grotesk weights */
+.h2, h2 {
+  font-family: var(--font-body);
+  font-size: var(--type-h2);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--kerning-heading);
+  color: var(--colour-text);
+}
+.h2--lock { font-size: var(--type-h2-lock); font-weight: var(--weight-semibold); }
+.h3, h3 {
+  font-family: var(--font-body);
+  font-size: var(--type-h3);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--kerning-heading);
+  color: var(--colour-text);
+}
+.h4, h4 {
+  font-family: var(--font-body);
+  font-size: var(--type-h4);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--kerning-heading);
+  color: var(--colour-text);
+}
+
+.large { font-size: var(--type-large); line-height: var(--leading-normal); }
+.small { font-size: var(--type-small); }
+.tiny  { font-size: var(--type-tiny); }
+
+.eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--type-mono-small);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+  font-weight: var(--weight-medium);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1;
+}
+
+.prose p + p { margin-top: 1em; }
+.prose { max-width: var(--container-prose); }
+.prose-narrow { max-width: 56ch; }
+
+a { color: var(--colour-link); text-decoration: underline; text-underline-offset: 0.2em; text-decoration-thickness: 1px; transition: color var(--motion-fast) var(--ease-out); }
+a:hover { color: var(--colour-link-hover); }
+
+/* 3. LAYOUT PRIMITIVES --------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+.container-narrow { max-width: var(--container-narrow); margin-inline: auto; padding-inline: var(--container-padding); }
+
+.section {
+  padding-block: var(--section-pad);
+  position: relative;
+}
+.section--tight { padding-block: var(--section-pad-tight); }
+.section--wide  { padding-block: var(--section-pad-wide); }
+
+/* dark section — applies the dark theme overrides scoped */
+.section--bg-dark {
+  background: var(--colour-bg);
+  color: var(--colour-text);
+}
+
+/* 4. BUTTON + LINK + FORM ----------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-150);
+  padding: var(--space-200) var(--space-400);
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  font-size: var(--type-base);
+  line-height: 1;
+  letter-spacing: var(--kerning-body);
+  border: var(--border-medium) solid var(--colour-border);
+  border-radius: var(--radius-sm);   /* squared — sitewide convention, matches header Book-a-tour */
+  background: var(--colour-bg);
+  color: var(--colour-text);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--motion-fast) var(--ease-out),
+              color var(--motion-fast) var(--ease-out),
+              transform var(--motion-fast) var(--ease-out);
+  min-height: 48px;
+  white-space: nowrap;
+}
+.btn:hover { background: var(--colour-text); color: var(--colour-bg); }
+.btn:active { transform: scale(0.98); }
+
+.btn--primary {
+  background: var(--colour-text);
+  color: var(--colour-bg);
+}
+.btn--primary:hover {
+  background: var(--colour-bg);
+  color: var(--colour-text);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--colour-text);
+}
+.btn--ghost:hover {
+  background: var(--colour-text);
+  color: var(--colour-bg);
+}
+
+.btn--small { padding: var(--space-150) var(--space-300); min-height: 40px; font-size: var(--type-small); }
+
+/* Header booking button — square corners, ink default, LIME fill on hover.
+   The default .btn--primary background is already ink so a "darken on hover"
+   isn't visible — invert to lime + ink text so the colour change reads.
+   Scoped to the site header so other .btn--primary buttons keep their pill globally. */
+.site-header .btn {
+  border-radius: var(--radius-sm);
+}
+.site-header .btn:hover,
+.site-header .btn--primary:hover {
+  background: var(--ip-lime);
+  color: var(--ip-ink);
+  border-color: var(--ip-lime);
+}
+
+/* ── Whole-card-as-link, .room pattern (meet + host product-detail cards).
+   Inherits any per-page bg/typography rules but adds the link reset, lift
+   + photo zoom + arrow translate on hover. Sitewide, drop-in. */
+a.room {
+  text-decoration: none;
+  color: inherit;
+  box-shadow: 0 8px 22px -16px rgba(20,32,11,0.32);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+a.room:hover,
+a.room:focus-visible {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 50px -22px rgba(20,32,11,0.4);
+}
+a.room .room__photo img,
+a.room .room__photo picture img {
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+a.room:hover .room__photo img {
+  transform: scale(1.05);
+}
+a.room .room__link {
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+a.room:hover .room__link {
+  transform: translateX(8px);
+}
+
+/* Full-width block button — stretches edge to edge for end-of-section CTAs.
+   Used after calculators (base, hub) to send to /pricing/ for a team quote. */
+.btn--block {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
+
+/* ── CTA CARD ─────────────────────────────────────────────────────────────
+   Full-width lime card with mono eyebrow + bold title + arrow. Pattern
+   first used on homepage success-stories "See all" CTA. Promoted here as a
+   shared component so end-of-section CTAs across the site can share the
+   same chrome. Lift + arrow translate on hover. */
+.cta-card {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: clamp(20px, 3vw, 40px);
+  padding: clamp(28px, 3.4vh, 44px) clamp(28px, 3.2vw, 40px);
+  background: var(--ip-lime);
+  color: var(--ip-ink);
+  text-decoration: none;
+  border-radius: 24px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 8px 20px -16px rgba(20,32,11,0.3);
+}
+.cta-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 36px -22px rgba(20,32,11,0.45);
+}
+.cta-card__text {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.cta-card__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  opacity: 0.65;
+}
+.cta-card__title {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: clamp(1.4rem, 1.2vw + 0.95rem, 2rem);
+  line-height: 1.05;
+  letter-spacing: -0.022em;
+}
+.cta-card__arrow {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.8rem, 1.8vw + 1rem, 2.8rem);
+  line-height: 1;
+  flex: none;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.cta-card:hover .cta-card__arrow {
+  transform: translateX(10px);
+}
+@media (max-width: 600px) {
+  .cta-card__title { font-size: 1.3rem; }
+  .cta-card__arrow { font-size: 1.6rem; }
+}
+
+/* Inline arrow CTA (less weight than button) */
+.cta-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-100);
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+  color: var(--colour-text);
+  transition: gap var(--motion-base) var(--ease-out);
+}
+.cta-arrow:hover { gap: var(--space-200); }
+.cta-arrow::after { content: "→"; font-family: var(--font-mono); font-size: 1em; }
+
+/* ─────────────────────────────────────────────────────────────────
+   Whole-card-as-link — sitewide convention
+   Every card pattern that wraps a single navigational destination
+   IS an <a>: archetype, photo-card, case-card, invite primary/secondary,
+   contact-card, org-card__link. Each lifts + casts a soft shadow on
+   hover/focus. Arrow glyphs nudge right. Motion is unified.
+   ───────────────────────────────────────────────────────────────── */
+a.archetype,
+a.case-card,
+a.photo-card,
+a.invite__primary,
+a.invite__secondary,
+a.contact-card {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 320ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+a.archetype:hover,
+a.archetype:focus-visible,
+a.case-card:hover,
+a.case-card:focus-visible,
+a.photo-card:hover,
+a.photo-card:focus-visible,
+a.invite__primary:hover,
+a.invite__primary:focus-visible,
+a.invite__secondary:hover,
+a.invite__secondary:focus-visible,
+a.contact-card:hover,
+a.contact-card:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 36px -20px rgba(20, 32, 11, 0.32);
+}
+
+/* Arrow glyph nudge — any → inside one of these cards shifts right on hover */
+a.archetype .archetype__name::after,
+a.archetype .archetype__name span[aria-hidden],
+a.invite__primary .invite__arrow,
+a.invite__secondary .invite__arrow,
+a.contact-card .contact-card__cta-arrow {
+  display: inline-block;
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+a.archetype:hover .archetype__name span[aria-hidden],
+a.invite__primary:hover .invite__arrow,
+a.invite__secondary:hover .invite__arrow,
+a.contact-card:hover .contact-card__cta-arrow {
+  transform: translateX(6px);
+}
+
+/* Photo cards: their image zooms in slightly on hover (use the existing
+   .photo-card__photo or img inside) */
+a.photo-card .photo-card__photo,
+a.photo-card img,
+a.case-card img,
+a.archetype .archetype__photo img {
+  transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+a.photo-card:hover .photo-card__photo,
+a.photo-card:hover img,
+a.case-card:hover img,
+a.archetype:hover .archetype__photo img {
+  transform: scale(1.035);
+}
+
+/* Honour reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  a.archetype,
+  a.case-card,
+  a.photo-card,
+  a.invite__primary,
+  a.invite__secondary,
+  a.contact-card,
+  a.archetype .archetype__photo img,
+  a.photo-card .photo-card__photo,
+  a.photo-card img,
+  a.case-card img {
+    transition: none;
+  }
+  a.archetype:hover,
+  a.case-card:hover,
+  a.photo-card:hover,
+  a.invite__primary:hover,
+  a.invite__secondary:hover,
+  a.contact-card:hover {
+    transform: none;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════
+   INVITE PANEL — canonical close-chapter CTA component
+   Layout identical sitewide; only copy + hrefs vary per page.
+
+   HTML pattern (1 primary + 1-2 secondaries):
+     <div class="invite">
+       <a class="invite__primary" href="…">
+         <p class="invite__eyebrow">…</p>
+         <h3 class="invite__primary-title">…<span class="invite__arrow">→</span></h3>
+         <p class="invite__primary-body">…</p>
+         <p class="invite__meta"><span>…</span><span>…</span><span>…</span></p>
+       </a>
+       <!-- Two secondaries side-by-side: wrap them in .invite__row -->
+       <div class="invite__row">
+         <a class="invite__secondary" href="…">
+           <h3 class="invite__secondary-title">…<span class="invite__arrow">→</span></h3>
+           <p class="invite__secondary-body">…</p>
+         </a>
+         <a class="invite__secondary" href="…"> … </a>
+       </div>
+       <!-- One secondary: drop the row, place directly under .invite -->
+       <a class="invite__secondary" href="…"> … </a>
+       <!-- Optional impact-discount tertiary band -->
+       <div class="invite__impact">
+         <p class="invite__impact-heading">…</p>
+         <p class="invite__impact-body">…</p>
+         <a class="invite__impact-link" href="…">…</a>
+       </div>
+     </div>
+   ═══════════════════════════════════════════════════════════════════════ */
+
+.invite {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 3.5vh, 56px);
+  margin-top: clamp(48px, 7vh, 96px);
+}
+
+/* Reset link underline on everything inside the invite (cards + impact link).
+   The card-level whole-card-link block above already does this for
+   .invite__primary / .invite__secondary, but child <a>s + spans need it too. */
+.invite a,
+.invite a:link,
+.invite a:visited,
+.invite a:hover,
+.invite a:focus,
+.invite a:active,
+.invite a *,
+.invite a:hover * {
+  text-decoration: none;
+  text-decoration-line: none;
+}
+
+/* ── PRIMARY · lime hero card ──────────────────────────────────────────── */
+.invite__primary {
+  position: relative;
+  padding: clamp(40px, 5.5vw, 80px) clamp(32px, 5vw, 72px);
+  border-radius: var(--radius-lg);
+  background: var(--ip-lime);
+  color: var(--ip-ink);
+  overflow: hidden;
+  isolation: isolate;
+}
+.invite__primary::after {
+  content: "";
+  position: absolute;
+  right: -8%; bottom: -28%;
+  width: clamp(200px, 24vw, 360px);
+  height: clamp(200px, 24vw, 360px);
+  background: rgba(20, 32, 11, 0.05);
+  border-radius: 50%;
+  z-index: -1;
+}
+.invite__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  letter-spacing: var(--kerning-caps);
+  text-transform: uppercase;
+  color: var(--ip-ink);
+  opacity: 0.65;
+  margin: 0 0 clamp(16px, 2vh, 24px);
+}
+.invite__primary-title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(2rem, 3vw + 1rem, 3.75rem);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--ip-ink);
+  margin: 0 0 clamp(16px, 2vh, 28px);
+  max-width: 22ch;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.invite__primary-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(1.05rem, 0.7vw + 0.9rem, 1.35rem);
+  line-height: 1.5;
+  color: var(--ip-ink);
+  max-width: 56ch;
+  margin: 0 0 clamp(20px, 2.5vh, 32px);
+}
+.invite__meta {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  letter-spacing: var(--kerning-caps);
+  text-transform: uppercase;
+  color: var(--ip-ink);
+  opacity: 0.72;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(10px, 1.4vw, 22px);
+}
+.invite__meta span[aria-hidden] { opacity: 0.4; font-weight: 400; }
+.invite__arrow {
+  display: inline-block;
+  font-weight: 500;
+  transition: transform var(--motion-base) var(--ease-out);
+}
+
+/* ── SECONDARY row (when 2 secondaries) ──────────────────────────────── */
+.invite__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(16px, 2vw, 24px);
+}
+@media (max-width: 720px) {
+  .invite__row { grid-template-columns: 1fr; }
+}
+
+/* ── SECONDARY · paper card (works inside .invite__row or as direct child) — */
+.invite__secondary {
+  display: block;
+  padding: clamp(28px, 3.5vw, 44px) clamp(28px, 4vw, 56px);
+  border-radius: var(--radius-lg);
+  background: var(--ip-paper, var(--colour-paper));
+  border: 1px solid rgba(20, 32, 11, 0.10);
+  color: var(--ip-ink);
+}
+.invite__secondary-text { display: block; }
+.invite__secondary-title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 1.4vw + 0.85rem, 1.85rem);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ip-ink);
+  margin: 0 0 clamp(8px, 1vh, 14px);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.invite__secondary-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--type-base);
+  line-height: 1.5;
+  color: var(--ip-ink);
+  max-width: 64ch;
+  margin: 0;
+}
+
+/* ── TERTIARY · optional impact-discount band ───────────────────────────
+   Hairline top + bottom, no card. Three-column grid (heading · body · link). */
+.invite__impact {
+  margin-top: clamp(8px, 1.5vh, 16px);
+  padding: clamp(28px, 3.5vh, 44px) clamp(8px, 2vw, 24px);
+  border-top: 1px solid rgba(20, 32, 11, 0.18);
+  border-bottom: 1px solid rgba(20, 32, 11, 0.18);
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(0, 2fr) auto;
+  align-items: baseline;
+  gap: clamp(16px, 3vw, 40px);
+}
+.invite__impact-heading {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.1rem, 0.5vw + 0.95rem, 1.35rem);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--ip-ink);
+  margin: 0;
+}
+.invite__impact-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--type-base);
+  line-height: 1.5;
+  color: var(--ip-ink);
+  opacity: 0.78;
+  margin: 0;
+  max-width: 60ch;
+}
+.invite__impact-link {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.05rem, 0.4vw + 0.95rem, 1.2rem);
+  color: var(--ip-ink);
+  white-space: nowrap;
+  display: inline-block;
+  transition: transform var(--motion-fast) var(--ease-out);
+}
+.invite__impact-link:hover { transform: translateX(4px); }
+.invite__impact-link:focus-visible {
+  outline: 3px solid var(--colour-focus);
+  outline-offset: 4px;
+}
+
+@media (max-width: 880px) {
+  .invite__impact {
+    grid-template-columns: 1fr;
+    gap: clamp(8px, 1.5vh, 16px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .invite__arrow,
+  .invite__impact-link {
+    transition: none !important;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════
+   CALCULATOR + PRICING — canonical chrome
+   One layout, six pages, three themes. Each page sets these vars on its
+   body class; everything below reads them:
+     --calc-theme-fill        accent fill on selected tile + headline result
+     --calc-theme-fill-deep   darker variant for hover + result-card bg
+     --calc-theme-on-fill     text colour on fill (usually ip-paper)
+     --calc-theme-bg-soft     soft tinted background for form steps
+     --calc-theme-text        primary ink on this page
+     --calc-theme-on-soft     text on soft bg
+   Defaults (if a page sets nothing) are workspace lime.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Defaults = workspace lime. --calc-theme-result-bg is a SEPARATE variable
+     from --calc-theme-fill-deep so the result-card panel can be theme-coloured
+     (mid-tone with chroma) rather than near-black. Near-black is reserved for
+     site-footer + dark CTA buttons only, not the calc result panel. */
+  --calc-theme-fill:        var(--ip-lime);
+  --calc-theme-fill-deep:   var(--colour-forest-dark, #14200b);
+  --calc-theme-on-fill:     var(--ip-ink);
+  --calc-theme-bg-soft:     var(--ip-paper);
+  --calc-theme-text:        var(--ip-ink);
+  --calc-theme-on-soft:     var(--ip-ink);
+  --calc-theme-result-bg:   var(--ip-ink);            /* main result panel bg */
+  --calc-theme-result-text: var(--ip-paper);
+}
+
+/* Per-page theme overrides — result-bg uses a saturated mid theme tone.
+   Body classes verified: page-meet-pricing (meetings/pricing/), page-meeting-costs
+   (calculator/meeting-costs/) — both target the meet/purple theme. */
+body.page-meet-pricing,
+body.page-meeting-costs {
+  --calc-theme-fill:        var(--purple-500);
+  --calc-theme-fill-deep:   var(--purple-600);
+  --calc-theme-on-fill:     var(--ip-paper);
+  --calc-theme-bg-soft:     var(--purple-300);
+  --calc-theme-text:        var(--purple-600);
+  --calc-theme-on-soft:     var(--purple-600);
+  --calc-theme-result-bg:   var(--purple-600);
+  --calc-theme-result-text: var(--ip-paper);
+}
+body.page-pricing {
+  --calc-theme-fill:        var(--ip-lime);
+  --calc-theme-fill-deep:   var(--colour-forest-dark, #14200b);
+  --calc-theme-on-fill:     var(--ip-ink);
+  --calc-theme-bg-soft:     var(--ip-paper);
+  --calc-theme-text:        var(--ip-ink);
+  --calc-theme-on-soft:     var(--ip-ink);
+  --calc-theme-result-bg:   var(--ip-lime);
+  --calc-theme-result-text: var(--ip-ink);
+}
+body.page-office-costs,
+body.page-office-carbon {
+  --calc-theme-fill:        var(--colour-forest-mid, #2a3d18);
+  --calc-theme-fill-deep:   var(--colour-forest-dark, #14200b);
+  --calc-theme-on-fill:     var(--ip-paper);
+  --calc-theme-bg-soft:     var(--ip-paper);
+  --calc-theme-text:        var(--colour-forest-dark, #14200b);
+  --calc-theme-on-soft:     var(--colour-forest-dark, #14200b);
+  --calc-theme-result-bg:   var(--colour-forest-mid, #2a3d18);
+  --calc-theme-result-text: var(--ip-paper);
+}
+body.page-hours-to-impact {
+  --calc-theme-fill:        var(--ip-lime);
+  --calc-theme-fill-deep:   var(--colour-forest-dark, #14200b);
+  --calc-theme-on-fill:     var(--ip-ink);
+  --calc-theme-bg-soft:     var(--ip-paper);
+  --calc-theme-text:        var(--colour-forest-dark, #14200b);
+  --calc-theme-on-soft:     var(--ip-ink);
+  --calc-theme-result-bg:   var(--ip-lime);
+  --calc-theme-result-text: var(--ip-ink);
+}
+
+/* ── HERO standardization (calc + pricing) ────────────────────────────
+   .calc-hero is intentionally non-layout — the page's existing .chapter
+   + .chapter__inner system handles container width and edge padding.
+   These classes are typographic hooks only, so adding .calc-hero* on top
+   of .calc-frame* / .ip-* on existing pages doesn't fight the page's layout. */
+.calc-hero { /* no-op layout hook — type only on children */ }
+.calc-hero__eyebrow {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--calc-theme-text); opacity: 0.7;
+  margin: 0 0 clamp(16px, 2vh, 24px);
+}
+.calc-hero__title {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: var(--type-section-h2);
+  line-height: 0.95; letter-spacing: -0.03em;
+  color: var(--calc-theme-text);
+  margin: 0 0 clamp(20px, 2.5vh, 32px);
+  max-width: 22ch; text-transform: lowercase; text-wrap: balance;
+}
+.calc-hero__sub {
+  font-family: var(--font-body); font-weight: 500;
+  font-size: clamp(1.05rem, 0.3vw + 0.95rem, 1.2rem);
+  line-height: 1.45; color: var(--calc-theme-text);
+  margin: 0; max-width: 56ch; opacity: 0.85;
+}
+
+/* ── TWO-COLUMN LAYOUT — form left, sticky result right ─────────────── */
+.calc-layout {
+  /* No max-width or horizontal padding here — .chapter__inner provides
+     container layout. Adding them on top makes the calc card MORE indented
+     than the hero text above (which only has .chapter__inner padding),
+     breaking the H1 ↔ calc left-edge alignment. */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(24px, 3vw, 48px);
+  padding-bottom: clamp(48px, 8vh, 96px);
+}
+@media (min-width: 1024px) {
+  .calc-layout {
+    grid-template-columns: 1.5fr 1fr;
+    align-items: start;
+  }
+}
+
+/* ── FORM column ─────────────────────────────────────────────────────── */
+.calc-form {
+  display: flex; flex-direction: column; gap: clamp(28px, 4vh, 48px);
+}
+.calc-step {
+  background: var(--calc-theme-bg-soft);
+  border-radius: 24px;
+  padding: clamp(24px, 3vw, 36px);
+  color: var(--calc-theme-on-soft);
+}
+.calc-step__title {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: clamp(1.3rem, 1.2vw + 0.85rem, 1.85rem);
+  line-height: 1.1; letter-spacing: -0.018em;
+  margin: 0 0 clamp(16px, 2.2vh, 24px);
+  color: var(--calc-theme-on-soft);
+}
+
+/* ── TILE GRID — primary discrete choice (rooms, space types, etc.) ─── */
+.calc-tile-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: clamp(10px, 1.2vw, 16px);
+}
+@media (min-width: 700px) {
+  .calc-tile-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.calc-tile {
+  cursor: pointer;
+  padding: clamp(14px, 1.6vw, 20px);
+  background: var(--ip-paper);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  color: var(--ip-ink);
+  transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+  text-align: left;
+  display: flex; flex-direction: column; gap: 6px;
+  position: relative;
+}
+.calc-tile:hover {
+  transform: translateY(-2px);
+  border-color: var(--calc-theme-fill);
+}
+.calc-tile input[type="radio"],
+.calc-tile input[type="checkbox"] {
+  position: absolute; opacity: 0; pointer-events: none;
+}
+.calc-tile[data-selected="true"],
+.calc-tile[aria-pressed="true"] {
+  background: var(--calc-theme-fill);
+  color: var(--calc-theme-on-fill);
+  border-color: var(--calc-theme-fill-deep);
+}
+/* Fix #11 — kill the stray outline on unselected tiles */
+.calc-tile:not([data-selected="true"]):not([aria-pressed="true"]) {
+  border-color: transparent;
+  outline: none;
+  box-shadow: none;
+}
+.calc-tile:focus-visible { outline: 2px solid var(--calc-theme-fill); outline-offset: 2px; }
+.calc-tile__name {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: clamp(0.95rem, 0.3vw + 0.88rem, 1.08rem);
+  line-height: 1.15;
+}
+.calc-tile__meta,
+.calc-tile__cap,
+.calc-tile__price {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.7;
+}
+
+/* ── SEGMENTED control — 2-4 option short choice (use existing .segmented or these) */
+.calc-segmented {
+  display: inline-flex; flex-wrap: wrap;
+  gap: clamp(8px, 1vw, 12px);
+}
+.calc-segmented__item {
+  cursor: pointer; user-select: none;
+  padding: 12px 22px;
+  background: var(--ip-paper);
+  color: var(--ip-ink);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-weight: 700;
+  font-size: clamp(0.95rem, 0.2vw + 0.9rem, 1.05rem);
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.calc-segmented__item input { position: absolute; opacity: 0; pointer-events: none; }
+.calc-segmented__item:hover { border-color: var(--calc-theme-fill); }
+.calc-segmented__item[data-selected="true"],
+.calc-segmented__item[aria-pressed="true"] {
+  background: var(--calc-theme-fill);
+  color: var(--calc-theme-on-fill);
+  border-color: var(--calc-theme-fill-deep);
+}
+
+/* ── STEPPER — number input with prominent +/- ────────────────────────── */
+.calc-stepper {
+  display: inline-flex; align-items: center;
+  gap: clamp(8px, 1vw, 14px);
+  padding: 6px;
+  background: var(--ip-paper);
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+.calc-stepper__btn {
+  appearance: none;
+  width: 48px; height: 48px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--calc-theme-fill-deep);
+  background: var(--ip-paper);
+  color: var(--calc-theme-fill-deep);
+  font-family: var(--font-body); font-weight: 800;
+  font-size: 1.4rem; line-height: 1;
+  cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.calc-stepper__btn:hover {
+  background: var(--calc-theme-fill);
+  color: var(--calc-theme-on-fill);
+}
+.calc-stepper__btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.calc-stepper__value {
+  min-width: 64px; text-align: center;
+  font-family: var(--font-body); font-weight: 800;
+  font-size: clamp(1.2rem, 0.5vw + 1rem, 1.6rem);
+  color: var(--calc-theme-on-soft);
+}
+
+/* ── MICROCOPY under fields ──────────────────────────────────────────── */
+.calc-microcopy {
+  display: block;
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--calc-theme-on-soft);
+  opacity: 0.6;
+  margin-top: clamp(8px, 1vh, 14px);
+  line-height: 1.5;
+}
+
+/* ── RESULT card — sticky on desktop, pinned to bottom on mobile ─────
+   Uses --calc-theme-result-bg so the panel reads as a saturated mid-theme
+   tone (purple-600 on meet, forest-mid on office calcs, lime on workspace),
+   not the near-black --fill-deep. Empty state visible when [data-empty="true"]. */
+.calc-result {
+  position: sticky; top: 100px;
+  background: var(--calc-theme-result-bg);
+  color: var(--calc-theme-result-text);
+  border-radius: 24px;
+  padding: clamp(24px, 2.6vw, 36px);
+  display: flex; flex-direction: column; gap: clamp(18px, 2vh, 26px);
+  z-index: 2;
+  min-height: 240px;  /* gives the empty state room to breathe */
+}
+.calc-result__empty {
+  display: none;
+  font-family: var(--font-body); font-weight: 500;
+  font-size: clamp(1rem, 0.3vw + 0.9rem, 1.15rem);
+  line-height: 1.45;
+  opacity: 0.85;
+  margin: 0;
+}
+.calc-result[data-empty="true"] .calc-result__empty { display: block; }
+.calc-result[data-empty="true"] .calc-result__total,
+.calc-result[data-empty="true"] .calc-result-stack,
+.calc-result[data-empty="true"] .calc-breakdown,
+.calc-result[data-empty="true"] .calc-contact {
+  display: none;
+}
+/* Single-number result (pricing calcs): big total at top */
+.calc-result__total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 14px;
+}
+.calc-result__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.65;
+}
+.calc-result__value {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: clamp(2.8rem, 3vw + 1.2rem, 4.6rem);
+  line-height: 0.92; letter-spacing: -0.028em;
+}
+.calc-result__tax {
+  font-family: var(--font-mono); font-size: 0.7rem;
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.45; margin: 0;
+}
+
+/* Inset sub-card inside the dark .calc-result — for secondary call-outs
+   (e.g. 'Your booking also funds $0 of subsidised space...' on meet, or
+   'Your team also funds X hours' on giving). Lighter shade over the dark
+   card via a translucent cream overlay — same pattern as meetings/pricing
+   .quote-impact. Works on every theme because it's rgba over the parent. */
+.calc-result-inset {
+  padding: clamp(16px, 2vh, 22px);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.10);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.calc-result-inset__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.75; margin: 0;
+  color: inherit;
+}
+.calc-result-inset__amount {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: clamp(1.8rem, 1.5vw + 1rem, 2.6rem);
+  line-height: 1; letter-spacing: -0.024em;
+  margin: 0;
+  color: inherit;
+}
+.calc-result-inset__context {
+  font-family: var(--font-body);
+  font-size: clamp(0.92rem, 0.2vw + 0.88rem, 1.02rem);
+  line-height: 1.45; margin: 0; opacity: 0.85;
+  color: inherit;
+}
+
+/* Three-stacked result (comparison calcs): one headline + two supporting,
+   all clear, NOT muted. The headline gets the theme accent fill. */
+.calc-result-stack {
+  display: flex; flex-direction: column;
+  gap: clamp(12px, 1.4vh, 18px);
+}
+.calc-result-card {
+  padding: clamp(18px, 2.2vh, 26px);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.calc-result-card--accent {
+  background: var(--calc-theme-fill);
+  color: var(--calc-theme-on-fill);
+}
+.calc-result-card__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.75; margin: 0;
+}
+.calc-result-card__value {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: clamp(2rem, 2vw + 1.1rem, 3rem);
+  line-height: 0.95; letter-spacing: -0.024em;
+  margin: 0;
+}
+.calc-result-card__context {
+  font-family: var(--font-body); font-size: 0.95rem; line-height: 1.45;
+  margin: 0; opacity: 0.9;
+}
+
+/* ── BREAKDOWN expand — line-by-line working under the result ─────── */
+.calc-breakdown {
+  margin-top: clamp(12px, 1.4vh, 18px);
+  padding: clamp(14px, 1.8vh, 20px);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.06);
+}
+.calc-breakdown summary {
+  cursor: pointer; user-select: none;
+  font-family: var(--font-body); font-weight: 700;
+  font-size: 0.98rem;
+  list-style: none;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+  color: var(--ip-paper);
+}
+.calc-breakdown summary::-webkit-details-marker { display: none; }
+.calc-breakdown summary::after {
+  content: '+'; font-family: var(--font-mono); font-weight: 400;
+  font-size: 1.3rem; line-height: 1; opacity: 0.7;
+  transition: transform 0.2s ease;
+}
+.calc-breakdown[open] summary::after { transform: rotate(45deg); }
+.calc-breakdown__lines {
+  margin-top: clamp(10px, 1.4vh, 16px);
+  display: flex; flex-direction: column; gap: 8px;
+  padding-top: clamp(10px, 1.4vh, 16px);
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+.calc-breakdown__line {
+  display: flex; justify-content: space-between; gap: 12px;
+  font-family: var(--font-body); font-size: 0.92rem; line-height: 1.4;
+}
+.calc-breakdown__line-label { opacity: 0.85; }
+.calc-breakdown__line-value {
+  font-family: var(--font-mono); font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ── IMPACT DISCOUNT toggle — room/event calcs only ─────────────────── */
+.calc-impact-toggle {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 0;
+  cursor: pointer; user-select: none;
+  color: var(--ip-paper);
+  border: 0; background: transparent;
+  text-align: left;
+}
+.calc-impact-toggle__check {
+  flex: none;
+  width: 16px; height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid rgba(255, 255, 255, 0.55);
+  background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 3px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.calc-impact-toggle:hover .calc-impact-toggle__check { border-color: var(--ip-paper); }
+.calc-impact-toggle[data-on="true"] .calc-impact-toggle__check {
+  background: var(--ip-paper); border-color: var(--ip-paper);
+}
+.calc-impact-toggle[data-on="true"] .calc-impact-toggle__check::after {
+  content: '✓';
+  color: var(--calc-theme-fill-deep);
+  font-weight: 700; font-size: 11px; line-height: 1;
+}
+.calc-impact-toggle__title {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: 0.92rem; line-height: 1.3;
+}
+.calc-impact-toggle__criteria {
+  display: block;
+  font-family: var(--font-mono); font-size: 0.7rem;
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  line-height: 1.5;
+  margin-top: 4px;
+  opacity: 0.7;
+}
+
+/* ── NEED-BASED workspace support — workspace calcs (no fixed % ) ───── */
+.calc-need-based {
+  padding: clamp(18px, 2.4vh, 24px);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.08);
+  display: flex; flex-direction: column; gap: 8px;
+  color: var(--ip-paper);
+}
+.calc-need-based__heading {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: 1rem; line-height: 1.3;
+  margin: 0;
+}
+.calc-need-based__body {
+  font-family: var(--font-body); font-size: 0.92rem; line-height: 1.5;
+  margin: 0; opacity: 0.88;
+}
+.calc-need-based__link {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--ip-paper);
+  text-decoration: underline; text-underline-offset: 3px;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+/* ── INLINE CONTACT — name + email + send, inside the result card ───── */
+.calc-contact {
+  display: flex; flex-direction: column;
+  gap: clamp(10px, 1.2vh, 14px);
+  padding-top: clamp(16px, 2vh, 22px);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+.calc-contact__title {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.7; margin: 0;
+}
+.calc-contact__field { display: flex; flex-direction: column; gap: 6px; }
+.calc-contact__field label {
+  font-family: var(--font-mono); font-size: 0.7rem;
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.6; color: var(--ip-paper);
+}
+.calc-contact__field input,
+.calc-contact__field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--ip-paper);
+  color: var(--ip-ink);
+  border: 2px solid transparent;
+  border-radius: 12px;
+  font-family: var(--font-body); font-weight: 500;
+  font-size: 0.98rem;
+}
+.calc-contact__field input:focus,
+.calc-contact__field textarea:focus {
+  outline: none;
+  border-color: var(--calc-theme-fill);
+}
+.calc-contact__send {
+  appearance: none;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 14px; width: 100%;
+  padding: 18px 24px;
+  background: var(--ip-paper);
+  color: var(--calc-theme-fill-deep);
+  border: none; border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-weight: 800;
+  font-size: clamp(1rem, 0.2vw + 0.95rem, 1.15rem);
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  text-align: left;
+}
+.calc-contact__send:hover:not(:disabled) { transform: translateY(-2px); }
+.calc-contact__send:disabled { cursor: not-allowed; opacity: 0.45; transform: none; }
+
+/* ── SHARE ROW — 3-card row: Email · Share link · Save PDF ─────────── */
+.calc-share {
+  max-width: 1480px;
+  margin: clamp(48px, 6vh, 88px) auto 0;
+  padding: 0 clamp(28px, 5vw, 96px);
+}
+.calc-share__eyebrow {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--calc-theme-text); opacity: 0.7;
+  margin: 0 0 clamp(12px, 1.6vh, 18px);
+}
+.calc-share__title {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: var(--type-section-h2, clamp(1.8rem, 2vw + 1rem, 2.8rem));
+  line-height: 1; letter-spacing: -0.022em;
+  color: var(--calc-theme-text);
+  margin: 0 0 clamp(28px, 3.5vh, 48px);
+  max-width: 22ch; text-transform: lowercase; text-wrap: balance;
+}
+.calc-share__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+}
+.calc-share-card {
+  padding: clamp(24px, 2.6vw, 32px);
+  border-radius: var(--radius-lg);
+  background: var(--ip-paper);
+  border: 1px solid rgba(20, 32, 11, 0.10);
+  color: var(--ip-ink);
+  display: flex; flex-direction: column; gap: clamp(12px, 1.4vh, 18px);
+}
+.calc-share-card__title {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: 1.1rem; line-height: 1.2;
+  margin: 0;
+}
+.calc-share-card__body {
+  font-family: var(--font-body); font-size: 0.94rem; line-height: 1.5;
+  margin: 0;
+  color: var(--colour-text-2, var(--ip-ink));
+}
+.calc-share-card__form {
+  display: flex; gap: 8px; margin-top: auto;
+}
+.calc-share-card__form input[type="email"] {
+  flex: 1;
+  padding: 12px 14px;
+  background: var(--ip-paper);
+  color: var(--ip-ink);
+  border: 1.5px solid rgba(20, 32, 11, 0.15);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: 0.95rem;
+}
+.calc-share-card__form input:focus {
+  outline: none; border-color: var(--calc-theme-fill-deep);
+}
+.calc-share-card__btn {
+  appearance: none;
+  padding: 12px 18px;
+  background: var(--calc-theme-fill-deep);
+  color: var(--ip-paper);
+  border: none; border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+.calc-share-card__btn:hover { opacity: 0.88; }
+
+/* ── METHODOLOGY block — externally-sourced calcs only ──────────────── */
+.calc-methodology {
+  max-width: 1480px;
+  margin: clamp(64px, 8vh, 120px) auto 0;
+  padding: 0 clamp(28px, 5vw, 96px);
+}
+.calc-methodology__eyebrow {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--calc-theme-text); opacity: 0.7;
+  margin: 0 0 clamp(12px, 1.6vh, 18px);
+}
+.calc-methodology__title {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: var(--type-section-h2, clamp(1.8rem, 2vw + 1rem, 2.8rem));
+  line-height: 1; letter-spacing: -0.022em;
+  color: var(--calc-theme-text);
+  margin: 0 0 clamp(28px, 3.5vh, 48px);
+  max-width: 30ch; text-transform: lowercase; text-wrap: balance;
+}
+.calc-methodology__steps {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(16px, 2vw, 24px);
+  counter-reset: methstep;
+}
+@media (min-width: 900px) {
+  .calc-methodology__steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.calc-methodology__step {
+  padding: clamp(24px, 2.6vw, 32px);
+  border-radius: var(--radius-lg);
+  background: var(--ip-paper);
+  border: 1px solid rgba(20, 32, 11, 0.10);
+  counter-increment: methstep;
+  position: relative;
+}
+.calc-methodology__step::before {
+  content: counter(methstep, decimal-leading-zero);
+  display: block;
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--calc-theme-text);
+  opacity: 0.55;
+  margin-bottom: clamp(10px, 1.2vh, 14px);
+}
+.calc-methodology__step-title {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: 1.15rem; line-height: 1.25;
+  color: var(--calc-theme-text);
+  margin: 0 0 clamp(10px, 1.2vh, 14px);
+}
+.calc-methodology__step-body {
+  font-family: var(--font-body); font-size: 0.96rem; line-height: 1.55;
+  color: var(--calc-theme-text);
+  margin: 0;
+}
+
+/* ── CITATION — footnote-style superscript with link ──────────────── */
+.calc-citation {
+  display: inline-flex;
+  font-family: var(--font-mono); font-size: 0.65em;
+  vertical-align: super; line-height: 1;
+  color: var(--calc-theme-fill);
+  text-decoration: none;
+  margin: 0 0.15em;
+  padding: 0 0.2em;
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.06);
+}
+.calc-citation:hover { background: rgba(0, 0, 0, 0.12); }
+.calc-sources {
+  margin-top: clamp(28px, 3.5vh, 48px);
+  padding: clamp(20px, 2.4vh, 28px) 0 0;
+  border-top: 1px solid rgba(20, 32, 11, 0.15);
+  font-family: var(--font-body); font-size: 0.88rem; line-height: 1.5;
+  color: var(--calc-theme-text); opacity: 0.85;
+}
+.calc-sources__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
+.calc-sources__list li::before {
+  content: '[' counter(srcnum) ']  ';
+  font-family: var(--font-mono); opacity: 0.7;
+}
+.calc-sources__list { counter-reset: srcnum; }
+.calc-sources__list li { counter-increment: srcnum; }
+
+/* ── WHAT'S INCLUDED — 6-tile grid (3 cols × 2 rows) ────────────────── */
+.calc-included {
+  max-width: 1480px;
+  margin: clamp(64px, 8vh, 120px) auto 0;
+  padding: 0 clamp(28px, 5vw, 96px);
+}
+.calc-included__eyebrow {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--calc-theme-text); opacity: 0.7;
+  margin: 0 0 clamp(12px, 1.6vh, 18px);
+}
+.calc-included__title {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: var(--type-section-h2, clamp(1.8rem, 2vw + 1rem, 2.8rem));
+  line-height: 1; letter-spacing: -0.022em;
+  color: var(--calc-theme-text);
+  margin: 0 0 clamp(28px, 3.5vh, 48px);
+  max-width: 30ch; text-transform: lowercase; text-wrap: balance;
+}
+.calc-included__tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+}
+.calc-included-tile {
+  padding: clamp(24px, 2.6vw, 32px);
+  border-radius: var(--radius-lg);
+  background: var(--calc-theme-bg-soft);
+  color: var(--calc-theme-on-soft);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.calc-included-tile__data {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.7; margin: 0;
+}
+.calc-included-tile__claim {
+  font-family: var(--font-body); font-weight: 800;
+  font-size: 1.1rem; line-height: 1.2;
+  margin: 0;
+}
+.calc-included-tile__detail {
+  font-family: var(--font-body); font-size: 0.94rem; line-height: 1.5;
+  margin: 0; opacity: 0.85;
+}
+
+/* ── UX SLIDER — themed range input with three visual layers ────────────
+   Lifted from /pricing/'s ux-slider widget (currently inline). Beats the
+   +/- stepper for any 1–N numeric range — sits cleanly inside .calc-step.
+   Wire it the same way pricing/ does: a tiny inline coordinator listens to
+   the slider's `input` event and synthesizes clicks on a hidden stepper
+   pair (--calc-team-inc / --calc-team-dec) to drive the underlying engine. */
+.ux-slider {
+  position: relative;
+  width: 100%;
+  height: 32px;
+  --pct: 0%;
+}
+.ux-slider__input {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  margin: 0; padding: 0;
+  border: 0; background: transparent;
+  -webkit-appearance: none; appearance: none;
+  cursor: pointer; z-index: 2;
+  opacity: 0;
+}
+.ux-slider__input:focus { outline: none; }
+.ux-slider__visual { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+.ux-slider__track {
+  position: absolute; top: 50%; left: 0; right: 0;
+  height: 4px;
+  transform: translateY(-50%);
+  background: rgba(20, 32, 11, 0.22);
+  border-radius: 2px;
+}
+.ux-slider__progress {
+  position: absolute; top: 50%; left: 0;
+  height: 4px;
+  width: var(--pct, 0%);
+  transform: translateY(-50%);
+  background: var(--calc-theme-fill-deep);
+  border-radius: 2px;
+}
+.ux-slider__thumb {
+  position: absolute; top: 50%; left: var(--pct, 0%);
+  width: 24px; height: 24px;
+  background: var(--calc-theme-fill);
+  border: 3px solid var(--calc-theme-fill-deep);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.12s var(--ease-out);
+}
+.ux-slider__input:hover  ~ .ux-slider__visual .ux-slider__thumb { transform: translate(-50%, -50%) scale(1.08); }
+.ux-slider__input:active ~ .ux-slider__visual .ux-slider__thumb { transform: translate(-50%, -50%) scale(1.12); }
+.ux-slider__input:focus-visible ~ .ux-slider__visual .ux-slider__thumb {
+  box-shadow: 0 0 0 4px rgba(20, 32, 11, 0.18);
+}
+
+/* ── PROPOSAL CHART — 3-row comparison bars (your number vs benchmarks) ─
+   Lifted from /pricing/. Use it on any calc that has a "yours vs benchmark"
+   story: office-costs, office-carbon, meeting-costs. Each row is a label
+   on the left, a bar centred, a value right-aligned. Bars are %-driven via
+   --bar-pct, so the engine just writes a percentage and the visual updates. */
+.proposal-chart {
+  display: flex; flex-direction: column;
+  gap: clamp(12px, 1.4vh, 18px);
+  padding: clamp(18px, 2vh, 24px) 0 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+.proposal-chart__row {
+  display: grid;
+  grid-template-columns: minmax(140px, 1fr) minmax(120px, 2fr) auto;
+  align-items: center;
+  gap: clamp(12px, 1.4vw, 18px);
+}
+.proposal-chart__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.75;
+}
+.proposal-chart__bar-wrap {
+  position: relative;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.10);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.proposal-chart__bar {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: var(--bar-pct, 0%);
+  border-radius: 999px;
+  transition: width 0.32s var(--ease-out);
+}
+.proposal-chart__bar--private    { background: rgba(255, 255, 255, 0.42); }
+.proposal-chart__bar--coworking  { background: rgba(255, 255, 255, 0.28); }
+.proposal-chart__bar-high {
+  position: absolute; top: 0; left: 0; bottom: 0;
+  width: var(--bar-pct, 0%);
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+}
+.proposal-chart__bar--ours       { background: var(--calc-theme-fill); }
+.proposal-chart__value {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: clamp(0.95rem, 0.2vw + 0.9rem, 1.05rem);
+  white-space: nowrap;
+  text-align: right;
+}
+.proposal-chart__row--ours .proposal-chart__value {
+  color: var(--calc-theme-fill);
+}
+.proposal-chart__savings {
+  display: flex; flex-wrap: wrap;
+  gap: clamp(16px, 2vw, 24px);
+  margin-top: clamp(10px, 1.4vh, 14px);
+  padding-top: clamp(12px, 1.4vh, 18px);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+.proposal-chart__saving {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.proposal-chart__saving-label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  opacity: 0.7;
+}
+.proposal-chart__saving-value {
+  font-family: var(--font-body); font-size: clamp(1rem, 0.2vw + 0.95rem, 1.15rem);
+  margin: 0;
+}
+.proposal-chart__saving-value strong { font-weight: 800; }
+
+/* ── MOBILE — result card pinned to bottom of viewport ──────────────── */
+@media (max-width: 1023px) {
+  .calc-result {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    top: auto;
+    border-radius: 24px 24px 0 0;
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: clamp(18px, 2vh, 24px) clamp(20px, 4vw, 32px) clamp(24px, 3vh, 32px);
+    box-shadow: 0 -16px 32px -16px rgba(0,0,0,0.18);
+  }
+  /* Ensure the form has bottom padding so its content isn't hidden under the pinned result */
+  .calc-form {
+    padding-bottom: clamp(220px, 28vh, 320px);
+  }
+  /* Collapse the result card to a compact view on mobile by default; user can tap to expand */
+  .calc-result[data-collapsed="true"] {
+    max-height: 96px;
+  }
+  .calc-result[data-collapsed="true"] > *:not(.calc-result__total):not(.calc-result__handle) {
+    display: none;
+  }
+  /* Drag handle for the bottom sheet */
+  .calc-result__handle {
+    width: 40px; height: 4px; border-radius: 2px;
+    background: rgba(255,255,255,0.4);
+    margin: 0 auto 12px;
+  }
+}
+@media (min-width: 1024px) {
+  .calc-result__handle { display: none; }
+}
+
+/* Form inputs */
+input[type="text"], input[type="number"], input[type="email"], select, textarea {
+  width: 100%;
+  padding: var(--space-150) var(--space-200);
+  font-family: var(--font-body);
+  font-size: var(--type-base);
+  line-height: 1.4;
+  color: var(--colour-text);
+  background: var(--colour-surface);
+  border: var(--border-thin) solid var(--colour-border);
+  border-radius: var(--radius-md);
+  transition: border-color var(--motion-fast) var(--ease-out);
+  min-height: 48px;
+}
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--colour-text); box-shadow: var(--shadow-focus); }
+label { font-family: var(--font-body); font-weight: 500; font-size: var(--type-small); color: var(--colour-text-2); display: block; margin-bottom: var(--space-100); }
+
+fieldset { border: 0; padding: 0; }
+legend { font-family: var(--font-body); font-weight: 500; font-size: var(--type-small); color: var(--colour-text-2); margin-bottom: var(--space-150); }
+
+/* Radio / checkbox segmented control */
+.segmented {
+  display: inline-flex;
+  border: var(--border-thin) solid var(--colour-border);
+  border-radius: var(--radius-sm);   /* squared — sitewide convention */
+  overflow: hidden;
+  background: var(--colour-surface);
+}
+.segmented input { position: absolute; opacity: 0; pointer-events: none; }
+.segmented label {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: var(--space-150) var(--space-300);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: var(--weight-medium);
+  font-size: var(--type-small);
+  margin: 0;
+  color: var(--colour-text);
+  transition: background var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out);
+}
+.segmented input:checked + label { background: var(--colour-text); color: var(--colour-bg); }
+.segmented input:focus-visible + label { box-shadow: var(--shadow-focus); }
+
+/* 5. SITE HEADER / NAV -------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: clamp(12px, 1.6vw, 24px);                /* sits below the page edge so corners read */
+  margin: clamp(12px, 1.6vw, 24px) clamp(12px, 1.6vw, 24px) 0;
+  border-radius: var(--radius-lg);
+  z-index: var(--z-sticky);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;                   /* wordmark left, everything else right via margin-left:auto */
+  gap: var(--space-400);
+  padding: var(--space-300) var(--container-padding);
+  background: var(--ip-paper);                  /* always paper, regardless of page ground */
+  backdrop-filter: saturate(140%) blur(8px);
+  -webkit-backdrop-filter: saturate(140%) blur(8px);
+  box-shadow: 0 10px 32px rgba(20, 32, 11, 0.10), 0 2px 6px rgba(20, 32, 11, 0.06);
+}
+/* No more hairline at the base — shadow does the job. */
+.site-header.is-scrolled { box-shadow: 0 14px 36px rgba(20, 32, 11, 0.14), 0 3px 8px rgba(20, 32, 11, 0.08); }
+
+.wordmark {
+  display: inline-block;
+  width: clamp(140px, 13vw, 180px);
+  height: clamp(36px, 3.5vw, 50px);
+  background: url('../assets/logos/twofiftyseven_logo.svg') no-repeat left center / contain;
+  filter: brightness(0);                       /* force-fill the logo to solid black */
+  text-indent: -9999px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-500);
+  margin-left: auto;                          /* push nav (and the button after it) to the right */
+}
+.nav-list {
+  display: flex;
+  gap: var(--space-400);
+  list-style: none;
+  align-items: center;
+}
+.nav-list a {
+  font-family: var(--font-body);
+  font-weight: var(--weight-medium);
+  font-size: var(--type-base);
+  text-decoration: none;
+  color: var(--colour-text);
+}
+.nav-list a:hover { color: var(--colour-text-2); }
+
+/* Differentiate the BUY group (Workspace + Meet + Host) from the INFO group
+   (Impact + About + Calculators + Contact). BUY items use the brand bold
+   weight; INFO items stay regular. */
+.nav-list .nav-section-workspace > a,
+.nav-list .nav-section-meet > a,
+.nav-list .nav-section-host > a {
+  font-weight: var(--weight-bold);
+}
+
+/* Per-section nav accent — scopes --nav-accent on each top-level dropdown <li>.
+   Read by the .nav-dropdown rule below so the dropdown card background matches
+   the section's accent colour. Falls back to lime for any unsectioned link. */
+.nav-section-workspace { --nav-accent: var(--ip-lime, #e5ffa9); }
+.nav-section-meet      { --nav-accent: #D3A7FE; }
+.nav-section-host      { --nav-accent: #F3AFAC; }
+
+/* Dropdown navigation — CSS-only, hover + focus-within for keyboard accessibility */
+.nav-list li { position: relative; }
+/* No visible dropdown indicator — the menu reveals itself on hover. */
+.nav-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 240px;
+  background: var(--colour-surface);
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: var(--space-200);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-4px);
+  transition: opacity 180ms var(--ease-out), visibility 180ms, transform 180ms var(--ease-out);
+  z-index: 200;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+/* Section-scoped dropdowns (Workspace / Meet / Host only) take their accent
+   colour as the card background. About + Calculators stay on the default
+   --colour-surface above. */
+.nav-list .nav-section-workspace > .nav-dropdown,
+.nav-list .nav-section-meet > .nav-dropdown,
+.nav-list .nav-section-host > .nav-dropdown {
+  background: var(--nav-accent, var(--ip-lime));
+}
+.nav-list li.has-dropdown:hover > .nav-dropdown,
+.nav-list li.has-dropdown:focus-within > .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+.nav-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.nav-dropdown a {
+  display: block;
+  padding: var(--space-150) var(--space-200);
+  color: var(--colour-text);
+  font-size: var(--type-small);
+  font-weight: var(--weight-regular);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  white-space: nowrap;
+  transition: background 120ms var(--ease-out);
+}
+.nav-dropdown a:hover { background: var(--colour-surface-2, rgba(0,0,0,0.04)); }
+
+@media (max-width: 767px) {
+  .nav-list { display: none; }
+}
+
+/* 6. HERO — 4 VARIANTS -------------------------------------------------- */
+
+/* HERO — single canonical style across every page that uses it.
+   Same height, same photo treatment, same scrim, same panel position.
+   Only the content (eyebrow / h1 / sub / ctas) and the photo change.
+   The .hero--lobby / --deep / --story / --brand class names are kept on
+   existing markup but they no longer modify the layout — they are
+   passive flags only. */
+.hero {
+  position: relative;
+  display: grid;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 80svh;
+  padding: var(--space-1000) 0 var(--space-800);
+}
+
+/* .hero--lobby — sticky-scroll-over variant used on product-detail pages.
+   Hero locks below the sticky nav and stays there as chapter sections scroll
+   up over it. Image fills the full first fold. */
+.hero--lobby {
+  position: sticky;
+  top: var(--nav-h, 80px);
+  height: calc(100vh - var(--nav-h, 80px));
+  min-height: 0;
+  z-index: 0;
+}
+/* .hero--lobby + sibling .hero__logos band — see §HERO TRUST BAND below.
+   The band is NOT inside the sticky hero; it follows it in DOM order and
+   is pulled up via negative margin to overlap the bottom of the photo on
+   landing. On user scroll the band scrolls away naturally, exposing the
+   full photo before chapters scroll over. */
+
+/* Photo layer — fills the hero, behind scrim + panel */
+.hero__photo {
+  position: absolute; inset: 0; z-index: 0;
+  background-size: cover;
+  background-position: center 40%;
+  overflow: hidden;
+}
+
+/* Scrim layer — readability gradient over the photo.
+   Strong at the bottom (where the panel sits) and carried meaningfully up the
+   frame so light text stays legible even on busy photos. */
+.hero__scrim {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    linear-gradient(to top, rgba(23,28,10,0.74) 0%, rgba(23,28,10,0.45) 45%, rgba(23,28,10,0.22) 80%, rgba(23,28,10,0.10) 100%),
+    rgba(23,28,10,0.12);
+}
+
+/* Panel — content packs to the bottom-left of the hero */
+.hero__panel {
+  position: relative; z-index: 2;
+  align-self: end;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding: var(--space-600) var(--container-padding);
+  color: var(--colour-bone);
+}
+
+/* Typography inside the panel. Compound selector wins over .chapter__marker
+   when the eyebrow has both classes (common pattern in product pages). */
+.hero__eyebrow,
+.chapter__marker.hero__eyebrow,
+.hero__eyebrow.chapter__marker {
+  color: var(--ip-lime);
+  opacity: 1;
+  margin-bottom: var(--space-300);
+}
+.hero__display {
+  font-family: var(--font-display);
+  font-size: var(--type-hero);
+  font-weight: 500;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-lime);
+  max-width: 22ch;
+  margin-bottom: var(--space-400);
+}
+/* Hero subtext + ghost CTA colour reads from the section accent token
+   (--ip-lime resolves to lime on workspace, lavender on meetings,
+   coral on events, etc.) — themes automatically per section. */
+.hero__sub {
+  font-size: var(--type-large);
+  color: var(--ip-lime);
+  max-width: 55ch;
+  margin-bottom: var(--space-500);
+}
+.hero__ctas { display: flex; flex-wrap: wrap; gap: var(--space-200); }
+.hero__ctas .btn--primary { background: var(--ip-lime); color: var(--colour-forest-dark); border-color: var(--ip-lime); }
+.hero__ctas .btn--primary:hover { background: var(--colour-lime-deep); border-color: var(--colour-lime-deep); }
+.hero__ctas .btn--ghost { color: var(--ip-lime); border-color: var(--ip-lime); }
+.hero__ctas .btn--ghost:hover { background: var(--ip-lime); color: var(--colour-forest-dark); }
+
+/* ── WORKSPACE SECTION HERO OVERRIDES ──────────────────────────────────────
+   Across /workspace/, /workspace/base/, /workspace/hub/, /workspace/desk/:
+   hero title is hero-scale bold (not medium), no italics on its <em>, and
+   the subtext + ghost CTA are lime (not bone) to match the brand register
+   of the dark hero photo behind. Change here to update all four pages. */
+body.page-workspace .hero__display,
+body.page-base .hero__display,
+body.page-hub .hero__display,
+body.page-desk .hero__display {
+  font-weight: 700;
+  font-size: clamp(3.5rem, 8.5vw + 0.5rem, 8rem);
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  max-width: 18ch;
+  text-wrap: balance;
+}
+/* Sitewide: no heading element ever renders italic on its <em> highlights —
+   em is used as a semantic emphasis marker, the visual treatment for it
+   comes from per-page styling (eg. pop background, colour), not italics.
+   Covers h1–h6 and every display/title class across the site. */
+h1 em, h2 em, h3 em, h4 em, h5 em, h6 em,
+.hero__display em,
+[class*="__title"] em,
+[class*="__claim"] em,
+.display em {
+  font-style: normal;
+}
+/* Subtext + ghost CTA colour rules now in the base .hero__sub / .btn--ghost
+   blocks above (sitewide, via --ip-lime per-section override). */
+
+/* 7. SECTION BANNER + DARK VARIANT -------------------------------------- */
+
+.section-banner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-150);
+  padding-bottom: var(--space-400);
+  margin-bottom: var(--space-600);
+  border-bottom: var(--border-thin) solid var(--colour-border-2);
+  align-items: flex-start;
+}
+/* Section number hidden by default — Ash directive 2026-05-07.
+   Pages keep markup so per-section numbering is recoverable, but the
+   banner now reads as eyebrow + heading + hairline only. */
+.section-banner__num { display: none; }
+.section-banner__heading {
+  display: flex; flex-direction: column; gap: var(--space-100);
+  width: 100%;
+}
+.section-banner__heading .eyebrow { color: var(--colour-text-2); }
+.section-banner__heading h2 {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-h2);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--kerning-heading);
+  color: var(--colour-text);
+  max-width: 28ch;
+}
+
+/* 8. TRUST MARQUEE ------------------------------------------------------ */
+
+.marquee {
+  background: transparent;
+  padding: var(--space-500) 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+          mask-image: linear-gradient(90deg, transparent 0%, black 8%, black 92%, transparent 100%);
+  border-block: var(--border-thin) solid var(--colour-border-2);
+}
+.marquee__track {
+  display: flex;
+  gap: var(--space-800);
+  animation: marquee 60s linear infinite;
+  width: max-content;
+}
+.marquee__item {
+  font-family: var(--font-body);
+  font-weight: var(--weight-medium);
+  font-size: var(--type-large);
+  color: var(--colour-text-2);
+  white-space: nowrap;
+  letter-spacing: var(--kerning-heading);
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none; }
+}
+
+/* 9. CARD — UNIVERSAL + VARIANTS ---------------------------------------- */
+
+/* Universal card treatment (locked from 08-homepage-locked.md §4) */
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--colour-lime);
+  color: var(--colour-forest-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-500);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--motion-base) var(--ease-out);
+}
+.card:hover { transform: translateY(-2px); }
+.card .eyebrow { color: var(--colour-forest); }
+.card__heading {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-h3);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--kerning-heading);
+  color: var(--forest-600);
+  margin-block: var(--space-200) var(--space-150);
+}
+.card__body { color: var(--colour-forest-dark); margin-bottom: var(--space-300); }
+.card__price { font-family: var(--font-mono); font-size: var(--type-small); color: var(--colour-forest); margin-bottom: var(--space-300); }
+.card__cta { margin-top: auto; }
+
+/* Tier card — image + heading + price + CTA, 5:7 aspect (locked) */
+.card--tier { padding: var(--photo-frame-padding); }
+.card--tier .card__photo {
+  aspect-ratio: 5 / 7;
+  width: 100%;
+  border-radius: var(--radius-photo-inset);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+  margin-bottom: var(--space-300);
+}
+.card--tier .card__photo img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform var(--motion-slower) var(--ease-out);
+}
+.card--tier:hover .card__photo img { transform: scale(1.02); }
+.card--tier .card__photo picture { display: block; width: 100%; height: 100%; }
+
+/* Hero photo — fill the hero container.
+   When a <picture><img> is dropped inside .hero__photo, it covers the gradient. */
+.hero__photo { overflow: hidden; }
+.hero__photo picture,
+.hero__photo > img {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.hero__photo picture img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+}
+
+/* Photo grid — used on room sub-pages (away days, event space, impact, etc.).
+   3 supporting shots in a 2/1/1 mosaic: one large cell spanning two rows on the
+   left, two stacked cells on the right. Picture inside fills the cell. */
+.photo-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: repeat(2, 1fr);
+  gap: var(--space-300);
+  aspect-ratio: 3 / 2;
+}
+.photo-grid__photo:first-child { grid-row: 1 / 3; }
+@media (max-width: 640px) {
+  .photo-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    aspect-ratio: auto;
+  }
+  .photo-grid__photo { aspect-ratio: 3 / 2; }
+  .photo-grid__photo:first-child { grid-row: auto; }
+}
+.photo-grid__photo { overflow: hidden; position: relative; }
+.photo-grid__photo picture { display: block; width: 100%; height: 100%; }
+.photo-grid__photo picture img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  position: absolute; inset: 0;
+}
+
+/* Stacked-cards image — case-study panels.
+   When a <picture> is dropped in, it fills the panel. */
+.stacked-cards__image { overflow: hidden; position: relative; }
+.stacked-cards__image picture { display: block; width: 100%; height: 100%; }
+.stacked-cards__image picture img {
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+  position: absolute; inset: 0;
+}
+.card--tier .card__content { padding: 0 var(--space-300) var(--space-300); display: flex; flex-direction: column; flex: 1; }
+.card--tier .card__heading { font-size: var(--type-h3); }
+
+/* Tier-card sub-elements — capacity sub-label + rate line, mono-styled.
+   Used across meetings rooms, workspace Base/Hub/Desk, homepage capacity sections. */
+.card__capacity {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--type-small);
+  letter-spacing: var(--kerning-body);
+  color: var(--colour-text-2);
+  margin-bottom: var(--space-200);
+}
+.card__rate {
+  font-family: var(--font-mono);
+  font-size: var(--type-small);
+  letter-spacing: var(--kerning-body);
+  color: var(--colour-text);
+  margin-top: var(--space-300);
+  margin-bottom: var(--space-300);
+}
+
+/* Pricing-card extensions to .card--tier — what's-included list, system
+   notes (member rate / Impact Discount), and featured-tier emphasis.
+   Per brief 09 pricing-card spec; .card--tier is the locked foundation. */
+.card__includes {
+  list-style: none;
+  display: flex; flex-direction: column; gap: var(--space-100);
+  margin: var(--space-200) 0 var(--space-300);
+  font-size: var(--type-small);
+  color: var(--colour-forest-dark);
+}
+.card__includes li {
+  position: relative;
+  padding-left: var(--space-300);
+}
+.card__includes li::before {
+  content: "·";
+  position: absolute; left: var(--space-100);
+  color: var(--colour-forest);
+  font-weight: var(--weight-bold);
+}
+.card__note {
+  font-family: var(--font-mono);
+  font-size: var(--type-tiny);
+  letter-spacing: var(--kerning-body);
+  color: var(--colour-text-2);
+  margin-top: var(--space-100);
+}
+.card--tier--featured {
+  outline: var(--border-medium) solid var(--colour-forest);
+  outline-offset: calc(-1 * var(--border-medium));
+}
+
+/* Value card — claim + evidence, no photo */
+.card--value { padding: var(--space-500); }
+.card--value .card__claim {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-h4);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--forest-600);
+  margin-bottom: var(--space-200);
+}
+.card--value .card__evidence { color: var(--colour-forest-dark); }
+
+/* Case-study card — pulls weight, fills column */
+.card--case-study { padding: var(--space-500); display: flex; flex-direction: column; }
+.card--case-study .case-study__tier {
+  font-family: var(--font-mono);
+  font-size: var(--type-tiny);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-forest);
+  margin-bottom: var(--space-200);
+}
+.card--case-study .case-study__name {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-h3);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--kerning-heading);
+  color: var(--forest-600);
+  margin-bottom: var(--space-100);
+  /* Ensure long org names wrap inside narrow card columns */
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.card--case-study .case-study__industry { font-size: var(--type-small); color: var(--colour-forest); margin-bottom: var(--space-300); }
+.card--case-study .case-study__outcome { color: var(--colour-forest-dark); flex: 1; margin-bottom: var(--space-300); }
+
+/* Sector card — single org logo + name */
+.card--sector { padding: var(--space-300); display: flex; flex-direction: column; align-items: center; gap: var(--space-200); justify-content: center; min-height: 140px; }
+.card--sector img { max-height: 56px; max-width: 80%; filter: brightness(0); object-fit: contain; }
+.card--sector .sector__name { font-family: var(--font-mono); font-size: var(--type-tiny); text-transform: uppercase; color: var(--colour-forest); }
+
+/* Resource card — non-photo (default) */
+.card--resource { padding: var(--space-500); }
+.card--resource .resource__attribution {
+  font-family: var(--font-mono);
+  font-size: var(--type-tiny);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-forest);
+  margin-bottom: var(--space-200);
+}
+.card--resource .resource__title {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-h3);
+  line-height: var(--leading-snug);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-heading);
+  color: var(--forest-600);
+  margin-bottom: var(--space-300);
+}
+
+/* Resource card — photo variant (the one card variant that breaks lime fill rule) */
+.card--resource-photo {
+  background: var(--colour-forest-dark);
+  color: var(--colour-bone);
+  border: var(--border-medium) solid var(--colour-forest-dark);
+  padding: 0;
+  position: relative;
+  min-height: 320px;
+  overflow: hidden;
+}
+.card--resource-photo .card__photo { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0.55; }
+.card--resource-photo .card__inner { position: relative; padding: var(--space-500); display: flex; flex-direction: column; height: 100%; min-height: 320px; justify-content: flex-end; }
+
+/* Card grid utility */
+.card-grid { display: grid; gap: var(--space-400); grid-template-columns: 1fr; }
+@media (min-width: 768px) {
+  .card-grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .card-grid--2 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1024px) {
+  .card-grid--4 { grid-template-columns: repeat(4, 1fr); }
+  .card-grid--6 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (min-width: 1280px) {
+  .card-grid--6 { grid-template-columns: repeat(6, 1fr); }
+}
+
+/* 10. COMPARISON TABLE -------------------------------------------------- */
+
+.compare {
+  display: grid;
+  gap: var(--space-400);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 1024px) {
+  .compare { grid-template-columns: 1fr 1fr; }
+}
+.compare__col {
+  background: var(--colour-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-500);
+  display: flex;
+  flex-direction: column;
+}
+.compare__col--ours {
+  background: var(--colour-lime);
+}
+.compare__col-head {
+  margin-bottom: var(--space-400);
+  padding-bottom: var(--space-300);
+  border-bottom: var(--border-thin) solid var(--colour-border-2);
+}
+.compare__col-eyebrow { color: var(--colour-text-2); margin-bottom: var(--space-100); }
+.compare__col-title {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-h3);
+  letter-spacing: var(--kerning-heading);
+  margin-bottom: var(--space-100);
+}
+.compare__col-sub { font-size: var(--type-small); color: var(--colour-text-2); }
+
+.compare__rows { display: flex; flex-direction: column; }
+.compare__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--space-200);
+  padding: var(--space-200) 0;
+  border-bottom: var(--border-thin) solid var(--colour-border-2);
+  align-items: baseline;
+}
+.compare__row:last-child { border-bottom: 0; }
+.compare__row-label { display: flex; align-items: center; gap: var(--space-100); }
+.compare__row-label .info-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  border: var(--border-thin) solid var(--colour-text-2);
+  font-family: var(--font-mono); font-size: 11px;
+  background: transparent; cursor: pointer;
+  color: var(--colour-text-2);
+  flex-shrink: 0;
+  transition: background var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out);
+}
+.info-trigger:hover, .info-trigger:focus-visible { background: var(--colour-text); color: var(--colour-bg); border-color: var(--colour-text); }
+
+.compare__row-value { font-family: var(--font-mono); font-feature-settings: "tnum" 1; font-variant-numeric: tabular-nums; }
+
+.compare__total {
+  margin-top: var(--space-300); padding-top: var(--space-300);
+  border-top: var(--border-medium) solid var(--colour-text);
+  display: grid; grid-template-columns: 1fr auto; gap: var(--space-200); align-items: baseline;
+  font-family: var(--font-body); font-weight: var(--weight-bold);
+  font-size: var(--type-h4);
+}
+
+/* The headline saving moment — big lime card */
+.saving {
+  margin-top: var(--space-600);
+  padding: var(--space-1000) var(--space-600);
+  background: var(--colour-lime);
+  border-radius: var(--radius-2xl);
+  text-align: center;
+  color: var(--colour-forest-dark);
+}
+.saving .eyebrow { color: var(--colour-forest); margin-bottom: var(--space-300); }
+.saving__figure {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(3rem, 8vw + 1rem, 6.5rem);
+  line-height: 1;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-forest-dark);
+  margin-bottom: var(--space-300);
+  font-variant-numeric: tabular-nums;
+}
+.saving__sub {
+  display: flex; flex-wrap: wrap; gap: var(--space-300) var(--space-500); justify-content: center;
+  font-family: var(--font-mono); font-size: var(--type-small); color: var(--colour-forest);
+}
+
+/* Impact grid — body copy + giving figure, used on workspace tier pages.
+   Mobile: stacked. Desktop >= 1024px: two columns. */
+.impact-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-800);
+  margin-bottom: var(--space-1200);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .impact-grid { grid-template-columns: 1fr 1fr; gap: var(--space-1000); }
+}
+
+/* .saving--inline — the saving card sized to sit inside a grid column
+   rather than as a full-width standalone moment. */
+.saving--inline {
+  margin-top: 0;
+  padding: var(--space-600) var(--space-500);
+}
+.saving__sub--stack {
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-200);
+}
+
+/* 11. QUOTE / TESTIMONIAL / PULL-QUOTE / LIVE NUMBERS ------------------- */
+
+.testimonial {
+  display: flex; flex-direction: column; gap: var(--space-400);
+  max-width: var(--container-narrow); margin-inline: auto;
+}
+.testimonial__quote {
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  font-size: var(--type-h2);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--kerning-heading);
+  color: var(--colour-text);
+}
+.testimonial__quote::before { content: "“"; font-family: var(--font-body); margin-right: 0.05em; }
+.testimonial__quote::after  { content: "”"; font-family: var(--font-body); margin-left: 0.05em; }
+.testimonial__attribution {
+  display: flex; gap: var(--space-300); align-items: center;
+  font-size: var(--type-small);
+  color: var(--colour-text-2);
+}
+.testimonial__attribution strong { font-weight: 600; color: var(--colour-text); }
+
+.pull-quote {
+  text-align: center;
+  max-width: var(--container-narrow);  /* 880px — 6–10 words per line at display scale */
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+.pull-quote .pq__text {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: clamp(2.25rem, 5vw + 0.5rem, 4.25rem);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  text-wrap: balance;  /* even line lengths in supported browsers */
+}
+.pull-quote__attribution {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+  margin: var(--space-300) auto 0;
+}
+
+/* ===========================================================================
+   IMPACT + NARRATIVE COMPONENTS
+   Consolidated into the design system — previously scattered as per-page inline
+   <style> blocks, so pages that didn't carry the inline copy rendered unstyled.
+   =========================================================================== */
+
+/* Impact equation — building-scale proof of the $1/hour model.
+   Mobile: stacked, centred. Desktop ≥768px: 3-col grid (cell · = · cell). */
+.impact-equation {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-500);
+  align-items: center;
+  text-align: center;
+  margin: var(--space-600) auto;
+  max-width: var(--container-narrow);
+}
+.impact-equation__cell { display: flex; flex-direction: column; gap: var(--space-200); align-items: center; }
+.impact-equation__figure {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: clamp(3rem, 8vw + 1rem, 6rem);
+  line-height: 1;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  font-variant-numeric: tabular-nums;
+}
+.impact-equation__operator {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: clamp(2.25rem, 4vw + 1rem, 3.5rem);
+  color: var(--colour-text);
+  line-height: 1;
+}
+@media (min-width: 768px) {
+  .impact-equation { grid-template-columns: 1fr auto 1fr; gap: var(--space-700); }
+}
+
+/* Impact stat ribbon — 2-up mobile, 4-up desktop */
+.impact-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-600) var(--space-500);
+}
+@media (min-width: 768px) { .impact-stats { grid-template-columns: repeat(4, 1fr); } }
+.impact-stat { display: flex; flex-direction: column; gap: var(--space-150); }
+.impact-stat__figure {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: clamp(2.25rem, 3vw + 1rem, 3.5rem);
+  line-height: 1;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  font-variant-numeric: tabular-nums;
+}
+.impact-stat__label {
+  font-size: var(--type-base);
+  line-height: var(--leading-snug);
+  color: var(--colour-text-2);
+}
+
+/* Recipients grid — who gets the subsidised space */
+.recipients {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-400);
+  margin-top: var(--space-600);
+}
+@media (min-width: 700px) { .recipients { grid-template-columns: 1fr 1fr; } }
+.recipient {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-200);
+  padding: var(--space-500);
+  background: var(--colour-surface);
+  border-radius: var(--radius-lg);
+}
+.recipient__type {
+  font-family: var(--font-body);
+  font-size: var(--type-h4);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-snug);
+  color: var(--colour-text);
+}
+.recipient__body {
+  font-size: var(--type-base);
+  line-height: var(--leading-loose);
+  color: var(--colour-text-2);
+  margin: 0;
+}
+
+/* Systemic claim — the $5B at-scale section */
+.systemic {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-700);
+  align-items: start;
+}
+@media (min-width: 900px) { .systemic { grid-template-columns: 1fr 1fr; gap: var(--space-1000); } }
+.systemic__figure-group { display: flex; flex-direction: column; gap: var(--space-300); }
+.systemic__figure {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: clamp(3.5rem, 9vw + 1rem, 7rem);
+  line-height: 1;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  margin: 0;
+}
+.systemic__caption {
+  font-size: var(--type-large);
+  line-height: var(--leading-snug);
+  color: var(--colour-text-2);
+  margin: 0;
+  max-width: 28ch;
+}
+.systemic__body p { font-size: var(--type-large); line-height: var(--leading-snug); }
+.systemic__body p + p { margin-top: var(--space-400); }
+
+/* Bigger picture — body verbatim left, display punch right */
+.bigger-picture {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-800);
+  align-items: start;
+}
+.bigger-picture__body p {
+  font-size: var(--type-large);
+  line-height: var(--leading-snug);
+  max-width: 56ch;
+}
+.bigger-picture__body p + p { margin-top: var(--space-400); }
+.bigger-picture__body a {
+  color: var(--colour-text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 1px;
+}
+.bigger-picture__body a:hover { text-decoration-thickness: 2px; }
+.bigger-picture__right { display: flex; flex-direction: column; gap: var(--space-500); }
+.bigger-picture__sub {
+  font-size: var(--type-large);
+  line-height: var(--leading-snug);
+  color: var(--colour-text);
+  margin: 0;
+  max-width: 30ch;
+}
+.bigger-picture__punch {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: clamp(2.25rem, 4vw + 1rem, 4rem);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  margin: 0;
+  max-width: 18ch;
+}
+.bigger-picture__punch a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 2px solid currentColor;
+  padding-bottom: 0.05em;
+  transition: opacity var(--motion-fast) var(--ease-out);
+}
+.bigger-picture__punch a:hover { opacity: 0.7; }
+@media (min-width: 1024px) {
+  .bigger-picture { grid-template-columns: 1fr 1fr; gap: var(--space-1000); }
+}
+
+/* Hours-to-impact inline calculator (impact page) */
+.h2i {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-600);
+  margin-top: var(--space-600);
+}
+@media (min-width: 800px) {
+  .h2i { grid-template-columns: 1fr 1fr; gap: var(--space-800); align-items: start; }
+}
+.h2i__inputs { display: flex; flex-direction: column; gap: var(--space-500); }
+.h2i__field { display: flex; flex-direction: column; gap: var(--space-200); }
+.h2i__field-row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-300); }
+.h2i__field-row label {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+}
+.h2i__value { font-family: var(--font-mono); font-size: var(--type-base); color: var(--colour-text); }
+.h2i__field input[type="range"] { width: 100%; accent-color: var(--colour-forest); }
+.h2i__output {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-200);
+  padding: var(--space-600);
+  background: var(--colour-surface);
+  border-radius: var(--radius-lg);
+}
+.h2i__output-label {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+}
+.h2i__output-figure {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: clamp(2.5rem, 5vw + 1rem, 4rem);
+  line-height: 1;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  font-variant-numeric: tabular-nums;
+}
+.h2i__output-hours { font-family: var(--font-mono); font-size: var(--type-mono-small); color: var(--colour-text-2); }
+.h2i__output-line { font-size: var(--type-base); line-height: var(--leading-loose); color: var(--colour-text); margin: var(--space-300) 0 0; }
+
+.live-numbers {
+  display: grid;
+  gap: var(--space-500);
+  grid-template-columns: 1fr;
+  text-align: center;
+}
+@media (min-width: 768px) { .live-numbers { grid-template-columns: repeat(4, 1fr); text-align: left; } }
+.live-numbers__cell { display: flex; flex-direction: column; gap: var(--space-100); }
+.live-numbers__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+}
+.live-numbers__figure {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 4vw + 0.5rem, 3.5rem);
+  line-height: 1;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  font-variant-numeric: tabular-nums;
+}
+.live-numbers__context {
+  font-size: var(--type-small);
+  color: var(--colour-text-2);
+}
+
+/* Voices - single-quote carousel. One large quote at a time on a brand
+   shape; prev/next arrows + dot pagination are built by chapter.js. The
+   shapes are rendered flat from shared/svg/shapes/. */
+.voices {
+  position: relative;
+  margin: clamp(48px, 7vh, 96px) auto 0;
+  max-width: min(1100px, 94%);
+  min-height: clamp(380px, 46vh, 560px);
+  display: grid;
+  place-items: center;
+}
+.voice {
+  grid-area: 1 / 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: clamp(20px, 3vh, 36px);
+  text-align: center; margin: 0;
+  padding: clamp(48px, 7vw, 120px) clamp(24px, 4vw, 80px);
+  opacity: 0; visibility: hidden;
+  transition: opacity 420ms ease;
+}
+.voice.is-active { opacity: 1; visibility: visible; }
+.voice::before {
+  content: ""; position: absolute; z-index: -1;
+  width: min(880px, 100%); aspect-ratio: 1;
+  background: var(--quote-shape) no-repeat center / contain;
+  left: 50%; top: 50%; transform: translate(-50%, -50%);
+}
+.voice__text {
+  font-family: var(--font-display); font-weight: 500;
+  font-style: normal;
+  font-size: clamp(2.4rem, 4.5vw + 1rem, 5.5rem);
+  line-height: 1.02; letter-spacing: -0.028em;
+  color: inherit; margin: 0; max-width: 18ch;
+}
+.voice__attr {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: inherit; opacity: 0.75; margin: 0; font-style: normal;
+}
+.voice--placeholder { opacity: 0.55; }
+.voice--placeholder.is-active { opacity: 0.55; }
+
+.voices__arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 3; width: 44px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  background: none; border: 0; cursor: pointer;
+  color: var(--ip-ink); opacity: 0.6;
+  transition: opacity 150ms ease;
+}
+.voices__arrow:hover { opacity: 1; }
+.voices__arrow:focus-visible { outline: 2px solid var(--ip-ink); outline-offset: 4px; }
+.voices__arrow--prev { left: clamp(-8px, -1vw, 8px); }
+.voices__arrow--next { right: clamp(-8px, -1vw, 8px); }
+.voices__dots {
+  position: absolute; bottom: clamp(8px, 2vh, 24px); left: 50%;
+  transform: translateX(-50%); z-index: 3;
+  display: flex; gap: 10px;
+}
+.voices__dot {
+  width: 9px; height: 9px; border-radius: 999px; border: 0;
+  background: var(--ip-ink); opacity: 0.25; cursor: pointer;
+  padding: 0; transition: opacity 150ms ease;
+}
+.voices__dot.is-active { opacity: 0.85; }
+.voices__dot:focus-visible { outline: 2px solid var(--ip-ink); outline-offset: 3px; }
+
+@media (max-width: 720px) {
+  .voice__text { font-size: clamp(1.3rem, 3vw + 0.9rem, 1.9rem); }
+  .voices__arrow { width: 40px; height: 40px; }
+}
+
+/* 11.5 INCL — "what's included" wrapper, head, and card grid.
+   Used on /meetings/, /meetings/pricing/, /meetings/workshops/, /meetings/away-days/.
+   Wrapper puts heading on the left and the cards grid on the right.
+   Pages assign per-card SVG watermarks via :nth-child rules with --shape-url.
+------------------------------------------------------------------------- */
+
+.incl {
+  display: grid;
+  grid-template-columns: 0.85fr 1fr;
+  gap: clamp(32px, 5vw, 76px);
+  align-items: start;
+  margin-top: clamp(8px, 1vh, 16px);
+}
+.incl__head { /* heading column — slot any chapter-marker, h2, lead inside */ }
+@media (max-width: 900px) {
+  .incl { grid-template-columns: 1fr; gap: clamp(20px, 3vh, 32px); }
+}
+
+.incl-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(12px, 1.4vw, 22px);
+  margin-top: clamp(28px, 4vh, 48px);
+}
+.incl-card {
+  position: relative;
+  padding: clamp(20px, 2vw, 30px) clamp(18px, 1.8vw, 26px);
+  background: var(--purple-300);
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+  isolation: isolate;
+  color: var(--purple-600);
+}
+.incl-card::before {
+  content: '';
+  position: absolute;
+  inset: -25% -18% -25% 35%;
+  z-index: 0;
+  background-image: var(--shape-url, none);
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: contain;
+  pointer-events: none;
+}
+.incl-card > * { position: relative; z-index: 1; }
+.incl-card__label {
+  display: block; font-weight: 800;
+  font-size: clamp(1.06rem, 0.4vw + 0.95rem, 1.18rem);
+  letter-spacing: -0.014em; margin: 0 0 6px;
+  color: inherit;
+}
+.incl-card__detail {
+  display: block;
+  font-size: clamp(0.95rem, 0.3vw + 0.88rem, 1.05rem);
+  line-height: 1.4;
+  color: inherit; opacity: 0.85; margin: 0;
+}
+@media (max-width: 900px) {
+  .incl-cards { grid-template-columns: 1fr; }
+}
+
+/* 12. FAQ ACCORDION ----------------------------------------------------- */
+
+.faq { display: flex; flex-direction: column; max-width: var(--container-narrow); margin-inline: 0; }
+.faq--centred { margin-inline: auto; }
+.faq-item { border-bottom: var(--border-thin) solid var(--colour-border-2); }
+.faq-item__question {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-300);
+  width: 100%;
+  padding: var(--space-400) 0;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  font-size: var(--type-h4);
+  text-align: left;
+  color: var(--colour-text);
+  letter-spacing: var(--kerning-heading);
+}
+.faq-item__question:focus { outline: none; }
+.faq-item__question:focus-visible {
+  outline: 2px solid var(--colour-text);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.faq-item__icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 32px; height: 32px;
+  font-family: var(--font-mono); font-size: 1.25rem;
+  flex-shrink: 0;
+  transition: transform var(--motion-base) var(--ease-out);
+}
+.faq-item[data-open="true"] .faq-item__icon { transform: rotate(45deg); }
+.faq-item__answer {
+  display: grid; grid-template-rows: 0fr;
+  transition: grid-template-rows var(--motion-base) var(--ease-out);
+}
+.faq-item[data-open="true"] .faq-item__answer { grid-template-rows: 1fr; }
+.faq-item__answer-inner { overflow: hidden; }
+.faq-item__answer-inner > * { padding-bottom: var(--space-400); color: var(--colour-text); }
+
+/* 13. FOOTER ------------------------------------------------------------ */
+
+/* Compressed dark footer — links + pānui in one tight zone, the signature
+   logotype as the anchor, a single legal bar. data-theme="dark" on the element
+   flips every token, so children adapt automatically. */
+.site-footer {
+  position: relative;
+  background: var(--colour-bg);
+  color: var(--colour-text);
+  padding: var(--space-700) 0 var(--space-400);
+  overflow: hidden;
+}
+/* Brain-coral texture — faint pattern band fading down from the top edge */
+.site-footer::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: url('/shared/svg/257-brain-coral.svg') repeat-x top center / auto 340px;
+  opacity: 0.12;
+  pointer-events: none;
+  -webkit-mask: linear-gradient(to bottom, #000 0%, transparent 58%);
+  mask: linear-gradient(to bottom, #000 0%, transparent 58%);
+}
+.site-footer > .container { position: relative; z-index: 1; }
+
+/* Top zone — nav columns alongside the pānui signup */
+.site-footer__top {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-600) var(--space-800);
+  margin-bottom: var(--space-600);
+}
+@media (min-width: 920px) {
+  .site-footer__top { grid-template-columns: 1.7fr 1fr; align-items: start; }
+}
+
+.site-footer__nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-500) var(--space-500);
+}
+@media (min-width: 560px) {
+  .site-footer__nav { grid-template-columns: repeat(4, 1fr); }
+}
+
+.site-footer__col h4 {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2); font-weight: 500;
+  margin: 0 0 var(--space-200);
+}
+.site-footer__col ul {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-direction: column; gap: var(--space-100);
+}
+.site-footer__col a { text-decoration: none; color: var(--colour-text); }
+.site-footer__col a:hover { text-decoration: underline; text-underline-offset: 3px; }
+
+/* About has 9 links — flow them into two short sub-columns */
+.site-footer__col--about ul {
+  display: block; columns: 2; column-gap: var(--space-400);
+}
+.site-footer__col--about li { margin-bottom: var(--space-100); break-inside: avoid; }
+
+.site-footer__address {
+  font-size: var(--type-small);
+  max-width: 32ch;
+  line-height: var(--leading-snug);
+  font-style: normal;
+  margin: 0 0 var(--space-150);
+  color: var(--colour-text);
+}
+.site-footer__note {
+  font-size: var(--type-mono-small);
+  color: var(--colour-text-2);
+  line-height: var(--leading-snug);
+  max-width: 36ch;
+  margin: 0 0 var(--space-200);
+}
+.site-footer__maplink {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--colour-text); text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* Pānui signup — compact stacked block */
+.site-footer__panui { display: flex; flex-direction: column; gap: var(--space-150); }
+.site-footer__panui h4 {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2); font-weight: 500; margin: 0;
+}
+.site-footer__panui p {
+  font-size: var(--type-small); color: var(--colour-text-2);
+  line-height: var(--leading-snug); max-width: 44ch; margin: 0;
+}
+.site-footer__panui-row { display: flex; gap: var(--space-200); flex-wrap: wrap; margin-top: var(--space-200); }
+.site-footer__panui-row input {
+  flex: 1 1 12rem;
+  padding: var(--space-200) var(--space-300);
+  border: var(--border-thin) solid var(--colour-border-2);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body); font-size: var(--type-small);
+  background: var(--colour-surface); color: var(--colour-text);
+}
+.site-footer__panui-row input::placeholder { color: var(--colour-text-3); }
+.site-footer .btn--primary {
+  background: var(--colour-accent); color: var(--colour-accent-on);
+  border-color: var(--colour-accent);
+}
+
+/* Beliefs — a slow, continuous marquee of the kaupapa. The track holds the
+   four beliefs twice over, so translateX(-50%) loops seamlessly. Edges fade
+   under a mask; hover pauses it; reduced-motion drops it to a wrapped list. */
+.site-footer__beliefs {
+  margin: 0 0 var(--space-500);
+  padding: var(--space-400) 0;
+  border-top: var(--border-thin) solid var(--colour-border-2);
+  border-bottom: var(--border-thin) solid var(--colour-border-2);
+  overflow: hidden;
+  -webkit-mask: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+          mask: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+.site-footer__beliefs-track {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; width: max-content;
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+  animation: footer-beliefs-marquee 46s linear infinite;
+  will-change: transform;
+}
+.site-footer__beliefs:hover .site-footer__beliefs-track { animation-play-state: paused; }
+.site-footer__beliefs-track li {
+  display: flex; align-items: center; white-space: nowrap;
+}
+.site-footer__beliefs-track li::after {
+  content: "/"; margin: 0 var(--space-500);
+  color: var(--colour-accent); font-weight: var(--weight-bold);
+}
+@keyframes footer-beliefs-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.motion-off .site-footer__beliefs { -webkit-mask: none; mask: none; }
+.motion-off .site-footer__beliefs-track {
+  animation: none; width: auto; flex-wrap: wrap; gap: var(--space-150) 0;
+}
+.motion-off .site-footer__beliefs-track li[aria-hidden="true"] { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .site-footer__beliefs { -webkit-mask: none; mask: none; }
+  .site-footer__beliefs-track {
+    animation: none; width: auto; flex-wrap: wrap; gap: var(--space-150) 0;
+  }
+  .site-footer__beliefs-track li[aria-hidden="true"] { display: none; }
+}
+
+/* Signature logotype — the real two/fiftyseven mark, masked so the logo
+   becomes a window onto the brain-coral artwork. HUGE — the floor of the
+   site. Stays static; a clean clip-path wipe reveals it bottom-to-top. */
+.site-footer__wordmark {
+  width: 100%;
+  height: clamp(200px, 44vw, 720px);
+  margin: var(--space-500) 0 var(--space-400);
+  background: url('/shared/svg/257-brain-coral.svg') no-repeat center / cover;
+  -webkit-mask: url('/shared/svg/logo.svg') no-repeat center / contain;
+          mask: url('/shared/svg/logo.svg') no-repeat center / contain;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1200ms var(--ease-out);
+}
+.site-footer__wordmark.is-revealed {
+  clip-path: inset(0 0 0 0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .site-footer__wordmark { clip-path: none; transition: none; }
+}
+
+/* Legal bar */
+.site-footer__bottom {
+  display: flex; flex-wrap: wrap; gap: var(--space-300); justify-content: space-between;
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+  border-top: var(--border-thin) solid var(--colour-border-2);
+  padding-top: var(--space-300);
+  margin-top: var(--space-400);
+}
+
+/* 13b. BOOKING EMBED (tours page — placeholder until calendar is wired) - */
+
+.booking-embed {
+  border: var(--border-medium) dashed var(--colour-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-800) var(--space-500);
+  background: var(--colour-bg-3);
+  text-align: center;
+}
+.booking-embed__placeholder {
+  max-width: 48ch; margin-inline: auto;
+  color: var(--colour-text-2); line-height: var(--leading-normal);
+}
+.booking-embed__placeholder strong {
+  display: block; color: var(--colour-text);
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  margin-bottom: var(--space-200);
+}
+
+/* Pricing grid — row of rate cards (room sub-pages: meeting-room, studios,
+   silver-linings). Lime card, mono label, display-face rate. */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-300);
+}
+@media (min-width: 560px) {
+  .pricing-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+}
+.pricing-card {
+  background: var(--colour-lime);
+  color: var(--colour-forest-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-500);
+  text-align: center;
+  display: flex; flex-direction: column; gap: var(--space-200);
+}
+.pricing-card__label {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-forest);
+}
+.pricing-card__rate {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: clamp(2rem, 4vw + 0.5rem, 3rem);
+  line-height: 1;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-forest-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+/* 14. UTILITIES + A11Y -------------------------------------------------- */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.skip-link {
+  position: absolute; top: 0; left: 0;
+  padding: var(--space-200) var(--space-300);
+  background: var(--colour-text);
+  color: var(--colour-bg);
+  text-decoration: none;
+  transform: translateY(-100%);
+  transition: transform var(--motion-base) var(--ease-out);
+  z-index: var(--z-toast);
+}
+.skip-link:focus { transform: translateY(0); }
+
+:focus-visible {
+  outline: 3px solid var(--colour-focus);
+  outline-offset: 2px;
+}
+button:focus-visible, a:focus-visible {
+  outline: 3px solid var(--colour-focus);
+  outline-offset: 2px;
+}
+
+.reveal { opacity: 0; transform: translateY(8px); transition: opacity var(--motion-slow) var(--ease-out), transform var(--motion-slow) var(--ease-out); }
+.reveal.is-inview { opacity: 1; transform: translateY(0); }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; }
+}
+
+/* 15. STACKED CARDS — Lenis scroll-driven sequential exit ----------------
+   Ported from WP precedent (themes/two-fiftyseven/assets/css/06-components/_stacked-cards.scss
+   + .../assets/js/modules/stacked-cards.js). Token names adapted to Direction 2.
+   See ../shared/js/stacked-cards.wp-precedent.js for the JS module.
+
+   Usage:
+   <div class="stacked-cards" data-js="stacked-cards" data-card-count="3"
+        style="--card-count: 3;">
+     <div class="stacked-cards__track">
+       <article class="stacked-cards__item" data-js="stacked-card" style="--card-index: 0;">
+         <button class="stacked-cards__tab" data-js="stacked-card-tab" type="button">Tab 1</button>
+         <div class="stacked-cards__panel">
+           <div class="stacked-cards__body">…</div>
+           <img class="stacked-cards__image" alt="" src="…">
+         </div>
+       </article>
+       <!-- repeat for each card; --card-index 0..n-1 -->
+     </div>
+   </div>
+
+   Mobile (<768px): native flex column stack, no scroll animation.
+   Desktop (768px+): cards stack absolutely in sticky 100svh track; first
+   (count − 1) cards translateY upward in sequence as Lenis scrolls through
+   the runway. Last card stays as final visible state.
+   ---------------------------------------------------------------------- */
+
+/* Ported VERBATIM from sketch/assets/css/components.css §1835-2066.
+   Token substitutions only: --colour-lime → --forest-300,
+   --colour-forest-dark → --forest-600, --colour-bone → --bone-on-dark.
+   Behaviour, dimensions, runway calc, and breakpoint rules are unchanged. */
+
+/* Outer wrapper — runway reserved before JS enhances.
+   --tab-width: 9rem (144px) so the longest current tab name ("Duck Island", 11 chars)
+   fits on a single line. The indent maths uses this token so spacing stays consistent. */
+.stacked-cards {
+  --tab-width: 9rem;
+  margin-block-start: var(--space-800);
+}
+@media (min-width: 768px) {
+  .stacked-cards {
+    min-height: calc(100svh + (var(--card-count, 1) - 1) * 100svh);
+    margin-block-start: 0;
+  }
+}
+
+/* Optional section title (translates up as the track sticks). */
+.stacked-cards__section-title {
+  margin: 0 auto var(--space-200);
+  text-align: center;
+  text-transform: uppercase;
+}
+@media (min-width: 768px) {
+  .stacked-cards__section-title {
+    transform: translateY(10vh);
+  }
+}
+
+/* Sticky viewport — cards are clipped here. */
+.stacked-cards__track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-200);
+}
+@media (min-width: 768px) {
+  .stacked-cards__track {
+    position: sticky;
+    top: 0;
+    height: 100svh;
+    overflow: hidden;
+    display: block;                           /* revert flex so absolute children take over */
+  }
+}
+
+/* Individual card. */
+.stacked-cards__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+@media (min-width: 768px) {
+  .stacked-cards__item {
+    position: absolute;
+    inset: 0;
+    justify-content: center;
+    z-index: calc(50 - var(--card-index, 0)); /* card 0 on top */
+    will-change: transform;
+    pointer-events: none;                     /* tab + panel re-enable */
+  }
+}
+
+/* Tab — sits on top edge of panel, indents by --card-index on desktop.
+   --tab-width is 9rem so the longest member name in any current deck
+   ("Duck Island" — 11 chars) fits on a single line. The indent maths
+   below uses the same token so spacing stays consistent. */
+.stacked-cards__tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--tab-width, 9rem);
+  padding-block: var(--space-150);
+  padding-inline: var(--space-200);
+  white-space: nowrap;
+  background-color: var(--forest-300);
+  border: var(--border-thin) solid var(--forest-600);
+  border-block-end: none;
+  border-start-start-radius: var(--radius-lg);
+  border-start-end-radius: var(--radius-lg);
+  border-end-start-radius: 0;
+  border-end-end-radius: 0;
+  position: relative;
+  z-index: 1;
+  margin-block-end: -3px;
+  pointer-events: all;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: var(--type-small);
+  line-height: 1.2;
+  color: var(--forest-600);
+  text-decoration: none;
+  text-align: center;
+}
+@media (min-width: 768px) {
+  .stacked-cards__tab {
+    margin-inline-start: calc(var(--card-index, 0) * var(--tab-width, 9rem));
+  }
+}
+.stacked-cards__tab[type="button"] {
+  appearance: none;
+  cursor: pointer;
+  transition: background-color var(--motion-fast) var(--ease-out),
+              color var(--motion-fast) var(--ease-out);
+}
+.stacked-cards__tab[type="button"]:hover {
+  background-color: var(--forest-600);
+  color: var(--forest-300);
+}
+@media (max-width: 767px) {
+  .stacked-cards__tab {
+    display: none;
+  }
+}
+
+/* Panel — the card body. */
+.stacked-cards__panel {
+  color: var(--forest-600);
+  display: grid;
+  gap: var(--space-300);
+  pointer-events: all;
+  background-color: var(--forest-300);
+  outline: var(--border-thin) solid var(--forest-600);
+  margin-inline: 1px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  align-items: center;
+  padding: var(--space-200);
+}
+@media (min-width: 768px) {
+  .stacked-cards__panel {
+    padding: var(--space-300);
+    border-start-start-radius: 0;             /* card 0: tab fills this corner */
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    height: 65svh;
+  }
+}
+
+/* Cards 1+: tab indents on desktop, so panel restores top-left radius. */
+@media (min-width: 768px) {
+  .stacked-cards__item:not(:first-child) .stacked-cards__panel {
+    border-start-start-radius: var(--radius-xl);
+  }
+}
+
+/* Body — text side of the panel. */
+.stacked-cards__body {
+  padding-inline: var(--space-500);
+  padding-block: var(--space-150);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-300);
+}
+@media (max-width: 767px) {
+  .stacked-cards__body {
+    padding-inline: var(--space-150);
+  }
+}
+
+/* Content — rich-text region inside body. */
+.stacked-cards__content ul {
+  padding-left: var(--space-300);
+  list-style-type: "/ ";
+}
+.stacked-cards__content ul li::marker {
+  font-family: var(--font-mono);
+  color: var(--forest-600);
+}
+.stacked-cards__content ul li:not(:last-child) {
+  margin-bottom: var(--space-150);
+}
+
+/* Image — right side of the panel grid. */
+.stacked-cards__image {
+  border-radius: var(--radius-md);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Reduced motion — collapse to a static vertical stack on all viewports. */
+@media (prefers-reduced-motion: reduce) {
+  .stacked-cards { min-height: auto; }
+  .stacked-cards__track {
+    position: static;
+    height: auto;
+    overflow: visible;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-400);
+  }
+  .stacked-cards__item {
+    position: static;
+    inset: auto;
+    transform: none !important;
+    pointer-events: auto;
+  }
+  .stacked-cards__tab { display: none; }
+}
+
+/* 16. SHAPE SYSTEM — section-banner decorative SVG with cross-section
+   projection. Ported from current sketch (sketch/assets/css/components.css
+   §section-banner__shape). The shape SVG is set via inline CSS variable.
+   ::before paints the natural colour, ::after paints the "projection"
+   colour (used to project across section boundaries when paired with
+   .section--bg-dark which flips the natural/projection swap).
+
+   Usage in markup:
+   <span class="section-banner__shape" aria-hidden="true"
+         style="--shape:url('../shared/svg/shapes/shape-19.svg')"></span>
+
+   Shape library: 137 SVGs in ../shared/svg/shapes/ (kebab-case shape-NN.svg).
+   Source: reference/shapes/ (133 originals named "Shape NN.svg") + 4 added
+   in sketch. Shapes 59 and 60 are >1MB each — Phase 4 will need either
+   alternatives or compression. Most other shapes are <30KB.
+   ---------------------------------------------------------------------- */
+
+.section-banner__shape {
+  --shape-natural:    rgba(17, 29, 8, 0.65);   /* dark on light section */
+  --shape-projection: var(--forest-300);       /* lime projects above */
+  display: block;
+  position: absolute;
+  top: 50%;
+  right: -12vw;
+  width: 33vw;
+  max-width: 420px;
+  aspect-ratio: 1;
+  pointer-events: none;
+  z-index: var(--z-base);
+}
+.section-banner__shape::before,
+.section-banner__shape::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  -webkit-mask: var(--shape) center / contain no-repeat;
+          mask: var(--shape) center / contain no-repeat;
+}
+.section-banner__shape::before {
+  background: var(--shape-natural);
+}
+.section-banner__shape::after {
+  background: var(--shape-projection);
+  /* clip-path will be set by JS to project the shape across section boundary */
+  clip-path: polygon(0 0, 100% 0, 100% var(--cut-px, 0px), 0 var(--cut-px, 0px));
+}
+
+/* On dark sections, the colours flip: natural becomes lime (visible on dark
+   ground), projection becomes the dark forest (so the shape "leaks" up
+   into the lighter section above). */
+.section--bg-dark .section-banner__shape {
+  --shape-natural:    var(--forest-300);
+  --shape-projection: rgba(17, 29, 8, 0.65);
+}
+
+@media (max-width: 640px) {
+  .section-banner__shape {
+    width: 50vw;
+    right: -25vw;
+  }
+}
+
+/* 17. BRAIN-CORAL BACKGROUND TEXTURE — body-level subtle organic mask
+   The 257-brain-coral.svg sits as a fixed background mask over the whole
+   page on light theme. Fades out toward the bottom. Adds Half-Earth-style
+   organic-silhouette layering without competing with content.
+
+   Usage: served from ../shared/svg/257-brain-coral.svg (file not yet copied).
+   Phase 4 will fetch from /assets/svg/257-brain-coral.svg in sketch-v2/.
+   ---------------------------------------------------------------------- */
+
+.has-brain-coral body::before,
+body[data-brain-coral="on"]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-hide);
+  background:
+    url("../shared/svg/257-brain-coral.svg") center top / cover no-repeat,
+    var(--colour-pattern-bg);
+  -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 95%);
+          mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 95%);
+  background-attachment: fixed;
+  opacity: 0.7;
+  pointer-events: none;
+}
+[data-theme="dark"] body::before,
+.section--bg-dark body::before {
+  opacity: 0.25;
+}
+
+/* 18. CALC 1 — OFFICE COST INLINE COMPONENT ----------------------------
+   The conversion centrepiece. Used inline on /workspace/base/ + /workspace/hub/
+   and full-page on /calculator/office-costs/. JS module:
+   ../shared/js/calc-office-costs.js. Builds on .compare + .saving from §10.
+   ---------------------------------------------------------------------- */
+
+.calc {
+  display: block;
+  margin-block: var(--space-600);
+}
+.calc__intro {
+  max-width: 60ch;
+  margin-bottom: var(--space-600);
+  font-size: var(--type-large);
+  color: var(--colour-text-2);
+}
+.calc__layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-500);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .calc__layout {
+    grid-template-columns: 380px 1fr;
+    gap: var(--space-600);
+  }
+}
+
+/* Builder — sticky on desktop */
+.calc__builder {
+  background: var(--forest-100);
+  border-radius: var(--radius-lg);
+  padding: var(--space-500);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-400);
+}
+@media (min-width: 1024px) {
+  .calc__builder {
+    position: sticky;
+    top: var(--space-400);
+  }
+}
+.calc__builder-title {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-h3);
+  letter-spacing: var(--kerning-heading);
+  color: var(--colour-text);
+}
+
+/* Team-size stepper */
+.team-stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  background: var(--colour-bg-3);
+  border: var(--border-thin) solid var(--colour-border);
+  border-radius: var(--radius-sm);   /* squared — sitewide convention */
+  padding: var(--space-100);
+  width: fit-content;
+}
+.team-stepper button {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 0;
+  background: transparent;
+  font-family: var(--font-mono);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--colour-text);
+  cursor: pointer;
+  transition: background var(--motion-fast) var(--ease-out);
+}
+.team-stepper button:hover { background: var(--forest-200); }
+.team-stepper button:disabled { opacity: 0.3; cursor: not-allowed; }
+.team-stepper output {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1;
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
+  text-align: center;
+  font-size: var(--type-base);
+  font-weight: 500;
+}
+
+/* Team roster */
+.team-roster {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-150);
+  list-style: none;
+}
+.team-row {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: var(--space-200);
+  align-items: center;
+}
+.team-row__label {
+  font-family: var(--font-mono);
+  font-size: var(--type-tiny);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+}
+.team-row select {
+  width: 100%;
+  padding: var(--space-100) var(--space-200);
+  font-family: var(--font-body);
+  font-size: var(--type-small);
+  font-weight: var(--weight-medium);
+  background: var(--colour-bg-3);
+  border: var(--border-thin) solid var(--colour-border);
+  border-radius: var(--radius-md);
+  min-height: 40px;
+}
+
+/* Commitment + annual toggles */
+.calc__field { display: flex; flex-direction: column; gap: var(--space-150); }
+.calc__field-label {
+  font-family: var(--font-mono);
+  font-size: var(--type-tiny);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+}
+.calc__annual {
+  display: flex;
+  align-items: center;
+  gap: var(--space-200);
+  cursor: pointer;
+  font-size: var(--type-small);
+  color: var(--colour-text);
+}
+.calc__annual input { width: 18px; height: 18px; cursor: pointer; }
+
+/* Live mini total inside the builder */
+.calc__mini-total {
+  margin-top: auto;
+  padding-top: var(--space-300);
+  border-top: var(--border-thin) solid var(--colour-border-2);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-200);
+}
+.calc__mini-total-label {
+  font-family: var(--font-mono);
+  font-size: var(--type-tiny);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+}
+.calc__mini-total-value {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-large);
+  font-variant-numeric: tabular-nums;
+  color: var(--colour-text);
+}
+
+/* Results column */
+.calc__results { display: flex; flex-direction: column; gap: var(--space-500); }
+.calc__results-title {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: var(--type-h3);
+  letter-spacing: var(--kerning-heading);
+  margin-bottom: var(--space-200);
+}
+
+/* Override .compare grid to single column (results stack vertically inside the
+   2-col calc layout). Override .compare__row to allow tooltip arrow. */
+.calc__results .compare { grid-template-columns: 1fr; }
+.calc__results .compare__col {
+  background: transparent;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+}
+.calc__results .compare__col + .compare__col {
+  margin-top: var(--space-500);
+}
+.calc__results .compare__col--ours .compare__col-head {
+  background: var(--forest-300);
+  border-radius: var(--radius-lg);
+  padding: var(--space-300);
+  margin-bottom: var(--space-300);
+  border-bottom: 0;
+}
+
+/* Source citation tooltip */
+.calc-source {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+}
+.calc-source__pop {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: var(--z-overlay);
+  width: max-content;
+  max-width: 280px;
+  padding: var(--space-200) var(--space-300);
+  background: var(--colour-text);
+  color: var(--colour-bg);
+  border-radius: var(--radius-md);
+  font-size: var(--type-tiny);
+  line-height: var(--leading-snug);
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity var(--motion-fast) var(--ease-out), transform var(--motion-fast) var(--ease-out);
+}
+.calc-source__pop a { color: var(--colour-bg); text-decoration: underline; word-break: break-word; }
+.calc-source[data-open="true"] .calc-source__pop,
+.calc-source:hover .calc-source__pop {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.calc-source__pop-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  margin-bottom: 4px;
+  color: var(--colour-bg-2);
+}
+
+/* Kaupapa-bridge footer transition */
+.calc-bridge {
+  margin-top: var(--space-800);
+  padding: var(--space-600) var(--space-500);
+  background: var(--forest-100);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-300);
+}
+.calc-bridge__lead {
+  font-size: var(--type-large);
+  max-width: 60ch;
+  margin-inline: auto;
+  color: var(--colour-text);
+}
+.calc-bridge__figure {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(2rem, 4vw + 0.5rem, 3.5rem);
+  line-height: 1;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  font-variant-numeric: tabular-nums;
+}
+.calc-bridge__cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-200);
+  justify-content: center;
+  margin-top: var(--space-300);
+}
+
+/* ════════════════════════════════════════════════════════════════════════════
+   CHAPTER SYSTEM (sitewide)
+   ════════════════════════════════════════════════════════════════════════════
+   Promoted from the Impact-page `.ip-*` pattern into the sitewide kit. The
+   chapter is the universal section shell. Every showpiece-quality page is
+   composed from chapters.
+
+   Companion docs:
+     - docs/COMPONENTS.md   — the contract
+     - docs/PLAYBOOK.md     — the rules
+     - design-system/impact.css — the page-scoped origin (still active on /impact/)
+
+   Token reference:
+     - Default ground:  --colour-paper
+     - Default ink:     --colour-text
+     - Lime variant:    --colour-lime  (the brand defining green)
+     - Dark variant:    --colour-text  inverted (paper on forest-600)
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* ── Chapter shell ─────────────────────────────────────────────────────────────
+   Theme-driven via --chapter-bg / --chapter-fg / --chapter-padding-block
+   (declared in tokens.css). Sitewide default = impact aesthetic (grey-green
+   ground, ink text). overflow:hidden by default; `.chapter--unclipped` opts out
+   for chapters containing sticky-positioned descendants (e.g. stacked-cards). */
+.chapter {
+  position: relative;
+  padding-block: var(--chapter-padding-block);
+  overflow: hidden;
+  background: var(--chapter-bg);
+  color: var(--chapter-fg);
+}
+/* Rounded top corners ONLY on the first section that slides over the
+   sticky hero. Uses general sibling (~) so any intervening <style>,
+   <script>, or comment block doesn't break the selector. Values-trio
+   is typically singular per page; the first content chapter is targeted
+   via :nth-of-type to ignore the hero itself in the section count. */
+section[class*="hero"] ~ section.values-trio,
+section[class*="hero"] + .chapter,
+section[class*="hero"] ~ section.chapter:nth-of-type(2) {
+  border-radius: 32px 32px 0 0;
+}
+.chapter__inner {
+  position: relative;
+  z-index: 2;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+.chapter--open       { padding-top: clamp(56px, 8vw, 120px); }
+.chapter--close      { padding-bottom: clamp(110px, 16vw, 240px); }
+.chapter--fit        { padding-block: var(--chapter-fit-padding-block); }
+.chapter--unclipped  { overflow: visible; }
+
+/* Auto-unclip chapters that contain sticky-pinned components. Any chapter
+   holding stacked-cards, a pinned walk-through, or a section explicitly
+   tagged data-unclipped gets overflow:visible so sticky behaviour works. */
+.chapter:has(.stacked-cards),
+.chapter:has(.walk__pin),
+.chapter:has([data-sticky-pin]),
+.chapter[data-unclipped] { overflow: visible; }
+
+/* Lime ground — the brand-defining colour flip. Pop reverses to paper. */
+.chapter--lime {
+  background: var(--ip-lime);
+  color: var(--ip-ink);
+}
+
+/* Dark ground — the earned inversion (ink ground, paper-toned text). */
+.chapter--dark {
+  background: var(--ip-ink);
+  color: var(--ip-ground);
+}
+.chapter--dark .chapter__marker { color: var(--ip-ground); }
+
+/* ── Chapter marker — small mono caps, no dash device.
+   inline-block + tighter margin per the pilot-page direction. */
+.chapter__marker {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--chapter-fg);
+  opacity: 0.78;
+  display: inline-block;
+  margin: 0 0 clamp(20px, 2.5vh, 32px);
+}
+
+/* ── Display typography (chapter-scoped sizing) ─────────────────────────────── */
+.chapter .display,
+.chapter .display--mid {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+  color: var(--chapter-fg);
+  margin: 0;
+  text-wrap: balance;
+}
+.chapter .display      { font-size: clamp(2.25rem, 4.5vw + 0.75rem, 5.25rem); }
+.chapter .display--mid { font-size: clamp(2rem, 3.5vw + 0.75rem, 4.25rem); }
+
+/* ── Canonical SECTION H2 ────────────────────────────────────────────────────
+   Single source of truth for every <h2 class="display display--mid"> in a
+   chapter. Gopher Bold, lowercase, no end periods (markup-side), max-width
+   18ch with text-wrap balance. Change THIS rule to change every section H2
+   sitewide — do not re-derive per page. Size was hero-scale; reduced ~30%
+   (Ash 2026-06) for better in-page hierarchy below the actual hero. */
+.chapter h2.display--mid {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--type-section-h2);
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  max-width: 18ch;
+  text-wrap: balance;
+  text-transform: lowercase;
+}
+
+/* Area theming: text colour AND page ground shift per area so each section
+   reads cohesively. Workspace stays default (green-tinted grey ground +
+   dark forest text). Meet shifts to purple-tinted grey + dark purple text.
+   Host shifts to peach-tinted grey + dark maroon text. Same luminance on
+   all three grounds so visual weight is consistent, just the hue moves. */
+body.section-meet {
+  --chapter-fg: var(--purple-600);
+  --ip-ground: #B0A6BC;       /* purple-tinted grey, same luminance as #b0bca6 */
+  --chapter-bg: #B0A6BC;      /* explicit so chapters pick it up too */
+  --ip-ground-2: #A39BB0;     /* deeper layer for surfaces */
+  --colour-bg: #B0A6BC;
+}
+body.section-host {
+  --chapter-fg: var(--maroon-600);
+  --ip-ground: #BCA8A6;       /* peach-tinted grey, same luminance */
+  --chapter-bg: #BCA8A6;
+  --ip-ground-2: #B09B98;
+  --colour-bg: #BCA8A6;
+}
+/* Section H2s also override directly so they win over any other rule. */
+body.section-meet .chapter h2.display--mid,
+body.section-meet .values-trio__title,
+body.section-meet h2[class*="__title"] {
+  color: var(--purple-600);
+}
+body.section-host .chapter h2.display--mid,
+body.section-host .values-trio__title,
+body.section-host h2[class*="__title"] {
+  color: var(--maroon-600);
+}
+
+/* ── PAGE GROUND OVERRIDES — paper background on the homepage, every
+   About-menu page, and contact. Everything else inherits the sitewide
+   default (green-grey ground, or meet/host's hue-shifted ground). */
+body.page-home,
+body.page-our-story,
+body.page-kaupapa,
+body.page-organisations,
+body.page-people,
+body.page-press-kit,
+body.page-whatson,
+body.page-kōrero,
+body.page-contact {
+  --colour-bg: var(--ip-paper);
+  --ip-ground: var(--ip-paper);
+  --chapter-bg: var(--ip-paper);
+  background: var(--ip-paper);
+}
+
+/* lime-highlighted pop inside a display — for words that earn it */
+.chapter .pop,
+.chapter .display em {
+  font-style: normal;
+  background: var(--pop-bg);
+  color: var(--pop-fg);
+  padding: 0.04em 0.14em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+.chapter--lime .pop,
+.chapter--lime .display em {
+  background: var(--ip-paper);
+}
+
+.chapter .lead {
+  font-family: var(--font-body);
+  font-weight: var(--weight-book);
+  font-size: clamp(1.1rem, 0.8vw + 0.85rem, 1.55rem);
+  line-height: 1.45;
+  max-width: 56ch;
+  margin: clamp(24px, 3vh, 40px) 0 0;
+  color: var(--chapter-fg);
+}
+
+/* ── Decorative background shapes — silhouette SVGs masked to a solid fill  ─── */
+.shapes {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.shape {
+  position: absolute;
+  display: block;
+  width: var(--s, 200px);
+  height: var(--s, 200px);
+  background: var(--shape-fill);
+  -webkit-mask: var(--shape) no-repeat center / contain;
+          mask: var(--shape) no-repeat center / contain;
+  will-change: transform;
+  transform: rotate(var(--r, 0deg));
+  opacity: 0.85;
+}
+.shape--ink   { background: var(--ip-ink); }
+.shape--paper { background: var(--ip-paper); }
+/* On lime chapters, shapes become a soft ink wash (sitewide, per audit E.4) */
+.chapter--lime .shape       { background: var(--ip-ink); opacity: 0.12; }
+.chapter--lime .shape--ink  { background: var(--ip-ink); opacity: 0.12; }
+.chapter--dark .shape       { background: var(--ip-lime); }
+.chapter--dark .shape--ink  { background: var(--ip-ground); }
+
+/* ── Reveal — one-shot fade-up tied to IntersectionObserver via JS  ─────────── */
+.chapter [data-reveal] {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 760ms var(--ease-out), transform 760ms var(--ease-out);
+}
+.chapter [data-reveal].is-inview { opacity: 1; transform: none; }
+.chapter [data-reveal][data-reveal-delay="1"] { transition-delay:  90ms; }
+.chapter [data-reveal][data-reveal-delay="2"] { transition-delay: 180ms; }
+.chapter [data-reveal][data-reveal-delay="3"] { transition-delay: 270ms; }
+.chapter [data-reveal][data-reveal-delay="4"] { transition-delay: 360ms; }
+body.motion-off .chapter [data-reveal] { opacity: 1; transform: none; transition: none; }
+body.motion-off .chapter .shape { transform: rotate(var(--r, 0deg)) !important; }
+@media (prefers-reduced-motion: reduce) {
+  .chapter [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
+/* Word-by-word reveal for headlines */
+.chapter [data-reveal-words] .word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.42em) rotate(2deg);
+  transition: opacity 560ms var(--ease-out), transform 560ms var(--ease-out);
+}
+.chapter [data-reveal-words].is-inview .word { opacity: 1; transform: none; }
+body.motion-off .chapter [data-reveal-words] .word { opacity: 1; transform: none; transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .chapter [data-reveal-words] .word { opacity: 1; transform: none; transition: none; }
+}
+
+/* ── Split-grid hero (product-detail pattern) ───────────────────────────────────
+   Two-column above-the-fold hero used on product-detail pages (workspace tiers,
+   meeting rooms, host pages). Copy left, photo right at desktop, single column
+   on mobile. Scoped under .chapter--hero so the .hero__* class namespace
+   doesn't collide with the sticky-photo .hero in §6. */
+.chapter--hero {
+  min-height: calc(82vh - 80px);
+  display: flex;
+  align-items: center;
+  padding-block: clamp(28px, 3.5vh, 56px);
+}
+.chapter--hero .hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: clamp(32px, 4vw, 72px);
+  align-items: center;
+  width: 100%;
+}
+.chapter--hero .hero__col { display: flex; flex-direction: column; }
+.chapter--hero .display {
+  font-weight: var(--weight-bold);
+  font-size: clamp(2.5rem, 4vw + 0.85rem, 4.75rem);
+  line-height: 1.0;
+  letter-spacing: -0.025em;
+  margin: clamp(20px, 2.5vh, 32px) 0 0;
+}
+.chapter--hero .lead {
+  max-width: 38ch;
+  margin-top: clamp(20px, 2.5vh, 32px);
+}
+.chapter--hero .hero__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(12px, 1.6vw, 20px);
+  margin-top: clamp(36px, 4.5vh, 56px);
+}
+.chapter--hero .hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: clamp(14px, 1.6vh, 20px) clamp(22px, 2.5vw, 32px);
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: clamp(1rem, 0.3vw + 0.9rem, 1.1rem);
+  letter-spacing: -0.005em;
+  border-radius: var(--radius-pill, 9999px);
+  text-decoration: none;
+  transition: transform var(--motion-fast) var(--ease-out),
+              background var(--motion-fast) var(--ease-out),
+              color var(--motion-fast) var(--ease-out);
+}
+.chapter--hero .hero__cta--primary {
+  background: var(--ip-ink);
+  color: var(--ip-lime);
+}
+.chapter--hero .hero__cta--primary:hover { transform: translateY(-2px); }
+.chapter--hero .hero__cta--ghost {
+  background: transparent;
+  color: var(--ip-ink);
+  outline: 1.5px solid var(--ip-ink);
+  outline-offset: -1.5px;
+}
+.chapter--hero .hero__cta--ghost:hover { background: var(--ip-ink); color: var(--ip-lime); }
+.chapter--hero .hero__photo-wrap {
+  border-radius: var(--radius-lg, 16px);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+  background: var(--ip-ink);
+  max-height: calc(100vh - 160px);
+}
+.chapter--hero .hero__photo-wrap picture,
+.chapter--hero .hero__photo-wrap img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+}
+@media (max-width: 900px) {
+  .chapter--hero { min-height: auto; }
+  .chapter--hero .hero__grid { grid-template-columns: 1fr; gap: clamp(28px, 4vh, 48px); }
+}
+
+/* ── Stats — vertical narrative sequence (one stat per scroll moment) ───────── */
+.chapter .stats {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(80px, 14vh, 220px);
+  margin-top: clamp(96px, 14vh, 200px);
+}
+.chapter .stat__lead {
+  font-size: clamp(1.5rem, 2vw + 1rem, 2.75rem);
+  line-height: var(--leading-snug);
+  color: var(--colour-text-2);
+  margin: 0;
+}
+.chapter .stat__figure {
+  display: block;
+  margin: var(--space-400) 0 var(--space-300);
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: clamp(3.75rem, 13vw, 14rem);
+  line-height: 0.84;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  font-variant-numeric: tabular-nums;
+  text-wrap: balance;
+}
+.chapter .stat__label {
+  font-size: clamp(1.5rem, 2vw + 1rem, 2.75rem);
+  line-height: var(--leading-snug);
+  color: var(--colour-text);
+  margin: 0;
+}
+
+/* ── In-field statement — bold display line set into a chapter  ─────────────── */
+.chapter .statement {
+  font-family: var(--font-body);
+  font-weight: var(--weight-bold);
+  font-size: clamp(1.75rem, 3vw + 0.5rem, 3.5rem);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--kerning-heading);
+  color: var(--colour-text);
+  max-width: 36ch;
+  margin: clamp(48px, 7vh, 110px) 0 0;
+}
+.chapter .statement--tight { margin-top: var(--space-400); }
+
+/* ── Equation — three cells, three figures, an operator between  ─────────────── */
+.chapter .equation {
+  margin-top: clamp(48px, 7vh, 100px);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr auto 1fr;
+  gap: clamp(20px, 3vw, 56px);
+  align-items: end;
+  text-align: center;
+}
+@media (max-width: 720px) {
+  .chapter .equation {
+    grid-template-columns: 1fr;
+    text-align: left;
+    gap: var(--space-400);
+  }
+  .chapter .equation .equation__op { display: none; }
+}
+.chapter .equation__cell { display: flex; flex-direction: column; gap: var(--space-200); align-items: center; }
+.chapter .equation__eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--colour-text-2);
+  margin: 0;
+}
+.chapter .equation__figure {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  font-size: clamp(2.5rem, 8vw, 6.5rem);
+  line-height: 0.96;
+  letter-spacing: var(--kerning-display);
+  color: var(--colour-text);
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.chapter .equation__op {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: var(--weight-medium);
+  color: var(--colour-text-2);
+  padding-block: clamp(8px, 1.5vw, 24px);
+}
+.chapter .equation__note {
+  margin: var(--space-400) auto 0;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  color: var(--colour-text-2);
+  text-align: center;
+  max-width: 50ch;
+}
+.chapter .equation__star {
+  font-family: var(--font-mono);
+  font-size: 0.5em;
+  vertical-align: super;
+  color: var(--colour-text-2);
+  margin-left: 0.06em;
+}
+
+/* ── Ways — close-out CTA cards (two feature + one ghost  ──────────────────── */
+.chapter .ways {
+  display: grid;
+  gap: clamp(20px, 3vw, 36px);
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  margin-top: clamp(56px, 9vh, 140px);
+  list-style: none;
+  padding: 0;
+}
+.chapter .way {
+  display: block;
+  padding: clamp(24px, 3vw, 40px);
+  border-radius: var(--radius-lg);
+  background: var(--colour-paper);
+  border: 1px solid var(--colour-border-2);
+  color: var(--colour-text);
+  text-decoration: none;
+  transition: transform var(--motion-fast) var(--ease-out),
+              box-shadow var(--motion-fast) var(--ease-out);
+}
+.chapter .way:hover,
+.chapter .way:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(17, 29, 8, 0.08);
+}
+.chapter .way--feature {
+  background: var(--colour-lime);
+  border-color: transparent;
+}
+.chapter .way__title {
+  font-family: var(--font-body);
+  font-weight: var(--weight-semibold);
+  font-size: clamp(1.25rem, 1.4vw + 0.85rem, 1.75rem);
+  line-height: var(--leading-snug);
+  margin: 0 0 var(--space-200);
+  color: var(--colour-text);
+}
+.chapter .way__body {
+  font-size: var(--type-base);
+  line-height: var(--leading-normal);
+  color: var(--colour-text);
+  margin: 0;
+}
+
+/* ── Logos marquee with lime treatment — for partner / org strips  ──────────── */
+.logos {
+  position: relative;
+  margin-top: clamp(40px, 6vh, 100px);
+  overflow: hidden;
+  -webkit-mask: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+          mask: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+}
+.logos__track {
+  display: flex;
+  gap: clamp(40px, 6vw, 96px);
+  width: max-content;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  animation: logos-scroll 70s linear infinite;
+}
+.logos:hover .logos__track,
+.logos:focus-within .logos__track { animation-play-state: paused; }
+.logos__item {
+  flex: none;
+  width: clamp(140px, 18vw, 200px);
+  height: clamp(38px, 5vw, 62px);
+  background: var(--colour-text);
+  -webkit-mask: var(--logo) no-repeat center / contain;
+          mask: var(--logo) no-repeat center / contain;
+  opacity: 0.7;
+  transition: opacity var(--motion-fast) var(--ease-out);
+}
+.logos__item:hover { opacity: 1; }
+.logos--lime .logos__item { background: var(--colour-lime); }
+.chapter--lime .logos__item { background: var(--colour-paper); }
+@keyframes logos-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+body.motion-off .logos__track { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .logos__track { animation: none; }
+}
+
+/* ── Generic actions row — buttons / links at chapter close  ────────────────── */
+.chapter .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-300);
+  margin-top: clamp(40px, 6vh, 88px);
+}
+
+/* End chapter system (sitewide) */
+
+/* ════════════════════════════════════════════════════════════════════════════
+   HERO with logo strip (Kinsta-style)
+   ════════════════════════════════════════════════════════════════════════════
+   Adds an in-hero logo marquee that sits at the bottom of the hero, over
+   the photo + scrim. Used by pages that want a trust strip in the hero
+   (homepage). Apply via `.hero hero--lobby hero--with-logos` on the section.
+
+   Implementation note: the logo strip is positioned absolutely at the bottom
+   so it stays out of the grid flow (avoiding any column-size expansion from
+   the logos__track having width: max-content). The hero gets extra bottom
+   padding to keep the panel content clear of the strip.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.hero--with-logos {
+  /* Reserve space at the bottom for the absolutely-positioned logo strip */
+  padding-bottom: clamp(72px, 9vw, 120px);
+}
+
+/* In-hero variant: .hero__logos nested inside the hero section (homepage
+   pattern). Absolutely positioned over the bottom of the photo, NO band
+   behind — logos sit directly on the photo. */
+.hero .hero__logos {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 0 clamp(8px, 1vh, 14px);
+  min-height: clamp(80px, 10vh, 110px);
+  overflow: hidden;
+  background: transparent;
+}
+.hero .hero__logos > .logos { margin-top: 0; flex: 1; }
+
+/* Sibling HERO TRUST BAND — marquee right after .hero--lobby (base + other
+   product-detail pages). Negative margin-top pulls the band up over the
+   bottom of the sticky hero photo on landing. Because the band is in
+   normal flow (not inside the sticky hero), it scrolls up at the same
+   rate as the chapter underneath it on user scroll. Logos sit directly
+   on the photo — NO band behind them. The .logos child keeps its own
+   left/right fade mask. */
+.hero--lobby + .hero__logos {
+  position: relative;
+  z-index: 2;
+  margin-top: calc(-1 * clamp(140px, 16vh, 180px));
+  min-height: clamp(140px, 16vh, 180px);
+  display: flex;
+  align-items: flex-end;
+  padding: 0 0 clamp(40px, 5vh, 60px);
+  background: transparent;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hero--lobby + .hero__logos > .logos { margin-top: 0; flex: 1; pointer-events: auto; }
+
+/* Paper-coloured logos (white silhouettes for use over dark photos / grounds) */
+.logos--paper .logos__item { background: var(--colour-paper); }
+
+/* In-hero overrides: kill the default top margin, slightly smaller items */
+.hero__logos .logos { margin-top: 0; }
+.hero__logos .logos__track { gap: clamp(32px, 5vw, 72px); }
+.hero__logos .logos__item {
+  width: clamp(100px, 12vw, 160px);
+  height: clamp(28px, 3.6vw, 44px);
+  opacity: 0.85;
+}
+.hero__logos .logos__item:hover { opacity: 1; }
+
+/* End hero-with-logos */
+
+/* Numbers-hero pattern removed 2026-05-18 — was only consumed by
+   /calculator/office-costs/, which was rebuilt as a tool (no big-number
+   marketing hero). If a future page wants a numbers-led hero, rebuild
+   from scratch against the locked design system rather than reviving
+   the bespoke chapter--hero-numbers / hn__* block deleted here. */
+
+/* ════════════════════════════════════════════════════════════════════════
+   SITEWIDE CHECKBOX + RADIO — added 2026-05-18
+   ------------------------------------------------------------------------
+   Custom round paper swatches in place of browser-default form controls.
+   Pattern:
+     <label class="checkbox">
+       <input type="checkbox" …>
+       <span class="checkbox__swatch" aria-hidden="true"></span>
+       <span class="checkbox__label">…</span>
+     </label>
+   Same shape for radios — swap "checkbox" for "radio".
+
+   Rules of engagement (per locked-decisions.md §2 visual rules):
+     • No strokes / borders — the swatch is a solid filled circle that
+       reads against the parent paper card via the ground-2 background.
+     • On check, the swatch flips to var(--ip-lime), which resolves to
+       lime canonically, lavender on body.section-meet, coral on
+       body.section-host (see tokens.css section overrides).
+     • Inputs are sr-only (NOT display:none) — keyboard + screen reader
+       still receive them. Focus-visible paints an outline on the visible
+       swatch, NEVER a border.
+     • Both checkbox + radio render as circles (per spec).
+   ════════════════════════════════════════════════════════════════════════ */
+
+.checkbox, .radio {
+  display: flex; align-items: center;
+  gap: clamp(10px, 1vw, 14px);
+  cursor: pointer;
+}
+
+.checkbox input, .radio input {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+.checkbox__swatch, .radio__swatch {
+  position: relative;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: var(--ip-ground-2, #a3b098);
+  border: 0;
+  transition: background 120ms ease, transform 120ms ease;
+  flex: none;
+}
+
+.checkbox:hover .checkbox__swatch,
+.radio:hover .radio__swatch {
+  transform: scale(1.05);
+  background: var(--ip-ink-dim, rgba(20, 32, 11, 0.62));
+}
+
+.checkbox input:checked + .checkbox__swatch,
+.radio input:checked + .radio__swatch {
+  background: var(--ip-lime);
+}
+
+.checkbox input:checked + .checkbox__swatch:hover,
+.radio input:checked + .radio__swatch:hover {
+  background: var(--ip-lime);
+}
+
+/* Centred ink dot when checked — works for both checkbox + radio. */
+.checkbox input:checked + .checkbox__swatch::after,
+.radio input:checked + .radio__swatch::after {
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--ip-ink);
+  transform: translate(-50%, -50%);
+}
+
+/* Focus ring on the visible swatch, not the hidden input. Outline, not border. */
+.checkbox input:focus-visible + .checkbox__swatch,
+.radio input:focus-visible + .radio__swatch {
+  outline: 3px solid var(--ip-ink);
+  outline-offset: 3px;
+}
+
+.checkbox__label, .radio__label {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  line-height: 1.3;
+  color: var(--ip-ink);
+}
+/* End sitewide checkbox + radio */
+
+/* ============================================================================
+   ROUTE BANDS — homepage routing as three editorial bands on the chapter
+   ground. No cards, no fills, no borders. Workspace leads (larger, first);
+   Meet and Host follow, photo side alternating. Each sub-option is a whole-row
+   lime-highlight button sitting directly on the ground.
+   ========================================================================== */
+.route-bands {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(30px, 4.5vw, 60px);
+}
+.route-band {
+  display: flex;
+  gap: clamp(22px, 3vw, 44px);
+  align-items: stretch;
+}
+.route-band--rev { flex-direction: row-reverse; }
+
+.route-band__photo {
+  width: 40%;
+  flex: none;
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: clamp(220px, 24vw, 300px);
+}
+.route-band--lead .route-band__photo { min-height: clamp(280px, 30vw, 380px); }
+.route-band__photo picture { display: block; width: 100%; height: 100%; }
+.route-band__photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+.route-band__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.route-band__marker {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  text-transform: uppercase;
+  letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink);
+  opacity: 0.6;
+  margin: 0 0 9px;
+}
+.route-band__title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 0.7vw + 1.05rem, 1.55rem);
+  line-height: 1.16;
+  letter-spacing: -0.013em;
+  color: var(--ip-ink);
+  margin: 0 0 clamp(14px, 1.8vh, 20px);
+  max-width: 22ch;
+}
+.route-band--lead .route-band__title {
+  font-size: clamp(1.7rem, 1.4vw + 1.2rem, 2.3rem);
+  letter-spacing: -0.02em;
+  margin-bottom: clamp(18px, 2.4vh, 28px);
+  max-width: 15ch;
+}
+
+.route-band__options {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-bottom: 1px solid rgba(20, 32, 11, 0.16);
+}
+.route-band__options li { border-top: 1px solid rgba(20, 32, 11, 0.16); }
+.route-band__options a {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(8px, 1vw, 14px);
+  padding: clamp(10px, 1.4vh, 14px) 12px;
+  margin: 0 -12px;
+  border-radius: 7px;
+  text-decoration: none;
+  color: var(--ip-ink);
+  transition: background 200ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+              padding-left 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.route-band__options a:hover { background: var(--ip-lime); padding-left: 22px; }
+.route-band__options a:focus-visible {
+  outline: 3px solid var(--ip-ink);
+  outline-offset: -3px;
+  background: var(--ip-lime);
+}
+.route-band__opt-name {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1rem, 0.3vw + 0.92rem, 1.15rem);
+  line-height: 1.25;
+  flex: none;
+}
+.route-band__opt-who {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.3;
+  color: var(--ip-ink);
+  opacity: 0.58;
+  flex: 1;
+  min-width: 0;
+}
+.route-band__opt-arrow {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ip-ink);
+  flex: none;
+  transition: transform 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.route-band__options a:hover .route-band__opt-arrow,
+.route-band__options a:focus-visible .route-band__opt-arrow { transform: translateX(7px); }
+
+.route-band__cta {
+  margin-top: auto;
+  align-self: flex-start;
+  padding-top: clamp(14px, 1.8vh, 22px);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ip-ink);
+  text-decoration: none;
+}
+.route-band__cta-arrow {
+  transition: transform 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.route-band__cta:hover .route-band__cta-arrow { transform: translateX(5px); }
+
+@media (max-width: 860px) {
+  .route-band,
+  .route-band--rev { flex-direction: column; }
+  .route-band__photo,
+  .route-band--lead .route-band__photo {
+    width: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+    order: -1; /* photo on top in stacked mode, matching brief's verify spec */
+  }
+}
+
+/* Route bands — mode variant (used on /workspace/): a body paragraph, a price
+   entry-point and a link, in place of the homepage's option rows. */
+.route-band__body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(0.95rem, 0.2vw + 0.9rem, 1.05rem);
+  line-height: 1.5;
+  color: var(--ip-ink);
+  opacity: 0.74;
+  margin: 0 0 14px;
+  max-width: 44ch;
+}
+.route-band__price {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  color: var(--ip-ink);
+  opacity: 0.66;
+  margin: auto 0 clamp(12px, 1.6vh, 18px);
+}
+.route-band__link {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ip-ink);
+  text-decoration: none;
+  border-bottom: 2px solid var(--ip-lime);
+  padding-bottom: 2px;
+}
+.route-band__link-arrow {
+  transition: transform 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.route-band__link:hover .route-band__link-arrow { transform: translateX(5px); }
+.route-bands__more { margin: clamp(20px, 3vh, 32px) 0 0; }
+
+/* ============================================================================
+   ROUTES — homepage routing. Three routes on the chapter ground: a firm
+   uppercase label, then the destination names as large bold uppercase lines.
+   Workspace leads (larger destinations). A lime tour line closes the section.
+   ========================================================================== */
+.routes { display: flex; flex-direction: column; gap: clamp(34px, 5vw, 54px); }
+.route__name {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(0.95rem, 0.3vw + 0.88rem, 1.1rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ip-ink);
+  margin: 0 0 clamp(10px, 1.4vh, 16px);
+}
+.route__dests { list-style: none; margin: 0; padding: 0; }
+.route__dest {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(12px, 1.6vw, 22px);
+  padding: clamp(9px, 1.2vh, 13px) 12px;
+  margin: 0 -12px;
+  border-radius: 9px;
+  text-decoration: none;
+  color: var(--ip-ink);
+  transition: background 200ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)),
+              padding-left 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.route__dest:hover { background: var(--ip-lime); padding-left: 22px; }
+.route__dest:focus-visible {
+  outline: 3px solid var(--ip-ink);
+  outline-offset: -3px;
+  background: var(--ip-lime);
+}
+.route__dest-name {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2vw + 1rem, 2rem);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  text-transform: uppercase;
+  color: var(--ip-ink);
+  flex: none;
+}
+.route--lead .route__dest-name { font-size: clamp(2rem, 3.4vw + 1.1rem, 2.7rem); }
+.route__dest-who {
+  font-family: var(--font-body);
+  font-size: clamp(0.82rem, 0.2vw + 0.78rem, 0.95rem);
+  line-height: 1.3;
+  color: var(--ip-ink);
+  opacity: 0.55;
+  flex: 1;
+  min-width: 0;
+}
+.route__dest-arrow {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.25rem, 1vw + 1rem, 1.6rem);
+  line-height: 1;
+  color: var(--ip-ink);
+  flex: none;
+  transition: transform 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.route__dest:hover .route__dest-arrow,
+.route__dest:focus-visible .route__dest-arrow { transform: translateX(9px); }
+
+/* Tour line — the section's one conversion, a lime line at the foot. */
+.route-tour {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.6vw, 18px);
+  margin-top: clamp(30px, 4.4vw, 50px);
+  padding: clamp(15px, 2vw, 20px) clamp(16px, 2.2vw, 24px);
+  background: var(--ip-lime);
+  border-radius: 11px;
+  text-decoration: none;
+  color: var(--ip-ink);
+}
+.route-tour:focus-visible { outline: 3px solid var(--ip-ink); outline-offset: 3px; }
+.route-tour__name {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.15rem, 0.6vw + 1rem, 1.4rem);
+  flex: none;
+}
+.route-tour__who {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  color: var(--ip-ink);
+  opacity: 0.65;
+  flex: 1;
+  min-width: 0;
+}
+.route-tour__arrow {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(1.3rem, 1vw + 1rem, 1.6rem);
+  line-height: 1;
+  color: var(--ip-ink);
+  flex: none;
+  transition: transform 240ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.route-tour:hover .route-tour__arrow { transform: translateX(9px); }
+@media (max-width: 600px) {
+  .route__dest-name,
+  .route--lead .route__dest-name { font-size: clamp(1.35rem, 6vw, 1.95rem); }
+}

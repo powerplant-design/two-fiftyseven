@@ -1,0 +1,2304 @@
+<!-- two/fiftyseven · /meetings/pricing/ · Quote tool · 2026-06 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Get a quote for your meeting · two/fiftyseven</title>
+  <meta name="description" content="Get a quote for your meeting at two/fiftyseven. Pick a room, your duration, add tea + coffee or catering — see your total instantly.">
+
+  <link rel="canonical" href="https://twofiftyseven.co/meetings/pricing/">
+
+  <link rel="stylesheet" href="../../design-system/fonts.css">
+  <link rel="stylesheet" href="../../design-system/tokens.css">
+  <link rel="stylesheet" href="../../design-system/components.css">
+
+  <!-- FAQPage JSON-LD — mirrors visible FAQ. AEO/SEO ingestion. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does a meeting room cost at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Meeting rooms at two/fiftyseven start at $70/hr or $290/day for the six-person Meeting Room. Silver Linings (12) is $140/hr or $690/day. The Studio (16) is $110/hr or $590/day. The Workshop Space (40) is $180/hr or $790/day. The Event Space (100) is $280/hr or $1,190/day. The whole venue (200) is $380/hr or $1,900/day. All prices ex GST. Charities, NGOs, indigenous-led organisations, community groups and social enterprises book at up to 50% off under the Impact Discount."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's included when I book a room at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The room set to your run-sheet before you arrive, tea, coffee and water on arrival, fast business-grade wifi, AV (screens, projector, mics, dongles, wireless screen-share, checked before you arrive in the rooms that have it), full-wall whiteboards in the rooms that have them, and pack-down by us. Catering runs through Karaka Cafe, Blue Carrot or Food Envy and is passed through at cost, no markup. Lift access from both Willis Street and Victoria Street."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who qualifies for the Impact Discount at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Impact Discount is up to 50% off room hire for: charities, NGOs, B-Corps and not-for-profits with annual revenue under $200k; certified carbon-zero or carbon-positive organisations under $200k revenue; community-based volunteer organisations; and tangata whenua or indigenous-led organisations. The discount applies to room hire only, not catering or add-ons."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are prices on this page ex GST or inc GST?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "All prices on this page are ex GST. NZ GST is currently 15%. Your invoice will show the GST line separately so it's clear for your finance team."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does catering work for meetings at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Catering runs through our three local partners: Karaka Cafe (Māori kai), Blue Carrot (plant-led platters and lunches) and Food Envy (full-service hot meals). Catering is passed through at cost — you set your own per-head budget and we add a $100 organising fee. Or organise your own catering from any other provider; you're absolutely welcome to."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much notice do I need to book a meeting room at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For meetings, a few business days is comfortable; same-day is often possible for the Meeting Room and the Studio. For workshops and away days, two to four weeks lead time gives us room to configure the day around your run-sheet. For the Event Space or a whole-venue booking, four to six weeks is sensible."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the difference between a meeting, workshop and away day at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A meeting is short and focused — boardroom, video calls, briefings — typically 1 to 4 hours in the Meeting Room, Silver Linings or a Studio. A workshop is session-focused, usually 3 to 4 hours with breakouts, often externally facilitated. An away day is a full-day team off-site, typically 09:00–17:00 with shared meals."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I book multiple rooms at the same time, or the whole venue, at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Multiple rooms work well when you want a plenary plus breakouts. The whole-venue rate is $380/hr or $1,900/day and gives you every room for the day, including the workspace."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script defer src="../../shared/js/nav.js"></script>
+  <script defer src="../../shared/js/faq.js"></script>
+  <script defer src="../../shared/js/chapter.js"></script>
+
+  <style id="page-meet-pricing-chrome">
+    body.page-meet-pricing { background: var(--ip-ground); color: var(--ip-ink); }
+    body.page-meet-pricing .chapter { z-index: 1; }
+
+    /* ── HERO · short, not full-fold — users are here to act ── */
+    body.page-meet-pricing .quote-hero {
+      position: relative;
+      padding: clamp(48px, 6vh, 80px) clamp(28px, 5vw, 96px) clamp(20px, 2.5vh, 36px);
+      max-width: 1480px; margin: 0 auto;
+    }
+    body.page-meet-pricing .quote-hero__eyebrow {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      color: var(--purple-600); opacity: 0.7;
+      margin: 0 0 clamp(16px, 2vh, 24px);
+    }
+    body.page-meet-pricing .quote-hero__title {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: var(--type-section-h2);
+      line-height: 0.92; letter-spacing: -0.03em;
+      color: var(--purple-600); margin: 0 0 clamp(20px, 2.5vh, 32px);
+      max-width: 18ch; text-transform: lowercase; text-wrap: balance;
+    }
+    body.page-meet-pricing .quote-hero__sub {
+      font-family: var(--font-body); font-weight: 500;
+      font-size: clamp(1.05rem, 0.3vw + 0.95rem, 1.2rem);
+      line-height: 1.45; color: var(--purple-600);
+      margin: 0; max-width: 56ch; opacity: 0.85;
+    }
+
+    /* ── CALCULATOR LAYOUT ── */
+    body.page-meet-pricing .quote-calc {
+      max-width: 1480px; margin: 0 auto;
+      padding: 0 clamp(28px, 5vw, 96px) clamp(96px, 14vh, 160px);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(24px, 3vw, 48px);
+    }
+    @media (min-width: 1024px) {
+      body.page-meet-pricing .quote-calc {
+        grid-template-columns: 1.5fr 1fr;
+        align-items: start;
+      }
+    }
+    body.page-meet-pricing .quote-form {
+      display: flex; flex-direction: column; gap: clamp(28px, 4vh, 48px);
+    }
+    body.page-meet-pricing .quote-step {
+      background: var(--purple-300);
+      border-radius: 24px;
+      padding: clamp(24px, 3vw, 36px);
+      color: var(--purple-600);
+    }
+    body.page-meet-pricing .quote-step__label {
+      display: none;  /* Step numbers dropped — section titles do the work */
+    }
+    body.page-meet-pricing .quote-step__title {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: clamp(1.3rem, 1.2vw + 0.85rem, 1.85rem);
+      line-height: 1.1; letter-spacing: -0.018em;
+      margin: 0 0 clamp(16px, 2.2vh, 24px);
+      color: var(--purple-600);
+    }
+
+    /* Room selector */
+    body.page-meet-pricing .room-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: clamp(10px, 1.2vw, 16px);
+    }
+    @media (min-width: 700px) {
+      body.page-meet-pricing .room-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    body.page-meet-pricing .room-option {
+      cursor: pointer;
+      padding: clamp(14px, 1.6vw, 20px);
+      background: var(--ip-paper);
+      border: 2px solid transparent;
+      border-radius: 16px;
+      color: var(--ip-ink);
+      transition: border-color 0.2s ease, transform 0.2s ease;
+      text-align: left;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    body.page-meet-pricing .room-option:hover {
+      transform: translateY(-2px);
+      border-color: var(--purple-500);
+    }
+    body.page-meet-pricing .room-option input[type="radio"] {
+      position: absolute; opacity: 0; pointer-events: none;
+    }
+    body.page-meet-pricing .room-option[data-selected="true"] {
+      background: var(--purple-500);
+      color: var(--ip-paper);
+      border-color: var(--purple-600);
+    }
+    /* Bug fix (audit #11): explicitly clear border on unselected tiles + drop the
+       focus-visible outline on click so a previously-selected tile doesn't keep
+       a dark border after de-selection. */
+    body.page-meet-pricing .room-option:not([data-selected="true"]):not(:hover) {
+      border-color: transparent;
+    }
+    body.page-meet-pricing .room-option:focus {
+      outline: none;
+    }
+    body.page-meet-pricing .room-option:focus-visible {
+      outline: 2px solid var(--purple-500);
+      outline-offset: 2px;
+    }
+    body.page-meet-pricing .room-option__name {
+      font-family: var(--font-body); font-weight: 800;
+      font-size: clamp(0.95rem, 0.3vw + 0.88rem, 1.08rem);
+      line-height: 1.15;
+    }
+    body.page-meet-pricing .room-option__cap {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.7;
+    }
+    body.page-meet-pricing .room-option__from {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.7; margin-top: 4px;
+    }
+
+    /* Radio / checkbox groups */
+    body.page-meet-pricing .pill-row {
+      display: flex; flex-wrap: wrap;
+      gap: clamp(8px, 1vw, 12px);
+    }
+    body.page-meet-pricing .pill {
+      cursor: pointer; user-select: none;
+      padding: 12px 22px;
+      background: var(--ip-paper);
+      color: var(--ip-ink);
+      border: 2px solid transparent;
+      border-radius: 14px;
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(0.95rem, 0.2vw + 0.9rem, 1.05rem);
+      transition: border-color 0.2s ease, background 0.2s ease;
+    }
+    body.page-meet-pricing .pill input { position: absolute; opacity: 0; pointer-events: none; }
+    body.page-meet-pricing .pill:hover { border-color: var(--purple-500); }
+    body.page-meet-pricing .pill[data-selected="true"] {
+      background: var(--purple-500);
+      color: var(--ip-paper);
+      border-color: var(--purple-600);
+    }
+    body.page-meet-pricing .pill[disabled],
+    body.page-meet-pricing .pill[aria-disabled="true"] {
+      cursor: not-allowed; opacity: 0.35; pointer-events: none;
+    }
+
+    /* People slider — primary entry, matched to embedded preview */
+    body.page-meet-pricing .people-slider-row {
+      display: flex; align-items: center; gap: 16px;
+    }
+    body.page-meet-pricing .people-slider {
+      flex: 1;
+      -webkit-appearance: none; appearance: none;
+      height: 8px; border-radius: 999px;
+      background: var(--ip-paper);
+      outline: none !important;
+      border: none; box-shadow: none;
+    }
+    body.page-meet-pricing .people-slider:focus,
+    body.page-meet-pricing .people-slider:focus-visible,
+    body.page-meet-pricing .people-slider:active {
+      outline: none !important; border: none; box-shadow: none;
+    }
+    body.page-meet-pricing .people-slider::-moz-focus-outer { border: 0; }
+    body.page-meet-pricing .people-slider::-webkit-slider-runnable-track {
+      height: 8px; border-radius: 999px;
+      background: var(--ip-paper);
+      border: none; outline: none;
+    }
+    body.page-meet-pricing .people-slider::-moz-range-track {
+      height: 8px; border-radius: 999px;
+      background: var(--ip-paper);
+      border: none; outline: none;
+    }
+    body.page-meet-pricing .people-slider::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none;
+      width: 24px; height: 24px;
+      background: var(--purple-600);
+      border: none; border-radius: 999px;
+      cursor: pointer;
+      outline: none; box-shadow: none;
+      transition: transform 0.15s ease;
+      margin-top: -8px;
+    }
+    body.page-meet-pricing .people-slider::-webkit-slider-thumb:hover { transform: scale(1.1); }
+    body.page-meet-pricing .people-slider::-webkit-slider-thumb:focus { outline: none; box-shadow: none; }
+    body.page-meet-pricing .people-slider::-moz-range-thumb {
+      width: 24px; height: 24px;
+      background: var(--purple-600);
+      border: none; border-radius: 999px;
+      cursor: pointer;
+      outline: none; box-shadow: none;
+    }
+    body.page-meet-pricing input:focus,
+    body.page-meet-pricing input:focus-visible,
+    body.page-meet-pricing select:focus,
+    body.page-meet-pricing button:focus,
+    body.page-meet-pricing a:focus { outline: none; }
+    body.page-meet-pricing .people-slider-value {
+      min-width: 116px;
+      padding: 10px 16px;
+      background: var(--ip-paper);
+      color: var(--ip-ink);
+      border-radius: 14px;
+      font-family: var(--font-body); font-weight: 800;
+      font-size: 1rem;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Auto-pick callout above the room grid */
+    body.page-meet-pricing .room-rec {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.72;
+      margin: 0 0 clamp(12px, 1.5vh, 18px);
+    }
+    body.page-meet-pricing .room-rec strong { font-weight: 700; opacity: 1; }
+
+    body.page-meet-pricing .room-option[aria-disabled="true"] {
+      opacity: 0.32; pointer-events: none;
+    }
+    body.page-meet-pricing .room-option[data-recommended="true"]:not([data-selected="true"]) {
+      border-color: var(--purple-500);
+    }
+
+    body.page-meet-pricing .quote-field {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-top: clamp(14px, 1.8vh, 20px);
+    }
+    body.page-meet-pricing .quote-field label {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.7;
+    }
+    body.page-meet-pricing .quote-field input[type="number"] {
+      width: 120px;
+      padding: 10px 14px;
+      border-radius: 10px; border: 2px solid transparent;
+      background: var(--ip-paper);
+      color: var(--ip-ink);
+      font-family: var(--font-body); font-weight: 700;
+      font-size: 1.1rem;
+    }
+    body.page-meet-pricing .quote-field input[type="number"]:focus {
+      outline: none; border-color: var(--purple-500);
+    }
+
+    /* Add-on toggles */
+    body.page-meet-pricing .addon-list {
+      display: grid; grid-template-columns: 1fr;
+      gap: clamp(10px, 1.2vh, 14px);
+    }
+    body.page-meet-pricing .addon {
+      background: var(--ip-paper);
+      border-radius: 14px;
+      padding: clamp(14px, 1.6vw, 18px);
+      color: var(--ip-ink);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    body.page-meet-pricing .addon__head {
+      display: flex; align-items: center; gap: 12px;
+      cursor: pointer;
+    }
+    body.page-meet-pricing .addon__check {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--purple-500);
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease;
+      flex: none;
+    }
+    body.page-meet-pricing .addon[data-on="true"] .addon__check {
+      background: var(--purple-500);
+    }
+    body.page-meet-pricing .addon[data-on="true"] .addon__check::after {
+      content: '✓'; color: var(--ip-paper); font-weight: 700; font-size: 14px;
+    }
+    body.page-meet-pricing .addon__title {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1rem, 0.2vw + 0.95rem, 1.1rem);
+      flex: 1;
+    }
+    body.page-meet-pricing .addon__price {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.7;
+    }
+    body.page-meet-pricing .addon__body {
+      font-family: var(--font-body); font-size: 0.95rem;
+      line-height: 1.4; margin: 0 0 0 34px;
+      opacity: 0.78;
+    }
+    body.page-meet-pricing .addon__extra {
+      margin-left: 34px;
+      display: none;
+      flex-wrap: wrap; gap: 10px;
+      align-items: center;
+    }
+    body.page-meet-pricing .addon[data-on="true"] .addon__extra { display: flex; }
+
+    /* ── DAYS LIST · per-day date + start + end inputs ── */
+    body.page-meet-pricing .day-row {
+      background: var(--ip-paper);
+      border-radius: 14px;
+      padding: clamp(12px, 1.4vw, 16px);
+      color: var(--ip-ink);
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px 14px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    body.page-meet-pricing .day-row__label {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.7; white-space: nowrap;
+    }
+    body.page-meet-pricing .day-row__inputs {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      align-items: center;
+    }
+    body.page-meet-pricing .day-row__inputs input[type="date"],
+    body.page-meet-pricing .day-row__inputs input[type="time"] {
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 2px solid transparent;
+      background: var(--ip-ground);
+      color: var(--ip-ink);
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 0.95rem;
+    }
+    body.page-meet-pricing .day-row__inputs input:focus {
+      outline: none; border-color: var(--purple-500);
+    }
+    body.page-meet-pricing .day-row__inputs span {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.55;
+    }
+    body.page-meet-pricing .day-row__hours {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.7; white-space: nowrap;
+    }
+    body.page-meet-pricing .day-row__remove {
+      background: transparent; border: 0; cursor: pointer;
+      color: var(--purple-600); opacity: 0.5;
+      font-size: 1.4rem; line-height: 1;
+      padding: 4px 8px;
+      transition: opacity 0.2s ease;
+    }
+    body.page-meet-pricing .day-row__remove:hover { opacity: 1; }
+    body.page-meet-pricing .add-day-btn {
+      width: 100%;
+      padding: 12px 18px;
+      background: transparent;
+      border: 2px dashed var(--purple-600);
+      border-radius: 14px;
+      color: var(--purple-600);
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(0.95rem, 0.2vw + 0.9rem, 1.05rem);
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    body.page-meet-pricing .add-day-btn:hover {
+      background: rgba(63, 33, 67, 0.08);
+      border-style: solid;
+    }
+    body.page-meet-pricing .days-hint {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.55; margin: 10px 0 0;
+    }
+
+    body.page-meet-pricing .addon__extra input,
+    body.page-meet-pricing .addon__extra select {
+      padding: 8px 12px;
+      border-radius: 8px; border: 2px solid transparent;
+      background: var(--ip-ground); color: var(--ip-ink);
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 0.95rem;
+    }
+    body.page-meet-pricing .addon__extra input:focus,
+    body.page-meet-pricing .addon__extra select:focus {
+      outline: none; border-color: var(--purple-500);
+    }
+
+    /* ── QUOTE PANEL — preview-matched hierarchy ── */
+    body.page-meet-pricing .quote-panel {
+      position: sticky; top: 100px;
+      background: var(--purple-600);
+      color: var(--ip-paper);
+      border-radius: 24px;
+      padding: clamp(24px, 2.6vw, 36px);
+      display: flex; flex-direction: column; gap: clamp(18px, 2vh, 26px);
+    }
+    /* visually hidden but kept for a11y */
+    body.page-meet-pricing .quote-panel__title {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+    body.page-meet-pricing .quote-items {
+      display: flex; flex-direction: column; gap: 10px;
+      padding: 0 0 clamp(14px, 1.8vh, 20px);
+      border-bottom: 1px solid rgba(221, 227, 212, 0.18);
+    }
+    body.page-meet-pricing .quote-items--empty {
+      border-bottom: 0; padding-bottom: 0;
+    }
+    body.page-meet-pricing .quote-item {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 14px;
+      font-family: var(--font-body); font-weight: 500;
+      font-size: 0.95rem;
+    }
+    body.page-meet-pricing .quote-item--prompt {
+      font-family: var(--font-body); font-weight: 600;
+      opacity: 0.78;
+    }
+    body.page-meet-pricing .quote-item__label { opacity: 0.85; }
+    body.page-meet-pricing .quote-item__value {
+      font-family: var(--font-mono); font-weight: 600;
+      letter-spacing: 0; white-space: nowrap;
+    }
+    body.page-meet-pricing .quote-item--discount .quote-item__value {
+      color: var(--purple-300);
+    }
+    /* L1 — big total */
+    body.page-meet-pricing .quote-total {
+      display: flex; justify-content: space-between; align-items: baseline;
+      gap: 14px;
+    }
+    body.page-meet-pricing .quote-total__label {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.65;
+    }
+    body.page-meet-pricing .quote-total__value {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(2.8rem, 3vw + 1.2rem, 4.6rem);
+      line-height: 0.92; letter-spacing: -0.028em;
+    }
+    /* L2 — eyebrow + tax footnote stacked under */
+    body.page-meet-pricing .quote-meta {
+      display: flex; flex-direction: column; gap: 4px;
+      margin-top: -4px;
+    }
+    body.page-meet-pricing .quote-tax {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.45; margin: 0;
+    }
+    /* L3 — impact card (lighter inset within dark panel) */
+    body.page-meet-pricing .quote-impact {
+      padding: clamp(16px, 2vh, 22px);
+      border-radius: 16px;
+      background: rgba(221, 227, 212, 0.10);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    body.page-meet-pricing .quote-impact__label {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.7; margin: 0;
+    }
+    body.page-meet-pricing .quote-impact__amount {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(1.8rem, 1.5vw + 1rem, 2.6rem);
+      line-height: 1; letter-spacing: -0.024em;
+      margin: 0;
+    }
+    body.page-meet-pricing .quote-impact__context {
+      font-family: var(--font-body);
+      font-size: clamp(0.92rem, 0.2vw + 0.88rem, 1.02rem);
+      line-height: 1.45; margin: 0; opacity: 0.85;
+    }
+    body.page-meet-pricing .quote-impact__total::after {
+      content: var(--impact-total-display);
+      font-weight: 700;
+    }
+    /* Impact Discount — subtle inline toggle on the dark panel */
+    body.page-meet-pricing .quote-impact-toggle {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 0;
+      cursor: pointer; user-select: none;
+      color: var(--ip-paper);
+    }
+    body.page-meet-pricing .quote-impact-toggle__check {
+      flex: none;
+      width: 16px; height: 16px;
+      border-radius: 4px;
+      border: 1.5px solid rgba(221, 227, 212, 0.55);
+      background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s ease, border-color 0.2s ease;
+    }
+    body.page-meet-pricing .quote-impact-toggle:hover .quote-impact-toggle__check {
+      border-color: var(--ip-paper);
+    }
+    body.page-meet-pricing .quote-impact-toggle[data-on="true"] .quote-impact-toggle__check {
+      background: var(--ip-paper);
+      border-color: var(--ip-paper);
+    }
+    body.page-meet-pricing .quote-impact-toggle[data-on="true"] .quote-impact-toggle__check::after {
+      content: '✓'; color: var(--purple-600); font-weight: 700; font-size: 11px; line-height: 1;
+    }
+    body.page-meet-pricing .quote-impact-toggle__title {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: 0.92rem; line-height: 1.2;
+      opacity: 0.9;
+    }
+    body.page-meet-pricing .quote-impact-toggle__criteria {
+      display: block;
+      font-family: var(--font-mono); font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      line-height: 1.5;
+      margin: 4px 0 0 26px;
+      opacity: 0.5;
+    }
+
+    /* L4 — Contact form + submit on the dark quote panel */
+    body.page-meet-pricing .quote-form-block {
+      display: flex; flex-direction: column;
+      gap: clamp(12px, 1.6vh, 18px);
+      padding-top: clamp(16px, 2vh, 22px);
+      border-top: 1px solid rgba(221, 227, 212, 0.18);
+    }
+    body.page-meet-pricing .quote-form-block__title {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.7; margin: 0;
+    }
+    body.page-meet-pricing .qf {
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    body.page-meet-pricing .qf label {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.6; color: var(--ip-paper);
+    }
+    body.page-meet-pricing .qf input,
+    body.page-meet-pricing .qf textarea {
+      width: 100%;
+      padding: 12px 14px;
+      background: var(--ip-paper);
+      color: var(--ip-ink);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      font-family: var(--font-body); font-weight: 500;
+      font-size: 0.98rem;
+    }
+    body.page-meet-pricing .qf input:focus,
+    body.page-meet-pricing .qf textarea:focus {
+      outline: none; border-color: var(--purple-300);
+    }
+    body.page-meet-pricing .qf textarea {
+      min-height: 80px; resize: vertical;
+      font-family: var(--font-body); line-height: 1.4;
+    }
+    /* Honeypot — off-screen */
+    body.page-meet-pricing .qf-honeypot {
+      position: absolute; left: -9999px; opacity: 0;
+      height: 0; width: 0; pointer-events: none;
+    }
+    body.page-meet-pricing .quote-cta {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px; width: 100%;
+      padding: 18px 24px;
+      background: var(--ip-paper);
+      color: var(--purple-600);
+      border: none; border-radius: 14px;
+      font-family: var(--font-body); font-weight: 800;
+      font-size: clamp(1rem, 0.2vw + 0.95rem, 1.15rem);
+      cursor: pointer;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+      text-align: left;
+    }
+    body.page-meet-pricing .quote-cta:hover:not(:disabled) { transform: translateY(-2px); }
+    body.page-meet-pricing .quote-cta:disabled {
+      cursor: not-allowed; opacity: 0.45; transform: none;
+    }
+    body.page-meet-pricing .quote-cta[data-state="loading"] {
+      opacity: 0.7; pointer-events: none;
+    }
+    body.page-meet-pricing .quote-error {
+      display: none;
+      background: rgba(220, 100, 100, 0.14);
+      border: 1px solid rgba(220, 100, 100, 0.35);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-family: var(--font-body); font-size: 0.92rem;
+      line-height: 1.45; margin: 0; color: var(--ip-paper);
+    }
+    body.page-meet-pricing .quote-error[data-show="true"] { display: block; }
+    body.page-meet-pricing .quote-confirmation {
+      display: none;
+      text-align: center;
+      padding: clamp(28px, 4vh, 40px) clamp(20px, 2.5vw, 32px);
+      background: rgba(221, 227, 212, 0.10);
+      border-radius: 16px;
+      margin-top: clamp(16px, 2vh, 22px);
+    }
+    body.page-meet-pricing .quote-confirmation[data-show="true"] { display: block; }
+    body.page-meet-pricing .quote-confirmation__check {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 56px; height: 56px;
+      background: var(--ip-paper); color: var(--purple-600);
+      border-radius: 999px;
+      font-family: var(--font-display); font-weight: 700;
+      font-size: 1.9rem; line-height: 1;
+      margin-bottom: 14px;
+    }
+    body.page-meet-pricing .quote-confirmation__title {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(1.4rem, 1vw + 1rem, 1.9rem);
+      line-height: 1.05; letter-spacing: -0.024em;
+      margin: 0 0 8px; text-transform: lowercase;
+    }
+    body.page-meet-pricing .quote-confirmation__body {
+      font-family: var(--font-body); font-size: 0.98rem;
+      line-height: 1.45; margin: 0; opacity: 0.85;
+    }
+    /* "Still too much? Talk to us" — warm lead at the bottom of the panel */
+    body.page-meet-pricing .quote-talk {
+      margin-top: clamp(16px, 2vh, 22px);
+      padding-top: clamp(16px, 2vh, 22px);
+      border-top: 1px solid rgba(221, 227, 212, 0.18);
+    }
+    body.page-meet-pricing .quote-talk__lead {
+      font-family: var(--font-body); font-weight: 500;
+      font-size: 0.95rem; line-height: 1.45;
+      margin: 0 0 10px; opacity: 0.85;
+    }
+    body.page-meet-pricing .quote-talk__cta {
+      display: inline-flex; align-items: baseline; gap: 8px;
+      font-family: var(--font-body); font-weight: 700;
+      font-size: 0.98rem; color: var(--ip-paper);
+      text-decoration: underline; text-underline-offset: 3px;
+      text-decoration-thickness: 1.5px;
+    }
+    body.page-meet-pricing .quote-talk__cta:hover { opacity: 0.85; }
+
+    /* ── PRICE LIST — verbatim from workspace /pricing/, body class renamed.
+       2-column grid: rooms (left), add-ons (right). Compact rows. ── */
+    body.page-meet-pricing .pricing-tiers__list {
+      list-style: none; margin: clamp(24px, 3vh, 36px) 0 clamp(24px, 3vh, 36px);
+      background: var(--purple-100);
+      border-radius: var(--radius-md, 8px);
+      padding: clamp(12px, 1.4vh, 18px) clamp(20px, 2.2vw, 28px);
+      display: flex; flex-direction: column;
+    }
+    body.page-meet-pricing .pricing-tiers-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(20px, 2.4vw, 36px);
+      margin: clamp(24px, 3vh, 36px) 0 clamp(24px, 3vh, 36px);
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      body.page-meet-pricing .pricing-tiers-grid { grid-template-columns: 1fr; }
+    }
+    body.page-meet-pricing .pricing-tiers-col__heading {
+      display: inline-block;
+      background: var(--purple-100);
+      border-radius: var(--radius-md, 8px);
+      padding: clamp(10px, 1.2vh, 14px) clamp(20px, 2.2vw, 28px);
+      font-family: var(--font-body);
+      font-size: clamp(1.15rem, 0.5vw + 1rem, 1.4rem);
+      letter-spacing: -0.014em;
+      text-transform: none;
+      color: var(--purple-600);
+      margin: 0 0 clamp(10px, 1.4vh, 16px);
+      font-weight: 800;
+      line-height: 1.2;
+    }
+    body.page-meet-pricing .pricing-tiers-col .pricing-tiers__list {
+      margin: 0;
+    }
+    body.page-meet-pricing .pricing-tiers__row {
+      display: grid;
+      grid-template-columns: 1fr minmax(70px, max-content) minmax(60px, max-content);
+      grid-template-areas:
+        "label price unit"
+        "detail detail detail";
+      align-items: baseline;
+      gap: 4px 12px;
+      padding: clamp(12px, 1.4vh, 16px) 0;
+      border-bottom: 1px solid rgba(63, 33, 67, 0.12);
+      font-family: var(--font-body); font-size: 0.95rem;
+      color: var(--purple-600);
+    }
+    /* Rooms variant — 4 columns: room | hour | evening | day. Cap on detail line. */
+    body.page-meet-pricing .pricing-tiers__row--rates {
+      grid-template-columns: 1fr repeat(3, minmax(56px, max-content));
+      grid-template-areas:
+        "label hour evening day"
+        "detail detail detail detail";
+      gap: 4px 16px;
+    }
+    body.page-meet-pricing .pricing-tiers__rate {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+      font-size: 0.95rem;
+    }
+    body.page-meet-pricing .pricing-tiers__rate--hour    { grid-area: hour; }
+    body.page-meet-pricing .pricing-tiers__rate--evening { grid-area: evening; }
+    body.page-meet-pricing .pricing-tiers__rate--day     { grid-area: day; }
+    body.page-meet-pricing .pricing-tiers__rate--empty {
+      opacity: 0.32; font-weight: 500;
+    }
+    /* Column header row above room rates */
+    body.page-meet-pricing .pricing-tiers__head {
+      display: grid;
+      grid-template-columns: 1fr repeat(3, minmax(56px, max-content));
+      gap: 4px 16px;
+      padding: clamp(10px, 1.2vh, 14px) 0;
+      border-bottom: 1px solid rgba(63, 33, 67, 0.18);
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: var(--kerning-caps, 0.04em);
+      text-transform: uppercase;
+      color: var(--purple-600); opacity: 0.65;
+    }
+    body.page-meet-pricing .pricing-tiers__head span:not(:first-child) {
+      text-align: right;
+    }
+    body.page-meet-pricing .pricing-tiers__row:last-child { border-bottom: 0; }
+    body.page-meet-pricing .pricing-tiers__label  { grid-area: label;  font-weight: 700; }
+    body.page-meet-pricing .pricing-tiers__price  {
+      grid-area: price;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    body.page-meet-pricing .pricing-tiers__unit   {
+      grid-area: unit;
+      font-family: var(--font-mono); font-size: 0.78rem;
+      letter-spacing: var(--kerning-caps, 0.04em); opacity: 0.7;
+      text-align: right;
+    }
+    body.page-meet-pricing .pricing-tiers__detail {
+      grid-area: detail;
+      font-size: 0.88rem; opacity: 0.78;
+      text-align: left;
+      margin-top: 2px;
+    }
+    body.page-meet-pricing .pricing-cards__after {
+      font-family: var(--font-body);
+      font-size: clamp(0.95rem, 0.3vw + 0.85rem, 1.05rem);
+      color: var(--purple-600); opacity: 0.85;
+      margin: clamp(20px, 2.4vh, 32px) 0 0;
+      max-width: 64ch;
+      /* Align with card interior text, not card edge — sitewide convention */
+      padding-left: clamp(20px, 2.2vw, 28px);
+    }
+
+    /* ── WHAT'S INCLUDED · heading-on-left, card-grid-on-right, with each
+       inclusion as a lavender card. Same brand pattern as the workspace
+       lime "basics" cards, themed for the meet section. Each card carries
+       a subtle purple-500 SVG watermark in its own corner.
+       Copied verbatim from /meetings/index.html, body class renamed. */
+    body.page-meet-pricing .incl {
+      display: grid; grid-template-columns: 0.85fr 1fr;
+      gap: clamp(32px, 5vw, 76px); align-items: start;
+      margin-top: clamp(8px, 1vh, 16px);
+    }
+    body.page-meet-pricing .incl-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(12px, 1.4vw, 22px);
+    }
+    body.page-meet-pricing .incl-card {
+      position: relative;
+      padding: clamp(20px, 2vw, 30px) clamp(18px, 1.8vw, 26px);
+      background: var(--purple-300);
+      border-radius: var(--radius-lg, 16px);
+      overflow: hidden;
+      isolation: isolate;
+      color: var(--purple-600);
+    }
+    body.page-meet-pricing .incl-card::before {
+      content: '';
+      position: absolute;
+      inset: -25% -18% -25% 35%;
+      z-index: 0;
+      background-image: var(--shape-url, none);
+      background-repeat: no-repeat;
+      background-position: right center;
+      background-size: contain;
+      pointer-events: none;
+    }
+    body.page-meet-pricing .incl-card > * {
+      position: relative;
+      z-index: 1;
+    }
+    body.page-meet-pricing .incl-card__label {
+      display: block; font-weight: 800;
+      font-size: clamp(1.06rem, 0.4vw + 0.95rem, 1.18rem);
+      letter-spacing: -0.014em; margin: 0 0 6px;
+      color: inherit;
+    }
+    body.page-meet-pricing .incl-card__detail {
+      display: block;
+      font-size: clamp(0.95rem, 0.3vw + 0.88rem, 1.05rem);
+      line-height: 1.4;
+      color: inherit;
+      opacity: 0.85;
+      margin: 0;
+    }
+    /* Eight distinct shapes — no repeats across the section. */
+    body.page-meet-pricing .incl-cards .incl-card:nth-child(1) {
+      --shape-url: url('../../shared/svg/shapes/shape-12-purple200.svg');
+    }
+    body.page-meet-pricing .incl-cards .incl-card:nth-child(2) {
+      --shape-url: url('../../shared/svg/shapes/shape-37-purple200.svg');
+    }
+    body.page-meet-pricing .incl-cards .incl-card:nth-child(3) {
+      --shape-url: url('../../shared/svg/shapes/shape-49-purple200.svg');
+    }
+    body.page-meet-pricing .incl-cards .incl-card:nth-child(4) {
+      --shape-url: url('../../shared/svg/shapes/shape-86-purple200.svg');
+    }
+    body.page-meet-pricing .incl-cards .incl-card:nth-child(5) {
+      --shape-url: url('../../shared/svg/shapes/shape-95-purple200.svg');
+    }
+    body.page-meet-pricing .incl-cards .incl-card:nth-child(6) {
+      --shape-url: url('../../shared/svg/shapes/shape-110-purple200.svg');
+    }
+    body.page-meet-pricing .incl-cards .incl-card:nth-child(7) {
+      --shape-url: url('../../shared/svg/shapes/shape-66-purple200.svg');
+    }
+    body.page-meet-pricing .incl-cards .incl-card:nth-child(8) {
+      --shape-url: url('../../shared/svg/shapes/shape-22-purple200.svg');
+    }
+    @media (max-width: 900px) {
+      body.page-meet-pricing .incl { grid-template-columns: 1fr; gap: clamp(20px, 3vh, 32px); }
+      body.page-meet-pricing .incl-cards { grid-template-columns: 1fr; }
+    }
+
+    /* ── TOUR INVITE — lime card closing CTA ── */
+    body.page-meet-pricing .tour-invite {
+      margin-top: clamp(48px, 6vh, 88px);
+      padding: clamp(40px, 5.5vw, 80px) clamp(32px, 5vw, 72px);
+      border-radius: 24px;
+      background: var(--ip-lime);
+      color: var(--ip-ink);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: clamp(24px, 3vw, 48px);
+      align-items: end;
+    }
+    @media (max-width: 760px) {
+      body.page-meet-pricing .tour-invite { grid-template-columns: 1fr; align-items: start; }
+    }
+    body.page-meet-pricing .tour-invite__eyebrow {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      opacity: 0.7; margin: 0 0 clamp(12px, 1.5vh, 20px);
+    }
+    body.page-meet-pricing .tour-invite__title {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(1.8rem, 2.6vw + 1rem, 3.4rem);
+      line-height: 0.96; letter-spacing: -0.024em;
+      margin: 0 0 clamp(12px, 1.6vh, 18px); text-transform: lowercase;
+      max-width: 20ch;
+    }
+    body.page-meet-pricing .tour-invite__body {
+      font-family: var(--font-body); font-weight: 500;
+      font-size: clamp(1rem, 0.3vw + 0.92rem, 1.15rem);
+      line-height: 1.45; margin: 0; max-width: 52ch; opacity: 0.85;
+    }
+    body.page-meet-pricing .tour-invite__cta {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 18px 26px;
+      background: var(--purple-600); color: var(--ip-paper);
+      border-radius: 14px;
+      font-family: var(--font-body); font-weight: 800;
+      font-size: clamp(1rem, 0.2vw + 0.95rem, 1.1rem);
+      text-decoration: none;
+      transition: transform 0.2s ease;
+      white-space: nowrap;
+    }
+    body.page-meet-pricing .tour-invite__cta:hover { transform: translateY(-2px); }
+    body.page-meet-pricing .tour-invite__secondary {
+      margin: clamp(14px, 1.8vh, 20px) 0 0;
+      font-family: var(--font-body); font-weight: 600;
+      font-size: clamp(0.92rem, 0.2vw + 0.88rem, 1rem);
+    }
+    body.page-meet-pricing .tour-invite__secondary a {
+      color: var(--ip-ink); opacity: 0.7;
+      text-decoration: underline; text-underline-offset: 3px;
+    }
+    body.page-meet-pricing .tour-invite__secondary a:hover { opacity: 1; }
+
+    /* FAQ uses the canonical .faq pattern in components.css — no override needed. */
+
+    /* Footnote subnote — tiny GST mention */
+    body.page-meet-pricing .quote-foot {
+      max-width: 1480px; margin: 0 auto;
+      padding: 0 clamp(28px, 5vw, 96px) clamp(64px, 10vh, 120px);
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      color: var(--purple-600); opacity: 0.55;
+    }
+  </style>
+</head>
+<body class="page-meet-pricing section-meet">
+  <!-- @include:site-header -->
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" data-js="site-header">
+    <a href="../../index.html" class="wordmark">two/fiftyseven</a>
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-dropdown nav-section-workspace">
+          <a href="../../workspace/index.html" aria-haspopup="true">Workspace</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../workspace/base/index.html" role="menuitem">Base</a></li>
+              <li><a href="../../workspace/hub/index.html" role="menuitem">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html" role="menuitem">Desk</a></li>
+              <li><a href="../../pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-meet">
+          <a href="../../meet/index.html" aria-haspopup="true">Meet</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../meetings/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html" role="menuitem">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html" role="menuitem">Away days</a></li>
+              <li><a href="../../meetings/pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-host">
+          <a href="../../events/index.html" aria-haspopup="true">Host</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../events/events/index.html" role="menuitem">Events</a></li>
+              <li><a href="../../events/functions/index.html" role="menuitem">Functions</a></li>
+              <li><a href="../../events/conferences/index.html" role="menuitem">Conferences</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../impact/index.html">Impact</a></li>
+        <li class="has-dropdown">
+          <a href="../../our-story/index.html" aria-haspopup="true">About</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../kaupapa/index.html" role="menuitem">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html" role="menuitem">Success stories</a></li>
+              <li><a href="../../organisations/index.html" role="menuitem">Organisations</a></li>
+              <li><a href="../../our-story/index.html" role="menuitem">Our story</a></li>
+              <li><a href="../../people/index.html" role="menuitem">People</a></li>
+              <li><a href="../../whatson/index.html" role="menuitem">What's on</a></li>
+              <li><a href="../../kōrero/index.html" role="menuitem">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html" role="menuitem">Press kit</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown">
+          <a href="../../calculator/index.html" aria-haspopup="true">Calculators</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html" role="menuitem">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html" role="menuitem">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html" role="menuitem">Carbon</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../contact/index.html">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="../../tours/" class="btn btn--primary btn--small">Book a tour</a>
+  </header>
+  <!-- @endinclude -->
+
+  <main id="content">
+
+    <!-- HERO -->
+    <section class="quote-hero" aria-labelledby="quote-title">
+      <p class="quote-hero__eyebrow">Meetings · Quote tool</p>
+      <h1 id="quote-title" class="quote-hero__title">get a quote for your meeting</h1>
+      <p class="quote-hero__sub">Pick a room and your dates. Your total updates as you go.</p>
+    </section>
+
+    <!-- CALCULATOR -->
+    <section class="quote-calc" aria-label="Meeting room quote calculator">
+
+      <form class="quote-form" data-js="quote-form" onsubmit="return false;">
+
+        <!-- PEOPLE — primary entry, slider -->
+        <div class="quote-step">
+          <p class="quote-step__title">How many people?</p>
+          <div class="people-slider-row">
+            <input type="range" id="people" name="people" class="people-slider" min="0" max="73" step="1" value="5" aria-label="Number of people">
+            <output class="people-slider-value" data-js="people-value">6 people</output>
+          </div>
+        </div>
+
+        <!-- ROOM — auto-picked from people, override only up -->
+        <div class="quote-step">
+          <p class="quote-step__title">Which room?</p>
+          <p class="room-rec" data-js="room-rec">Recommended for <strong data-js="rec-people">6</strong> people: <strong data-js="rec-room">Meeting Room</strong>. You can size up if you want more space.</p>
+          <div class="room-grid" data-js="room-grid">
+            <label class="room-option" data-room="meeting" data-cap="6" data-day="290" data-hour="70" data-evening="0">
+              <input type="radio" name="room" value="meeting">
+              <span class="room-option__name">Meeting Room</span>
+              <span class="room-option__cap">Up to 6</span>
+            </label>
+            <label class="room-option" data-room="silver-linings" data-cap="12" data-day="690" data-hour="140" data-evening="420">
+              <input type="radio" name="room" value="silver-linings">
+              <span class="room-option__name">Silver Linings</span>
+              <span class="room-option__cap">Up to 12</span>
+            </label>
+            <label class="room-option" data-room="studio" data-cap="16" data-day="590" data-hour="110" data-evening="340">
+              <input type="radio" name="room" value="studio">
+              <span class="room-option__name">Studio</span>
+              <span class="room-option__cap">Up to 16</span>
+            </label>
+            <label class="room-option" data-room="workshop" data-cap="40" data-day="790" data-hour="180" data-evening="490">
+              <input type="radio" name="room" value="workshop">
+              <span class="room-option__name">Workshop Space</span>
+              <span class="room-option__cap">Up to 40</span>
+            </label>
+            <label class="room-option" data-room="event" data-cap="100" data-day="1190" data-hour="280" data-evening="740">
+              <input type="radio" name="room" value="event">
+              <span class="room-option__name">Event Space</span>
+              <span class="room-option__cap">Up to 100</span>
+            </label>
+            <label class="room-option" data-room="entire" data-cap="200" data-day="1900" data-hour="380" data-evening="990">
+              <input type="radio" name="room" value="entire">
+              <span class="room-option__name">Entire two/fiftyseven</span>
+              <span class="room-option__cap">Up to 200</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- DURATION -->
+        <div class="quote-step">
+          <p class="quote-step__title">How long?</p>
+          <div class="pill-row" data-js="duration-row">
+            <label class="pill" data-dur="hour"><input type="radio" name="duration" value="hour">By the hour</label>
+            <label class="pill" data-dur="day"><input type="radio" name="duration" value="day">Full day</label>
+            <label class="pill" data-dur="evening"><input type="radio" name="duration" value="evening">Evening (4hr block)</label>
+          </div>
+        </div>
+
+        <!-- DAYS -->
+        <div class="quote-step">
+          <p class="quote-step__title">When?</p>
+          <div class="quote-field" data-js="days-field">
+            <div data-js="days-list"></div>
+            <button type="button" class="add-day-btn" data-js="add-day">
+              <span aria-hidden="true">+</span> Add day
+            </button>
+            <p class="days-hint">Include your set-up time. Each day can be different — e.g. Day 1: 9-5, Day 2: 9-3.</p>
+          </div>
+        </div>
+
+        <!-- ADD-ONS -->
+        <div class="quote-step">
+<p class="quote-step__title">Extras</p>
+          <div class="addon-list">
+
+            <div class="addon" data-addon="tea" data-on="false">
+              <label class="addon__head">
+                <span class="addon__check" aria-hidden="true"></span>
+                <span class="addon__title">Tea + coffee</span>
+                <span class="addon__price">$5 / $10 per person</span>
+              </label>
+              <p class="addon__body">Organic, brewed fresh — single serve or bottomless (refilled throughout the day).</p>
+              <div class="addon__extra">
+                <select data-js="tea-type">
+                  <option value="5">Single serve · $5pp</option>
+                  <option value="10">Bottomless · $10pp</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="addon" data-addon="projector" data-on="false">
+              <label class="addon__head">
+                <span class="addon__check" aria-hidden="true"></span>
+                <span class="addon__title">Projector</span>
+                <span class="addon__price">$50</span>
+              </label>
+              <p class="addon__body">Screen, projector and dongles brought into your room.</p>
+            </div>
+
+            <div class="addon" data-addon="sound" data-on="false">
+              <label class="addon__head">
+                <span class="addon__check" aria-hidden="true"></span>
+                <span class="addon__title">Sound system</span>
+                <span class="addon__price">$50</span>
+              </label>
+              <p class="addon__body">PA, mics, mixer for your session.</p>
+            </div>
+
+            <div class="addon" data-addon="catering" data-on="false">
+              <label class="addon__head">
+                <span class="addon__check" aria-hidden="true"></span>
+                <span class="addon__title">Catering organised by us</span>
+                <span class="addon__price">Your budget + $100 organising</span>
+              </label>
+              <p class="addon__body">Through Karaka Cafe, Blue Carrot or Food Envy. Catering passed through at cost - set your own per-head budget below. We add a $100 organising fee on top, because from experience it's a lot of work. You are absolutely welcome to organise your own catering from our friends or any other provider.</p>
+              <div class="addon__extra">
+                <label for="catering-perhead" style="font-family: var(--font-mono); font-size: var(--type-mono-small); text-transform: uppercase; letter-spacing: var(--kerning-caps); opacity: 0.7;">$ per head</label>
+                <input type="number" id="catering-perhead" data-js="catering-perhead" value="25" min="0" max="200" step="5">
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </form>
+
+      <!-- QUOTE PANEL — sticky on desktop -->
+      <aside class="quote-panel" data-js="quote-panel" aria-live="polite">
+        <h2 class="quote-panel__title">Your quote</h2>
+
+        <!-- L1 · big total -->
+        <div class="quote-total">
+          <span class="quote-total__label">Estimated total</span>
+          <span class="quote-total__value" data-js="quote-total">$0</span>
+        </div>
+        <div class="quote-meta">
+          <p class="quote-tax">excl. GST</p>
+        </div>
+
+        <!-- itemised lines -->
+        <div class="quote-items quote-items--empty" data-js="quote-items">
+          <p class="quote-item quote-item--prompt"><span class="quote-item__label">Pick a duration to see your itemised quote</span></p>
+        </div>
+
+        <!-- L3 · impact -->
+        <div class="quote-impact" data-js="quote-impact" hidden>
+          <p class="quote-impact__label">Your booking also funds</p>
+          <p class="quote-impact__amount" data-js="impact-amount">$0</p>
+          <p class="quote-impact__context">of subsidised space for charities + community orgs. Contributing to <span class="quote-impact__total"></span> paid forward since 2021.</p>
+        </div>
+
+        <!-- Impact Discount — subtle inline toggle, mirrors the preview -->
+        <div class="quote-impact-toggle" data-js="quote-impact-toggle" data-on="false" role="button" tabindex="0" aria-pressed="false" aria-label="Apply Impact Discount, 50% off room rate">
+          <span class="quote-impact-toggle__check" aria-hidden="true"></span>
+          <span class="quote-impact-toggle__title">Apply Impact Discount · 50% off</span>
+        </div>
+        <span class="quote-impact-toggle__criteria">For charity, NGO, B-Corp under $200k · carbon-zero under $200k · community volunteer · tangata whenua / indigenous-led.</span>
+
+        <!-- L4 · Contact form — sends enquiry to staff + BCCs user via Fluent Forms -->
+        <form class="quote-form-block" data-js="quote-contact-form" novalidate>
+          <p class="quote-form-block__title">Your details</p>
+
+          <div class="qf">
+            <label for="quote-name">Name</label>
+            <input type="text" id="quote-name" name="name" autocomplete="name" required>
+          </div>
+
+          <div class="qf">
+            <label for="quote-email">Email</label>
+            <input type="email" id="quote-email" name="email" autocomplete="email" required>
+          </div>
+
+          <div class="qf">
+            <label for="quote-comments">Anything we should know? <span style="opacity: 0.55; text-transform: none; letter-spacing: 0;">(optional)</span></label>
+            <textarea id="quote-comments" name="comments" rows="3"></textarea>
+          </div>
+
+          <!-- Honeypot — bots fill, humans don't see -->
+          <div class="qf-honeypot" aria-hidden="true">
+            <label>Website (leave blank)<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+          </div>
+
+          <p class="quote-error" data-js="quote-error" role="alert"></p>
+
+          <button type="submit" class="quote-cta" data-js="quote-cta" disabled>
+            <span data-js="quote-cta-label">Send enquiry to two/fiftyseven</span>
+            <span aria-hidden="true">→</span>
+          </button>
+        </form>
+
+        <!-- Confirmation — replaces form on success -->
+        <div class="quote-confirmation" data-js="quote-confirmation" role="status">
+          <div class="quote-confirmation__check" aria-hidden="true">✓</div>
+          <p class="quote-confirmation__title">sent. we'll be back to you.</p>
+          <p class="quote-confirmation__body">A copy of your quote is on its way to your inbox. We aim to reply within one business day.</p>
+        </div>
+
+        <!-- Warm lead — for orgs who still can't afford it -->
+        <div class="quote-talk">
+          <p class="quote-talk__lead">Still feels out of reach? Our kaupapa is making space accessible — let's kōrero.</p>
+          <a href="mailto:kiaora@twofiftyseven.co?subject=Talk%20to%20us%20about%20access" class="quote-talk__cta">
+            Talk to us about your kaupapa
+            <span aria-hidden="true">→</span>
+          </a>
+        </div>
+      </aside>
+
+    </section>
+
+    <!-- SAVE YOUR NUMBERS — canonical 3-card share row. Audit #3 drift fix.
+         meetings/pricing previously had only the inline send-enquiry form;
+         this row sits between the quote builder and the rates table so a
+         reader can take the quote back to their team without sending it. -->
+    <section class="calc-share" aria-labelledby="share-title">
+      <p class="calc-share__eyebrow">Take this with you</p>
+      <h2 id="share-title" class="calc-share__title">save your quote, send it on.</h2>
+      <div class="calc-share__row">
+        <div class="calc-share-card">
+          <h3 class="calc-share-card__title">Email me this quote</h3>
+          <p class="calc-share-card__body">All your selections + itemised price in your inbox, ready to forward to whoever's signing off the booking.</p>
+          <form class="calc-share-card__form" data-js="calc-share-email" action="#" method="post" novalidate>
+            <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Your email">
+            <button type="submit" class="calc-share-card__btn">Send &rarr;</button>
+          </form>
+        </div>
+        <div class="calc-share-card">
+          <h3 class="calc-share-card__title">Share this quote</h3>
+          <p class="calc-share-card__body">Same selections, same price &mdash; your team clicks and sees the exact same quote you just built.</p>
+          <button type="button" class="calc-share-card__btn" data-js="calc-share-copy" style="align-self: flex-start;">Copy link &rarr;</button>
+        </div>
+        <div class="calc-share-card">
+          <h3 class="calc-share-card__title">Save as PDF</h3>
+          <p class="calc-share-card__body">Print-ready, branded version for procurement, finance, or your event lead.</p>
+          <button type="button" class="calc-share-card__btn" data-js="calc-share-pdf" style="align-self: flex-start;">Download PDF &rarr;</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── RATES AT A GLANCE — full table, − where unavailable ─────────── -->
+    <section class="chapter" aria-labelledby="ch-rates-title">
+      <div class="chapter__inner">
+        <p class="chapter__marker">Rates</p>
+        <h2 id="ch-rates-title" class="display display--mid" data-reveal-words>The prices.</h2>
+
+        <div class="pricing-tiers-grid" data-reveal data-reveal-delay="2">
+
+          <!-- ROOMS -->
+          <div class="pricing-tiers-col">
+            <h3 class="pricing-tiers-col__heading">Rooms</h3>
+            <ul class="pricing-tiers__list">
+              <li class="pricing-tiers__head" aria-hidden="true">
+                <span></span>
+                <span>Hour</span>
+                <span>Evening</span>
+                <span>Day</span>
+              </li>
+              <li class="pricing-tiers__row pricing-tiers__row--rates">
+                <span class="pricing-tiers__label">Meeting Room</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--hour">$70</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--evening pricing-tiers__rate--empty">&mdash;</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--day">$290</span>
+                <span class="pricing-tiers__detail">Up to 6.</span>
+              </li>
+              <li class="pricing-tiers__row pricing-tiers__row--rates">
+                <span class="pricing-tiers__label">Silver Linings</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--hour">$140</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--evening">$420</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--day">$690</span>
+                <span class="pricing-tiers__detail">Up to 12.</span>
+              </li>
+              <li class="pricing-tiers__row pricing-tiers__row--rates">
+                <span class="pricing-tiers__label">Studio</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--hour">$110</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--evening">$340</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--day">$590</span>
+                <span class="pricing-tiers__detail">Up to 16.</span>
+              </li>
+              <li class="pricing-tiers__row pricing-tiers__row--rates">
+                <span class="pricing-tiers__label">Workshop Space</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--hour">$180</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--evening">$490</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--day">$790</span>
+                <span class="pricing-tiers__detail">Up to 40.</span>
+              </li>
+              <li class="pricing-tiers__row pricing-tiers__row--rates">
+                <span class="pricing-tiers__label">Event Space</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--hour">$280</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--evening">$740</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--day">$1,190</span>
+                <span class="pricing-tiers__detail">Up to 100.</span>
+              </li>
+              <li class="pricing-tiers__row pricing-tiers__row--rates">
+                <span class="pricing-tiers__label">Entire two/fiftyseven</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--hour">$380</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--evening">$990</span>
+                <span class="pricing-tiers__rate pricing-tiers__rate--day">$1,900</span>
+                <span class="pricing-tiers__detail">Up to 200.</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- ADD-ONS -->
+          <div class="pricing-tiers-col">
+            <h3 class="pricing-tiers-col__heading">Add-ons</h3>
+            <ul class="pricing-tiers__list">
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Tea + coffee</span>
+                <span class="pricing-tiers__price">$5</span>
+                <span class="pricing-tiers__unit">/head</span>
+                <span class="pricing-tiers__detail">Single serve. Organic, brewed fresh.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Bottomless tea + coffee</span>
+                <span class="pricing-tiers__price">$10</span>
+                <span class="pricing-tiers__unit">/head</span>
+                <span class="pricing-tiers__detail">Refilled throughout the day.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Projector</span>
+                <span class="pricing-tiers__price">$50</span>
+                <span class="pricing-tiers__unit">&nbsp;</span>
+                <span class="pricing-tiers__detail">Available in the Workshop, Event and Entire two/fiftyseven spaces.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Sound system</span>
+                <span class="pricing-tiers__price">$50</span>
+                <span class="pricing-tiers__unit">&nbsp;</span>
+                <span class="pricing-tiers__detail">PA, mics, mixer for your session.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Catering through us</span>
+                <span class="pricing-tiers__price">$100</span>
+                <span class="pricing-tiers__unit">+ budget</span>
+                <span class="pricing-tiers__detail">Through Karaka Cafe, Blue Carrot or Food Envy. Catering passed through at cost - set your own per-head budget. We add a $100 organising fee on top, because from experience it's a lot of work.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Bring your own catering</span>
+                <span class="pricing-tiers__price">&mdash;</span>
+                <span class="pricing-tiers__unit">&nbsp;</span>
+                <span class="pricing-tiers__detail">You are absolutely welcome to organise your own catering from our friends or any other provider.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="pricing-cards__after" data-reveal data-reveal-delay="3">All prices excl. GST.</p>
+        <p class="pricing-cards__after" data-reveal data-reveal-delay="3">Charities, NGOs, indigenous-led organisations, community groups and social enterprises book at up to 50% off under the Impact Discount.</p>
+        <p class="pricing-cards__after" data-reveal data-reveal-delay="3">The projector and sound system fee covers maintenance and repair, and helps make the spaces more accessible for those who don't use them.</p>
+      </div>
+    </section>
+
+    <!-- ─────────── WHAT'S INCLUDED — incl-cards pattern ─────────── -->
+    <section class="chapter" aria-labelledby="ch-included-title">
+      <div class="chapter__inner">
+        <div class="incl">
+          <div class="incl__head">
+            <p class="chapter__marker">What's included</p>
+            <h2 id="ch-included-title" class="display display--mid" data-reveal-words>What's included with every room booking?</h2>
+            <p class="lead" data-reveal data-reveal-delay="1">Every room set up before you arrive. Same care that runs the workspace runs every booking, no hidden hire fees, no surprise extras.</p>
+          </div>
+          <div class="incl-cards" data-reveal data-reveal-delay="2">
+          <article class="incl-card">
+            <p class="incl-card__label">Set-up and pack-down</p>
+            <p class="incl-card__detail">The room arranged to your shape before you arrive, cleared by us after you leave.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Tea + coffee</p>
+            <p class="incl-card__detail">Organic, brewed fresh and in your room when you arrive.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Wifi</p>
+            <p class="incl-card__detail">Fast business-grade wifi on every device, every room.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">AV, ready to go</p>
+            <p class="incl-card__detail">Screens, projector, mics, dongles, wireless screen-share, checked before you arrive, in the rooms that have it.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Whiteboards</p>
+            <p class="incl-card__detail">Full-wall whiteboards in the rooms that take them, with markers, erasers, and a pinnable surface.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Catering sorted</p>
+            <p class="incl-card__detail">Through Karaka Cafe, Blue Carrot or Food Envy, passed through at cost, no markup.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Full accessibility</p>
+            <p class="incl-card__detail">Lift access from both Willis Street and Victoria Street entrances. Designed for everyone, every meeting.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">The Impact Discount</p>
+            <p class="incl-card__detail">Up to 50% off for qualifying charities, NGOs, indigenous-led organisations, community groups and social enterprises.</p>
+          </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLOSE CTA — canonical .invite (audit #18). The inline quote form above IS
+         this page's primary transactional action; this invite serves the reader
+         who isn't ready to send a quote yet but wants the building or the alternatives. -->
+    <section class="chapter chapter--fit chapter--close" id="get-involved" aria-labelledby="ch-close-title">
+      <div class="chapter__inner">
+        <h2 id="ch-close-title" class="display display--mid">Not ready to send a quote yet?</h2>
+        <p class="lead">Most teams tour the rooms before they book. Twenty minutes, weekday mornings, walk every room with whoever's hosting that day.</p>
+
+        <div class="invite">
+          <!-- PRIMARY — for the still-deciding reader. Tour is the strongest move
+               for someone not yet ready to commit a date. -->
+          <a class="invite__primary" href="../../tours/">
+            <p class="invite__eyebrow">See it before you book</p>
+            <h3 class="invite__primary-title">Walk the rooms<span class="invite__arrow" aria-hidden="true">→</span></h3>
+            <p class="invite__primary-body">A 20-minute tour with whoever's hosting that day. See the AV set, the kitchen, the rooms in person. Helpful before a workshop, a board day or an event.</p>
+            <p class="invite__meta"><span>Weekday mornings</span><span aria-hidden="true">·</span><span>With whoever's hosting</span><span aria-hidden="true">·</span><span>No pitch</span></p>
+          </a>
+
+          <!-- SECONDARY ROW — (1) the alternative to a quote: talk to a human about catering/
+               hybrid/sensitive content; (2) compare the rates across all six rooms at a glance. -->
+          <div class="invite__row">
+            <a class="invite__secondary" href="mailto:kiaora@twofiftyseven.co?subject=Meeting%20room%20enquiry">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">Have a question first<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">For catering, hybrid setup, sensitive content or anything the quote tool can't capture. Email <strong>kiaora@twofiftyseven.co</strong> or call <strong>(04) 974-3299</strong>.</p>
+              </div>
+            </a>
+            <a class="invite__secondary" href="#ch-rates-title">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">See all the rates<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">Every room, every block, every Impact Discount. The full price table on this page, no scrolling through individual room pages.</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ─────────── FAQ — SEO + AEO led. Mirrors FAQPage JSON-LD in <head>. ─────────── -->
+    <section class="chapter" aria-labelledby="ch-faq-title">
+      <div class="chapter__inner">
+        <p class="chapter__marker">FAQ</p>
+        <h2 id="ch-faq-title" class="display display--mid" data-reveal-words>Before you book a meeting room.</h2>
+
+        <div class="faq" data-js="faq-accordion" data-reveal data-reveal-delay="2" style="margin-top: clamp(40px, 5vh, 72px);">
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How much does a meeting room cost at two/fiftyseven?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Meeting rooms at two/fiftyseven start at $70/hr or $290/day for the six-person Meeting Room. Silver Linings (12) is $140/hr or $690/day. The Studio (16) is $110/hr or $590/day. The Workshop Space (40) is $180/hr or $790/day. The Event Space (100) is $280/hr or $1,190/day. The whole venue (200) is $380/hr or $1,900/day. All prices ex GST. Charities, NGOs, indigenous-led organisations, community groups and social enterprises book at up to 50% off under the Impact Discount.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">What's included when I book a room at two/fiftyseven?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>The room set to your run-sheet before you arrive, tea, coffee and water on arrival, fast business-grade wifi, AV (screens, projector, mics, dongles, wireless screen-share, checked before you arrive in the rooms that have it), full-wall whiteboards in the rooms that have them, and pack-down by us. Catering runs through Karaka Cafe, Blue Carrot or Food Envy and is passed through at cost, no markup. Lift access from both Willis Street and Victoria Street.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Who qualifies for the Impact Discount at two/fiftyseven?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>The Impact Discount is up to 50% off room hire for: charities, NGOs, B-Corps and not-for-profits with annual revenue under $200k; certified carbon-zero or carbon-positive organisations under $200k revenue; community-based volunteer organisations; and tangata whenua or indigenous-led organisations. The discount applies to room hire only, not catering or add-ons. If you're not sure where you fit, email <a href="mailto:kiaora@twofiftyseven.co">kiaora@twofiftyseven.co</a> with a one-line description and we confirm within a working day.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Are prices on this page ex GST or inc GST?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>All prices on this page are ex GST. NZ GST is currently 15%. Your invoice will show the GST line separately so it's clear for your finance team.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How does catering work for meetings at two/fiftyseven?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Catering runs through our three local partners — Karaka Cafe (Māori kai), Blue Carrot (plant-led platters and lunches) and Food Envy (full-service hot meals). All three know our kitchen setup and the way meetings here run. Catering is passed through at cost — you set your own per-head budget and we add a $100 organising fee. Or organise your own catering from any other provider; you're absolutely welcome to.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How much notice do I need to book a meeting room?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>For meetings, a few business days is comfortable; same-day is often possible for the Meeting Room and the Studio. For workshops and away days, two to four weeks lead time gives us room to configure the day around your run-sheet. For the Event Space or a whole-venue booking, four to six weeks is sensible. Email <a href="mailto:kiaora@twofiftyseven.co">kiaora@twofiftyseven.co</a> and we reply within one working day.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">What's the difference between a meeting, workshop and away day at two/fiftyseven?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>A meeting is short and focused — boardroom, video calls, briefings — typically 1 to 4 hours in the Meeting Room, Silver Linings or a Studio. A workshop is session-focused, usually 3 to 4 hours with breakouts, often externally facilitated — usually in the Workshop Space or a Studio. An away day is a full-day team off-site, typically 09:00–17:00 with shared meals — usually in the Workshop Space configured for the day. Same rooms, different shapes.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Can I book multiple rooms at the same time, or the whole venue?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Yes. Multiple rooms work well when you want a plenary plus breakouts — typically the Workshop Space or Event Space alongside a Studio for splinter sessions. The whole-venue rate ($380/hr or $1,900/day) gives you every room for the day, including the workspace, and is the option most events of 100+ people take.</p>
+            </div></div>
+          </div>
+
+<div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How do I pay — card or invoice?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p><!-- TODO: Ash to confirm payment + deposit + cancellation policy. Placeholder to flag for content sourcing. -->[Payment terms, deposit and cancellation policy to be confirmed by two/fiftyseven team. Email <a href="mailto:kiaora@twofiftyseven.co">kiaora@twofiftyseven.co</a> for the current terms with your quote.]</p>
+            </div></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- @include:site-footer -->
+  <footer class="site-footer" data-theme="dark">
+    <div class="container">
+      <div class="site-footer__top">
+        <nav class="site-footer__nav" aria-label="Footer">
+          <div class="site-footer__col site-footer__col--find">
+            <h4>Find us</h4>
+            <address class="site-footer__address">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara</address>
+            <p class="site-footer__note">Central lift access from both the Willis Street and Victoria Street entrances. The Victoria Street entrance is opposite Matapihi ki te Ao Nui.</p>
+            <a class="site-footer__maplink" href="https://www.google.com/maps/search/?api=1&amp;query=57+Willis+Street+Te+Whanganui-a-Tara">View on map</a>
+          </div>
+          <div class="site-footer__col">
+            <h4>Workspace</h4>
+            <ul>
+              <li><a href="../../workspace/base/index.html">Base</a></li>
+              <li><a href="../../workspace/hub/index.html">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html">Desk</a></li>
+              <li><a href="../../pricing/index.html">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Meet &amp; Host</h4>
+            <ul>
+              <li><a href="../../meetings/index.html">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html">Away days</a></li>
+              <li><a href="../../events/index.html">Events</a></li>
+              <li><a href="../../events/functions/index.html">Functions</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col site-footer__col--about">
+            <h4>About</h4>
+            <ul>
+              <li><a href="../../kaupapa/index.html">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html">Success stories</a></li>
+              <li><a href="../../organisations/index.html">Organisations</a></li>
+              <li><a href="../../our-story/index.html">Our story</a></li>
+              <li><a href="../../people/index.html">People</a></li>
+              <li><a href="../../whatson/index.html">What's on</a></li>
+              <li><a href="../../kōrero/index.html">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html">Press kit</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Calculators</h4>
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html">Carbon</a></li>
+              <li><a href="../../contact/index.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <form class="site-footer__panui" method="post" action="#" aria-label="Pānui signup">
+          <h4>Pānui</h4>
+          <p>Occasional notes from inside two/fiftyseven · what's on, what's changed, what we're thinking about.</p>
+          <div class="site-footer__panui-row">
+            <label class="visually-hidden" for="panui-email">Email address</label>
+            <input type="email" id="panui-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit" class="btn btn--primary btn--small">Sign up</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="site-footer__beliefs" aria-label="What we believe">
+        <ul class="site-footer__beliefs-track">
+          <li>diversity is resilience</li>
+          <li>radical equality is good for all</li>
+          <li>complete decolonisation is a necessary future</li>
+          <li>climate justice is a human and environmental imperative</li>
+          <li aria-hidden="true">diversity is resilience</li>
+          <li aria-hidden="true">radical equality is good for all</li>
+          <li aria-hidden="true">complete decolonisation is a necessary future</li>
+          <li aria-hidden="true">climate justice is a human and environmental imperative</li>
+        </ul>
+      </div>
+
+      <div class="site-footer__wordmark" data-js="footer-reveal" role="img" aria-label="two/fiftyseven"></div>
+
+      <div class="site-footer__bottom">
+        <span>&copy; 2026 two/fiftyseven Limited</span>
+        <span>Aotearoa / New Zealand</span>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var wm = document.querySelector('[data-js="footer-reveal"]');
+        if (!wm) return;
+        if (!('IntersectionObserver' in window)) { wm.classList.add('is-revealed'); return; }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-revealed'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.25 });
+        io.observe(wm);
+      })();
+    </script>
+  </footer>
+    <!-- @endinclude -->
+  </main>
+
+  <script>
+    // Quote calculator logic — vanilla JS, no framework.
+    /*
+     * QUOTE TOOL · /meetings/pricing/
+     * High-fidelity capture surface: dates, multi-day, add-ons, contact.
+     * Output: structured Fluent Forms POST → kiaora@ + BCC user.
+     * Field keys here are the schema contract — they must match Fluent admin
+     * field names and the future management software API.
+     */
+    (function() {
+      const itemsEl = document.querySelector('[data-js="quote-items"]');
+      const totalEl = document.querySelector('[data-js="quote-total"]');
+      const ctaEl = document.querySelector('[data-js="quote-cta"]');
+      const ctaLabelEl = document.querySelector('[data-js="quote-cta-label"]');
+      const daysList = document.querySelector('[data-js="days-list"]');
+      const addDayBtn = document.querySelector('[data-js="add-day"]');
+      const impactBlock = document.querySelector('[data-js="quote-impact"]');
+      const impactAmountEl = document.querySelector('[data-js="impact-amount"]');
+      const impactLabelEl = impactBlock.querySelector('.quote-impact__label');
+      const impactContextEl = impactBlock.querySelector('.quote-impact__context');
+      // Contact form refs
+      const formEl = document.querySelector('[data-js="quote-contact-form"]');
+      const nameEl = document.getElementById('quote-name');
+      const emailEl = document.getElementById('quote-email');
+      const commentsEl = document.getElementById('quote-comments');
+      const errorEl = document.querySelector('[data-js="quote-error"]');
+      const confirmationEl = document.querySelector('[data-js="quote-confirmation"]');
+      const honeypotEl = formEl.querySelector('input[name="website"]');
+      // Impact Discount toggle (now lives on the dark panel, not in addons)
+      const impactToggleEl = document.querySelector('[data-js="quote-impact-toggle"]');
+
+      // Helpers
+      const todayISO = () => new Date().toISOString().slice(0, 10);
+      const parseTime = str => {
+        const [h, m] = (str || '0:0').split(':').map(Number);
+        return h + (m / 60);
+      };
+      const hoursForDay = d => Math.max(0, parseTime(d.end) - parseTime(d.start));
+      const fmt = n => '$' + Math.round(n).toLocaleString('en-NZ');
+      const fmtHrs = n => (Math.round(n * 2) / 2).toString().replace('.5', '.5').replace(/\.0$/, '') + 'hrs';
+
+      // State
+      let state = {
+        room: null,
+        roomName: null,
+        rates: { day: 0, hour: 0, evening: 0 },
+        duration: null,
+        people: 6,
+        days: [
+          { date: todayISO(), start: '09:00', end: '17:00' }
+        ],
+        addons: {
+          impact: false,
+          tea: false,
+          teaType: 5,
+          catering: false,
+          cateringPerHead: 25,
+          projector: false,
+          sound: false,
+        }
+      };
+
+      function selectInGroup(group, selectedEl) {
+        group.querySelectorAll('[data-selected]').forEach(el => el.removeAttribute('data-selected'));
+        if (selectedEl) selectedEl.setAttribute('data-selected', 'true');
+      }
+
+      // Room selection — with override-up-only logic
+      const roomGrid = document.querySelector('[data-js="room-grid"]');
+      const roomOptions = Array.from(roomGrid.querySelectorAll('.room-option'));
+      const recPeopleEl = document.querySelector('[data-js="rec-people"]');
+      const recRoomEl = document.querySelector('[data-js="rec-room"]');
+
+      function pickRoomForPeople(n) {
+        // smallest room with cap >= n; fallback to largest
+        const fits = roomOptions.filter(o => +o.dataset.cap >= n);
+        return fits.length ? fits[0] : roomOptions[roomOptions.length - 1];
+      }
+      function updateRoomAvailability() {
+        roomOptions.forEach(o => {
+          if (+o.dataset.cap < state.people) {
+            o.setAttribute('aria-disabled', 'true');
+            o.removeAttribute('data-recommended');
+          } else {
+            o.removeAttribute('aria-disabled');
+            o.removeAttribute('data-recommended');
+          }
+        });
+        const rec = pickRoomForPeople(state.people);
+        if (rec) rec.setAttribute('data-recommended', 'true');
+        return rec;
+      }
+      function selectRoom(opt) {
+        selectInGroup(roomGrid, opt);
+        state.room = opt.dataset.room;
+        state.roomName = opt.querySelector('.room-option__name').textContent;
+        state.rates = {
+          day: +opt.dataset.day,
+          hour: +opt.dataset.hour,
+          evening: +opt.dataset.evening,
+        };
+        const eveningPill = document.querySelector('[data-dur="evening"]');
+        if (state.rates.evening === 0) {
+          eveningPill.setAttribute('aria-disabled', 'true');
+          if (state.duration === 'evening') {
+            state.duration = null;
+            selectInGroup(document.querySelector('[data-js="duration-row"]'), null);
+          }
+        } else {
+          eveningPill.removeAttribute('aria-disabled');
+        }
+      }
+      roomOptions.forEach(opt => {
+        opt.addEventListener('click', e => {
+          e.preventDefault();
+          if (opt.getAttribute('aria-disabled') === 'true') return;
+          selectRoom(opt);
+          render();
+        });
+      });
+
+      // Duration selection
+      const durationRow = document.querySelector('[data-js="duration-row"]');
+      durationRow.querySelectorAll('.pill').forEach(pill => {
+        pill.addEventListener('click', e => {
+          e.preventDefault();
+          if (pill.getAttribute('aria-disabled') === 'true') return;
+          selectInGroup(durationRow, pill);
+          state.duration = pill.dataset.dur;
+          render();
+        });
+      });
+
+      // People slider — stepped scale: 1-60 by 1, 70-200 by 10.
+      // Most bookings sit at 4-60; rare event/whole-venue jobs extend the tail.
+      const peopleScale = (() => {
+        const a = [];
+        for (let i = 1; i <= 60; i++) a.push(i);
+        for (let i = 70; i <= 200; i += 10) a.push(i);
+        return a;
+      })();
+      const peopleIndexOf = n => {
+        let best = 0, bestDiff = Infinity;
+        for (let i = 0; i < peopleScale.length; i++) {
+          const d = Math.abs(peopleScale[i] - n);
+          if (d < bestDiff) { bestDiff = d; best = i; }
+        }
+        return best;
+      };
+      const peopleInput = document.getElementById('people');
+      const peopleValueEl = document.querySelector('[data-js="people-value"]');
+      peopleInput.addEventListener('input', e => {
+        const idx = Math.max(0, Math.min(peopleScale.length - 1, +e.target.value || 0));
+        state.people = peopleScale[idx];
+        peopleValueEl.textContent = state.people + (state.people === 1 ? ' person' : ' people');
+        const rec = updateRoomAvailability();
+        // if current room is now too small (or no room picked), snap to recommended
+        const currentEl = state.room ? roomOptions.find(o => o.dataset.room === state.room) : null;
+        if (!currentEl || +currentEl.dataset.cap < state.people) {
+          if (rec) selectRoom(rec);
+        }
+        // update recommendation line
+        recPeopleEl.textContent = state.people;
+        if (rec) recRoomEl.textContent = rec.querySelector('.room-option__name').textContent;
+        render();
+      });
+
+      // Days list — date + start + end per day, + Add day button
+      addDayBtn.addEventListener('click', e => {
+        e.preventDefault();
+        const last = state.days[state.days.length - 1];
+        const next = new Date(last.date);
+        next.setDate(next.getDate() + 1);
+        state.days.push({
+          date: next.toISOString().slice(0, 10),
+          start: last.start,
+          end: last.end
+        });
+        renderDaysList();
+        render();
+      });
+
+      function renderDaysList() {
+        daysList.innerHTML = '';
+        state.days.forEach((day, i) => {
+          const row = document.createElement('div');
+          row.className = 'day-row';
+
+          const label = document.createElement('span');
+          label.className = 'day-row__label';
+          label.textContent = 'Day ' + (i + 1);
+
+          const inputs = document.createElement('div');
+          inputs.className = 'day-row__inputs';
+
+          const dateInput = document.createElement('input');
+          dateInput.type = 'date';
+          dateInput.value = day.date;
+          dateInput.addEventListener('input', e => { day.date = e.target.value; render(); });
+
+          const startInput = document.createElement('input');
+          startInput.type = 'time';
+          startInput.value = day.start;
+          startInput.addEventListener('input', e => { day.start = e.target.value; render(); });
+
+          const dash = document.createElement('span');
+          dash.textContent = '→';
+
+          const endInput = document.createElement('input');
+          endInput.type = 'time';
+          endInput.value = day.end;
+          endInput.addEventListener('input', e => { day.end = e.target.value; render(); });
+
+          const hoursEl = document.createElement('span');
+          hoursEl.className = 'day-row__hours';
+          hoursEl.dataset.dayIndex = i;
+          hoursEl.textContent = fmtHrs(hoursForDay(day));
+
+          inputs.appendChild(dateInput);
+          inputs.appendChild(startInput);
+          inputs.appendChild(dash);
+          inputs.appendChild(endInput);
+          inputs.appendChild(hoursEl);
+
+          const remove = document.createElement('button');
+          remove.type = 'button';
+          remove.className = 'day-row__remove';
+          remove.setAttribute('aria-label', 'Remove day');
+          remove.innerHTML = '×';
+          remove.addEventListener('click', e => {
+            e.preventDefault();
+            if (state.days.length === 1) return;
+            state.days.splice(i, 1);
+            renderDaysList();
+            render();
+          });
+          if (state.days.length === 1) remove.style.visibility = 'hidden';
+
+          row.appendChild(label);
+          row.appendChild(inputs);
+          row.appendChild(remove);
+
+          daysList.appendChild(row);
+        });
+      }
+
+      // Add-on toggles
+      document.querySelectorAll('.addon').forEach(addon => {
+        const head = addon.querySelector('.addon__head');
+        head.addEventListener('click', e => {
+          e.preventDefault();
+          const on = addon.getAttribute('data-on') === 'true';
+          addon.setAttribute('data-on', on ? 'false' : 'true');
+          state.addons[addon.dataset.addon] = !on;
+          render();
+        });
+        const teaSelect = addon.querySelector('[data-js="tea-type"]');
+        if (teaSelect) {
+          teaSelect.addEventListener('change', e => {
+            state.addons.teaType = +e.target.value;
+            render();
+          });
+        }
+        const cateringInput = addon.querySelector('[data-js="catering-perhead"]');
+        if (cateringInput) {
+          cateringInput.addEventListener('input', e => {
+            state.addons.cateringPerHead = Math.max(0, +e.target.value || 0);
+            render();
+          });
+        }
+      });
+
+      // --- Calculation + render ---
+      function render() {
+        const items = [];
+        const numDays = state.days.length;
+        const totalHours = state.days.reduce((s, d) => s + hoursForDay(d), 0);
+
+        // Update day-hours indicators
+        state.days.forEach((day, i) => {
+          const el = daysList.querySelector('[data-day-index="' + i + '"]');
+          if (el) el.textContent = fmtHrs(hoursForDay(day));
+        });
+
+        if (!state.room || !state.duration) {
+          itemsEl.classList.add('quote-items--empty');
+          itemsEl.innerHTML = '<p class="quote-item quote-item--prompt"><span class="quote-item__label">' +
+            (!state.room ? 'Pick a room to see your itemised quote' : 'Pick a duration to see your itemised quote') + '</span></p>';
+          totalEl.textContent = '$0';
+          impactBlock.hidden = true;
+          return;
+        }
+        itemsEl.classList.remove('quote-items--empty');
+
+        // Room cost
+        let roomCost = 0;
+        let roomLabel = '';
+        if (state.duration === 'hour') {
+          roomCost = state.rates.hour * totalHours;
+          roomLabel = state.roomName + ' · ' + (numDays > 1 ? numDays + ' days × ' : '') + fmtHrs(totalHours) + ' × ' + fmt(state.rates.hour) + '/hr';
+        } else if (state.duration === 'day') {
+          roomCost = state.rates.day * numDays;
+          roomLabel = state.roomName + ' · ' + numDays + ' day' + (numDays > 1 ? 's' : '') + ' × ' + fmt(state.rates.day);
+        } else if (state.duration === 'evening') {
+          roomCost = state.rates.evening * numDays;
+          roomLabel = state.roomName + ' · ' + numDays + ' evening' + (numDays > 1 ? 's' : '') + ' × ' + fmt(state.rates.evening);
+        }
+        items.push({ label: roomLabel, value: roomCost });
+
+        // Tea + coffee
+        if (state.addons.tea) {
+          const teaCost = state.addons.teaType * state.people * numDays;
+          const teaLabel = state.addons.teaType === 10 ? 'bottomless' : 'single serve';
+          items.push({
+            label: 'Tea + coffee · ' + teaLabel + ' × ' + state.people + 'pp' + (numDays > 1 ? ' × ' + numDays + ' days' : ''),
+            value: teaCost
+          });
+        }
+
+        // Catering — itemised separately
+        if (state.addons.catering) {
+          const cateringCost = (state.addons.cateringPerHead * state.people + 100) * numDays;
+          items.push({
+            label: 'Catering · ' + state.people + 'pp × $' + state.addons.cateringPerHead + ' + $100 organising' + (numDays > 1 ? ' × ' + numDays + ' days' : ''),
+            value: cateringCost
+          });
+        }
+
+        // Projector + sound — $50 each, per day
+        if (state.addons.projector) {
+          items.push({
+            label: 'Projector' + (numDays > 1 ? ' × ' + numDays + ' days' : ''),
+            value: 50 * numDays
+          });
+        }
+        if (state.addons.sound) {
+          items.push({
+            label: 'Sound system' + (numDays > 1 ? ' × ' + numDays + ' days' : ''),
+            value: 50 * numDays
+          });
+        }
+
+        let total = items.reduce((sum, it) => sum + it.value, 0);
+        let discountAmt = 0;
+        if (state.addons.impact) {
+          discountAmt = roomCost * 0.5;
+          total -= discountAmt;
+        }
+
+        let html = items.map(it =>
+          '<p class="quote-item"><span class="quote-item__label">' + it.label + '</span>' +
+          '<span class="quote-item__value">' + fmt(it.value) + '</span></p>'
+        ).join('');
+        if (state.addons.impact) {
+          html += '<p class="quote-item quote-item--discount"><span class="quote-item__label">Impact Discount · 50% off room</span>' +
+            '<span class="quote-item__value">−' + fmt(discountAmt) + '</span></p>';
+        }
+        itemsEl.innerHTML = html;
+        totalEl.textContent = fmt(total);
+
+        // Impact donation — hours × people × $1, with day/evening blocks valued as 8/4 hours
+        let impactHours = totalHours;
+        if (state.duration === 'day') impactHours = numDays * 8;
+        else if (state.duration === 'evening') impactHours = numDays * 4;
+        const impactDonation = Math.round(impactHours * state.people);
+
+        // Impact card — copy + amount depend on Impact Discount state
+        if (state.addons.impact) {
+          // User is RECEIVING the subsidy, not contributing to it
+          impactBlock.hidden = false;
+          impactLabelEl.textContent = 'You\'re supported by';
+          impactAmountEl.textContent = fmt(discountAmt);
+          impactContextEl.innerHTML = 'paid forward by others, so spaces like ours stay open to charities, NGOs, and community work. Joining <span class="quote-impact__total"></span> paid forward since 2021.';
+        } else if (impactDonation > 0) {
+          impactBlock.hidden = false;
+          impactLabelEl.textContent = 'Your booking also funds';
+          impactAmountEl.textContent = fmt(impactDonation);
+          impactContextEl.innerHTML = 'of subsidised space for charities + community orgs. Contributing to <span class="quote-impact__total"></span> paid forward since 2021.';
+        } else {
+          impactBlock.hidden = true;
+        }
+
+        // Stash computed totals on state for the submit payload
+        state._computed = {
+          items: items,
+          total: total,
+          discountAmt: discountAmt,
+          impactDonation: impactDonation,
+          totalHours: totalHours,
+          numDays: numDays
+        };
+
+        validateForm();
+      }
+
+      // ── Impact Discount toggle ──────────────────────────────────────────
+      function setImpactDiscount(on) {
+        state.addons.impact = !!on;
+        impactToggleEl.setAttribute('data-on', state.addons.impact ? 'true' : 'false');
+        impactToggleEl.setAttribute('aria-pressed', state.addons.impact ? 'true' : 'false');
+        render();
+      }
+      impactToggleEl.addEventListener('click', () => setImpactDiscount(!state.addons.impact));
+      impactToggleEl.addEventListener('keydown', e => {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          setImpactDiscount(!state.addons.impact);
+        }
+      });
+
+      // ── Contact form validation ─────────────────────────────────────────
+      const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      function validateForm() {
+        const hasName = nameEl.value.trim().length >= 2;
+        const hasEmail = EMAIL_RE.test(emailEl.value.trim());
+        const hasRoom = !!state.room;
+        const hasDuration = !!state.duration;
+        const hasDate = state.days.length > 0 && state.days.every(d => !!d.date);
+        ctaEl.disabled = !(hasName && hasEmail && hasRoom && hasDuration && hasDate);
+      }
+      ['input', 'change'].forEach(evt => {
+        nameEl.addEventListener(evt, validateForm);
+        emailEl.addEventListener(evt, validateForm);
+      });
+
+      // ── Fluent Forms submission ─────────────────────────────────────────
+      // Set this once the WP form ID is assigned. Until then, the dev fallback
+      // logs the payload and shows the success state.
+      // Example (prod): const FLUENT_ENDPOINT = '/wp-json/fluentform/v1/forms/13/submit';
+      const FLUENT_ENDPOINT = '';
+
+      function buildPayload() {
+        const c = state._computed || {};
+        return {
+          // Contact
+          name: nameEl.value.trim(),
+          email: emailEl.value.trim(),
+          comments: commentsEl.value.trim(),
+          // Booking shape
+          room: state.room,
+          room_name: state.roomName,
+          duration: state.duration,
+          people: state.people,
+          days: state.days.map(d => ({
+            date: d.date,
+            start_time: d.start,
+            end_time: d.end,
+            hours: hoursForDay(d)
+          })),
+          duration_total_hours: c.totalHours || 0,
+          num_days: c.numDays || 0,
+          // Add-ons
+          addon_tea: state.addons.tea,
+          addon_tea_type: state.addons.teaType,
+          addon_projector: state.addons.projector,
+          addon_sound: state.addons.sound,
+          addon_catering: state.addons.catering,
+          addon_catering_perhead: state.addons.cateringPerHead,
+          discount_applied: state.addons.impact,
+          discount_amount: c.discountAmt || 0,
+          // Totals
+          est_total: c.total || 0,
+          impact_donation: c.impactDonation || 0,
+          // Source + honeypot
+          source: 'meetings-pricing-standalone',
+          website: honeypotEl.value
+        };
+      }
+
+      function showError(msg) {
+        errorEl.textContent = msg;
+        errorEl.setAttribute('data-show', 'true');
+      }
+      function clearError() {
+        errorEl.removeAttribute('data-show');
+        errorEl.textContent = '';
+      }
+      function showConfirmation() {
+        formEl.hidden = true;
+        confirmationEl.setAttribute('data-show', 'true');
+      }
+
+      formEl.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (ctaEl.disabled) return;
+        clearError();
+
+        // Honeypot trip — silently succeed
+        if (honeypotEl.value) { showConfirmation(); return; }
+
+        const payload = buildPayload();
+        ctaEl.setAttribute('data-state', 'loading');
+        ctaLabelEl.textContent = 'Sending…';
+
+        try {
+          if (!FLUENT_ENDPOINT) {
+            console.log('[QUOTE TOOL · dev mode] would POST to Fluent Forms:', payload);
+            await new Promise(r => setTimeout(r, 500));
+            showConfirmation();
+            return;
+          }
+          const res = await fetch(FLUENT_ENDPOINT, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+          if (!res.ok) throw new Error('Submission failed (' + res.status + ')');
+          showConfirmation();
+        } catch (err) {
+          console.error(err);
+          showError("Something went wrong sending that. Try again, or email us directly at kiaora@twofiftyseven.co.");
+          ctaEl.removeAttribute('data-state');
+          ctaLabelEl.textContent = 'Send enquiry to two/fiftyseven';
+        }
+      });
+
+      // ── URL param pre-fill (carries state from embedded preview) ────────
+      function applyUrlParams() {
+        const params = new URLSearchParams(window.location.search);
+        if (!params.toString()) return;
+        // People
+        const p = parseInt(params.get('people'), 10);
+        if (!isNaN(p) && p > 0) {
+          state.people = Math.min(200, Math.max(1, p));
+          const peopleSlider = document.getElementById('people');
+          if (peopleSlider) {
+            // peopleSlider value is the index into peopleScale, not the raw number
+            // Find closest index
+            const scale = (() => { const a=[]; for (let i=1;i<=60;i++) a.push(i); for (let i=70;i<=200;i+=10) a.push(i); return a; })();
+            let bestIdx = 0, bestDiff = Infinity;
+            for (let i = 0; i < scale.length; i++) {
+              const d = Math.abs(scale[i] - state.people);
+              if (d < bestDiff) { bestDiff = d; bestIdx = i; }
+            }
+            peopleSlider.value = bestIdx;
+            state.people = scale[bestIdx];
+            const peopleValueEl = document.querySelector('[data-js="people-value"]');
+            if (peopleValueEl) peopleValueEl.textContent = state.people + (state.people === 1 ? ' person' : ' people');
+          }
+        }
+        // Room
+        const r = params.get('room');
+        if (r) {
+          const opt = roomOptions.find(o => o.dataset.room === r);
+          if (opt && +opt.dataset.cap >= state.people) {
+            selectRoom(opt);
+          }
+        }
+        // Duration
+        const dur = params.get('dur');
+        if (dur === 'hour' || dur === 'day' || dur === 'evening') {
+          const durPill = document.querySelector('[data-dur="' + dur + '"]');
+          if (durPill && durPill.getAttribute('aria-disabled') !== 'true') {
+            selectInGroup(document.querySelector('[data-js="duration-row"]'), durPill);
+            state.duration = dur;
+          }
+        }
+        // Impact Discount carryover — now lives on the dark panel toggle
+        if (params.get('impact') === '1') {
+          setImpactDiscount(true);
+        }
+
+        // Safety: if pre-filled room can't hold the pre-filled people, snap
+        // to the smallest fitting room. Don't strand the user in an invalid state.
+        const currentRoomEl = state.room ? roomOptions.find(o => o.dataset.room === state.room) : null;
+        if (!currentRoomEl || +currentRoomEl.dataset.cap < state.people) {
+          const fit = pickRoomForPeople(state.people);
+          if (fit) selectRoom(fit);
+        }
+      }
+
+      // ── Initial bootstrap ──────────────────────────────────────────────
+      (function init() {
+        const rec = updateRoomAvailability();
+        if (rec) {
+          selectRoom(rec);
+          recPeopleEl.textContent = state.people;
+          recRoomEl.textContent = rec.querySelector('.room-option__name').textContent;
+        }
+        applyUrlParams();
+        // Refresh recommendation line after URL param pre-fill
+        const rec2 = updateRoomAvailability();
+        if (rec2) {
+          recPeopleEl.textContent = state.people;
+          recRoomEl.textContent = rec2.querySelector('.room-option__name').textContent;
+        }
+      })();
+
+      renderDaysList();
+      render();
+    })();
+  </script>
+</body>
+</html>

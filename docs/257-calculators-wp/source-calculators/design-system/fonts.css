@@ -1,0 +1,77 @@
+/* ============================================================================
+   two/fiftyseven · Phase 2 design system · fonts
+   ----------------------------------------------------------------------------
+   Brand fonts locked from current site (sketch/assets/fonts/).
+   In sketch-v2/ Phase 4 these will live at /assets/fonts/.
+   For Phase 2 mockups, fonts live at ../shared/fonts/ relative to design-system/.
+   ----------------------------------------------------------------------------
+   Display:  Gopher Display Medium (display headlines, hero, h1, h2)
+             Gopher Medium (h3, h4, mid-display, sub-headings)
+             Gopher Bold (emphasis, ribbon labels)
+   Body:     Overused Grotesk VF (variable, primary body, weights 100–900)
+             Overused Grotesk Static fallback (Book 400, SemiBold 600, Black 900)
+   Mono:     System fallback (ui-monospace, SF Mono, Menlo) — Geist Mono not yet sourced
+   ========================================================================== */
+
+@font-face {
+  font-family: "Gopher Display";
+  src: url("../shared/fonts/Gopher-Display-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gopher Display";
+  src: url("../shared/fonts/Gopher-Display-Medium-Italic.woff2") format("woff2");
+  font-weight: 500;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gopher";
+  src: url("../shared/fonts/Gopher-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Gopher";
+  src: url("../shared/fonts/Gopher-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Overused Grotesk — variable font, primary load */
+@font-face {
+  font-family: "Overused Grotesk";
+  src: url("../shared/fonts/OverusedGrotesk-VF.woff2") format("woff2-variations"),
+       url("../shared/fonts/OverusedGrotesk-VF.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Static fallbacks for browsers that don't support variable fonts */
+@font-face {
+  font-family: "Overused Grotesk Static";
+  src: url("../shared/fonts/OverusedGrotesk-Book.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Overused Grotesk Static";
+  src: url("../shared/fonts/OverusedGrotesk-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* OverusedGrotesk-Black not yet sourced — file in current sketch/assets/fonts/
+   is 0 bytes. Variable font (-VF) covers weight 900 for browsers that support
+   variable fonts. Source the static Black weight before Phase 4 sketch-v2 ships. */

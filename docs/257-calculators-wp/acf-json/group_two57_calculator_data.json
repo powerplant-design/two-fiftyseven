@@ -1,0 +1,1027 @@
+{
+    "key": "group_two57_calculator_data",
+    "title": "Calculator data",
+    "fields": [
+        {
+            "key": "field_two57_tab_memberships",
+            "label": "Memberships",
+            "name": "",
+            "type": "tab",
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_two57_msg_memberships",
+            "label": "",
+            "name": "",
+            "type": "message",
+            "message": "two/fiftyseven's own monthly membership prices (ex GST). These replace the PRICES object currently hardcoded in calc-office-costs.js.",
+            "new_lines": "wpautop",
+            "esc_html": 0,
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_membership_dedicated_monthly",
+            "label": "Dedicated \u00b7 7 days",
+            "name": "membership_dedicated_monthly",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 659,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "/mo",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_membership_flexi_5_monthly",
+            "label": "Flexi 5 days",
+            "name": "membership_flexi_5_monthly",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 509,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "/mo",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_membership_flexi_4_monthly",
+            "label": "Flexi 4 days",
+            "name": "membership_flexi_4_monthly",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 409,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "/mo",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_membership_flexi_3_monthly",
+            "label": "Flexi 3 days",
+            "name": "membership_flexi_3_monthly",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 309,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "/mo",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_membership_flexi_2_monthly",
+            "label": "Flexi 2 days",
+            "name": "membership_flexi_2_monthly",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 209,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "/mo",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_membership_flexi_1_monthly",
+            "label": "Flexi 1 day",
+            "name": "membership_flexi_1_monthly",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 109,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "/mo",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_annual_prepay_discount_pct",
+            "label": "Annual prepay discount",
+            "name": "annual_prepay_discount_pct",
+            "type": "number",
+            "instructions": "Stored as a percent. JS divides by 100.",
+            "required": 0,
+            "default_value": 10,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "% (Dedicated only)",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_tab_day_passes",
+            "label": "Day passes",
+            "name": "",
+            "type": "tab",
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_two57_day_pass_single",
+            "label": "Single day pass",
+            "name": "day_pass_single",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 40,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_day_pass_pack_10",
+            "label": "10-pack",
+            "name": "day_pass_pack_10",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 350,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_day_pass_pack_20",
+            "label": "20-pack",
+            "name": "day_pass_pack_20",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 650,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_day_pass_pack_50",
+            "label": "50-pack",
+            "name": "day_pass_pack_50",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 1400,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_tab_rooms",
+            "label": "Rooms",
+            "name": "",
+            "type": "tab",
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_two57_msg_rooms",
+            "label": "",
+            "name": "",
+            "type": "message",
+            "message": "Room + event rates (ex GST). NOTE: these were duplicated and CONFLICTING across three files (calc-meeting-costs.js, meetings/pricing inline, the tiers table). The values below use the meetings/pricing set. CONFIRM these are the canonical rates before go-live. Capacity is a headcount, not a price.",
+            "new_lines": "wpautop",
+            "esc_html": 0,
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_meeting_capacity",
+            "label": "Meeting Room \u00b7 capacity",
+            "name": "room_meeting_capacity",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 6,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "people",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_meeting_day",
+            "label": "Meeting Room \u00b7 day",
+            "name": "room_meeting_day",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 290,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_meeting_hour",
+            "label": "Meeting Room \u00b7 hour",
+            "name": "room_meeting_hour",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 70,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_meeting_evening",
+            "label": "Meeting Room \u00b7 evening",
+            "name": "room_meeting_evening",
+            "type": "number",
+            "instructions": "0 = not available in the evening",
+            "required": 0,
+            "default_value": 0,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_silver_linings_capacity",
+            "label": "Silver Linings \u00b7 capacity",
+            "name": "room_silver_linings_capacity",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 12,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "people",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_silver_linings_day",
+            "label": "Silver Linings \u00b7 day",
+            "name": "room_silver_linings_day",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 690,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_silver_linings_hour",
+            "label": "Silver Linings \u00b7 hour",
+            "name": "room_silver_linings_hour",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 140,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_silver_linings_evening",
+            "label": "Silver Linings \u00b7 evening",
+            "name": "room_silver_linings_evening",
+            "type": "number",
+            "instructions": "0 = not available in the evening",
+            "required": 0,
+            "default_value": 420,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_studio_capacity",
+            "label": "Studio \u00b7 capacity",
+            "name": "room_studio_capacity",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 16,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "people",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_studio_day",
+            "label": "Studio \u00b7 day",
+            "name": "room_studio_day",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 590,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_studio_hour",
+            "label": "Studio \u00b7 hour",
+            "name": "room_studio_hour",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 110,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_studio_evening",
+            "label": "Studio \u00b7 evening",
+            "name": "room_studio_evening",
+            "type": "number",
+            "instructions": "0 = not available in the evening",
+            "required": 0,
+            "default_value": 340,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_workshop_capacity",
+            "label": "Workshop Space \u00b7 capacity",
+            "name": "room_workshop_capacity",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 40,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "people",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_workshop_day",
+            "label": "Workshop Space \u00b7 day",
+            "name": "room_workshop_day",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 790,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_workshop_hour",
+            "label": "Workshop Space \u00b7 hour",
+            "name": "room_workshop_hour",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 180,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_workshop_evening",
+            "label": "Workshop Space \u00b7 evening",
+            "name": "room_workshop_evening",
+            "type": "number",
+            "instructions": "0 = not available in the evening",
+            "required": 0,
+            "default_value": 490,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_event_capacity",
+            "label": "Event Space \u00b7 capacity",
+            "name": "room_event_capacity",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 100,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "people",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_event_day",
+            "label": "Event Space \u00b7 day",
+            "name": "room_event_day",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 1190,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_event_hour",
+            "label": "Event Space \u00b7 hour",
+            "name": "room_event_hour",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 280,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_event_evening",
+            "label": "Event Space \u00b7 evening",
+            "name": "room_event_evening",
+            "type": "number",
+            "instructions": "0 = not available in the evening",
+            "required": 0,
+            "default_value": 740,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_entire_capacity",
+            "label": "Entire two/fiftyseven \u00b7 capacity",
+            "name": "room_entire_capacity",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 200,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "people",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_entire_day",
+            "label": "Entire two/fiftyseven \u00b7 day",
+            "name": "room_entire_day",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 1900,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_entire_hour",
+            "label": "Entire two/fiftyseven \u00b7 hour",
+            "name": "room_entire_hour",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 380,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_room_entire_evening",
+            "label": "Entire two/fiftyseven \u00b7 evening",
+            "name": "room_entire_evening",
+            "type": "number",
+            "instructions": "0 = not available in the evening",
+            "required": 0,
+            "default_value": 990,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_tab_add-ons_+_catering",
+            "label": "Add-ons + catering",
+            "name": "",
+            "type": "tab",
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_two57_av_projector_flat",
+            "label": "Projector",
+            "name": "av_projector_flat",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 50,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_av_sound_flat",
+            "label": "Sound system",
+            "name": "av_sound_flat",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 50,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_tea_single_per_head",
+            "label": "Tea \u00b7 single serve / head",
+            "name": "tea_single_per_head",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 5,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_tea_bottomless_per_head",
+            "label": "Tea \u00b7 bottomless / head",
+            "name": "tea_bottomless_per_head",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 10,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_catering_organising_fee",
+            "label": "Catering organising fee",
+            "name": "catering_organising_fee",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 100,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_materials_postits_charge",
+            "label": "Post-its (pass-through)",
+            "name": "materials_postits_charge",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 30,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_materials_printing_charge",
+            "label": "Printing (pass-through)",
+            "name": "materials_printing_charge",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 60,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_setup_complex_charge",
+            "label": "Complex setup charge",
+            "name": "setup_complex_charge",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 200,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_tab_impact_+_kaupapa_levers",
+            "label": "Impact + kaupapa levers",
+            "name": "",
+            "type": "tab",
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_two57_msg_impact",
+            "label": "",
+            "name": "",
+            "type": "message",
+            "message": "Cross-cutting figures two/fiftyseven controls. The giving rate and paid-forward total feed every calculator's 'also funds' block; the impact discount feeds the rooms/events calcs.",
+            "new_lines": "wpautop",
+            "esc_html": 0,
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_giving_rate_per_person_hour",
+            "label": "Giving rate",
+            "name": "giving_rate_per_person_hour",
+            "type": "number",
+            "instructions": "$ funded per person-hour in the space.",
+            "required": 0,
+            "default_value": 1,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "/ person-hour",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_impact_discount_pct",
+            "label": "Impact Discount",
+            "name": "impact_discount_pct",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 50,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "% (rooms + events only)",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_impact_eligibility_revenue_ceiling",
+            "label": "Impact eligibility \u00b7 revenue ceiling",
+            "name": "impact_eligibility_revenue_ceiling",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 200000,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_paid_forward_total",
+            "label": "Paid forward \u00b7 total",
+            "name": "paid_forward_total",
+            "type": "number",
+            "instructions": "Canonical value (was tokens.css --impact-total).",
+            "required": 0,
+            "default_value": 450000,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_paid_forward_total_display",
+            "label": "Paid forward \u00b7 display",
+            "name": "paid_forward_total_display",
+            "type": "text",
+            "instructions": "",
+            "default_value": "$450,000+",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0,
+            "required": 0
+        },
+        {
+            "key": "field_two57_biodiversity_contribution_yr",
+            "label": "Biodiversity contribution / yr",
+            "name": "biodiversity_contribution_yr",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 2000,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_carbon_offset_value_per_person_yr",
+            "label": "Carbon offset value / person / yr",
+            "name": "carbon_offset_value_per_person_yr",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 1.25,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_climate_power_premium_pct",
+            "label": "Climate power premium",
+            "name": "climate_power_premium_pct",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 5,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "%",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_tab_impact_stats",
+            "label": "Impact stats",
+            "name": "",
+            "type": "tab",
+            "placement": "top",
+            "endpoint": 0
+        },
+        {
+            "key": "field_two57_msg_stats",
+            "label": "",
+            "name": "",
+            "type": "message",
+            "message": "Headline impact numbers that appear in many places (homepage tease, Impact page, Press page). Wired to [data-countup] targets so every placement updates from here.",
+            "new_lines": "wpautop",
+            "esc_html": 0,
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_impact_organisations_count",
+            "label": "Organisations supported",
+            "name": "impact_organisations_count",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 900,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "+ (display suffix)",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_impact_donated_total",
+            "label": "Donated \u00b7 total",
+            "name": "impact_donated_total",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 500000,
+            "min": 0,
+            "step": "any",
+            "prepend": "$",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        },
+        {
+            "key": "field_two57_impact_hours_worked",
+            "label": "Hours worked",
+            "name": "impact_hours_worked",
+            "type": "number",
+            "instructions": "",
+            "required": 0,
+            "default_value": 415000,
+            "min": 0,
+            "step": "any",
+            "prepend": "",
+            "append": "",
+            "wrapper": {
+                "width": "25"
+            },
+            "conditional_logic": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "options_page",
+                "operator": "==",
+                "value": "calculator-data-settings"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Single source of truth for every two/fiftyseven calculator: prices + kaupapa levers. Researched/cited benchmarks stay in code.",
+    "show_in_rest": 1,
+    "modified": 1785000000
+}

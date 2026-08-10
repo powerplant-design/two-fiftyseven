@@ -979,7 +979,205 @@ add_action( 'acf/init', function (): void {
 		'parent_slug' => '',
 		'autoload'    => false,
 	] );
+
+	acf_add_options_page( [
+		'page_title'  => __( 'Calculator Data', 'two-fiftyseven' ),
+		'menu_title'  => __( 'Calculator Data', 'two-fiftyseven' ),
+		'menu_slug'   => 'calculator-data-settings',
+		'capability'  => 'manage_options',
+		'parent_slug' => '',
+		'autoload'    => true,
+	] );
 } );
+
+
+/**
+ * ============================================================
+ * Calculators — Expose SSOT to JS via window.twofiftyseven
+ * ============================================================
+ * Reads all calculator pricing fields from the ACF Options
+ * "Calculator data" page and emits them as a JS global in <head>
+ * so every calculator engine reads from one source of truth.
+ *
+ * Static labels (name, shortName, unit) are defined here — only
+ * the numeric values come from ACF.
+ * ============================================================
+ */
+add_action( 'wp_head', function (): void {
+	if ( ! function_exists( 'get_field' ) ) {
+		return;
+	}
+
+	// — Memberships + day passes → prices object —
+	$prices = [
+		'dedicated' => [
+			'name'      => 'Dedicated 7 days/week',
+			'shortName' => 'Dedicated',
+			'price'     => (int) get_field( 'membership_dedicated_monthly', 'option' ),
+			'unit'      => 'monthly',
+		],
+		'flexi-5'   => [
+			'name'      => 'Flexi 5 days/week',
+			'shortName' => 'Flexi 5',
+			'price'     => (int) get_field( 'membership_flexi_5_monthly', 'option' ),
+			'unit'      => 'monthly',
+		],
+		'flexi-4'   => [
+			'name'      => 'Flexi 4 days/week',
+			'shortName' => 'Flexi 4',
+			'price'     => (int) get_field( 'membership_flexi_4_monthly', 'option' ),
+			'unit'      => 'monthly',
+		],
+		'flexi-3'   => [
+			'name'      => 'Flexi 3 days/week',
+			'shortName' => 'Flexi 3',
+			'price'     => (int) get_field( 'membership_flexi_3_monthly', 'option' ),
+			'unit'      => 'monthly',
+		],
+		'flexi-2'   => [
+			'name'      => 'Flexi 2 days/week',
+			'shortName' => 'Flexi 2',
+			'price'     => (int) get_field( 'membership_flexi_2_monthly', 'option' ),
+			'unit'      => 'monthly',
+		],
+		'flexi-1'   => [
+			'name'      => 'Flexi 1 day/week',
+			'shortName' => 'Flexi 1',
+			'price'     => (int) get_field( 'membership_flexi_1_monthly', 'option' ),
+			'unit'      => 'monthly',
+		],
+		'day-pass'  => [
+			'name'      => 'Day pass weekdays',
+			'shortName' => 'Day pass',
+			'price'     => (int) get_field( 'day_pass_single', 'option' ),
+			'unit'      => 'one-off',
+		],
+		'pass-10'   => [
+			'name'      => '10 pass pack weekdays',
+			'shortName' => '10 pass',
+			'price'     => (int) get_field( 'day_pass_pack_10', 'option' ),
+			'unit'      => 'one-off',
+		],
+		'pass-20'   => [
+			'name'      => '20 pass pack weekdays',
+			'shortName' => '20 pass',
+			'price'     => (int) get_field( 'day_pass_pack_20', 'option' ),
+			'unit'      => 'one-off',
+		],
+		'pass-50'   => [
+			'name'      => '50 pass pack weekdays',
+			'shortName' => '50 pass',
+			'price'     => (int) get_field( 'day_pass_pack_50', 'option' ),
+			'unit'      => 'one-off',
+		],
+	];
+
+	$annual_discount_pct = (float) get_field( 'annual_prepay_discount_pct', 'option' );
+
+	// — Rooms → rooms object —
+	$rooms = [
+		'meeting-room'   => [
+			'name'      => 'Meeting room',
+			'capacity'  => (int) get_field( 'room_meeting_capacity', 'option' ),
+			'day'       => (int) get_field( 'room_meeting_day', 'option' ),
+			'hour'      => (int) get_field( 'room_meeting_hour', 'option' ),
+			'evening'   => (int) get_field( 'room_meeting_evening', 'option' ),
+		],
+		'silver-linings' => [
+			'name'      => 'Silver Linings',
+			'capacity'  => (int) get_field( 'room_silver_linings_capacity', 'option' ),
+			'day'       => (int) get_field( 'room_silver_linings_day', 'option' ),
+			'hour'      => (int) get_field( 'room_silver_linings_hour', 'option' ),
+			'evening'   => (int) get_field( 'room_silver_linings_evening', 'option' ),
+		],
+		'studio'         => [
+			'name'      => 'Studio',
+			'capacity'  => (int) get_field( 'room_studio_capacity', 'option' ),
+			'day'       => (int) get_field( 'room_studio_day', 'option' ),
+			'hour'      => (int) get_field( 'room_studio_hour', 'option' ),
+			'evening'   => (int) get_field( 'room_studio_evening', 'option' ),
+		],
+		'workshop'       => [
+			'name'      => 'Workshop space',
+			'capacity'  => (int) get_field( 'room_workshop_capacity', 'option' ),
+			'day'       => (int) get_field( 'room_workshop_day', 'option' ),
+			'hour'      => (int) get_field( 'room_workshop_hour', 'option' ),
+			'evening'   => (int) get_field( 'room_workshop_evening', 'option' ),
+		],
+		'event'          => [
+			'name'      => 'Event space',
+			'capacity'  => (int) get_field( 'room_event_capacity', 'option' ),
+			'day'       => (int) get_field( 'room_event_day', 'option' ),
+			'hour'      => (int) get_field( 'room_event_hour', 'option' ),
+			'evening'   => (int) get_field( 'room_event_evening', 'option' ),
+		],
+		'entire'         => [
+			'name'      => 'Entire two/fiftyseven',
+			'capacity'  => (int) get_field( 'room_entire_capacity', 'option' ),
+			'day'       => (int) get_field( 'room_entire_day', 'option' ),
+			'hour'      => (int) get_field( 'room_entire_hour', 'option' ),
+			'evening'   => (int) get_field( 'room_entire_evening', 'option' ),
+		],
+	];
+
+	// — Add-ons + catering → addons object —
+	$addons = [
+		'av'         => [
+			'projector' => [
+				'name' => 'Projector + screen',
+				'flat' => (int) get_field( 'av_projector_flat', 'option' ),
+			],
+			'sound'     => [
+				'name' => 'Sound system + mic',
+				'flat' => (int) get_field( 'av_sound_flat', 'option' ),
+			],
+		],
+		'tea'        => [
+			'singlePerHead'     => (int) get_field( 'tea_single_per_head', 'option' ),
+			'bottomlessPerHead' => (int) get_field( 'tea_bottomless_per_head', 'option' ),
+		],
+		'catering'   => [
+			'organisingFee' => (int) get_field( 'catering_organising_fee', 'option' ),
+		],
+		'materials'  => [
+			'postits'  => (int) get_field( 'materials_postits_charge', 'option' ),
+			'printing' => (int) get_field( 'materials_printing_charge', 'option' ),
+		],
+		'setup'      => [
+			'complex' => (int) get_field( 'setup_complex_charge', 'option' ),
+		],
+	];
+
+	// — Impact + kaupapa levers → impact object —
+	$impact = [
+		'givingRatePerPersonHour'    => (float) get_field( 'giving_rate_per_person_hour', 'option' ),
+		'discountPct'                => (float) get_field( 'impact_discount_pct', 'option' ) / 100,
+		'eligibilityCeiling'         => (int) get_field( 'impact_eligibility_revenue_ceiling', 'option' ),
+		'paidForwardTotal'           => (int) get_field( 'paid_forward_total', 'option' ),
+		'paidForwardDisplay'         => get_field( 'paid_forward_total_display', 'option' ),
+		'biodiversityContributionYr' => (int) get_field( 'biodiversity_contribution_yr', 'option' ),
+		'carbonOffsetValuePerPersonYr' => (float) get_field( 'carbon_offset_value_per_person_yr', 'option' ),
+		'climatePowerPremiumPct'     => (float) get_field( 'climate_power_premium_pct', 'option' ) / 100,
+	];
+
+	// — Impact stats → stats object —
+	$stats = [
+		'organisations' => (int) get_field( 'impact_organisations_count', 'option' ),
+		'donated'       => (int) get_field( 'impact_donated_total', 'option' ),
+		'hoursWorked'   => (int) get_field( 'impact_hours_worked', 'option' ),
+	];
+
+	$data = [
+		'prices'            => $prices,
+		'annualDiscountPct' => $annual_discount_pct,
+		'rooms'             => $rooms,
+		'addons'            => $addons,
+		'impact'            => $impact,
+		'stats'             => $stats,
+	];
+
+	echo '<script>window.twofiftyseven = Object.assign(window.twofiftyseven||{}, ' . wp_json_encode( $data ) . ');</script>' . "\n";
+}, 1 );
 
 
 /**

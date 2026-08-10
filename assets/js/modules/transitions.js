@@ -28,6 +28,7 @@ import { initImpact, destroyImpact } from './impact.js';
 import { initTestimonials, destroyTestimonials } from './testimonial.js';
 import { initCaseStudies, destroyCaseStudies } from './case-studies.js';
 import { initGallerySlider, destroyGallerySlider } from './gallery-slider.js';
+import { initInjectPrices }  from './inject-prices.js';
 
 function resetScrollRevealState() {
 	document.querySelectorAll( '[data-scroll].is-inview' ).forEach( ( el ) => {
@@ -64,11 +65,12 @@ export function initTransitions() {
 					initStackedCards();
 					initFaq();
 					initEventsArchive();
-					initGallerySlider();
-					initCptArchive();
-					initImpact();
-					initTestimonials();
-					initCaseStudies();
+				initGallerySlider();
+				initCptArchive();
+				initImpact();
+				initTestimonials();
+				initCaseStudies();
+				initInjectPrices();
 				} );
 			} );
 		}
@@ -155,6 +157,7 @@ export function initTransitions() {
 		initImpact();
 		initTestimonials();
 		initCaseStudies();
+		initInjectPrices();
 		syncHeader();
 
 		// Safety net: if animation:in:end never fires (e.g. transitionend

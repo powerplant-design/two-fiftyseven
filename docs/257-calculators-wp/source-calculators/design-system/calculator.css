@@ -1,0 +1,962 @@
+/* ============================================================================
+ * two/fiftyseven · /design-system/calculator.css
+ * ----------------------------------------------------------------------------
+ * Shared cross-calculator CSS extracted from the four calc pages
+ *   /calculator/meeting-costs/ (MC · canonical)
+ *   /calculator/office-costs/  (OC)
+ *   /calculator/hours-to-impact/ (Giving)
+ *   /calculator/office-carbon/ (Carbon)
+ *
+ * RULE: only patterns that were character-for-character identical across all
+ * four pages (or all pages that used them, in the case of take-it) live here.
+ * Any rule with subtle per-page variation stays inline in the page's <style>.
+ * If you need to introduce a per-page variation, leave this file alone and
+ * add the override inline using a `body.page-<slug>` selector for specificity.
+ *
+ * Class consolidation: MC's `.size-stepper` and OC/Giving/Carbon's
+ * `.team-stepper` are unified under `.calc-stepper` (the canonical name).
+ * HTML on each page was renamed in the same commit.
+ *
+ * Linked AFTER components.css and BEFORE the page's inline <style id="…"> so
+ * page-specific rules can override these defaults.
+ * ========================================================================= */
+
+
+/* ── 1. TOP FRAME ────────────────────────────────────────────────────────── */
+
+.chapter--calc-frame { padding-top: clamp(20px, 3vh, 36px); padding-bottom: 0; }
+.calc-frame__eyebrow {
+  font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  color: var(--ip-ink); opacity: 0.72; margin: 0 0 clamp(16px, 2vh, 24px);
+}
+.calc-frame__title {
+  font-family: var(--font-display, var(--font-body)); font-weight: 700;
+  font-size: clamp(2rem, 3.2vw + 0.75rem, 3.75rem);
+  letter-spacing: -0.025em; line-height: 1.05;
+  margin: 0 0 clamp(14px, 1.8vh, 22px); max-width: 26ch; color: var(--ip-ink);
+}
+.calc-frame__tagline {
+  font-family: var(--font-body); font-size: clamp(1rem, 0.45vw + 0.85rem, 1.2rem);
+  line-height: 1.5; max-width: 60ch; margin: 0; color: var(--ip-ink); opacity: 0.82;
+}
+
+
+/* ── 2. CALC LAYOUT ──────────────────────────────────────────────────────── */
+/* Two-column grid; collapses to single column under 900px. Each page may
+ * override .chapter--calc-wrap padding inline if it needs to.
+ */
+
+/* Aligned with components.css canonical (meetings/pricing-style). Form gets
+   1.5x the result column so the configurator has breathing room and the
+   result card reads as a sidebar, not a co-equal block.
+   The calc chapter widens to 1480px to match the meetings/pricing convention
+   (40px wider than the default 1440px .chapter__inner) so the form has the
+   room it needs without feeling crammed beside huge page-edge margins. */
+.chapter--calc-wrap > .chapter__inner,
+.chapter--calc-frame > .chapter__inner {
+  max-width: 1480px;
+  /* Defensive: restate padding-inline so any later rule in the cascade
+     can't accidentally zero it. Same value the default .chapter__inner uses. */
+  padding-inline: clamp(20px, 4vw, 56px);
+}
+/* ── #7 SEGMENTED · short-choice opt-in for any .radio-row ────────────────
+   Add `.calc-segmented` to a .radio-row to render its labels as a single
+   pill-style row of buttons (the meetings/pricing 'How long?' pattern).
+   Inputs stay in the DOM (engine bindings preserved); swatches are hidden. */
+.radio-row.calc-segmented,
+.check-row.calc-segmented {
+  display: inline-flex; flex-wrap: wrap;
+  gap: clamp(6px, 0.8vw, 10px);
+  padding: 4px;
+  background: var(--ip-paper);
+  border-radius: var(--radius-md, 10px);
+  width: max-content; max-width: 100%;
+}
+.radio-row.calc-segmented > label,
+.check-row.calc-segmented > label {
+  position: relative;
+  cursor: pointer;
+  padding: 10px 18px;
+  margin: 0;
+  background: transparent;
+  color: var(--ip-ink);
+  border: none;
+  border-radius: var(--radius-sm, 6px);
+  font-family: var(--font-body); font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+  transition: background 0.15s ease, color 0.15s ease;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.radio-row.calc-segmented > label > input,
+.check-row.calc-segmented > label > input {
+  position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;
+}
+.radio-row.calc-segmented > label .radio__swatch,
+.radio-row.calc-segmented > label .checkbox__swatch,
+.check-row.calc-segmented > label .radio__swatch,
+.check-row.calc-segmented > label .checkbox__swatch {
+  display: none;
+}
+.radio-row.calc-segmented > label:hover,
+.check-row.calc-segmented > label:hover {
+  background: rgba(20, 32, 11, 0.06);
+}
+.radio-row.calc-segmented > label:has(input:checked),
+.check-row.calc-segmented > label:has(input:checked) {
+  background: var(--ip-ink);
+  color: var(--ip-paper);
+}
+
+/* ── #6 TILE-GRID · longer-list opt-in for any .radio-row / .check-row ───
+   Add `.calc-tile-grid` to render labels as a grid of selectable tiles. */
+.radio-row.calc-tile-grid,
+.check-row.calc-tile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: clamp(8px, 1vw, 12px);
+}
+.radio-row.calc-tile-grid > label,
+.check-row.calc-tile-grid > label {
+  cursor: pointer;
+  padding: clamp(12px, 1.4vw, 16px) clamp(14px, 1.5vw, 18px);
+  background: var(--ip-paper);
+  color: var(--ip-ink);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm, 6px);
+  margin: 0;
+  font-family: var(--font-body); font-weight: 600;
+  font-size: clamp(0.92rem, 0.2vw + 0.88rem, 1rem);
+  line-height: 1.25;
+  display: flex; align-items: flex-start; gap: 8px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.radio-row.calc-tile-grid > label > input,
+.check-row.calc-tile-grid > label > input {
+  position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0;
+}
+.radio-row.calc-tile-grid > label .radio__swatch,
+.radio-row.calc-tile-grid > label .checkbox__swatch,
+.check-row.calc-tile-grid > label .radio__swatch,
+.check-row.calc-tile-grid > label .checkbox__swatch {
+  display: none;
+}
+.radio-row.calc-tile-grid > label:hover,
+.check-row.calc-tile-grid > label:hover {
+  border-color: var(--ip-ink);
+}
+.radio-row.calc-tile-grid > label:has(input:checked),
+.check-row.calc-tile-grid > label:has(input:checked) {
+  background: var(--ip-ink);
+  color: var(--ip-paper);
+  border-color: var(--ip-ink);
+}
+
+/* ── #2 INLINE CONTACT · email-this-result form, lives inside .calc-result ─
+   Compact form for the calc result aside. Tiny version of the meetings/pricing
+   quote form. No name field; just email + send. Theme-aware via parent
+   .calc-result inherited colours (cream on dark). */
+.calc-contact-inline {
+  display: flex; flex-direction: column;
+  gap: 8px;
+  margin-top: clamp(16px, 2vh, 22px);
+  padding-top: clamp(14px, 1.8vh, 20px);
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+.calc-contact-inline__title {
+  font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps, 0.08em);
+  color: inherit; opacity: 0.72;
+  margin: 0;
+}
+.calc-contact-inline__row {
+  display: flex; gap: 8px;
+}
+.calc-contact-inline__row input[type="email"] {
+  flex: 1; min-width: 0;
+  padding: 12px 14px;
+  background: var(--ip-paper);
+  color: var(--ip-ink);
+  border: 2px solid transparent;
+  border-radius: var(--radius-sm, 6px);
+  font-family: var(--font-body); font-size: 0.95rem;
+}
+.calc-contact-inline__row input[type="email"]:focus {
+  outline: none; border-color: var(--ip-lime);
+}
+.calc-contact-inline__row button {
+  appearance: none;
+  padding: 12px 16px;
+  background: var(--ip-paper);
+  color: var(--ip-ink);
+  border: none; border-radius: var(--radius-sm, 6px);
+  font-family: var(--font-body); font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+.calc-contact-inline__row button:hover { opacity: 0.88; }
+.calc-contact-inline__note {
+  font-family: var(--font-mono); font-size: 0.7rem;
+  text-transform: uppercase; letter-spacing: var(--kerning-caps, 0.08em);
+  color: inherit; opacity: 0.55;
+  margin: 0;
+}
+
+/* ── #10 MICROCOPY · small contextual note under any calc field ─────────── */
+.calc-microcopy {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--font-mono); font-size: 0.72rem;
+  text-transform: uppercase; letter-spacing: var(--kerning-caps, 0.08em);
+  color: var(--ip-ink); opacity: 0.62;
+  line-height: 1.5;
+}
+
+/* Existing .calc-layout block follows */
+.calc-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: clamp(24px, 3vw, 48px);
+  align-items: start;
+}
+@media (min-width: 1024px) {
+  .calc-layout {
+    grid-template-columns: 1.5fr 1fr;
+  }
+}
+
+
+/* ── Sticky result column ────────────────────────────────────────────────── */
+
+.calc-result-sticky {
+  position: sticky;
+  top: clamp(108px, calc(var(--nav-h, 80px) + 32px), 140px);
+  align-self: start;
+  display: flex; flex-direction: column;
+  gap: clamp(16px, 2vh, 24px);
+  background: transparent; border-radius: 0; padding: 0;
+}
+@media (max-width: 900px) {
+  .calc-result-sticky {
+    position: static; max-height: none; overflow: visible; order: -1;
+  }
+  .calc-result-sticky .calc-result {
+    position: sticky; top: var(--nav-h, 80px); z-index: 5;
+    background: var(--ip-ground);
+    padding: 12px clamp(20px, 4vw, 56px) 14px;
+    margin: 0 calc(-1 * clamp(20px, 4vw, 56px));
+    box-shadow: 0 6px 14px -10px rgba(20,32,11,0.35);
+  }
+  .calc-layout { display: flex; flex-direction: column; }
+}
+
+
+/* ── Input cards ─────────────────────────────────────────────────────────── */
+
+.calc__field {
+  display: flex; flex-direction: column;
+  gap: clamp(10px, 1.4vh, 16px);
+  min-width: 0;
+  background: var(--ip-paper);
+  border: 0;
+  border-radius: var(--radius-lg, 16px);
+  padding: clamp(20px, 2.5vw, 32px);
+}
+.calc__field-label {
+  font-family: var(--font-mono); font-size: 0.72rem;
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  color: var(--ip-ink); opacity: 0.78;
+  margin: 0 0 clamp(2px, 0.5vh, 6px);
+}
+
+
+/* ── Stepper (canonical class · was .size-stepper on MC, .team-stepper on OC/G/C) ──
+ * Adopt .calc-stepper everywhere; the old class names are not styled here.
+ */
+
+.calc-stepper {
+  display: inline-flex; align-items: center; gap: 0;
+  background: var(--ip-ground);
+  border-radius: 12px; padding: 6px; width: max-content;
+}
+.calc-stepper button {
+  width: clamp(40px, 5vw, 52px); height: clamp(40px, 5vw, 52px);
+  background: var(--ip-lime); color: var(--ip-ink);
+  border: 0; border-radius: 8px; cursor: pointer;
+  font-size: 1.4rem; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+  transition: opacity 150ms;
+}
+.calc-stepper button:disabled { opacity: 0.3; cursor: not-allowed; }
+.calc-stepper output,
+.calc-stepper [data-mc-size-display] {
+  min-width: clamp(56px, 7vw, 72px); text-align: center;
+  font-family: var(--font-body);
+  font-size: clamp(1.3rem, 0.8vw + 0.9rem, 1.6rem);
+  font-weight: 600; color: var(--ip-ink);
+}
+
+
+/* ── Result panel · the three figures sitting in the sticky column ─────── */
+/* `.calc-result__figure`, `.calc-result__label`, `.calc-result__unit` have
+ * per-page font-size/weight variations and stay inline on each page.
+ * The grid + lime-on-save shells are identical across all four pages. */
+
+.calc-result {
+  display: grid; grid-template-columns: 1fr;
+  gap: clamp(20px, 2.6vh, 32px); align-items: start;
+}
+.calc-result__col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.calc-result__col--save .calc-result__figure {
+  background: var(--ip-lime); color: var(--ip-ink);
+  padding: 0.08em 0.22em; align-self: flex-start;
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+}
+
+
+/* ── Breakdown trigger button (dark) ─────────────────────────────────────── */
+
+.breakdown-trigger {
+  margin-top: clamp(14px, 1.8vh, 22px);
+  width: 100%;
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--ip-lime); color: var(--ip-ink);
+  border: 0; border-radius: var(--radius-md, 8px);
+  padding: clamp(14px, 1.6vh, 18px) clamp(16px, 1.8vw, 22px);
+  cursor: pointer;
+  font-family: var(--font-body); font-weight: 500;
+  font-size: clamp(0.95rem, 0.2vw + 0.9rem, 1.05rem);
+  letter-spacing: 0; text-transform: none; text-align: left;
+}
+.breakdown-trigger:hover { opacity: 0.85; }
+.breakdown-trigger__caret { transition: transform 200ms ease; margin-left: 10px; }
+.breakdown-trigger[aria-expanded="true"] .breakdown-trigger__caret { transform: rotate(180deg); }
+
+
+/* ── Breakdown disclosure (full-width, hidden summary) ──────────────────── */
+
+.breakdown-disclosure--full > summary { display: none; }
+
+
+/* ── Breakdown body + h3 ─────────────────────────────────────────────────── */
+
+.breakdown-body {
+  background: var(--ip-paper); padding: clamp(20px, 3vh, 32px) clamp(18px, 3vw, 28px);
+  border-radius: 8px; margin-top: clamp(16px, 2vh, 24px);
+}
+.breakdown-body h3 {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: clamp(1.1rem, 0.5vw + 1rem, 1.4rem);
+  letter-spacing: -0.01em; text-transform: none;
+  color: var(--ip-ink); opacity: 1;
+  margin: 0 0 clamp(16px, 2vh, 24px);
+}
+.breakdown-body h3:not(:first-child) { margin-top: clamp(28px, 3.5vh, 44px); }
+
+
+/* ── Breakdown rows · 4-col grid ─────────────────────────────────────────── */
+
+.breakdown-rows {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr) auto 180px;
+  column-gap: clamp(16px, 2vw, 28px);
+  row-gap: 0;
+  align-items: baseline;
+}
+.breakdown-row { display: contents; }
+.breakdown-row[hidden], .breakdown-row[hidden] > * { display: none; }
+.breakdown-row > * {
+  padding: 12px 0; border-bottom: 1px solid rgba(20, 32, 11, 0.12);
+}
+.breakdown-row__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  font-weight: 500; color: var(--ip-ink);
+}
+.breakdown-row__note {
+  font-family: var(--font-body); font-size: 0.9rem; line-height: 1.4;
+  color: var(--ip-ink); opacity: 0.6;
+}
+.breakdown-row__value {
+  font-family: var(--font-body); font-weight: 500;
+  font-variant-numeric: tabular-nums; color: var(--ip-ink);
+  text-align: right; white-space: nowrap;
+}
+.breakdown-row__source {
+  font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+  letter-spacing: 0; text-transform: none;
+  color: var(--ip-ink); opacity: 0.6;
+  text-decoration: none;
+  text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.breakdown-row__source--plain { text-decoration: none; }
+.breakdown-row__source:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+.breakdown-row__source-spacer { /* empty 4th col */ }
+
+.breakdown-total { display: contents; }
+.breakdown-total > * {
+  padding-top: 16px; padding-bottom: 8px; margin-top: 2px;
+  border-top: 2px solid var(--ip-ink); align-self: start;
+}
+.breakdown-total__label {
+  grid-column: 1 / 3;
+  font-family: var(--font-mono); font-size: 0.85rem;
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase; font-weight: 600;
+}
+.breakdown-total__value {
+  grid-column: 3 / 4;
+  text-align: right; font-variant-numeric: tabular-nums;
+  font-family: var(--font-body); font-size: 1.05rem;
+  text-transform: none; letter-spacing: 0; white-space: nowrap; font-weight: 600;
+}
+.breakdown-total__source-spacer {
+  grid-column: 4 / 5; border-top: 2px solid var(--ip-ink);
+  padding-top: 16px; padding-bottom: 8px; margin-top: 2px;
+}
+@media (max-width: 720px) {
+  .breakdown-rows { grid-template-columns: 1fr auto; }
+  .breakdown-row__label { grid-column: 1 / -1; padding-bottom: 2px; border-bottom: 0; }
+  .breakdown-row__note { grid-column: 1 / -1; padding-top: 0; padding-bottom: 6px; border-bottom: 0; }
+  .breakdown-row__value { grid-column: 1; text-align: left; }
+  .breakdown-row__source { grid-column: 2; text-align: right; }
+  .breakdown-total__label { grid-column: 1; }
+  .breakdown-total__value { grid-column: 2; }
+}
+
+
+/* ── 3. TAKE-IT (MC + OC only · cards 1-3 actions row) ──────────────────── */
+
+.take-it__heading {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: clamp(1.6rem, 1.3vw + 1.1rem, 2.25rem);
+  line-height: 1.15; letter-spacing: -0.015em; color: var(--ip-ink);
+  margin: 0 0 clamp(28px, 3.5vh, 44px); max-width: 36ch;
+}
+.take-it__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+  align-items: stretch;
+}
+@media (max-width: 800px) { .take-it__grid { grid-template-columns: 1fr; } }
+.take-it__card {
+  background: var(--ip-paper); border-radius: 10px;
+  padding: clamp(20px, 2.5vh, 28px);
+  display: flex; flex-direction: column; gap: 12px;
+  min-height: 220px; height: 100%;
+}
+.take-it__card > .take-it__cta,
+.take-it__card > .take-it__form { margin-top: auto; }
+.take-it__card > .take-it__status { min-height: 0; margin: 0; }
+.take-it__card > .take-it__status:empty { display: none; }
+.take-it__title {
+  font-family: var(--font-body); font-weight: 600; font-size: 1.15rem;
+  line-height: 1.25; color: var(--ip-ink); margin: 0;
+}
+.take-it__body {
+  font-family: var(--font-body); font-size: 0.95rem; line-height: 1.5;
+  color: var(--ip-ink); opacity: 0.78; margin: 0; flex: 1;
+}
+.take-it__cta {
+  display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+  margin-top: 6px; padding: 10px 16px;
+  background: var(--ip-ink); color: var(--ip-paper);
+  border: 0; border-radius: 6px; cursor: pointer;
+  font-family: var(--font-body); font-size: 0.95rem; font-weight: 500;
+  text-decoration: none;
+}
+.take-it__cta:hover { opacity: 0.82; }
+.take-it__form {
+  display: flex; flex-direction: row; gap: 8px; margin-top: 6px; align-items: stretch;
+}
+.take-it__form input[type="email"] {
+  flex: 1; min-width: 0;
+  background: var(--ip-ground);
+}
+.take-it__form button {
+  align-self: stretch; padding: 10px 16px;
+  background: var(--ip-ink); color: var(--ip-paper);
+  border: 0; border-radius: 6px; cursor: pointer;
+  font-family: var(--font-body); font-size: 0.95rem; font-weight: 500;
+}
+.take-it__status {
+  font-family: var(--font-body); font-size: 0.85rem;
+  color: var(--ip-ink); opacity: 0.7; margin: 0;
+}
+@media (max-width: 480px) { .take-it__form { flex-direction: column; } }
+
+
+/* ── Inputs · paper-card-friendly, ground fill, no border ───────────────── */
+
+.calc input[type="number"],
+.calc input[type="text"],
+.calc input[type="email"] {
+  font: inherit; font-family: var(--font-body);
+  font-size: 0.95rem; color: var(--ip-ink);
+  background: var(--ip-ground);
+  border: 0;
+  border-radius: var(--radius-md, 8px);
+  padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1.6vw, 18px);
+  outline: none;
+}
+/* `max-width: 140px` lives inline on OC/Giving/Carbon (not extracted) because
+ * MC's custom-line / time-input fields need to be wider. */
+.calc input[type="number"]:focus-visible,
+.calc input[type="text"]:focus-visible,
+.calc input[type="email"]:focus-visible {
+  outline: 2px solid var(--ip-ink); outline-offset: 2px;
+}
+
+
+/* ============================================================================
+ * v2 office-costs additions (Job 5 · 6 · 7 · 9 · 10 · 11)
+ * ----------------------------------------------------------------------------
+ * Shared paper-card calculator components introduced alongside the rebuilt
+ * /calculator/office-costs/ page. Naming: `oc-*` for v2-specific patterns.
+ * ========================================================================= */
+
+/* ── Tooltip · "ⓘ" trigger + panel beside each variable label ───────────── */
+
+.oc-var { display: flex; flex-direction: column; gap: 6px; position: relative; }
+.oc-var__label {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 0.72rem;
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  color: var(--ip-ink); opacity: 0.78;
+}
+.oc-tip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: transparent; color: var(--ip-ink);
+  border: 1px solid var(--ip-ink); opacity: 0.5;
+  font-family: var(--font-mono); font-size: 0.65rem;
+  cursor: pointer; padding: 0;
+}
+.oc-tip:hover { opacity: 1; }
+.oc-tip:focus-visible { outline: 2px solid var(--ip-ink); outline-offset: 2px; }
+.oc-tip__panel {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 10;
+  background: var(--ip-ink); color: var(--ip-paper);
+  padding: clamp(14px, 1.6vh, 18px);
+  border-radius: var(--radius-md, 8px);
+  margin-top: 8px; max-width: 420px;
+  font-family: var(--font-body); font-size: 0.88rem; line-height: 1.45;
+  box-shadow: 0 12px 36px -16px rgba(0,0,0,0.5);
+}
+.oc-tip__panel p { margin: 0 0 8px; }
+.oc-tip__panel p:last-child { margin-bottom: 0; }
+.oc-tip__panel a { color: var(--ip-lime); text-decoration: underline; text-underline-offset: 3px; }
+.oc-tip__panel a:hover { opacity: 0.85; }
+.oc-tip__default { font-weight: 600; }
+.oc-tip__range   { opacity: 0.85; }
+.oc-tip__sources { opacity: 0.7; font-size: 0.82rem; }
+
+/* ── Variable input row · label + tooltip + input on one card row ───────── */
+.oc-var__field-row {
+  display: flex; align-items: center; gap: 12px;
+  margin-top: 4px; flex-wrap: wrap;
+}
+.oc-var__field-row .oc-var__suffix {
+  font-family: var(--font-mono); font-size: 0.78rem;
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  color: var(--ip-ink); opacity: 0.6;
+}
+
+/* Radio row used inside the v2 calculator. */
+.oc-radio-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.oc-radio-row label {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--ip-ground); padding: 8px 14px;
+  border-radius: var(--radius-md, 8px); cursor: pointer;
+  font-family: var(--font-body); font-size: 0.92rem;
+}
+.oc-radio-row label:has(input:checked) { background: var(--ip-ink); color: var(--ip-paper); }
+.oc-radio-row input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+
+/* Select using the same chevron styling pattern as OC's team-row select. */
+.oc-select {
+  width: 100%;
+  padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1.6vw, 18px);
+  font-family: var(--font-body); font-size: 0.95rem; color: var(--ip-ink);
+  background: var(--ip-ground); border: 0; border-radius: var(--radius-md, 8px);
+  cursor: pointer; appearance: none; -webkit-appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--ip-ink) 50%),
+    linear-gradient(135deg, var(--ip-ink) 50%, transparent 50%);
+  background-position: calc(100% - 18px) 50%, calc(100% - 13px) 50%;
+  background-size: 5px 5px, 5px 5px; background-repeat: no-repeat;
+  padding-right: 32px;
+}
+.oc-select:focus-visible { outline: 2px solid var(--ip-ink); outline-offset: 2px; }
+
+/* Per-person days slider list (Card 1) */
+.oc-days-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.oc-days-row {
+  display: grid; grid-template-columns: minmax(80px, 120px) 1fr 60px;
+  align-items: center; gap: 12px;
+}
+.oc-days-row__label {
+  font-family: var(--font-mono); font-size: 0.72rem;
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  color: var(--ip-ink); opacity: 0.78;
+}
+.oc-days-row__value {
+  text-align: right; font-variant-numeric: tabular-nums;
+  font-family: var(--font-body); color: var(--ip-ink);
+}
+.oc-days-row input[type="range"] { width: 100%; accent-color: var(--ip-ink); }
+
+
+/* ── Result secondary grid (Job 6) ──────────────────────────────────────── */
+.oc-result-secondary {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  margin-top: 12px; padding-top: 16px;
+  border-top: 1px solid rgba(20, 32, 11, 0.15);
+}
+.oc-result-cell { display: flex; flex-direction: column; gap: 4px; }
+.oc-result-cell__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  color: var(--ip-ink); opacity: 0.62;
+}
+.oc-result-cell__value {
+  font-family: var(--font-body); font-weight: 600; font-size: 1.1rem;
+  color: var(--ip-ink); font-variant-numeric: tabular-nums;
+}
+
+
+/* ── Category grid (Job 7) ──────────────────────────────────────────────── */
+.oc-category-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 1.6vw, 20px); margin-top: clamp(20px, 2vh, 28px);
+}
+@media (max-width: 720px) { .oc-category-grid { grid-template-columns: 1fr; } }
+.oc-category {
+  background: var(--ip-paper); border-radius: var(--radius-md, 8px);
+  padding: clamp(14px, 1.6vh, 18px);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.oc-category__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  opacity: 0.72;
+}
+.oc-category__value {
+  font-family: var(--font-body); font-weight: 600;
+  font-variant-numeric: tabular-nums; font-size: 1.2rem;
+}
+.oc-category__pct {
+  font-family: var(--font-mono); font-size: 0.75rem; opacity: 0.6;
+}
+
+
+/* ── Scenarios (Job 9) ──────────────────────────────────────────────────── */
+.oc-scenarios {
+  display: flex; flex-direction: column; gap: 12px;
+  padding-top: 16px; border-top: 1px solid rgba(20,32,11,0.15);
+  margin-top: 16px;
+}
+.oc-scenarios__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  opacity: 0.72;
+}
+.oc-scenarios__row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+}
+.oc-scenario-slot {
+  background: var(--ip-paper); border: 0; border-radius: var(--radius-md, 8px);
+  padding: 10px; cursor: pointer;
+  display: flex; flex-direction: column; gap: 2px; text-align: left;
+  font: inherit; color: var(--ip-ink);
+}
+.oc-scenario-slot:hover { background: var(--ip-ground); }
+.oc-scenario-slot--filled { background: var(--ip-ink); color: var(--ip-paper); }
+.oc-scenario-slot--filled:hover { opacity: 0.92; }
+.oc-scenario-slot__num   { font-family: var(--font-mono); font-size: 0.7rem; opacity: 0.6; }
+.oc-scenario-slot__name  { font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; }
+.oc-scenario-slot__value { font-family: var(--font-body); font-size: 0.85rem; font-variant-numeric: tabular-nums; opacity: 0.85; }
+.oc-scenarios__actions { display: flex; gap: 8px; }
+.oc-scenarios__btn {
+  flex: 1; background: transparent; color: var(--ip-ink);
+  border: 1px solid var(--ip-ink); border-radius: var(--radius-md, 8px);
+  padding: 8px 12px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.75rem;
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+}
+.oc-scenarios__btn:hover { background: var(--ip-ink); color: var(--ip-paper); }
+
+/* Compare dialog · uses native <dialog>, paper background, ink text. */
+.oc-compare {
+  border: 0; padding: 0; max-width: min(960px, 92vw); width: 100%;
+  background: var(--ip-paper); color: var(--ip-ink);
+  border-radius: var(--radius-lg, 16px);
+}
+.oc-compare::backdrop { background: rgba(20, 32, 11, 0.6); }
+.oc-compare__inner { padding: clamp(20px, 3vh, 36px); }
+.oc-compare__head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  gap: 16px; margin: 0 0 clamp(16px, 2vh, 24px);
+}
+.oc-compare__title {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: clamp(1.3rem, 1vw + 0.9rem, 1.75rem);
+  letter-spacing: -0.015em; color: var(--ip-ink); margin: 0;
+}
+.oc-compare__close {
+  background: transparent; border: 0; cursor: pointer;
+  font-family: var(--font-mono); font-size: 1.4rem; color: var(--ip-ink);
+  line-height: 1;
+}
+.oc-compare__grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(12px, 1.6vw, 20px);
+}
+@media (max-width: 720px) { .oc-compare__grid { grid-template-columns: 1fr; } }
+.oc-compare__col {
+  background: var(--ip-ground); border-radius: var(--radius-md, 8px);
+  padding: clamp(14px, 1.8vh, 20px);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.oc-compare__col-name {
+  font-family: var(--font-mono); font-size: 0.78rem;
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  color: var(--ip-ink); opacity: 0.72;
+}
+.oc-compare__col-value {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: clamp(1.5rem, 1.2vw + 1rem, 2.2rem);
+  font-variant-numeric: tabular-nums; color: var(--ip-ink);
+}
+.oc-compare__col-meta {
+  font-family: var(--font-body); font-size: 0.9rem;
+  color: var(--ip-ink); opacity: 0.78;
+}
+.oc-compare__empty {
+  font-family: var(--font-body); font-size: 0.9rem;
+  color: var(--ip-ink); opacity: 0.62;
+}
+
+
+/* ── Custom-rows (Job 4 Card 7) ─────────────────────────────────────────── */
+.oc-custom-rows {
+  display: flex; flex-direction: column; gap: clamp(8px, 1vh, 12px);
+}
+.oc-custom-row {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.calc .oc-custom-row input[type="text"]   { flex: 1; min-width: 200px; max-width: none; }
+.calc .oc-custom-row input[type="number"] { width: 130px; max-width: none; }
+.oc-custom-row__remove {
+  background: var(--ip-ground); color: var(--ip-ink);
+  border: 0; border-radius: var(--radius-md, 8px);
+  width: 36px; height: 36px; cursor: pointer;
+  font-size: 1.1rem; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.oc-custom-row__remove:hover { background: var(--ip-ink); color: var(--ip-paper); }
+.oc-custom-rows[data-count="1"] .oc-custom-row__remove { visibility: hidden; }
+.oc-custom-add {
+  align-self: flex-start; margin-top: 4px;
+  background: transparent; color: var(--ip-ink);
+  border: 0; border-radius: var(--radius-md, 8px);
+  padding: 8px 14px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.78rem;
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  text-decoration: underline; text-underline-offset: 4px;
+}
+.oc-custom-add:hover { opacity: 0.7; }
+
+
+/* ── Further-considerations (Job 10) ────────────────────────────────────── */
+.further-considerations__heading {
+  font-family: var(--font-body); font-weight: 700;
+  font-size: clamp(1.4rem, 1vw + 1.1rem, 1.875rem);
+  line-height: 1.2; letter-spacing: -0.01em; color: var(--ip-ink);
+  margin: 0 0 clamp(20px, 3vh, 32px); max-width: 36ch;
+}
+.further-considerations__list {
+  list-style: none; padding: 0; margin: 0;
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: clamp(14px, 2vw, 22px);
+}
+@media (max-width: 720px) { .further-considerations__list { grid-template-columns: 1fr; } }
+.further-considerations__item {
+  background: var(--ip-paper); border-radius: var(--radius-md, 8px);
+  padding: clamp(16px, 2vh, 22px);
+  display: flex; flex-direction: column; gap: 6px;
+}
+.further-considerations__title {
+  font-family: var(--font-body); font-weight: 600; font-size: 1.05rem;
+  color: var(--ip-ink); margin: 0;
+}
+.further-considerations__body {
+  font-family: var(--font-body); font-size: 0.95rem; line-height: 1.5;
+  color: var(--ip-ink); opacity: 0.82; margin: 0;
+}
+
+
+/* ── Value-add (Job 11) ─────────────────────────────────────────────────── */
+.value-add { background: var(--ip-ground); }
+.value-add__lead {
+  font-family: var(--font-body); font-size: clamp(1rem, 0.45vw + 0.85rem, 1.15rem);
+  line-height: 1.5; max-width: 70ch;
+  margin: clamp(20px, 2vh, 28px) 0 clamp(28px, 3vh, 40px);
+  color: var(--ip-ink); opacity: 0.85;
+}
+.value-add__table {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 2fr) auto minmax(140px, auto);
+  column-gap: clamp(16px, 2vw, 28px); row-gap: 0;
+  background: var(--ip-paper); border-radius: var(--radius-md, 8px);
+  padding: clamp(16px, 2vh, 24px) clamp(16px, 2vw, 28px);
+  align-items: baseline;
+}
+.value-add__row { display: contents; }
+.value-add__row > * {
+  padding: 12px 0; border-bottom: 1px solid rgba(20, 32, 11, 0.12);
+}
+.value-add__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+  font-weight: 500; color: var(--ip-ink);
+}
+.value-add__sub {
+  font-family: var(--font-body); font-size: 0.92rem; line-height: 1.4;
+  color: var(--ip-ink); opacity: 0.7;
+}
+.value-add__value {
+  font-family: var(--font-body); font-weight: 500;
+  font-variant-numeric: tabular-nums; color: var(--ip-ink);
+  text-align: right; white-space: nowrap;
+}
+.value-add__source {
+  font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+  letter-spacing: 0; text-transform: none;
+  color: var(--ip-ink); opacity: 0.6; text-decoration: none; text-align: right;
+}
+.value-add__source:hover { opacity: 1; text-decoration: underline; text-underline-offset: 3px; }
+.value-add__total { display: contents; }
+.value-add__total > * {
+  padding-top: 16px; padding-bottom: 8px; margin-top: 2px;
+  border-top: 2px solid var(--ip-ink); border-bottom: 0; align-self: start;
+}
+.value-add__total-label {
+  grid-column: 1 / 3;
+  font-family: var(--font-mono); font-size: 0.85rem;
+  letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase; font-weight: 600;
+}
+.value-add__total-value {
+  grid-column: 3 / 4;
+  text-align: right; font-variant-numeric: tabular-nums;
+  font-family: var(--font-body); font-size: 1.05rem;
+  font-weight: 600; white-space: nowrap;
+}
+.value-add__total-spacer { grid-column: 4 / 5; }
+@media (max-width: 720px) {
+  .value-add__table { grid-template-columns: 1fr auto; }
+  .value-add__label { grid-column: 1 / -1; padding-bottom: 2px; border-bottom: 0; }
+  .value-add__sub   { grid-column: 1 / -1; padding-top: 0; padding-bottom: 6px; border-bottom: 0; }
+  .value-add__value { grid-column: 1; text-align: left; }
+  .value-add__source{ grid-column: 2; }
+  .value-add__total-label { grid-column: 1; }
+  .value-add__total-value { grid-column: 2; }
+  .value-add__total-spacer { display: none; }
+}
+.value-add__after {
+  font-family: var(--font-body); font-size: clamp(1rem, 0.45vw + 0.85rem, 1.15rem);
+  line-height: 1.5; max-width: 70ch;
+  margin: clamp(20px, 2.5vh, 28px) 0 0; color: var(--ip-ink); opacity: 0.88;
+}
+.value-add__after a {
+  color: var(--ip-ink); text-decoration: underline; text-underline-offset: 4px;
+}
+.value-add__after a:hover { opacity: 0.7; }
+
+
+/* ── Print · shared parts only ───────────────────────────────────────────── */
+
+.print-only { display: none; }
+@media print {
+  @page { size: A4; margin: 14mm; }
+  body { background: white !important; color: black !important; }
+  .site-header, .site-footer, .calc-frame__eyebrow, .skip-link,
+  .site-footer__beliefs { display: none !important; }
+  .print-only { display: block !important; }
+  .print-wordmark { height: 28pt; margin: 0 0 16pt; }
+  .print-wordmark img { height: 100%; width: auto; }
+  .print-footer {
+    margin-top: 24pt; padding-top: 10pt; border-top: 1px solid #333;
+    font-family: var(--font-mono); font-size: 9pt; color: black !important; line-height: 1.5;
+  }
+  .calc-frame { padding: 0 0 8mm; max-width: none; }
+  .calc-frame__title { font-size: 18pt; max-width: none; margin-bottom: 6pt; }
+  .calc-frame__tagline { font-size: 10pt; }
+  .calc-wrap { padding: 0; max-width: none; }
+  .calc-stepper { background: white !important; border: 1px solid #999; }
+  .calc-stepper button { background: white !important; color: black !important; border: 1px solid #999; }
+  .calc-result-sticky { position: static !important; }
+  .calc-layout { display: block !important; }
+  .calc-result { gap: 18pt; page-break-inside: avoid; grid-template-columns: 1fr !important; }
+  .calc-result__figure { font-size: 16pt; color: black !important; background: none !important; padding: 0 !important; }
+  .calc-result__col--save .calc-result__figure { background: none !important; padding: 0 !important; border-bottom: 2px solid black; }
+  .breakdown-disclosure { margin-top: 16pt; }
+  .breakdown-disclosure summary { display: none !important; }
+  .breakdown-disclosure .breakdown-body { display: block !important; background: none !important; padding: 0 !important; }
+  .breakdown-body h3 { font-size: 11pt; margin-top: 10pt; }
+  .breakdown-row > *, .breakdown-total > * { font-size: 9pt; padding: 4pt 0; }
+  .breakdown-row__source { color: black !important; opacity: 1; }
+  .breakdown-row__source::after {
+    content: " (" attr(href) ")"; font-family: var(--font-mono); font-size: 7pt; word-break: break-all;
+  }
+  a { color: black !important; text-decoration: underline; }
+}
+
+
+/* ── /pricing/ team roster · 3-col auto-wrap grid of member dropdowns ────── */
+
+.team-roster {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.team-roster:empty { display: none; }
+.team-row {
+  display: grid;
+  grid-template-columns: minmax(70px, auto) 1fr;
+  align-items: center;
+  gap: 12px;
+}
+.team-row__label {
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small, 0.78rem);
+  letter-spacing: var(--kerning-caps, 0.08em);
+  text-transform: uppercase;
+  color: var(--ip-ink);
+  opacity: 0.78;
+}
+.team-row select {
+  width: 100%;
+  padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1.6vw, 18px);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--ip-ink);
+  background: var(--ip-ground);
+  border: 0;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23141414' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+.team-row select:focus-visible { outline: 2px solid var(--ip-ink); outline-offset: 2px; }
+@media (max-width: 800px) { .team-roster { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .team-roster { grid-template-columns: 1fr; } }

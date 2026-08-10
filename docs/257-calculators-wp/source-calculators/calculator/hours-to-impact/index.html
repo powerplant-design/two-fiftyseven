@@ -1,0 +1,817 @@
+<!-- two/fiftyseven · /calculator/hours-to-impact/ · 2026-05-18 rebuild
+     Aligned with /calculator/meeting-costs/ pattern. Engine locked
+     (shared/js/calc-hours-to-impact.js). Single-figure result panel: hours
+     in / dollars of subsidised space out. Lime accent on the giving figure. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Hours to impact calculator · How much subsidised space your team would fund · two/fiftyseven</title>
+  <meta name="description" content="Every hour at two/fiftyseven funds $1 of subsidised space for charities, climate organisations, and tangata whenua-led work in Te Whanganui-a-Tara. Run the numbers for your team.">
+  <link rel="canonical" href="https://twofiftyseven.co/calculator/hours-to-impact/">
+
+  <!-- Open Graph + Twitter. Static OG image.
+       TODO: og:image asset missing · needs lockup at /assets/og/calculator-hours-to-impact.png · 1200×630, impact-aesthetic ground, lime ribbon, two/fiftyseven wordmark. -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://twofiftyseven.co/calculator/hours-to-impact/">
+  <meta property="og:title" content="Hours-to-impact · how much subsidised space your team would fund">
+  <meta property="og:description" content="Every person-hour at two/fiftyseven funds about $1 of subsidised space for charities, climate organisations, and tangata whenua-led work. Run the numbers for your team.">
+  <meta property="og:image" content="https://twofiftyseven.co/assets/og/calculator-hours-to-impact.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="two/fiftyseven">
+  <meta property="og:locale" content="en_NZ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Hours-to-impact · how much subsidised space your team would fund">
+  <meta name="twitter:description" content="Every person-hour at two/fiftyseven funds about $1 of subsidised space for charities, climate organisations, and tangata whenua-led work.">
+  <meta name="twitter:image" content="https://twofiftyseven.co/assets/og/calculator-hours-to-impact.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="../../design-system/fonts.css">
+  <link rel="stylesheet" href="../../design-system/tokens.css">
+  <link rel="stylesheet" href="../../design-system/components.css">
+  <link rel="stylesheet" href="../../design-system/calculator.css">
+
+  <!-- Shared chrome -->
+  <script defer src="../../shared/js/nav.js"></script>
+  <script defer src="../../shared/js/faq.js"></script>
+  <script defer src="../../shared/js/chapter.js"></script>
+
+  <!-- Calc engine -->
+  <script defer src="../../shared/js/calc-hours-to-impact.js"></script>
+
+  <style id="page-hours-to-impact-chrome">
+    body.page-hours-to-impact { background: var(--ip-ground); color: var(--ip-ink); }
+
+    /* ── 1. TOP FRAME · shared in design-system/calculator.css ─────────── */
+
+    /* ── 2. CALCULATOR · per-page overrides only ──────────────────────────── */
+    .chapter--calc-wrap { padding-top: 0; padding-bottom: clamp(40px, 5vh, 72px); }
+
+    body.page-hours-to-impact .calc > .calc__field + .calc__field {
+      margin-top: clamp(14px, 1.6vw, 22px);
+    }
+    body.page-hours-to-impact .calc { margin-block: 0; display: block; }
+
+    /* Full-width breakdown spacing (Giving pushes it further down). */
+    .breakdown-disclosure--full { margin: 0; margin-top: clamp(28px, 3.5vh, 44px); }
+
+    /* Horizontal radio row (days per week) */
+    .calc .radio-row--horizontal { display: flex; flex-direction: row; gap: clamp(16px, 2vw, 28px); flex-wrap: wrap; }
+    .calc .radio-row--horizontal > label { width: auto; padding: 4px 0; }
+
+    /* Inputs · shared in calculator.css. Giving caps width to 140px. */
+    .calc input[type="number"],
+    .calc input[type="text"],
+    .calc input[type="email"] { max-width: 140px; }
+
+    /* ── Live result · grid + col + save-lime shared. Giving uses 2-col
+       mobile breakpoint at 760px (only two figures: hours + giving). */
+    .calc-result__label {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      opacity: 0.78;
+    }
+    .calc-result__figure {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: clamp(1.6rem, 1.4vw + 1rem, 2.4rem);
+      line-height: 1.05; letter-spacing: -0.02em;
+    }
+    .calc-result__unit {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      opacity: 0.62;
+    }
+    @media (max-width: 760px) {
+      .calc-result { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    }
+
+    /* ── Breakdown body + h3 shared in design-system/calculator.css.
+       Giving-specific patterns: .breakdown-stat (its own 3-col grid). */
+    .breakdown-stat {
+      display: grid; grid-template-columns: 1fr auto 1fr; gap: 14px; align-items: baseline;
+      padding: 12px 0; border-bottom: 1px solid rgba(20, 32, 11, 0.12);
+    }
+    .breakdown-stat__label {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.78;
+    }
+    .breakdown-stat__value {
+      font-family: var(--font-body); font-weight: 600;
+      font-variant-numeric: tabular-nums; font-size: 1.2rem;
+      color: var(--ip-ink); text-align: center;
+    }
+    .breakdown-stat__unit {
+      font-family: var(--font-body); font-size: 0.9rem;
+      color: var(--ip-ink); opacity: 0.7;
+    }
+    .breakdown-prose {
+      font-family: var(--font-body); font-size: 0.95rem; line-height: 1.5;
+      color: var(--ip-ink); opacity: 0.85; max-width: 60ch; margin: 0 0 16px;
+    }
+
+    /* ── Recipient grid (Where it goes) ─────────────────────────────────── */
+    .recipient-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: clamp(16px, 2vw, 24px); margin-top: clamp(20px, 3vh, 32px);
+    }
+    @media (max-width: 720px) { .recipient-grid { grid-template-columns: 1fr; } }
+    .recipient-card {
+      background: var(--ip-paper); border-radius: var(--radius-lg, 16px);
+      padding: clamp(20px, 2.5vw, 28px);
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .recipient-card__label {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.7; margin: 0;
+    }
+    .recipient-card h4 {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: clamp(1.05rem, 0.4vw + 0.95rem, 1.2rem);
+      color: var(--ip-ink); margin: 0;
+    }
+    .recipient-card p {
+      font-family: var(--font-body); font-size: 0.95rem; line-height: 1.5;
+      color: var(--ip-ink); opacity: 0.8; margin: 0;
+    }
+
+    /* ── Kaupapa quote block ────────────────────────────────────────────── */
+    .kaupapa-quote-block {
+      background: var(--ip-paper); border-radius: var(--radius-lg, 16px);
+      padding: clamp(24px, 3vw, 36px); margin: clamp(20px, 3vh, 32px) 0;
+    }
+    .kaupapa-quote-block__quote {
+      font-family: var(--font-body); font-weight: 500;
+      font-size: clamp(1.1rem, 0.6vw + 0.95rem, 1.35rem);
+      line-height: 1.4; color: var(--ip-ink); margin: 0 0 12px;
+    }
+    .kaupapa-quote-block__citation {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.7;
+    }
+
+    /* ── Prose ──────────────────────────────────────────────────────────── */
+    .prose {
+      font-family: var(--font-body); font-size: clamp(1rem, 0.3vw + 0.9rem, 1.1rem);
+      line-height: 1.55; color: var(--ip-ink); opacity: 0.88;
+    }
+    .prose p { margin: 0 0 clamp(14px, 2vh, 20px); max-width: 65ch; }
+    .prose-narrow { max-width: 60ch; }
+
+    /* ── Methodology list ───────────────────────────────────────────────── */
+    .methodology-list {
+      list-style: none; padding: 0; margin: clamp(20px, 3vh, 32px) 0 0;
+      display: flex; flex-direction: column; gap: clamp(16px, 2vw, 24px);
+    }
+    .methodology-list > li {
+      display: grid; grid-template-columns: 56px 1fr; gap: clamp(16px, 2vw, 24px);
+      align-items: start;
+      background: var(--ip-paper); border-radius: var(--radius-lg, 16px);
+      padding: clamp(20px, 2.5vw, 28px);
+    }
+    .methodology-list > li::before {
+      content: attr(data-step);
+      font-family: var(--font-mono); font-size: 0.85rem;
+      letter-spacing: var(--kerning-caps, 0.08em);
+      color: var(--ip-ink); opacity: 0.6;
+    }
+    .methodology-list h4 {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: clamp(1.05rem, 0.4vw + 0.95rem, 1.2rem);
+      color: var(--ip-ink); margin: 0 0 8px;
+    }
+    .methodology-list p {
+      font-family: var(--font-body); font-size: 0.95rem; line-height: 1.5;
+      color: var(--ip-ink); opacity: 0.85; margin: 0;
+    }
+
+    /* ── CTA link ───────────────────────────────────────────────────────── */
+    .cta-arrow {
+      font-family: var(--font-body); font-size: 1rem; font-weight: 500;
+      color: var(--ip-ink); text-decoration: underline; text-underline-offset: 4px;
+    }
+    .cta-arrow:hover { opacity: 0.7; }
+    .ctas-row {
+      display: flex; flex-wrap: wrap; gap: clamp(12px, 2vw, 20px);
+      justify-content: center; margin: clamp(20px, 3vh, 32px) 0;
+    }
+    .address-line {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em);
+      color: var(--ip-ink); opacity: 0.6;
+      text-align: center; margin: 0;
+    }
+
+    /* ── Chapter heading defaults ───────────────────────────────────────── */
+    .chapter__eyebrow {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.72; margin: 0 0 clamp(16px, 2vh, 24px);
+    }
+    .chapter__heading {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.6rem, 1.3vw + 1.1rem, 2.25rem);
+      line-height: 1.2; letter-spacing: -0.015em; color: var(--ip-ink);
+      margin: 0 0 clamp(20px, 3vh, 32px); max-width: 36ch;
+    }
+
+    /* ── Print · shared base in design-system/calculator.css.
+       Giving-specific additions: input field bg, breakdown-stat, recipient
+       grid stack, methodology list collapse, kaupapa quote unstyle, faq-wrap
+       hide (in case it gets added later). */
+    @media print {
+      .faq-wrap { display: none !important; }
+      .calc input[type="number"] { background: white !important; border: 1px solid #999; }
+      .breakdown-stat { page-break-inside: avoid; }
+      .recipient-grid { grid-template-columns: 1fr !important; gap: 8pt; }
+      .recipient-card { background: none !important; padding: 6pt 0 !important; page-break-inside: avoid; }
+      .methodology-list { font-size: 9pt; }
+      .methodology-list > li { background: none !important; padding: 6pt 0 !important; page-break-inside: avoid; }
+      .kaupapa-quote-block { background: none !important; padding: 6pt 0 !important; }
+    }
+  </style>
+
+  <!-- WebApplication JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Hours to impact calculator",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "url": "https://twofiftyseven.co/calculator/hours-to-impact/",
+    "description": "Free calculator translating a team's hours at two/fiftyseven into the dollar value of subsidised space funded for charities, climate organisations and tangata whenua-led work via the Impact Discount.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "NZD" },
+    "provider": { "@type": "Organization", "name": "two/fiftyseven", "url": "https://twofiftyseven.co/" }
+  }
+  </script>
+
+  <!-- Organization JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "two/fiftyseven",
+    "url": "https://twofiftyseven.co/",
+    "logo": "https://twofiftyseven.co/assets/logos/257-mark.svg",
+    "sameAs": [
+      "https://www.instagram.com/twofiftyseven/",
+      "https://www.linkedin.com/company/two-fiftyseven/"
+    ]
+  }
+  </script>
+
+  <!-- FAQPage JSON-LD · mirrors visible page copy. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How is the $1-per-hour ratio calculated?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The ratio is derived from five years of measured revenue versus measured discount given at two/fiftyseven. The $1 per person-hour figure sits below the actual realised ratio in each of those years · so the calculator under-promises by design. Reality has consistently outpaced this figure."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which organisations receive subsidised space?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Charities, not-for-profits, social enterprises with under $200k annual revenue, certified carbon-zero or carbon-positive organisations under $200k revenue, volunteer-led community organisations, climate-focused groups, tangata whenua and indigenous-led organisations and businesses, mental health and wellbeing organisations, and community arts initiatives. The Impact Discount is a 50% rate (or more · talk to us) for organisations doing work this kaupapa supports."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is the ratio verified each year?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We re-check the ratio at the end of each financial year against measured giving. If the ratio drifts above $1/hour we'd consider revising the calculator up. Five years in it hasn't drifted down · and given the kaupapa, it shouldn't."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does the giving programme not cover?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The ratio counts the 50% Impact Discount on coworking memberships, meeting rooms, and venue hire, plus negotiated rates that go further when a kaupapa needs it, plus venue-hire fees waived entirely for events serving organisations we partner with. It is not a separate cash grants programme · the redistribution happens through space, not through transferred funds."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="page-calculator page-hours-to-impact">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" data-js="site-header">
+    <a href="../../index.html" class="wordmark">two/fiftyseven</a>
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-dropdown nav-section-workspace">
+          <a href="../../workspace/index.html" aria-haspopup="true">Workspace</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../workspace/base/index.html" role="menuitem">Base</a></li>
+              <li><a href="../../workspace/hub/index.html" role="menuitem">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html" role="menuitem">Desk</a></li>
+              <li><a href="../../pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-meet">
+          <a href="../../meet/index.html" aria-haspopup="true">Meet</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../meetings/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html" role="menuitem">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html" role="menuitem">Away days</a></li>
+              <li><a href="../../meetings/pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-host">
+          <a href="../../events/index.html" aria-haspopup="true">Host</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../events/events/index.html" role="menuitem">Events</a></li>
+              <li><a href="../../events/functions/index.html" role="menuitem">Functions</a></li>
+              <li><a href="../../events/conferences/index.html" role="menuitem">Conferences</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../impact/index.html">Impact</a></li>
+        <li class="has-dropdown">
+          <a href="../../our-story/index.html" aria-haspopup="true">About</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../kaupapa/index.html" role="menuitem">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html" role="menuitem">Success stories</a></li>
+              <li><a href="../../organisations/index.html" role="menuitem">Organisations</a></li>
+              <li><a href="../../our-story/index.html" role="menuitem">Our story</a></li>
+              <li><a href="../../people/index.html" role="menuitem">People</a></li>
+              <li><a href="../../whatson/index.html" role="menuitem">What's on</a></li>
+              <li><a href="../../kōrero/index.html" role="menuitem">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html" role="menuitem">Press kit</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown">
+          <a href="../../calculator/index.html" aria-haspopup="true">Calculators</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html" role="menuitem">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html" role="menuitem">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html" role="menuitem">Carbon</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../contact/index.html">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="../../tours/" class="btn btn--primary btn--small">Book a tour</a>
+  </header>
+
+  <main id="main">
+
+    <div class="print-only print-wordmark" aria-hidden="true">
+      <img src="../../assets/logos/twofiftyseven_logo.svg" alt="two/fiftyseven">
+    </div>
+
+    <!-- 1. HERO — canonical .calc-hero. Lowercase OG bold H1 matches the sitewide
+         calc/pricing standard. Internal $1/hour ratio so no Wellington geo prefix
+         needed in the eyebrow. -->
+    <section class="chapter chapter--calc-frame calc-frame" aria-labelledby="calc-title">
+      <div class="chapter__inner">
+        <p class="calc-frame__eyebrow calc-hero__eyebrow">Hours-to-impact calculator</p>
+        <h1 id="calc-title" class="calc-frame__title calc-hero__title">how many hours of subsidised space would your team fund?</h1>
+        <p class="calc-frame__tagline calc-hero__sub">For every hour someone is at two/fiftyseven, our community of paying members enables us to give away $1 worth of free or discounted space. Run the numbers for your team.</p>
+      </div>
+    </section>
+
+    <!-- 2. CALCULATOR -->
+    <section class="chapter chapter--calc-wrap calc-wrap" data-unclipped aria-label="Hours-to-impact calculator">
+      <div class="chapter__inner">
+
+      <div class="calc-layout">
+
+        <div class="calc" data-js="calc-hours-to-impact">
+
+          <div class="calc__field">
+            <span class="calc__field-label">Team size</span>
+            <div class="calc-stepper">
+              <button type="button" data-calc-team-dec aria-label="Decrease team size">−</button>
+              <output data-calc-team-out aria-live="polite">0</output>
+              <button type="button" data-calc-team-inc aria-label="Increase team size">+</button>
+            </div>
+          </div>
+
+          <div class="calc__field">
+            <span class="calc__field-label">Days per week in office</span>
+            <div class="radio-row radio-row--horizontal calc-segmented" role="radiogroup" aria-label="Days per week in office">
+              <label class="radio"><input type="radio" name="days" value="1" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">1</span></label>
+              <label class="radio"><input type="radio" name="days" value="2" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">2</span></label>
+              <label class="radio"><input type="radio" name="days" value="3" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">3</span></label>
+              <label class="radio"><input type="radio" name="days" value="4" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">4</span></label>
+              <label class="radio"><input type="radio" name="days" value="5" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">5</span></label>
+            </div>
+          </div>
+
+          <div class="calc__field">
+            <span class="calc__field-label">Working weeks per year</span>
+            <input type="number" min="1" max="52" value="" data-calc-weeks aria-label="Working weeks per year" placeholder="0">
+              <small class="calc-microcopy">NZ standard: 46 (52 minus 4 leave minus 2 stat holidays).</small>
+          </div>
+
+          <div class="calc__field">
+            <span class="calc__field-label">Hours per day</span>
+            <input type="number" min="1" max="24" value="" data-calc-hours aria-label="Hours per day" placeholder="0">
+              <small class="calc-microcopy">8 default; adjust if your team runs longer.</small>
+          </div>
+
+        </div><!-- /.calc -->
+
+        <!-- STICKY RESULT COLUMN -->
+        <aside class="calc-result-sticky" aria-label="Live result">
+          <div class="calc-result" role="status" aria-live="polite">
+            <div class="calc-result__col">
+              <span class="calc-result__label">Your team's hours, a year</span>
+              <span class="calc-result__figure" data-calc-result-hours>0 hrs</span>
+              <span class="calc-result__unit">person-hours combined</span>
+            </div>
+            <div class="calc-result__col calc-result__col--save">
+              <span class="calc-result__label">Subsidised space funded</span>
+              <span class="calc-result__figure" data-calc-giving>$0</span>
+              <span class="calc-result__unit">at $1 per person-hour</span>
+            </div>
+          </div>
+          <!-- #2 INLINE CONTACT — compact 'email this to yourself' form inside the
+               result aside. Mailto with calc name pre-filled in the subject so it
+               works without a backend; can be upgraded to a Fluent Forms POST later. -->
+          <form class="calc-contact-inline"
+                action="mailto:kiaora@twofiftyseven.co?subject=My%20hours-to-impact%20calculation"
+                method="post" enctype="text/plain" novalidate>
+            <p class="calc-contact-inline__title">Email this to your team</p>
+            <div class="calc-contact-inline__row">
+              <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Your email">
+              <button type="submit">Send &rarr;</button>
+            </div>
+            <p class="calc-contact-inline__note">We'll email your team's giving numbers.</p>
+          </form>
+
+
+          <button type="button"
+                  class="breakdown-trigger"
+                  data-breakdown-trigger
+                  aria-controls="methodology"
+                  aria-expanded="false">
+            <span>See the verification + per-person rate</span>
+            <span class="breakdown-trigger__caret" aria-hidden="true">↓</span>
+          </button>
+        </aside>
+
+      </div><!-- /.calc-layout -->
+
+      <!-- Full-width breakdown disclosure -->
+      <details class="breakdown-disclosure breakdown-disclosure--full" id="methodology">
+        <summary aria-hidden="true">Breakdown</summary>
+        <div class="breakdown-body" id="breakdown-body">
+
+          <h3>How the figure is calculated</h3>
+          <p class="breakdown-prose">The ratio is derived from five years of measured revenue versus measured discount given at two/fiftyseven. The $1 per person-hour figure sits below the actual realised ratio in each of those years · so the calculator under-promises by design. Reality has consistently outpaced this figure.</p>
+
+          <h3>Per-person rate this year</h3>
+          <div class="breakdown-stat">
+            <span class="breakdown-stat__label">One person at two/fiftyseven funds</span>
+            <span class="breakdown-stat__value" data-calc-per-person-hours>0</span>
+            <span class="breakdown-stat__unit">hours of subsidised space per working year</span>
+          </div>
+          <div class="breakdown-stat">
+            <span class="breakdown-stat__label">Roughly</span>
+            <span class="breakdown-stat__value" data-calc-per-person-giving>$0</span>
+            <span class="breakdown-stat__unit">in dollar terms per person, per year</span>
+          </div>
+
+          <h3>Working year defaults</h3>
+          <p class="breakdown-prose">46 weeks × 5 days × 8 hours = 1,840 hrs per person per year. NZ standard: 52 weeks minus 4 weeks annual leave minus 11 stat holidays.</p>
+
+          <h3>Ratio source</h3>
+          <p class="breakdown-prose">$1.00 per person-hour, verified across 5 years of two/fiftyseven internal usage and subsidy records. Reality has consistently outpaced this figure.</p>
+
+          <h3>All-time redistributed</h3>
+          <p class="breakdown-prose">$450,000 across 5,000 meetings + events and 1,500 workdays (current as of Marketing Association mihi 2026).</p>
+
+        </div>
+      </details>
+
+      </div><!-- /.chapter__inner -->
+    </section>
+
+    <!-- Where it goes -->
+    <section class="chapter" aria-labelledby="where-it-goes-title">
+      <div class="chapter__inner">
+        <p class="chapter__eyebrow">Where it goes</p>
+        <h2 id="where-it-goes-title" class="chapter__heading">Charities, climate organisations, and tangata whenua-led work.</h2>
+
+        <div class="prose prose-narrow">
+          <p>When a team books a desk at full rate, part of that rent funds another desk for an organisation that couldn't pay full rate. When a company hires a meeting room or a workshop space, that booking funds time for another organisation. When an event takes over the venue, the same redistribution happens at scale.</p>
+          <p>We're not running an office that has a charity arm. We're running a property model that redistributes by design. The Impact Discount is a 50% rate (or more · talk to us) for organisations doing work this kaupapa supports.</p>
+        </div>
+
+        <div class="kaupapa-quote-block">
+          <p class="kaupapa-quote-block__quote">For every hour someone is in our space, our community of people who can pay enable us to give away $1 worth of free or discounted space.</p>
+          <div class="kaupapa-quote-block__citation">from the kaupapa, Marketing Association mihi 2026</div>
+        </div>
+
+        <div class="recipient-grid">
+          <div class="recipient-card">
+            <p class="recipient-card__label">Receiving the discount</p>
+            <h4>Charities + not-for-profits</h4>
+            <p>Plus social enterprises with under $200k annual revenue, and certified carbon-zero or carbon-positive organisations under $200k revenue.</p>
+          </div>
+          <div class="recipient-card">
+            <p class="recipient-card__label">Receiving the discount</p>
+            <h4>Climate + community organisations</h4>
+            <p>Volunteer-led community organisations, climate-focused groups, and the people doing the work this kaupapa exists to support.</p>
+          </div>
+          <div class="recipient-card">
+            <p class="recipient-card__label">Receiving the discount</p>
+            <h4>Tangata whenua-led work</h4>
+            <p>Tangata whenua and indigenous-led organisations and businesses · a standing priority of the kaupapa, named so it doesn't get left to chance.</p>
+          </div>
+          <div class="recipient-card">
+            <p class="recipient-card__label">Receiving the discount</p>
+            <h4>Social enterprises</h4>
+            <p>Mental health and wellbeing organisations, community arts initiatives, and organisations whose work we want to see happen in Te Whanganui-a-Tara.</p>
+          </div>
+        </div>
+
+        <p class="ctas-row"><a href="../../impact/index.html" class="cta-arrow">See the full list of recipients and the $450,000 redistributed so far →</a></p>
+      </div>
+    </section>
+
+    <!-- At scale -->
+    <section class="chapter" aria-labelledby="at-scale-title">
+      <div class="chapter__inner">
+        <p class="chapter__eyebrow">At scale</p>
+        <h2 id="at-scale-title" class="chapter__heading">Imagine if the whole commercial property industry worked this way.</h2>
+
+        <div class="prose">
+          <p>two/fiftyseven exists for two reasons · one is sustainability and one is community, and we really think those things are the same thing. The model we run here · paying members enabling subsidised space for the organisations doing the work · is small, in one place, on one corner of one city. The maths it implies at scale is the real argument.</p>
+          <p>More than a third of global emissions come from buildings. In a world where billion-dollar climate disasters now hit every twelve days, and New Zealand's storm-related insurance claims have tripled in the last year, we can't afford to keep building the way we do.</p>
+          <p>If every commercial building in Aotearoa ran a redistribution model proportional to ours, the redistribution into climate work, tangata whenua-led work, and community organisations would land in the billions of dollars annually · closer to $5 billion than to $5 million. That's not a small adjustment to the existing system. That's the system, doing its actual job.</p>
+          <p>We're a working prototype. Five years in. $450,000 redistributed so far. The model works at this size. The question is whether it scales · and the only way to answer that is to keep proving it can.</p>
+        </div>
+
+        <p class="ctas-row"><a href="../../our-story/index.html" class="cta-arrow">Read the full story →</a></p>
+      </div>
+    </section>
+
+    <!-- How the math works (methodology overview) -->
+    <section class="chapter" aria-labelledby="methodology-overview-title">
+      <div class="chapter__inner">
+        <p class="chapter__eyebrow">How the math works</p>
+        <h2 id="methodology-overview-title" class="chapter__heading">How we verify the $1-per-hour ratio.</h2>
+
+        <div class="prose prose-narrow">
+          <p>The ratio is conservative. Across five years of operating two/fiftyseven, the actual redistribution has consistently outpaced what $1 per person-hour would imply. Reality runs ahead of the figure · which is the point, but also worth being clear about.</p>
+        </div>
+
+        <ol class="methodology-list">
+          <li data-step="01">
+            <div>
+              <h4>The mechanism</h4>
+              <p>Every person-hour at two/fiftyseven by a paying member contributes approximately $1 to subsidised space · meeting rooms, day passes, memberships, event venues · for organisations on the Impact Discount.</p>
+            </div>
+          </li>
+          <li data-step="02">
+            <div>
+              <h4>How the ratio is set</h4>
+              <p>Derived from five years of measured revenue versus measured discount given. The $1/hour figure sits below the actual realised ratio in each of those years · so the calculator under-promises by design.</p>
+            </div>
+          </li>
+          <li data-step="03">
+            <div>
+              <h4>What counts as a discount</h4>
+              <p>The 50% Impact Discount on coworking memberships, meeting rooms, and venue hire. Plus negotiated rates that go further when a kaupapa needs it. Plus venue-hire fees waived entirely for events serving organisations we partner with.</p>
+            </div>
+          </li>
+          <li data-step="04">
+            <div>
+              <h4>Annual review</h4>
+              <p>We re-check the ratio at the end of each financial year against measured giving. If the ratio drifts above $1/hour we'd consider revising the calculator up. Five years in it hasn't drifted down · and given the kaupapa, it shouldn't.</p>
+            </div>
+          </li>
+        </ol>
+
+        <p class="ctas-row"><a href="../../impact/index.html" class="cta-arrow">See the full impact page with verified figures →</a></p>
+      </div>
+    </section>
+
+    <!-- SAVE YOUR NUMBERS — canonical 3-card share row. Audit #3. -->
+    <section class="calc-share" aria-labelledby="share-title">
+      <p class="calc-share__eyebrow">Take this with you</p>
+      <h2 id="share-title" class="calc-share__title">save your number, share it, send it on.</h2>
+      <div class="calc-share__row">
+        <div class="calc-share-card">
+          <h3 class="calc-share-card__title">Email me this calculation</h3>
+          <p class="calc-share-card__body">Get the numbers and a one-line summary in your inbox, ready to forward to your team.</p>
+          <form class="calc-share-card__form" data-js="calc-share-email" action="#" method="post" novalidate>
+            <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Your email">
+            <button type="submit" class="calc-share-card__btn">Send →</button>
+          </form>
+        </div>
+        <div class="calc-share-card">
+          <h3 class="calc-share-card__title">Share this calculation</h3>
+          <p class="calc-share-card__body">Same numbers, any browser — your team clicks and sees the exact same numbers.</p>
+          <button type="button" class="calc-share-card__btn" data-js="calc-share-copy" style="align-self: flex-start;">Copy link →</button>
+        </div>
+        <div class="calc-share-card">
+          <h3 class="calc-share-card__title">Save as PDF</h3>
+          <p class="calc-share-card__body">Print-ready, branded version for the team or to forward to finance.</p>
+          <button type="button" class="calc-share-card__btn" data-js="calc-share-pdf" style="align-self: flex-start;">Download PDF →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLOSE CTA — canonical .invite (audit #18). One big primary lime hero
+         + two smaller paper secondaries in the .invite__row, all deliberate. -->
+    <section class="chapter chapter--fit chapter--close" id="get-involved" aria-labelledby="ch-close-title">
+      <div class="chapter__inner">
+        <h2 id="ch-close-title" class="display display--mid">The numbers fit. The next step is the building.</h2>
+        <p class="lead">Standing in the room is worth more than any spreadsheet. Bring the calculation and the team that ran it.</p>
+
+        <div class="invite">
+          <!-- PRIMARY — reader has just modelled their impact. Strongest next move:
+               see the place that turns those hours into subsidised space. -->
+          <a class="invite__primary" href="../../tours/">
+            <p class="invite__eyebrow">After the numbers</p>
+            <h3 class="invite__primary-title">Book a tour<span class="invite__arrow" aria-hidden="true">→</span></h3>
+            <p class="invite__primary-body">A 20-minute walk-around with whoever's hosting that day. See the building that's redistributed $450,000 of subsidised space in five years.</p>
+            <p class="invite__meta"><span>Weekday mornings</span><span aria-hidden="true">·</span><span>With whoever's hosting</span><span aria-hidden="true">·</span><span>Bring a colleague</span></p>
+          </a>
+
+          <!-- SECONDARY ROW — (1) low-friction trial day, (2) deep impact context. -->
+          <div class="invite__row">
+            <a class="invite__secondary" href="../../passes/">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">Try a $40 day pass<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">One day in the building. Hot desk, kitchen, wifi, the community. Your first hour funds someone else's at half rate.</p>
+              </div>
+            </a>
+            <a class="invite__secondary" href="../../impact/">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">See the verified impact<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">The full impact page — five years of measured redistribution, recipient list, and the kaupapa behind it. $450,000 so far.</p>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <p class="address-line">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara · opposite Matapihi ki te Ao Nui (Wellington Library)</p>
+      </div>
+    </section>
+
+    <div class="print-only print-footer" aria-hidden="true">
+      two/fiftyseven · twofiftyseven.co · kiaora@twofiftyseven.co · Book a tour at twofiftyseven.co/tours/
+    </div>
+
+  </main>
+
+  <footer class="site-footer" data-theme="dark">
+    <div class="container">
+      <div class="site-footer__top">
+        <nav class="site-footer__nav" aria-label="Footer">
+          <div class="site-footer__col site-footer__col--find">
+            <h4>Find us</h4>
+            <address class="site-footer__address">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara</address>
+            <p class="site-footer__note">Central lift access from both the Willis Street and Victoria Street entrances. The Victoria Street entrance is opposite Matapihi ki te Ao Nui.</p>
+            <a class="site-footer__maplink" href="https://www.google.com/maps/search/?api=1&amp;query=57+Willis+Street+Te+Whanganui-a-Tara">View on map</a>
+          </div>
+          <div class="site-footer__col">
+            <h4>Workspace</h4>
+            <ul>
+              <li><a href="../../workspace/base/index.html">Base</a></li>
+              <li><a href="../../workspace/hub/index.html">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html">Desk</a></li>
+              <li><a href="../../pricing/index.html">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Meet &amp; Host</h4>
+            <ul>
+              <li><a href="../../meetings/index.html">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html">Away days</a></li>
+              <li><a href="../../events/index.html">Events</a></li>
+              <li><a href="../../events/functions/index.html">Functions</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col site-footer__col--about">
+            <h4>About</h4>
+            <ul>
+              <li><a href="../../kaupapa/index.html">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html">Success stories</a></li>
+              <li><a href="../../organisations/index.html">Organisations</a></li>
+              <li><a href="../../our-story/index.html">Our story</a></li>
+              <li><a href="../../people/index.html">People</a></li>
+              <li><a href="../../whatson/index.html">What's on</a></li>
+              <li><a href="../../kōrero/index.html">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html">Press kit</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Calculators</h4>
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html">Carbon</a></li>
+              <li><a href="../../contact/index.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <form class="site-footer__panui" method="post" action="#" aria-label="Pānui signup">
+          <h4>Pānui</h4>
+          <p>Occasional notes from inside two/fiftyseven · what's on, what's changed, what we're thinking about.</p>
+          <div class="site-footer__panui-row">
+            <label class="visually-hidden" for="panui-email">Email address</label>
+            <input type="email" id="panui-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit" class="btn btn--primary btn--small">Sign up</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="site-footer__beliefs" aria-label="What we believe">
+        <ul class="site-footer__beliefs-track">
+          <li>diversity is resilience</li>
+          <li>radical equality is good for all</li>
+          <li>complete decolonisation is a necessary future</li>
+          <li>climate justice is a human and environmental imperative</li>
+          <li aria-hidden="true">diversity is resilience</li>
+          <li aria-hidden="true">radical equality is good for all</li>
+          <li aria-hidden="true">complete decolonisation is a necessary future</li>
+          <li aria-hidden="true">climate justice is a human and environmental imperative</li>
+        </ul>
+      </div>
+
+      <div class="site-footer__wordmark" data-js="footer-reveal" role="img" aria-label="two/fiftyseven"></div>
+
+      <div class="site-footer__bottom">
+        <span>&copy; 2026 two/fiftyseven Limited</span>
+        <span>Aotearoa / New Zealand</span>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var wm = document.querySelector('[data-js="footer-reveal"]');
+        if (!wm) return;
+        if (!('IntersectionObserver' in window)) { wm.classList.add('is-revealed'); return; }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-revealed'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.25 });
+        io.observe(wm);
+      })();
+    </script>
+  </footer>
+
+  <!-- PAGE COORDINATOR -->
+  <script>
+  (function () {
+    document.addEventListener('DOMContentLoaded', function () {
+      // Breakdown trigger proxies into the full-width <details>.
+      var breakdownTrigger = document.querySelector('[data-breakdown-trigger]');
+      var breakdownDetails = document.getElementById('methodology');
+      if (breakdownTrigger && breakdownDetails) {
+        breakdownTrigger.addEventListener('click', function () {
+          var wasOpen = breakdownDetails.open;
+          breakdownDetails.open = !wasOpen;
+          breakdownTrigger.setAttribute('aria-expanded', String(!wasOpen));
+          if (!wasOpen) {
+            breakdownDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+        breakdownDetails.addEventListener('toggle', function () {
+          breakdownTrigger.setAttribute('aria-expanded', String(breakdownDetails.open));
+        });
+      }
+    });
+  })();
+  </script>
+
+</body>
+</html>
