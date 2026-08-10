@@ -169,11 +169,11 @@ Meet pricing reuses the same block with a `room_set` ACF select:
 
 Every calculator block creates these files (following existing theme conventions):
 
-- [ ] `blocks/<calc>/block.php` — ported markup with `data-color-space` + all `data-*` engine hooks preserved, `$allowed_spaces` whitelist, `$is_preview` fallback
+- [ ] `blocks/<calc>/block.php` — ported markup with `data-color-space` + all `data-*` engine hooks preserved, `$allowed_spaces` whitelist, `$is_preview` fallback. Uses shared `.calc__*` classes (see §11) for standard elements; adds a per-calc identity class (e.g. `hours-to-impact`) for block-specific overrides.
 - [ ] `acf-json/group_two57_block_<calc>.json` — field group with `colour_space` select (+ `room_set` for meet pricing)
 - [ ] `assets/js/modules/<calc>.js` — ported engine as ES module exporting `init<Calc>()`, hardcoded constants swapped for `window.twofiftyseven.*`
-- [ ] `assets/css/06-components/_<calc>.scss` — styles using theme semantic tokens, no hardcoded hues
-- [ ] `@forward '<calc>';` added to `assets/css/06-components/_index.scss`
+- [ ] `assets/css/06-components/_calc-<calc>.scss` — **per-calc overrides only**; shared base styling lives in `_calc-base.scss` (see §11). Uses theme semantic tokens, no hardcoded hues.
+- [ ] `@forward 'calc-<calc>';` added to `assets/css/06-components/_index.scss` (after `@forward 'calc-base';` so calc files cluster together)
 - [ ] `import` + `init<Calc>()` added to `assets/js/main.js`
 - [ ] Re-init hook added to `assets/js/modules/transitions.js` (Swup lifecycle)
 - [ ] `acf_register_block_type()` added to `functions.php` `acf/init` handler
@@ -268,14 +268,14 @@ Reference implementation: `assets/js/modules/hours-to-impact.js` + `blocks/hours
 
 ### Block registration (`functions.php`)
 
-Add one `acf_register_block_type()` call per calc to the existing `acf/init` handler (around line 584):
+Add one `acf_register_block_type()` call per calc to the existing `acf/init` handler (around line 584). All calculator blocks use the **`257 Calc <Name>`** title convention so they cluster together in the block picker:
 
 ```php
 acf_register_block_type( [
-    'name'            => 'office-cost-calculator',
-    'title'           => __( '257 Office Cost Calculator', 'two-fiftyseven' ),
-    'description'     => __( ' Wellington office cost comparison calculator.', 'two-fiftyseven' ),
-    'render_template' => get_template_directory() . '/blocks/office-cost-calculator/block.php',
+    'name'            => 'workspace-pricing',
+    'title'           => __( '257 Calc Workspace Pricing', 'two-fiftyseven' ),
+    'description'     => __( 'Wellington office cost comparison calculator.', 'two-fiftyseven' ),
+    'render_template' => get_template_directory() . '/blocks/workspace-pricing/block.php',
     'category'        => 'layout',
     'icon'            => 'calculator',
     'keywords'        => [ 'calculator', 'office', 'cost', 'pricing' ],
@@ -317,12 +317,21 @@ initOfficeCostCalculator();
 
 ### SCSS (`assets/css/06-components/`)
 
-Create `_<calc>.scss` using theme semantic tokens only. Add `@forward` to `_index.scss`:
+Calculator SCSS uses a **shared base + per-calc override** pattern (see §11):
+
+- `_calc-base.scss` — shared `.calc__*` classes used by all calculator blocks
+- `_calc-<calc>.scss` — per-calc overrides only (block shell padding, unique elements)
+
+Both are `@forward`ed in `_index.scss`, with `calc-base` before the per-calc files so they cluster together:
 
 ```scss
 // assets/css/06-components/_index.scss
-@forward 'office-cost-calculator';
+@forward 'calc-base';
+@forward 'calc-hours-to-impact';
+// @forward 'calc-workspace-pricing';  // future calcs
 ```
+
+New calculators should **reuse `.calc__*` classes** for any standard element (stepper, radio group, number input, result panel, breakdown, stat row, etc.) and only add per-calc classes for genuinely unique elements (comparison tables, quote forms, scenario slots, etc.). Extend `_calc-base.scss` when a new shared element type is needed across multiple calculators.
 
 ### ACF field group (`acf-json/`)
 
@@ -365,7 +374,7 @@ docs/257-calculators-wp/
     │   ├── inject-prices.js              ← P0 (price injector)
     │   └── quote-preview.js              ← T1 engine
     └── design-system/
-        ├── calculator.css                ← calc styles (port to _<calc>.scss)
+        ├── calculator.css                ← calc styles (port to _calc-base.scss + _calc-<calc>.scss)
         ├── components.css                ← shared component styles
         ├── fonts.css                     ← (use theme fonts instead)
         ├── impact.css                    ← T2 impact stats styles
@@ -374,15 +383,75 @@ docs/257-calculators-wp/
 
 ---
 
+## 11. Shared calculator styling system (`.calc__*`)
+
+### Architecture
+
+All calculator blocks share a common SCSS base, `_calc-base.scss`, which defines `.calc__*` classes for the standard calculator elements. Each calculator block uses these classes directly in its markup and adds only its unique extras in a per-calc `_calc-<calc>.scss` file.
+
+**Why:** Avoids duplicating stepper/input/radio/result/breakdown styles across 6+ calculator SCSS files. The hours-to-impact calc (C6) was the reference implementation; its styles were lifted into `_calc-base.scss` and the per-calc file slimmed to ~18 lines of overrides.
+
+### File layout
+
+```
+assets/css/06-components/
+├── _calc-base.scss              ← shared .calc__* classes (all calcs)
+├── _calc-hours-to-impact.scss    ← C6 overrides (shell padding, --accent col)
+├── _calc-workspace-pricing.scss ← C1 overrides (future)
+├── _calc-meet-pricing.scss      ← C2 overrides (future)
+└── ...
+```
+
+`_index.scss` forwards them grouped:
+```scss
+@forward 'calc-base';
+@forward 'calc-hours-to-impact';
+// @forward 'calc-workspace-pricing';  // future
+```
+
+### Shared `.calc__*` class catalogue
+
+| Class | Element | Used by |
+|---|---|---|
+| `.calc__intro` / `__eyebrow` / `__heading` / `__tagline` | Section intro (scroll-revealed) | All |
+| `.calc__body` | 50/50 grid (inputs left, result right); stacks at `bp-lg` | All |
+| `.calc__inputs` | Inputs card (`--color-surface-secondary` bg, scroll-revealed) | All |
+| `.calc__fields-grid` | 2-col grid for paired inputs (stacks ≤600px) | C6, C5, others |
+| `.calc__field` / `__field-label` | Field wrapper + label | All |
+| `.calc__stepper` (+ `button` / `output`) | −/output/+ stepper | C1, C3, C4, C5, C6 |
+| `.calc__radio-group` / `__radio-label` | Segmented radio buttons (`<button role="radio">`) | C3, C4, C5, C6 |
+| `.calc__input` | Number/text input (stepper-only keyboard guard) | All |
+| `.calc__microcopy` | Small helper text under inputs | C5, C6 |
+| `.calc__result` / `__result-grid` / `__result-col` / `__result-label` / `__result-figure` / `__result-unit` | Result panel (dark `--color-surface-inverse-primary` bg) | All |
+| `.calc__breakdown-trigger` / `__breakdown-caret` | Trigger button + CSS chevron (rotates when open) | C3, C4, C5, C6 |
+| `.calc__breakdown` / `__breakdown-summary` / `__breakdown-body` / `__breakdown-grid` / `__breakdown-col` / `__breakdown-heading` / `__breakdown-prose` | Full-width disclosure panel | C3, C4, C5, C6 |
+| `.calc__stat` / `__stat-label` / `__stat-value` / `__stat-unit` | Label/value/unit stat row | C6 (extensible) |
+
+### How to use it in a new calculator
+
+1. **Markup**: use `.calc__*` classes for any standard element in `block.php`. Add a per-calc identity class on `<section>` (e.g. `workspace-pricing`) for block-specific scoping.
+2. **Unique elements**: add a new per-calc class (e.g. `workspace-pricing__chart`) and style it in `_calc-<calc>.scss`.
+3. **New shared element type**: if a new element type appears in **2+ calculators**, add it to `_calc-base.scss` as `.calc__<element>` rather than duplicating it per-calc.
+4. **Overrides**: if a calc needs to tweak a shared element (e.g. a bigger result figure, different gap), scope the override under the per-calc identity class in `_calc-<calc>.scss`:
+   ```scss
+   .workspace-pricing {
+       .calc__result-figure { font-size: calc(var(--text-3xl-size) * 2); }
+   }
+   ```
+
+### Reveal animation
+
+`_calc-base.scss` exposes a `reveal` mixin (opacity + translateY) used by `.calc__intro` and `.calc__inputs`. Any new scroll-revealed element in a calc can `@include reveal;` if it imports the mixin, or reuse the `.is-inview` class pattern.
+
 ## Status
 
-Last updated: 2026-08-10 (all work on `feature/calculators` branch)
+Last updated: 2026-08-11 (all work on `feature/calculators` branch)
 
 - [x] **F1** — ACF Options SSOT ✅ committed (`2ee8788`)
 - [x] **F2** — `window.twofiftyseven` injector ✅ committed (`2ee8788`)
 - [x] **P0** — Port `inject-prices.js` ✅ committed (`2ee8788`)
 - [x] **Review checkpoint** ✅ passed — `window.twofiftyseven` populated, `data-price="dedicated"` renders `$659`
-- [ ] **C6** — Giving (hours→impact) 🔨 implemented, staged, **not yet committed**
+- [x] **C6** — Giving (hours→impact) ✅ committed (`3331d48`) + refactored to shared `.calc__*` system (uncommitted)
 - [ ] **C1** — Workspace pricing ← **next up**
 - [ ] **C2** — Meet pricing (+ Host variant)
 - [ ] **C5** — Office carbon
@@ -391,15 +460,26 @@ Last updated: 2026-08-10 (all work on `feature/calculators` branch)
 - [ ] **T1** — Quick quote teaser
 - [ ] **T2** — Impact stats partial
 
-### C6 details (implemented, staged)
+### C6 details (committed `3331d48`, then refactored to shared system)
 
 Demo: `https://twofiftyseven.pages.dev/calculator/hours-to-impact/`
 
-All §4 checklist items done: `block.php` (data-color-space, whitelist, `$is_preview`), ACF field group `group_two57_block_hours_to_impact.json` (eyebrow/heading/tagline + `colour_space`), engine module, SCSS, `@forward`, `main.js` import + init, `transitions.js` Swup re-init, `acf_register_block_type` in `functions.php`.
+All §4 checklist items done. The C6 SCSS was split into:
+- `_calc-base.scss` — shared `.calc__*` classes (see §11), reusable by all future calculators
+- `_calc-hours-to-impact.scss` — slimmed to ~18 lines (block shell padding + `--accent` result col placeholder)
 
-Behaviour: `readURL()` cold-load defaults 46/8; radio-group keyboard pattern (§7 relayed) via `<button role="radio">`; breakdown `<details>` inside the `data-js` root so per-person stats update live; `scroll-margin-top` on breakdown so it clears the fixed header when auto-scrolled; BREAKDOWN heading only shown when open; weeks/hours inputs in a 2-col grid; left card types bumped +1 step.
+Block markup (`block.php`) uses `.calc__*` classes throughout; the `hours-to-impact` identity class remains on `<section>` for block-specific scoping.
 
-**Remaining for C6**: final visual QA on demo → commit staged changes → mark C6 done.
+Behaviour added during build:
+- `readURL()` cold-load defaults: team=1, days=5, weeks=46, hours=8 (immediate non-zero result)
+- Radio-group keyboard pattern (§7) via `<button role="radio">`
+- Breakdown `<details>` inside the `data-js` root so per-person stats update live
+- `scroll-margin-top` on breakdown clears the fixed header when auto-scrolled
+- BREAKDOWN heading only shown when open (`:not([open])` hides summary)
+- Weeks/hours inputs in a 2-col grid; hours input increments by 0.5 (`step="0.5"`)
+- Bounded inputs: stepper-only keyboard guard (typing blocked, only arrows), snap-back clamp on change
+- Breakdown caret: CSS chevron matching mobile nav, rotates when open (`aria-expanded`)
+- Body grid stacks at `bp-lg` (1024px) not `bp-md` — prevents 2x result figures overflowing at tablet widths
 
 ### Code-review notes (2026-08-10)
 

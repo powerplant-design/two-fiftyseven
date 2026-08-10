@@ -62,10 +62,12 @@ function readURL() {
 		team:         parseInt( params.get( 'team' ) || '0', 10 ),
 		daysPerWeek:  parseInt( params.get( 'days' ) || '0', 10 ),
 		weeksPerYear: parseInt( params.get( 'weeks' ) || '0', 10 ),
-		hoursPerDay:  parseInt( params.get( 'hours' ) || '0', 10 ),
+		hoursPerDay:  parseFloat( params.get( 'hours' ) || '0' ),
 	};
 	// On a cold load (no URL params), pre-fill the NZ working-year defaults
 	if ( ! hasParams ) {
+		state.team         = 1;
+		state.daysPerWeek  = M.DAYS_PER_WEEK;
 		state.weeksPerYear = M.WEEKS_PER_YEAR;
 		state.hoursPerDay  = M.HOURS_PER_DAY;
 	}
@@ -189,15 +191,36 @@ function bindEvents( root, state, givingRate ) {
 
 	root.addEventListener( 'change', ( e ) => {
 		if ( e.target.matches( '[data-calc-weeks]' ) ) {
-			state.weeksPerYear = Math.max( 0, Math.min( M.MAX_WEEKS, parseInt( e.target.value, 10 ) || 0 ) );
+			const v = parseInt( e.target.value, 10 ) || 0;
+			state.weeksPerYear = Math.max( 0, Math.min( M.MAX_WEEKS, v ) );
+			if ( v !== state.weeksPerYear ) e.target.value = state.weeksPerYear;
 			rerender();
 			return;
 		}
 		if ( e.target.matches( '[data-calc-hours]' ) ) {
-			state.hoursPerDay = Math.max( 0, Math.min( M.MAX_HOURS, parseInt( e.target.value, 10 ) || 0 ) );
+			const v = parseFloat( e.target.value ) || 0;
+			state.hoursPerDay = Math.max( 0, Math.min( M.MAX_HOURS, v ) );
+			if ( v !== state.hoursPerDay ) e.target.value = state.hoursPerDay;
 			rerender();
 			return;
 		}
+	} );
+
+	// Restrict the bounded number inputs (weeks/hours) to stepper-only:
+	// typed digits never enter, so values can't exceed min/max. Only the
+	// up/down steppers (native keyboard arrows + spinner buttons) move them.
+	// Capture phase + stopPropagation so Locomotive Scroll can't hijack arrows.
+	const stepperOnly = [ 'ArrowUp', 'ArrowDown', 'Tab', 'Enter' ];
+	root.querySelectorAll( '[data-calc-weeks], [data-calc-hours]' ).forEach( ( input ) => {
+		input.addEventListener( 'keydown', ( e ) => {
+			if ( e.key === 'ArrowUp' || e.key === 'ArrowDown' ) {
+				e.stopPropagation();
+				return;
+			}
+			if ( ! stepperOnly.includes( e.key ) ) {
+				e.preventDefault();
+			}
+		}, { capture: true } );
 	} );
 
 	// Breakdown trigger proxies into the full-width <details>
