@@ -647,12 +647,16 @@ Last updated: 2026-08-11 (all work on `feature/calculators` branch)
 - [x] **C6 share row + email/copy backend** — first calculator to ship the §6 reusable system (committed `5080103`)
 - [x] **C1** — Workspace pricing ✅ built + committed (`b084d49`) — retrofits the §6 share row + proves `two57_calc_figures_workspace_pricing()`; breakdown + chart refinements landed after the commit (see "C1 — Workspace pricing implementation plan" + status notes below)
 - [x] **Base-SCSS refactor** — shared primitives promoted to `_calc-base.scss` (see "Shared-SCSS refactor" below), ready for C2
+- [x] **Shared team-size slider system** ✅ committed (`699d816`) — `.calc__slider*` primitives in `_calc-base.scss` (range input + stepper buttons + big readout); ported to C1 and C6. Mobile hides the slider (buttons + number only). See "Slider system" below.
+- [x] **C1/C6 UX polish** ✅ committed (`699d816`) — commitment field reordered below memberships + relabelled "Private office lease term"; Dedicated annual-save breakdown row hidden unless annual is ticked **and** ≥1 Dedicated member; new memberships default to **Dedicated** tier (`M.DEFAULT_TIER`); `calc-source` tooltips capped to viewport + anchored right of the trigger below `bp-md` (fixes the mobile horizontal-overflow bug the slider work surfaced)
 - [ ] **C2** — Meet pricing (+ Host variant) ← **next up** (plan in "C2 — Meet pricing implementation plan" below)
 - [ ] **C5** — Office carbon
 - [ ] **C4** — Meeting costs
 - [ ] **C3** — Office costs v2
 - [ ] **T1** — Quick quote teaser
 - [ ] **T2** — Impact stats partial
+
+> **Next action (2026-08-11):** merge `feature/calculators` → `main` and deploy so C1 + C6 (slider system, tooltip fix, default tier) can be tested on the live site. After deploy, verify on live: slider drag/stepper/readout on both calcs, roster defaulting to Dedicated, annual-prepay row visibility, and tooltip behaviour on mobile (no horizontal overflow).
 
 ### C6 share row + email/copy link (built on C6, not C1)
 
@@ -742,6 +746,7 @@ Behaviour added during build:
 - Bounded inputs: stepper-only keyboard guard (typing blocked, only arrows), snap-back clamp on change
 - Breakdown caret: CSS chevron matching mobile nav, rotates when open (`aria-expanded`)
 - Body grid stacks at `bp-lg` (1024px) not `bp-md` — prevents 2x result figures overflowing at tablet widths
+- Team-size stepper upgraded to the shared `.calc__slider*` system (`699d816`, max 30 — see "Slider system" below)
 
 ### C1 — Workspace pricing implementation plan
 
@@ -779,7 +784,7 @@ Behaviour added during build:
 6. **`functions.php`** — `acf_register_block_type` `workspace-pricing` (title `257 Calc Workspace Pricing`).
 7. **`assets/js/main.js`** + **`transitions.js`** — import + `initWorkspacePricing()` (three call sites, mirroring `initHoursToImpact`).
 
-**Post-commit refinements (after `b084d49`, see git status):** email figures/compose gained per-member `Member N:` roster lines (member index tracked in `two57_calc_figures_workspace_pricing()`); breakdown totals regrouped so Monthly + Annual sit flush in one `compare__list` (both columns), with the Annual row using the `compare__row--total` bold treatment and the Dedicated-prepay line moved above the totals.
+**Post-commit refinements (after `b084d49`):** email figures/compose gained per-member `Member N:` roster lines (member index tracked in `two57_calc_figures_workspace_pricing()`); breakdown totals regrouped so Monthly + Annual sit flush in one `compare__list` (both columns), with the Annual row using the `compare__row--total` bold treatment and the Dedicated-prepay line moved above the totals. Later (`699d816`): commitment radios reordered below Memberships + relabelled "Private office lease term" (longer tooltip explaining it's a comparison assumption, not a commitment), Dedicated-prepay row now hides unless annual **and** ≥1 Dedicated member, team control replaced with the shared slider system, and new members default to Dedicated tier (see "Slider system" + "C1/C6 default membership tier" below).
 
 **Verification:** `npm run build`; send a test via the block's email form → `TWO57_CALC_EMAIL_LOG` or Mailhog (rate limit cleared per §"Local mail testing"), lead `calc_source = workspace-pricing`; confirm copy-link round-trips `team/commitment/annual/desks`; no `/calculator/...` WP page exists locally → test on Cloudflare Pages demo or a throwaway page.
 
@@ -796,6 +801,49 @@ Feasible via the existing SSOT pipeline (ACF Options → `wp_head` injector in `
 
 Complexity = **moderate** (proven wiring, but): (1) methodology is duplicated across JS + PHP recompute, so edits hit both and must stay in sync; (2) decimals (0.27, 1.2, 2.5) need careful casting; (3) empty-field fallbacks needed — a cleared number would silently render a $0 estimate line on a public page. Also note `M.GIVING_RATE = 1` in JS is hardcoded while `giving_rate_per_person_hour` already exists in ACF — inconsistent, worth auditing if this is picked up.
 
+### Slider system (shared `.calc__slider*` primitives — committed `699d816`)
+
+Replaces the old stepper-only team control on **C1 (workspace pricing)** and **C6 (hours-to-impact)**. Built once in `_calc-base.scss`, no per-calc SCSS.
+
+**Markup** (both blocks use identical structure; only the range `max` differs — 15 for C1, 30 for C6):
+
+```html
+<div class="calc__slider-row">
+  <div class="calc__slider-controls">
+    <button type="button" class="calc__stepper-btn" data-calc-team-dec aria-label="Decrease team size">&minus;</button>
+    <div class="calc__slider" data-calc-team-slider>
+      <input type="range" class="calc__slider-input" data-calc-team-range min="0" max="15" step="1" value="0" aria-label="Team size">
+    </div>
+    <button type="button" class="calc__stepper-btn" data-calc-team-inc aria-label="Increase team size">&plus;</button>
+  </div>
+  <output class="calc__slider-value" data-calc-team-out aria-live="polite">0</output>
+</div>
+```
+
+**Behaviour:**
+- Slider + `−`/`+` steppers both drive the same `updateTeam()`; the readout (`<output>`) and range stay in sync
+- Track fill is painted via a `--pct` custom property (JS sets `calc__slider`'s `--pct` = value/max × 100) — CSS `linear-gradient` background reads it; the round thumb is a styled native range thumb (webkit + moz), 2px inverse border, grab cursor, focus ring via `:focus-visible`
+- **Mobile (< `bp-md` 768px):** the range input is `display: none` — stepper buttons + number only (slider is unusable at narrow widths). `.calc__slider-controls` collapses to `auto auto`
+- Readout: display font, `--text-5xl-size`, `tabular-nums`, `white-space: nowrap`, `min-inline-size: 2ch` reserved so 1→2 digit doesn't shift the layout, right-aligned, number only (no "members" suffix)
+- Min stays **0** to preserve the empty state on both calcs; max clamps to the calc's `M.MAX_TEAM`/`M.TEAM_MAX`
+- Init sets range value, `--pct`, readout, and button disabled states from the URL-hydrated state (same as the stepper did)
+
+**QA learned:** the `output` `aria-live="polite"` readout keeps the range accessible; buttons get `aria-label`s. Both calcs verified working locally before commit.
+
+### Tooltip overflow fix (committed `699d816`)
+
+The `calc-source` tooltips (`<span class="calc-source__pop">`) were the cause of the mobile horizontal-overflow bug — on narrow viewports the popup (positioned `left: 0` of the trigger, `inline-size: max-content`) ran past the right edge of the screen.
+
+**Fix (in `_calc-base.scss`, applies to every calc that uses `.calc-source`):**
+- `max-inline-size: min(280px, calc(100vw - 2 * var(--space-m)))` — the popup can never exceed the viewport minus page gutters
+- Below `bp-md`: `left: auto; right: 0` — anchored to the trigger's **right** edge so it expands **leftward** instead of off-screen
+
+Verified: deleting the offending DOM node removed the overflow (root-caused by bisection), then the CSS fix resolved it without markup changes.
+
+### C1/C6 default membership tier (committed `699d816`)
+
+New memberships now default to **Dedicated** (was Flexi 1 day/week): `M.DEFAULT_TIER = 'dedicated'` in `assets/js/modules/workspace-pricing.js`, used by all three member-creation sites (`readURL()` roster build, `readURL()` desks fallback, `updateTeam()` grow loop). Consequence: a cold visitor gets 1 Dedicated member at $659 (annual discount applies if the annual box is ticked). No plan/backend change — the server recompute clamps independently.
+
 ### C2 — Meet pricing implementation plan
 
 > **Source (2026-08-11):** `meetings/pricing/index.html` (2304 lines) is a hand-built "quote tool" (`.quote-*` classes, root `.quote-calc`) — **not** the shared design-system family that C3/C4/C5 use. It shares only the §6 share row + FAQ with sitewide patterns. Ports to a `meet-pricing` block with a `room_set` ACF select for the Host variant (§"Host variant (C2)").
@@ -811,7 +859,7 @@ Complexity = **moderate** (proven wiring, but): (1) methodology is duplicated ac
 | `.calc__result-empty` (centred empty state in the dark card) | C1 override — moved to base with stretch centring | C2 `.quote-item--prompt`, C4/C5 result asides | ✅ done |
 | `.calc__body` stretch + result fill (stretched card) | C1 override — promoted to base default (`.calc__body` is now `align-items: stretch`, `.calc__result` flex column, `.calc__result-empty` fills) | all calcs (C1 proved the right default) | ✅ done |
 | `.calc__roster` / `-row` / `-label` | C1 roster list — moved to base | C1 roster, C2/C3 member rows | ✅ done |
-| `.calc__slider` (range + value display, reconcile 2 impls) | new | C2 `.people-slider`, C3 `.ux-slider` | ⏳ with C2 |
+| `.calc__slider` (range + value display, reconcile 2 impls) | new | C2 `.people-slider`, C3 `.ux-slider` | ✅ done — built on C1, ported to C6 (see "Slider system" below) |
 | `.calc__repeat` + `.calc__add-btn` (add/remove row) | new | C2 `.day-row`, C3 `.oc-custom-rows`, C4 `.custom-rows` | ⏳ with C2 |
 | `.calc__day-row` (repeating date/time shell) | new | C2 native date/time, C4 AM/PM inset widget | ⏳ with C2 |
 | `.calc__contact` (inline email/contact form) | new | C2 full `.qf` form, C3/4/5 `.calc-contact-inline` | ⏳ with C2 |
