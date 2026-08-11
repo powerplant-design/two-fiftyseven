@@ -397,7 +397,7 @@ MailPoet API notes verified against the installed plugin (v5.x):
 
 The share row can be built on any of the calculators that need it. **Built on C6 (hours-to-impact)** because it was already live with the complete `.calc__*` system; the backend is generic so C1–C5 retrofit cleanly. Order of operations when a calc gets the share row:
 
-1. `inc/calc-share-email.php` holds the `rest_api_init` endpoint + the per-calc recompute helpers (shared; the `calc` switch dispatches to the right recompute) — **built once**, no per-calc backend
+1. `inc/calc-share-email.php` holds the `rest_api_init` endpoint + the per-calc recompute helpers (shared infrastructure **built once**; each calc adds its own sanitize + figures + compose `$calc` case to the existing switches)
 2. Build the calc's share markup in `block.php` (calc-specific copy)
 3. The `.calc__share-*` classes live in `_calc-base.scss` — **built once**, no per-calc SCSS
 4. Wire the calc engine: `import { initCalcShare }` + `initCalcShare(root, { slug, getState })`
@@ -422,7 +422,7 @@ The share row can be built on any of the calculators that need it. **Built on C6
 Suggested order (simplest → most complex):
 
 1. **C6 — Giving (hours→impact)** — ✅ done. 4 inputs, 1 ratio, no comparison table. **Also ships the §6 share row + email backend + MailPoet lead capture as the reference implementation** (built on C6 rather than C1 — C6 already had the complete `.calc__*` system, §6.10). C1+ simply reuse it.
-2. **C1 — Workspace pricing** — retrofits the §6 share row (no backend work); proves a second calc's `two57_calc_figures_workspace_pricing()` + email template.
+2. **C1 — Workspace pricing** — ✅ done (`b084d49`). Retrofit the §6 share row + prove a second calc's `two57_calc_figures_workspace_pricing()` + email template. Backend work needed: per-calc sanitize + figures + compose cases in `inc/calc-share-email.php` (the C6 backend is generic, but each calc adds its own `$calc` case).
 3. **C2 — Meet pricing** — proves colour swap (same block, different `colour_space` + `room_set`). Reuses the §6 backend.
 4. **C5 — Office carbon** — medium, emission factors stay in code
 5. **C4 — Meeting costs** — high complexity, industry bands comparison
@@ -514,7 +514,7 @@ Both are `@forward`ed in `_index.scss`, with `calc-base` before the per-calc fil
 // assets/css/06-components/_index.scss
 @forward 'calc-base';
 @forward 'calc-hours-to-impact';
-// @forward 'calc-workspace-pricing';  // future calcs
+@forward 'calc-workspace-pricing';
 ```
 
 New calculators should **reuse `.calc__*` classes** for any standard element (stepper, radio group, number input, result panel, breakdown, stat row, etc.) and only add per-calc classes for genuinely unique elements (comparison tables, quote forms, scenario slots, etc.). Extend `_calc-base.scss` when a new shared element type is needed across multiple calculators.
@@ -583,7 +583,7 @@ All calculator blocks share a common SCSS base, `_calc-base.scss`, which defines
 assets/css/06-components/
 ├── _calc-base.scss              ← shared .calc__* classes (all calcs)
 ├── _calc-hours-to-impact.scss    ← C6 overrides (shell padding, --accent col)
-├── _calc-workspace-pricing.scss ← C1 overrides (future)
+├── _calc-workspace-pricing.scss ← C1 overrides (roster, annual toggle, chart)
 ├── _calc-meet-pricing.scss      ← C2 overrides (future)
 └── ...
 ```
@@ -592,7 +592,7 @@ assets/css/06-components/
 ```scss
 @forward 'calc-base';
 @forward 'calc-hours-to-impact';
-// @forward 'calc-workspace-pricing';  // future
+@forward 'calc-workspace-pricing';
 ```
 
 ### Shared `.calc__*` class catalogue
@@ -605,13 +605,13 @@ assets/css/06-components/
 | `.calc__fields-grid` | 2-col grid for paired inputs (stacks ≤600px) | C6, C5, others |
 | `.calc__field` / `__field-label` | Field wrapper + label | All |
 | `.calc__stepper` (+ `button` / `output`) | −/output/+ stepper | C1, C3, C4, C5, C6 |
-| `.calc__radio-group` / `__radio-label` | Segmented radio buttons (`<button role="radio">`) | C3, C4, C5, C6 |
+| `.calc__radio-group` / `__radio-label` | Segmented radio buttons (`<button role="radio">`) | C1, C3, C4, C5, C6 |
 | `.calc__input` | Number/text input (stepper-only keyboard guard) | All |
 | `.calc__microcopy` | Small helper text under inputs | C5, C6 |
 | `.calc__result` / `__result-grid` / `__result-col` / `__result-label` / `__result-figure` / `__result-unit` | Result panel (dark `--color-surface-inverse-primary` bg) | All |
-| `.calc__breakdown-trigger` / `__breakdown-caret` | Trigger button + CSS chevron (rotates when open) | C3, C4, C5, C6 |
-| `.calc__breakdown` / `__breakdown-summary` / `__breakdown-body` / `__breakdown-grid` / `__breakdown-col` / `__breakdown-heading` / `__breakdown-prose` | Full-width disclosure panel | C3, C4, C5, C6 |
-| `.calc__stat` / `__stat-label` / `__stat-value` / `__stat-unit` | Label/value/unit stat row | C6 (extensible) |
+| `.calc__breakdown-trigger` / `__breakdown-caret` | Trigger button + CSS chevron (rotates when open) | C1, C3, C4, C5, C6 |
+| `.calc__breakdown` / `__breakdown-summary` / `__breakdown-body` / `__breakdown-grid` / `__breakdown-col` / `__breakdown-heading` / `__breakdown-prose` | Full-width disclosure panel | C1, C3, C4, C5, C6 |
+| `.calc__stat` / `__stat-label` / `__stat-value` / `__stat-unit` | Label/value/unit stat row | C1, C6 (extensible) |
 | `.calc__share` / `__share-eyebrow` / `__share-title` / `__share-row` | Share section (email + copy cards) | All with a share row |
 | `.calc__share-card` / `__share-card-title` / `__share-card-body` | Share card | All with a share row |
 | `.calc__share-form` / `__share-input` / `__share-btn` | Email form row | All with a share row |
@@ -645,7 +645,7 @@ Last updated: 2026-08-11 (all work on `feature/calculators` branch)
 - [x] **Review checkpoint** ✅ passed — `window.twofiftyseven` populated, `data-price="dedicated"` renders `$659`
 - [x] **C6** — Giving (hours→impact) ✅ committed (`3331d48`) + refactored to shared `.calc__*` system (committed `ef0d2cb`)
 - [x] **C6 share row + email/copy backend** — first calculator to ship the §6 reusable system (committed `5080103`)
-- [ ] **C1** — Workspace pricing ← **in progress** (implementation plan in "C1 — Workspace pricing implementation plan" below)
+- [x] **C1** — Workspace pricing ✅ built + committed (`b084d49`) — retrofits the §6 share row + proves `two57_calc_figures_workspace_pricing()`; breakdown + chart refinements landed after the commit (see "C1 — Workspace pricing implementation plan" + status notes below)
 - [ ] **C2** — Meet pricing (+ Host variant)
 - [ ] **C5** — Office carbon
 - [ ] **C4** — Meeting costs
@@ -655,7 +655,7 @@ Last updated: 2026-08-11 (all work on `feature/calculators` branch)
 
 ### C6 share row + email/copy link (built on C6, not C1)
 
-The §6 share/email system was built on C6 (hours-to-impact) instead of the originally suggested C1 — C6 is already live with the full `.calc__*` system, and the backend is fully generic, so C1–C5 now just add markup + a one-line `initCalcShare()` call. Decision recorded per §6.10's flexibility.
+The §6 share/email system was built on C6 (hours-to-impact) instead of the originally suggested C1 — C6 is already live with the full `.calc__*` system, and the backend infrastructure is fully generic, so C1–C5 now just add markup + a one-line `initCalcShare()` call + their per-calc `$calc` backend cases (sanitize/figures/compose). Decision recorded per §6.10's flexibility.
 
 **Implemented:**
 - `inc/calc-share-email.php` — REST endpoint `POST /wp-json/two57/v1/calc-share-email` (honeypot → `is_email` → consent gate → per-calc state sanitise/clamp → server-side recompute from ACF → email compose → send → MailPoet lead capture, all in one file, loaded from `functions.php`)
@@ -753,35 +753,47 @@ Behaviour added during build:
 | root `[data-js="calc-office-costs"]` (`pricing/index.html:674`) | block identity class `workspace-pricing`, keeps `[data-js="calc-office-costs"]` |
 | Team stepper `[data-calc-team-*]` (0–15) | `.calc__stepper` |
 | Commitment radios `[data-calc-commitment]` (1/3/5) | `.calc__radio-group` `<button role="radio">` (§7 pattern) |
-| Annual discount `[data-calc-annual]` checkbox | per-calc `.workspace-pricing__annual` toggle |
-| Member roster `<select>` `[data-calc-member]` (dedicated/flexi-5..1) | per-calc dropdown rows; rebuilt on team change |
-| Result sinks `[data-calc-private-*|ours-*|saving-*|mini-total|period|bridge-*]` | `.calc__result` layout |
+| Annual discount `[data-calc-annual]` checkbox | `.annual-check` label (hidden unless a Dedicated member is on the roster — `[data-calc-annual-wrap]`) |
+| Member roster `<select>` `[data-calc-member]` (dedicated/flexi-5..1) | per-calc `.calc__roster-row`/`.calc__roster-select`; rebuilt on team change; stacks label-above-select ≤640px |
+| Result sinks `[data-calc-private-*|ours-*|mini-total|dedicated-save|bridge-*]` | `.calc__result` layout; note: `saving-*`/`period` writes are dead (no markup) |
 | Comparison chart (pricing coordinator `:1305-1577`) | per-calc `workspace-pricing__chart` (comparison table stays per-calc, not `.calc__*`) |
 
-**Stays in code** (cited methodology/benchmarks, per §2): private-office model `M` (`rent 420/sqm, sqm/person 10, opex 0.27, furniture 2000, internet 2400, power 50W/sqm × 8h × 230d × $0.30, cleaning 45/hr × 1.2, consumables 300, insurance 200, mhfr 445/1:12/2.5yr, admin 0.06×$70, legal 3500, booking 75/mo ≥10 team`), `ANNUAL_DISCOUNT 0.10`, comparison benches (`PRIVATE_OFFICE_PER_PERSON_YR 14200`, flexi `450–650` / dedicated `700–830` monthly, giving `8h×46wk×$1`), `SOURCES` citations, `desks` URL encoding.
+**Stays in code** (cited methodology/benchmarks, per §2): private-office model `M` (`rent 420/sqm, sqm/person 10, opex 0.27, furniture 2000, internet 2400, power 50W/sqm × 8h × 230d × $0.30, cleaning 45/hr × 1.2, consumables 300, insurance 200, mhfr 445/1:12/2.5yr, admin 0.06×$70, legal 3500, booking 75/mo ≥10 team`), comparison benches (`PRIVATE_OFFICE_PER_PERSON_YR 14200`, flexi `450–650` / dedicated `700–830` monthly, giving `8h×46wk×$1`), `SOURCES` citations, `desks` URL encoding.
 
-**Reads from ACF SSOT** (already injected → `window.twofiftyseven.prices`): `dedicated | flexi-5..1` monthly prices (6 fields), `annualDiscountPct` (Dedicated only). Day passes are SSOT fields but **not** used by this calc — ignore.
+**Reads from ACF SSOT** (already injected → `window.twofiftyseven.prices`): `dedicated | flexi-5..1` monthly prices (6 fields), `annualDiscountPct` (Dedicated only; JS falls back to 0.10 if missing/zero). Day passes are SSOT fields but **not** used by this calc — ignore.
 
 **URL sync:** `readURL()/writeURL()` keeps `team, commitment, annual, desks` (one char per roster member: `d`/`1..5`/`x`) in the query string → copy-link reproduces the exact roster.
 
-**Zero-start:** team 0 renders the empty state ("Set your team size above") with hidden chart; engine keeps 0, but the email submit clamps team to ≥1 server-side (a `$0` email is meaningless).
+**Zero-start:** team 0 renders the empty state ("Select your team size to see your number") with hidden headline + chart; engine keeps 0, but the email submit clamps team to ≥1 server-side (a `$0` email is meaningless).
 
 ---
 
-**Build order:**
+**Built (committed `b084d49`) — deviations from the original build order:**
 
-1. **`inc/calc-share-email.php`** (the only backend change) — 3 additions mirroring the C6 cases:
-   - `two57_calc_sanitize_state()`: add `'workspace-pricing'` case → `{ team:int 1–15, commitment:int ∈{1,3,5}, annual:bool, members:array }` (clamp team min 1, snap commitment to nearest valid, whitelist tier slugs `dedicated|flexi-5..flexi-1`)
-   - `two57_calc_figures_workspace_pricing(array $state)` — recompute wholly from `get_field('membership_*_monthly','option')` + `get_field('annual_prepay_discount_pct','option')`; private model uses the same code-methodology `M`; output keys mirroring C6's figures array
-   - `two57_calc_compose_workspace_pricing()` + a `case 'workspace-pricing'` in `two57_calc_compose_email()` (email copy: team size, commitment term, roster, "your memberships vs a private office" summary figure)
-2. **`acf-json/group_two57_block_workspace_pricing.json`** — one `colour_space` select (`neutral|forest|purple|maroon`, default `forest`)
-3. **`blocks/workspace-pricing/block.php`** — port markup: shared `.calc__*` classes (intro, body 50/50 grid, stepper, radio-group, results, breakdown), check `$allowed_spaces` + `$is_preview` like C6, `data-color-space` on root, share row §6 markup **inside** the `data-js` root (copy C6 block.php → `data-calc-share`), `calc_source` slug `workspace-pricing`
-4. **`assets/js/modules/workspace-pricing.js`** — port v1 engine as ES module exporting `initWorkspacePricing()`: `compute(state)` pure with `window.twofiftyseven.prices` injected, roster rebuild on team change, `read/writeURL`, price formatting, `initCalcShare(root, { slug: 'workspace-pricing', getState })`; single export queried on `[data-js="calc-office-costs"]`
-5. **`assets/css/06-components/_calc-workspace-pricing.scss`** — per-calc overrides only: roster dropdown rows, annual toggle, comparison chart bars; forward in `_index.scss` after `calc-base`
-6. **`functions.php`** — `acf_register_block_type` `workspace-pricing` → title `257 Calc Workspace Pricing`, `render_template` `blocks/workspace-pricing/block.php`
-7. **`assets/js/main.js`** + **`transitions.js`** — import + `initWorkspacePricing()` (three call sites, mirroring `initHoursToImpact`)
+1. **`inc/calc-share-email.php`** — all 3 additions done. Note: the `case 'workspace-pricing'` in `two57_calc_share_email_handle()`'s recompute `switch ($calc)` was initially missed and caused "Unsupported calculator." on email submit — fixed (the sanitize + compose switches had the case, the figures dispatch didn't). The email summary covers team size, membership count, totals + savings vs private office, and the per-member roster; the commitment term is **not** in the email copy (only used for the amortisation math).
+2. **`acf-json/group_two57_block_workspace_pricing.json`** — one `colour_space` select (`neutral|forest|purple|maroon`, default `forest`) + `wp_eyebrow`/`wp_heading`/`wp_tagline`.
+3. **`blocks/workspace-pricing/block.php`** — ported with `$allowed` whitelist + `$is_preview` fallback + `data-color-space` + §6 share markup. Breakdown shows: private-office line items + monthly/Annual totals, memberships (Dedicated-prepay line, monthly, annual total), Kaupapa bridge. Breakdown heading is "Estimated private office costs {current year}" (`gmdate('Y')`).
+4. **`assets/js/modules/workspace-pricing.js`** — ported v1 engine, `initWorkspacePricing()` queried on `[data-js="calc-office-costs"]`; commitment radios, annual checkbox (hidden unless Dedicated on roster), `read/writeURL`, `initCalcShare(root, { slug: 'workspace-pricing', getState })`.
+5. **`assets/css/06-components/_calc-workspace-pricing.scss`** — roster rows, annual toggle, source-tooltip rows, breakdown totals, comparison chart bars; forwarded in `_index.scss`.
+6. **`functions.php`** — `acf_register_block_type` `workspace-pricing` (title `257 Calc Workspace Pricing`).
+7. **`assets/js/main.js`** + **`transitions.js`** — import + `initWorkspacePricing()` (three call sites, mirroring `initHoursToImpact`).
+
+**Post-commit refinements (after `b084d49`, see git status):** email figures/compose gained per-member `Member N:` roster lines (member index tracked in `two57_calc_figures_workspace_pricing()`); breakdown totals regrouped so Monthly + Annual sit flush in one `compare__list` (both columns), with the Annual row using the `compare__row--total` bold treatment and the Dedicated-prepay line moved above the totals.
 
 **Verification:** `npm run build`; send a test via the block's email form → `TWO57_CALC_EMAIL_LOG` or Mailhog (rate limit cleared per §"Local mail testing"), lead `calc_source = workspace-pricing`; confirm copy-link round-trips `team/commitment/annual/desks`; no `/calculator/...` WP page exists locally → test on Cloudflare Pages demo or a throwaway page.
+
+#### Future improvement (scoped, not built — 2026-08-11)
+
+The private-office methodology numbers (`M` in `assets/js/modules/workspace-pricing.js:28`) and the source citations (`SOURCES`, ~13 × label/name/url) are **hardcoded in code** (both in the JS engine and mirrored in `two57_calc_figures_workspace_pricing()` in `inc/calc-share-email.php`). They stay hardcoded for now; the requested change is to move them into the ACF Options "Calculator data" page so they can be edited without a code deploy.
+
+Feasible via the existing SSOT pipeline (ACF Options → `wp_head` injector in `functions.php` → `window.twofiftyseven`). Scoped shape:
+
+- ACF: new "Workspace pricing · methodology" tab on `calculator-data-settings` — ~29 number fields (rent/sqm 420, opex 0.27, MHFR 445/1:12/2.5yr, benchmarks $14,200 / flexi 450–650 / dedicated 700–830, etc.) + a **repeater** for sources (sub-fields label/name/url)
+- `functions.php`: emit `window.twofiftyseven.methodology` + `sources`
+- JS: read from the global, drop `M`/`SOURCES`
+- `inc/calc-share-email.php`: switch hardcoded numbers to `get_field()`
+
+Complexity = **moderate** (proven wiring, but): (1) methodology is duplicated across JS + PHP recompute, so edits hit both and must stay in sync; (2) decimals (0.27, 1.2, 2.5) need careful casting; (3) empty-field fallbacks needed — a cleared number would silently render a $0 estimate line on a public page. Also note `M.GIVING_RATE = 1` in JS is hardcoded while `giving_rate_per_person_hour` already exists in ACF — inconsistent, worth auditing if this is picked up.
 
 ### Code-review notes (2026-08-10)
 

@@ -200,11 +200,17 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 					<div class="calc__breakdown-grid">
 						<!-- Left column: private office line items -->
 						<div class="calc__breakdown-col | stack">
-							<h3 class="calc__breakdown-heading | text-l">Private office, costed line by line</h3>
+							<h3 class="calc__breakdown-heading | text-l">Estimated private office costs <?php echo esc_html( gmdate( 'Y' ) ); ?></h3>
 							<div class="compare__list" data-calc-private-lines></div>
-							<div class="compare__row compare__row--total">
-								<div class="compare__row-label font-bold">Annual total</div>
-								<div class="compare__row-value" data-calc-private-total>$0</div>
+							<div class="compare__list">
+								<div class="compare__row">
+									<div class="compare__row-label">Monthly total</div>
+									<div class="compare__row-value" data-calc-private-monthly>$0</div>
+								</div>
+								<div class="compare__row compare__row--total">
+									<div class="compare__row-label font-bold">Annual total</div>
+									<div class="compare__row-value" data-calc-private-total>$0</div>
+								</div>
 							</div>
 							<p class="calc__breakdown-prose | text-m">
 								Includes rent, outgoings, fit-out amortised over your commitment, and the team's admin + MHFR burden. Booking software only kicks in at 10+ people.
@@ -217,16 +223,16 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 							<div class="compare__list" data-calc-ours-lines></div>
 							<div class="compare__list">
 								<div class="compare__row">
+									<div class="compare__row-label">Dedicated pays <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% less when paid annually</div>
+									<div class="compare__row-value" data-calc-dedicated-save>$0</div>
+								</div>
+								<div class="compare__row">
 									<div class="compare__row-label">Monthly total</div>
 									<div class="compare__row-value" data-calc-mini-total>$0</div>
 								</div>
-								<div class="compare__row">
-									<div class="compare__row-label">Annual</div>
+								<div class="compare__row compare__row--total">
+									<div class="compare__row-label font-bold">Annual total</div>
 									<div class="compare__row-value" data-calc-ours-total>$0</div>
-								</div>
-								<div class="compare__row">
-									<div class="compare__row-label">Dedicated pays <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% less when paid annually</div>
-									<div class="compare__row-value" data-calc-dedicated-save>$0</div>
 								</div>
 							</div>
 

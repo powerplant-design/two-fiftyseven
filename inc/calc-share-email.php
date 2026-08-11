@@ -92,6 +92,9 @@ function two57_calc_share_email_handle( WP_REST_Request $request ): WP_REST_Resp
 		case 'hours-to-impact':
 			$figures = two57_calc_figures_hours_to_impact( $state );
 			break;
+		case 'workspace-pricing':
+			$figures = two57_calc_figures_workspace_pricing( $state );
+			break;
 		default:
 			$figures = new WP_Error( 'unsupported_calc', 'Unsupported calculator.' );
 	}
@@ -314,7 +317,9 @@ function two57_calc_figures_workspace_pricing( array $state ) {
 	// 257 — sum of memberships (annual_prepay_discount applies to Dedicated only).
 	$ours_total_yr = 0;
 	$ours_lines    = [];
+	$member_number = 0;
 	foreach ( $state['members'] as $tier ) {
+		$member_number++;
 		if ( '' === $tier ) {
 			continue;
 		}
@@ -324,7 +329,7 @@ function two57_calc_figures_workspace_pricing( array $state ) {
 			$monthly = $prices[ $tier ] ?? 0;
 		}
 		$ours_total_yr += $monthly * 12;
-		$ours_lines[] = [ 'tier' => $tier, 'monthly' => $monthly ];
+		$ours_lines[] = [ 'tier' => $tier, 'monthly' => $monthly, 'member' => $member_number ];
 	}
 
 	$annual_saving     = $private_total_yr - $ours_total_yr;
@@ -463,9 +468,11 @@ function two57_calc_compose_workspace_pricing( array $figures, array $state, str
 			return 'Flexi ' . str_replace( 'flexi-', '', $slug ) . ' day' . ( 'flexi-1' === $slug ? '' : 's' ) . '/week';
 		};
 		$label = $tier_label( $line['tier'] );
-		$roster_plain[] = sprintf( '%s · %s/mo', $label, $money( $line['monthly'] ) );
+		$member = $line['member'] ?? count( $roster_plain ) + 1;
+		$roster_plain[] = sprintf( 'Member %d: %s · %s/mo', $member, $label, $money( $line['monthly'] ) );
 		$roster_html[]  = sprintf(
-			'<strong style="color:#111827;">%s</strong> · %s/mo',
+			'Member %d: <strong style="color:#111827;">%s</strong> · %s/mo',
+			$member,
 			esc_html( $label ),
 			esc_html( $money( $line['monthly'] ) )
 		);

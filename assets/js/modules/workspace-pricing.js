@@ -377,6 +377,9 @@ function renderResults( root, state, computed, prices, annualDiscount ) {
 	root.querySelectorAll( '[data-calc-private-total]' ).forEach( ( el ) => {
 		el.textContent = fmt$( round100( computed.privateTotalYr ) );
 	} );
+	root.querySelectorAll( '[data-calc-private-monthly]' ).forEach( ( el ) => {
+		el.textContent = fmt$( Math.round( computed.privateTotalYr / 12 ) );
+	} );
 	root.querySelectorAll( '[data-calc-ours-lines]' ).forEach( ( el ) => {
 		el.innerHTML = computed.oursLines.map( ( l ) => `
 			<div class="compare__row">

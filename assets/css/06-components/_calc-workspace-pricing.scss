@@ -169,7 +169,6 @@
 }
 
 .compare__row--total {
-	margin-block-start: var(--space-xs);
 	padding-block-start: var(--space-xs);
 	border-block-start: 2px solid var(--color-content-primary);
 }
@@ -269,9 +268,6 @@
 // inverse (light-on-dark) tokens resolved by the block's colour space.
 .workspace-pricing__chart {
 	gap: var(--space-xs);
-	// margin-block-start: var(--space-m);
-	// padding-block-start: var(--space-m);
-	// border-top: 1px solid color-mix(in srgb, var(--color-content-inverse) 22%, transparent);
 }
 
 .workspace-pricing__chart-row {
