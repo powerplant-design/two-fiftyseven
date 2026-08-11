@@ -116,16 +116,28 @@ function bindEvents( root, state, givingRate ) {
 
 	const teamDec = root.querySelector( '[data-calc-team-dec]' );
 	const teamInc = root.querySelector( '[data-calc-team-inc]' );
+	const teamRange = root.querySelector( '[data-calc-team-range]' );
+	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
 	const teamOut = root.querySelector( '[data-calc-team-out]' );
+
+	function paintSlider( n ) {
+		if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.MAX_TEAM > 0 ? ( n / M.MAX_TEAM ) * 100 : 0 }%` );
+		if ( teamOut ) teamOut.value = n;
+	}
 
 	function updateTeam( n ) {
 		state.team = Math.max( 0, Math.min( M.MAX_TEAM, n ) );
-		if ( teamOut ) teamOut.value = state.team;
+		if ( teamRange ) teamRange.value = state.team;
 		if ( teamDec ) teamDec.disabled = state.team <= 0;
 		if ( teamInc ) teamInc.disabled = state.team >= M.MAX_TEAM;
+		paintSlider( state.team );
 		rerender();
 	}
 
+	if ( teamRange ) {
+		teamRange.addEventListener( 'input', () => updateTeam( parseInt( teamRange.value, 10 ) ) );
+		paintSlider( state.team );
+	}
 	if ( teamDec ) teamDec.addEventListener( 'click', () => updateTeam( state.team - 1 ) );
 	if ( teamInc ) teamInc.addEventListener( 'click', () => updateTeam( state.team + 1 ) );
 
@@ -254,8 +266,16 @@ function initCalc( root ) {
 
 	const state = readURL();
 
+	const teamRange = root.querySelector( '[data-calc-team-range]' );
+	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
+	if ( teamRange ) teamRange.value = state.team;
 	const teamOut = root.querySelector( '[data-calc-team-out]' );
+	if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.MAX_TEAM > 0 ? ( state.team / M.MAX_TEAM ) * 100 : 0 }%` );
 	if ( teamOut ) teamOut.value = state.team;
+	const teamDec = root.querySelector( '[data-calc-team-dec]' );
+	const teamInc = root.querySelector( '[data-calc-team-inc]' );
+	if ( teamDec ) teamDec.disabled = state.team <= 0;
+	if ( teamInc ) teamInc.disabled = state.team >= M.MAX_TEAM;
 
 	if ( state.daysPerWeek > 0 ) {
 		root.querySelectorAll( '[data-calc-days-group] [data-calc-days]' ).forEach( ( btn ) => {

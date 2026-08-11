@@ -76,25 +76,16 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 							<span class="calc-source__pop" role="tooltip">Up to 15 members. Bigger teams are a conversation, talk to Ash.</span>
 						</span>
 					</span>
-					<div class="calc__stepper">
-						<button type="button" data-calc-team-dec aria-label="Decrease team size">&minus;</button>
-						<output data-calc-team-out aria-live="polite">0</output>
-						<button type="button" data-calc-team-inc aria-label="Increase team size">&plus;</button>
-					</div>
-				</div>
-
-				<div class="calc__field">
-					<span class="calc__field-label | text-monospace text-s | cluster">
-						Commitment
-						<span class="calc-source">
-							<button class="calc-source__trigger" type="button" aria-label="About commitment">i</button>
-							<span class="calc-source__pop" role="tooltip">Amortises the private-office fit-out + lease legals over the term.</span>
-						</span>
-					</span>
-					<div class="calc__radio-group | cluster" role="radiogroup" aria-label="Commitment length" data-calc-commitment-group>
-						<button type="button" role="radio" class="calc__radio-label" data-calc-commitment="1" aria-checked="false">1 yr</button>
-						<button type="button" role="radio" class="calc__radio-label" data-calc-commitment="3" aria-checked="false">3 yr</button>
-						<button type="button" role="radio" class="calc__radio-label" data-calc-commitment="5" aria-checked="false">5 yr</button>
+					<div class="calc__slider-row">
+						<div class="calc__slider-controls">
+							<button type="button" class="calc__stepper-btn" data-calc-team-dec aria-label="Decrease team size">&minus;</button>
+							<div class="calc__slider" data-calc-team-slider>
+								<input type="range" class="calc__slider-input" data-calc-team-range
+									min="0" max="15" step="1" value="0" aria-label="Team size">
+							</div>
+							<button type="button" class="calc__stepper-btn" data-calc-team-inc aria-label="Increase team size">&plus;</button>
+						</div>
+						<output class="calc__slider-value" data-calc-team-out aria-live="polite">0</output>
 					</div>
 				</div>
 
@@ -110,8 +101,23 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 					<label class="calc__check" data-calc-annual-wrap hidden>
 						<input type="checkbox" data-calc-annual aria-label="Pay annually and save on Dedicated Memberships">
 						<span class="calc__check-box" aria-hidden="true"></span>
-						<span class="calc__check-label | text-s">Pay annually and save <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% on Dedicated Memberships</span>
+						<span class="calc__check-label | text-m">Pay annually and save <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% on Dedicated Memberships</span>
 					</label>
+				</div>
+
+				<div class="calc__field">
+					<span class="calc__field-label | text-monospace text-s | cluster">
+						Private office lease term
+						<span class="calc-source">
+							<button class="calc-source__trigger" type="button" aria-label="About the private office lease term">i</button>
+							<span class="calc-source__pop" role="tooltip">Used to compare against a private office, not a commitment you're making here. A longer lease term spreads the fit-out + legal costs, which lowers the estimated private-office bill — so this shows the fair comparison for your situation.</span>
+						</span>
+					</span>
+					<div class="calc__radio-group | cluster" role="radiogroup" aria-label="Private office lease term" data-calc-commitment-group>
+						<button type="button" role="radio" class="calc__radio-label" data-calc-commitment="1" aria-checked="false">1 yr</button>
+						<button type="button" role="radio" class="calc__radio-label" data-calc-commitment="3" aria-checked="false">3 yr</button>
+						<button type="button" role="radio" class="calc__radio-label" data-calc-commitment="5" aria-checked="false">5 yr</button>
+					</div>
 				</div>
 			</div>
 
@@ -222,7 +228,7 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 							<h3 class="calc__breakdown-heading | text-l">Your memberships</h3>
 							<div class="calc__compare" data-calc-ours-lines></div>
 							<div class="calc__compare">
-								<div class="calc__compare-row">
+								<div class="calc__compare-row" data-calc-dedicated-save-row hidden>
 									<div class="calc__compare-row-label">Dedicated pays <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% less when paid annually</div>
 									<div class="calc__compare-row-value" data-calc-dedicated-save>$0</div>
 								</div>

@@ -50,6 +50,7 @@ const M = {
 	HOURS_PER_DAY:         8,
 	WEEKS_PER_YEAR:        46,
 	TEAM_MAX:              15,
+	DEFAULT_TIER:          'dedicated',
 	// Comparison benchmarks (pricing coordinator · verified NZ 2026)
 	PRIVATE_OFFICE_PER_PERSON_YR: 14200,
 	COMPETITOR_FLEXI_LOW_MO:      450,
@@ -269,10 +270,10 @@ function readURL() {
 		for ( const ch of desks ) {
 			if ( ch === 'd' ) state.members.push( { tier: 'dedicated' } );
 			else if ( /[1-5]/.test( ch ) ) state.members.push( { tier: `flexi-${ ch }` } );
-			else state.members.push( { tier: 'flexi-1' } );
+			else state.members.push( { tier: M.DEFAULT_TIER } );
 		}
 	} else if ( state.team > 0 ) {
-		state.members = Array.from( { length: state.team }, () => ( { tier: 'flexi-1' } ) );
+		state.members = Array.from( { length: state.team }, () => ( { tier: M.DEFAULT_TIER } ) );
 	}
 	return state;
 }
@@ -409,8 +410,13 @@ function renderResults( root, state, computed, prices, annualDiscount ) {
 		el.textContent = fmt$( Math.round( computed.oursTotalYr / 12 ) );
 	} );
 
-	// Dedicated annual-prepay discount — per-member $/yr saved (only shown when
-	// the checkbox is ticked).
+	// Dedicated annual-prepay discount — per-member $/yr saved. Only shown when
+	// the checkbox is ticked and at least one member is on Dedicated.
+	root.querySelectorAll( '[data-calc-dedicated-save-row]' ).forEach( ( row ) => {
+		const dedicatedCount = state.members.filter( ( m ) => m.tier === 'dedicated' ).length;
+		const show = state.annualDiscount && dedicatedCount > 0;
+		row.hidden = ! show;
+	} );
 	root.querySelectorAll( '[data-calc-dedicated-save]' ).forEach( ( el ) => {
 		if ( state.annualDiscount ) {
 			const dedicatedCount = state.members.filter( ( m ) => m.tier === 'dedicated' ).length;
@@ -510,24 +516,36 @@ function bindEvents( root, state, prices, annualDiscount ) {
 		writeURL( state );
 	}
 
+	const teamRange = root.querySelector( '[data-calc-team-range]' );
+	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
+	const teamOut = root.querySelector( '[data-calc-team-out]' );
 	const teamDec = root.querySelector( '[data-calc-team-dec]' );
 	const teamInc = root.querySelector( '[data-calc-team-inc]' );
-	const teamOut = root.querySelector( '[data-calc-team-out]' );
+
+	function paintSlider( n ) {
+		if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.TEAM_MAX > 0 ? ( n / M.TEAM_MAX ) * 100 : 0 }%` );
+		if ( teamOut ) teamOut.value = n;
+	}
 
 	function updateTeam( n ) {
 		state.team = Math.max( 0, Math.min( M.TEAM_MAX, n ) );
 		if ( state.members.length < state.team ) {
-			while ( state.members.length < state.team ) state.members.push( { tier: 'flexi-1' } );
+			while ( state.members.length < state.team ) state.members.push( { tier: M.DEFAULT_TIER } );
 		} else if ( state.members.length > state.team ) {
 			state.members = state.members.slice( 0, state.team );
 		}
-		if ( teamOut ) teamOut.value = state.team;
+		if ( teamRange ) teamRange.value = state.team;
 		if ( teamDec ) teamDec.disabled = state.team <= 0;
 		if ( teamInc ) teamInc.disabled = state.team >= M.TEAM_MAX;
+		paintSlider( state.team );
 		renderRoster( root, state, prices );
 		rerender();
 	}
 
+	if ( teamRange ) {
+		teamRange.addEventListener( 'input', () => updateTeam( parseInt( teamRange.value, 10 ) ) );
+		paintSlider( state.team );
+	}
 	if ( teamDec ) teamDec.addEventListener( 'click', () => updateTeam( state.team - 1 ) );
 	if ( teamInc ) teamInc.addEventListener( 'click', () => updateTeam( state.team + 1 ) );
 
@@ -633,7 +651,11 @@ function initCalc( root ) {
 
 	const state = readURL();
 
+	const teamRange = root.querySelector( '[data-calc-team-range]' );
+	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
+	if ( teamRange ) teamRange.value = state.team;
 	const teamOut = root.querySelector( '[data-calc-team-out]' );
+	if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.TEAM_MAX > 0 ? ( state.team / M.TEAM_MAX ) * 100 : 0 }%` );
 	if ( teamOut ) teamOut.value = state.team;
 	const teamDec = root.querySelector( '[data-calc-team-dec]' );
 	const teamInc = root.querySelector( '[data-calc-team-inc]' );

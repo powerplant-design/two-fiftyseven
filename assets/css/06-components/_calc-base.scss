@@ -224,6 +224,161 @@
 	}
 }
 
+// ── Slider row (stepper buttons + range input with a round knob) ──
+// Two columns: the interactive controls and the big value readout.
+.calc__slider-row {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: var(--space-s);
+	align-items: center;
+}
+
+.calc__slider-controls {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	gap: var(--space-s);
+	align-items: center;
+	min-inline-size: 0;
+}
+
+// Below md the range input is hidden — stepper buttons + number only.
+@media (max-width: #{bp.$bp-md}) {
+	.calc__slider-controls {
+		grid-template-columns: auto auto;
+	}
+
+	.calc__slider {
+		display: none;
+	}
+}
+
+.calc__stepper-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: var(--space-l);
+	block-size: var(--space-l);
+	flex-shrink: 0;
+	border-radius: var(--corner-radius-xs);
+	border: 1px solid var(--color-border-tertiary);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	font-size: var(--text-l-size);
+	line-height: 1;
+	cursor: pointer;
+	transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+
+	&:hover:not(:disabled) {
+		background-color: color-mix(in srgb, var(--color-content-inverse) 90%, var(--color-content-primary));
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.calc__slider {
+	--pct: 0%;
+	inline-size: 100%;
+	min-inline-size: 0;
+	block-size: var(--space-l);
+	display: flex;
+	align-items: center;
+
+	// The native input paints the track via --pct; the knob is a round thumb.
+
+	input[type="range"] {
+		-webkit-appearance: none;
+		appearance: none;
+		inline-size: 100%;
+		block-size: 8px;
+		border-radius: 999px;
+		background-color: var(--color-border-tertiary);
+		background-image: linear-gradient(var(--color-btn-primary-bg), var(--color-btn-primary-bg));
+		background-repeat: no-repeat;
+		background-size: var(--pct) 100%;
+		cursor: pointer;
+	}
+
+	input[type="range"]:focus {
+		outline: none;
+	}
+
+	input[type="range"]::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		inline-size: var(--space-l);
+		block-size: var(--space-l);
+		border-radius: 50%;
+		border: 2px solid var(--color-content-inverse);
+		background-color: var(--color-content-primary);
+		cursor: grab;
+		box-shadow: 0 2px 6px color-mix(in srgb, var(--color-content-primary) 30%, transparent);
+		transition: transform 0.15s ease;
+
+		&:hover {
+			transform: scale(1.1);
+		}
+
+		&:active {
+			cursor: grabbing;
+			transform: scale(1.05);
+		}
+	}
+
+	input[type="range"]::-moz-range-thumb {
+		inline-size: var(--space-l);
+		block-size: var(--space-l);
+		border-radius: 50%;
+		border: 2px solid var(--color-content-inverse);
+		background-color: var(--color-content-primary);
+		cursor: grab;
+		box-shadow: 0 2px 6px color-mix(in srgb, var(--color-content-primary) 30%, transparent);
+		transition: transform 0.15s ease;
+
+		&:hover {
+			transform: scale(1.1);
+		}
+
+		&:active {
+			cursor: grabbing;
+			transform: scale(1.05);
+		}
+	}
+
+	// Focus ring around the knob (the input itself has none).
+	input[type="range"]:focus-visible::-webkit-slider-thumb {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 3px;
+	}
+
+	input[type="range"]:focus-visible::-moz-range-thumb {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 3px;
+	}
+}
+
+.calc__slider-value {
+	font-family: var(--font-display-family);
+	font-weight: var(--font-display-weight);
+	font-size: var(--text-5xl-size);
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+	// Reserve width for two digits (both calcs cap at 15 / 30) so the controls
+	// don't shift when the value crosses from single to double digits.
+	min-inline-size: 2ch;
+	text-align: right;
+	color: var(--color-content-primary);
+	white-space: nowrap;
+}
+
 // ── Radio group (segmented buttons) ───────────────────────────
 .calc__radio-group {
 	--cluster-gap-columns: var(--space-xs);
@@ -543,7 +698,12 @@
 	left: 0;
 	z-index: 10;
 	inline-size: max-content;
-	max-inline-size: 280px;
+	max-inline-size: min(280px, calc(100vw - 2 * var(--space-m)));
+
+	@media (max-width: #{bp.$bp-md}) {
+		left: auto;
+		right: 0;
+	}
 	padding: var(--space-2xs) var(--space-s);
 	background-color: var(--color-content-primary);
 	color: var(--color-content-inverse);

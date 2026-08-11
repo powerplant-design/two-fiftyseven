@@ -39,6 +39,7 @@
 // ── Annual prepay toggle (layout only — the swatch is .calc__check) ──
 .workspace-pricing .calc__check {
 	justify-content: flex-end;
+	align-items: center;
 	margin-block-start: var(--space-xs);
 }
 

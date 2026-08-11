@@ -66,10 +66,16 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 			<div class="calc__inputs | stack" data-scroll data-scroll-repeat>
 				<div class="calc__field">
 					<span class="calc__field-label | text-monospace text-s">Team size</span>
-					<div class="calc__stepper">
-						<button type="button" data-calc-team-dec aria-label="Decrease team size">&minus;</button>
-						<output data-calc-team-out aria-live="polite">0</output>
-						<button type="button" data-calc-team-inc aria-label="Increase team size">&plus;</button>
+					<div class="calc__slider-row">
+						<div class="calc__slider-controls">
+							<button type="button" class="calc__stepper-btn" data-calc-team-dec aria-label="Decrease team size">&minus;</button>
+							<div class="calc__slider" data-calc-team-slider>
+								<input type="range" class="calc__slider-input" data-calc-team-range
+									min="0" max="30" step="1" value="0" aria-label="Team size">
+							</div>
+							<button type="button" class="calc__stepper-btn" data-calc-team-inc aria-label="Increase team size">&plus;</button>
+						</div>
+						<output class="calc__slider-value" data-calc-team-out aria-live="polite">0</output>
 					</div>
 				</div>
 
