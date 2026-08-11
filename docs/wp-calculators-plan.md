@@ -646,7 +646,7 @@ Last updated: 2026-08-11 (all work on `feature/calculators` branch)
 - [x] **C6** — Giving (hours→impact) ✅ committed (`3331d48`) + refactored to shared `.calc__*` system (committed `ef0d2cb`)
 - [x] **C6 share row + email/copy backend** — first calculator to ship the §6 reusable system (committed `5080103`)
 - [x] **C1** — Workspace pricing ✅ built + committed (`b084d49`) — retrofits the §6 share row + proves `two57_calc_figures_workspace_pricing()`; breakdown + chart refinements landed after the commit (see "C1 — Workspace pricing implementation plan" + status notes below)
-- [ ] **C2** — Meet pricing (+ Host variant)
+- [ ] **C2** — Meet pricing (+ Host variant) ← **next up** (plan + base-SCSS refactor in "C2 — Meet pricing implementation plan" below)
 - [ ] **C5** — Office carbon
 - [ ] **C4** — Meeting costs
 - [ ] **C3** — Office costs v2
@@ -794,6 +794,41 @@ Feasible via the existing SSOT pipeline (ACF Options → `wp_head` injector in `
 - `inc/calc-share-email.php`: switch hardcoded numbers to `get_field()`
 
 Complexity = **moderate** (proven wiring, but): (1) methodology is duplicated across JS + PHP recompute, so edits hit both and must stay in sync; (2) decimals (0.27, 1.2, 2.5) need careful casting; (3) empty-field fallbacks needed — a cleared number would silently render a $0 estimate line on a public page. Also note `M.GIVING_RATE = 1` in JS is hardcoded while `giving_rate_per_person_hour` already exists in ACF — inconsistent, worth auditing if this is picked up.
+
+### C2 — Meet pricing implementation plan
+
+> **Source (2026-08-11):** `meetings/pricing/index.html` (2304 lines) is a hand-built "quote tool" (`.quote-*` classes, root `.quote-calc`) — **not** the shared design-system family that C3/C4/C5 use. It shares only the §6 share row + FAQ with sitewide patterns. Ports to a `meet-pricing` block with a `room_set` ACF select for the Host variant (§"Host variant (C2)").
+
+**Shared-SCSS refactor first (separate pre-C2 commit — review the primitives before C2 builds on them).** Audit of C1's `_calc-workspace-pricing.scss` (381 lines) + the 4 future sources found most of C1's "per-calc" styles are shared-worthy. Promote to `_calc-base.scss`:
+
+| Primitive | From | Used by |
+|---|---|---|
+| `.calc__select` (custom chevron dropdown) | C1 `.calc__roster-select` | C2 addon select, C3 `.oc-select`, C1 roster |
+| `.calc__check` (custom checkbox/radio swatch primitive) | C1 `.annual-check` | C2 `.addon__check`/`.impact-toggle__check`, C3 booking checkbox, C4 `.checkbox`/`.radio`, C1 annual toggle |
+| `.calc__compare` (label/value row list + `--total`) | C1 `.compare__list`/`__row`/`__row--total` | C2 `.quote-items`, C3 `.value-add`/`.offset-math`, C5 `.esg-export__row`, C1 breakdown |
+| `.calc-source` tooltip glyph + pop | C1 (keep name/behaviour) | C3 `.oc-tip` (structured panel variant), C1 breakdown |
+| `.calc__result-empty` (centred empty state in the dark card) | C1 override | C2 `.quote-item--prompt`, C4/C5 result asides |
+| `.calc__body` stretch + result fill (stretched card) | C1 override | all calcs (C1 proved the right default) |
+| `.calc__slider` (range + value display, reconcile 2 impls) | new | C2 `.people-slider`, C3 `.ux-slider` |
+| `.calc__repeat` + `.calc__add-btn` (add/remove row) | new | C2 `.day-row`, C3 `.oc-custom-rows`, C4 `.custom-rows` |
+| `.calc__day-row` (repeating date/time shell) | new | C2 native date/time, C4 AM/PM inset widget |
+| `.calc__contact` (inline email/contact form) | new | C2 full `.qf` form, C3/4/5 `.calc-contact-inline` |
+
+**Stay per-calc (genuinely unique):** C2 room-tile selector states (`recommended`/`disabled`), C2 `pricing-tiers` multi-rate table, C3 scenarios/compare dialog, chart bars, feature/inclusion card grids.
+
+**C2 build order (after the refactor commit):**
+
+1. **`inc/calc-share-email.php`** — `two57_calc_sanitize_state()` `'meet-pricing'` case (people, room, duration, days `[{date,start,end}]`, addons, catering per-head, impact discount), `two57_calc_figures_meet_pricing()` (rooms + addons + impact discount + giving from ACF SSOT; recompute authoritative), `two57_calc_compose_meet_pricing()` (itemised quote, room, dates, impact-funding line)
+2. **`acf-json/group_two57_block_meet_pricing.json`** — `colour_space` select + `room_set` select (`all` default / `host` = Workshop/Event/Entire only)
+3. **`blocks/meet-pricing/block.php`** — `.meet-pricing` identity class on root; §6 share row inside the `data-js` root; people slider, room-tile grid, duration pills, day rows, addon reveal cards, sticky quote panel (total + itemised + impact-funding + impact-discount toggle)
+4. **`assets/js/modules/meet-pricing.js`** — engine reading `window.twofiftyseven.rooms`/`addons`/`impact` (all already injected), `initCalcShare(root, { slug: 'meet-pricing', getState })`, URL sync (`people/room/duration/days/addons/impact`)
+5. **`assets/css/06-components/_calc-meet-pricing.scss`** — per-calc only: quote layout (`1.5fr 1fr`), room tiles, quote panel, impact card, pricing tiers; forward in `_index.scss`
+6. **`functions.php`** — `acf_register_block_type` `meet-pricing` (title `257 Calc Meet Pricing`)
+7. **`assets/js/main.js`** + **`transitions.js`** — import + `initMeetPricing()` (three call sites)
+
+**SSOT:** no new ACF data fields — rooms (6 × cap/day/hour/evening), addons (AV/tea/catering/materials/setup), impact (discount 50%, eligibility $200k, paid-forward $450k) all already exist in `group_two57_calculator_data.json` and inject into `window.twofiftyseven`.
+
+**Verification:** `npm run build`; test quote end-to-end (room swap, day add/remove, addon reveal, impact toggle); email send → `TWO57_CALC_EMAIL_LOG`/Mailhog with `calc_source = meet-pricing`; copy-link round-trips `people/room/duration/days/addons/impact`; Host variant filters tiles via `room_set`.
 
 ### Code-review notes (2026-08-10)
 
