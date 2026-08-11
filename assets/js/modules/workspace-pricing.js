@@ -322,7 +322,7 @@ function renderRoster( root, state, prices ) {
 		row.className = 'calc__roster-row';
 		row.innerHTML = `
 			<span class="calc__roster-label | text-l font-bold">Member ${ i + 1 }</span>
-			<select class="calc__roster-select" aria-label="Member ${ i + 1 } membership type" data-calc-member="${ i }">
+			<select class="calc__select" aria-label="Member ${ i + 1 } membership type" data-calc-member="${ i }">
 				${ options }
 			</select>
 		`;
@@ -352,8 +352,8 @@ function renderRoster( root, state, prices ) {
 function renderSourceRow( line ) {
 	const source = SOURCES[ line.source ] || { label: line.source, name: '' };
 	return `
-		<div class="compare__row">
-			<div class="compare__row-label">
+		<div class="calc__compare-row">
+			<div class="calc__compare-row-label">
 				<span class="calc-source">
 					<span>${ TIER_LABELS[ line.key ] }${ line.note ? ` <span class="text-s">&middot; ${ line.note }</span>` : '' }</span>
 					<button class="calc-source__trigger" type="button" aria-label="${ source.label } source">i</button>
@@ -365,7 +365,7 @@ function renderSourceRow( line ) {
 					</span>
 				</span>
 			</div>
-			<div class="compare__row-value">${ fmt$( round100( line.amount ) ) }</div>
+			<div class="calc__compare-row-value">${ fmt$( round100( line.amount ) ) }</div>
 		</div>
 	`;
 }
@@ -382,9 +382,9 @@ function renderResults( root, state, computed, prices, annualDiscount ) {
 	} );
 	root.querySelectorAll( '[data-calc-ours-lines]' ).forEach( ( el ) => {
 		el.innerHTML = computed.oursLines.map( ( l ) => `
-			<div class="compare__row">
-				<div class="compare__row-label">${ l.tier }</div>
-				<div class="compare__row-value">${ fmt$( l.annual ) }/yr</div>
+			<div class="calc__compare-row">
+				<div class="calc__compare-row-label">${ l.tier }</div>
+				<div class="calc__compare-row-value">${ fmt$( l.annual ) }/yr</div>
 			</div>
 		` ).join( '' );
 	} );

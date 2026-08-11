@@ -646,7 +646,8 @@ Last updated: 2026-08-11 (all work on `feature/calculators` branch)
 - [x] **C6** — Giving (hours→impact) ✅ committed (`3331d48`) + refactored to shared `.calc__*` system (committed `ef0d2cb`)
 - [x] **C6 share row + email/copy backend** — first calculator to ship the §6 reusable system (committed `5080103`)
 - [x] **C1** — Workspace pricing ✅ built + committed (`b084d49`) — retrofits the §6 share row + proves `two57_calc_figures_workspace_pricing()`; breakdown + chart refinements landed after the commit (see "C1 — Workspace pricing implementation plan" + status notes below)
-- [ ] **C2** — Meet pricing (+ Host variant) ← **next up** (plan + base-SCSS refactor in "C2 — Meet pricing implementation plan" below)
+- [x] **Base-SCSS refactor** — shared primitives promoted to `_calc-base.scss` (see "Shared-SCSS refactor" below), ready for C2
+- [ ] **C2** — Meet pricing (+ Host variant) ← **next up** (plan in "C2 — Meet pricing implementation plan" below)
 - [ ] **C5** — Office carbon
 - [ ] **C4** — Meeting costs
 - [ ] **C3** — Office costs v2
@@ -799,20 +800,21 @@ Complexity = **moderate** (proven wiring, but): (1) methodology is duplicated ac
 
 > **Source (2026-08-11):** `meetings/pricing/index.html` (2304 lines) is a hand-built "quote tool" (`.quote-*` classes, root `.quote-calc`) — **not** the shared design-system family that C3/C4/C5 use. It shares only the §6 share row + FAQ with sitewide patterns. Ports to a `meet-pricing` block with a `room_set` ACF select for the Host variant (§"Host variant (C2)").
 
-**Shared-SCSS refactor first (separate pre-C2 commit — review the primitives before C2 builds on them).** Audit of C1's `_calc-workspace-pricing.scss` (381 lines) + the 4 future sources found most of C1's "per-calc" styles are shared-worthy. Promote to `_calc-base.scss`:
+**Shared-SCSS refactor — ✅ DONE (commit after this doc sync).** Audit of C1's `_calc-workspace-pricing.scss` (381 lines) + the 4 future sources found most of C1's "per-calc" styles are shared-worthy. The live-code promotions shipped first; the remaining rows are new primitives built when their first consumer lands (C2):
 
-| Primitive | From | Used by |
-|---|---|---|
-| `.calc__select` (custom chevron dropdown) | C1 `.calc__roster-select` | C2 addon select, C3 `.oc-select`, C1 roster |
-| `.calc__check` (custom checkbox/radio swatch primitive) | C1 `.annual-check` | C2 `.addon__check`/`.impact-toggle__check`, C3 booking checkbox, C4 `.checkbox`/`.radio`, C1 annual toggle |
-| `.calc__compare` (label/value row list + `--total`) | C1 `.compare__list`/`__row`/`__row--total` | C2 `.quote-items`, C3 `.value-add`/`.offset-math`, C5 `.esg-export__row`, C1 breakdown |
-| `.calc-source` tooltip glyph + pop | C1 (keep name/behaviour) | C3 `.oc-tip` (structured panel variant), C1 breakdown |
-| `.calc__result-empty` (centred empty state in the dark card) | C1 override | C2 `.quote-item--prompt`, C4/C5 result asides |
-| `.calc__body` stretch + result fill (stretched card) | C1 override | all calcs (C1 proved the right default) |
-| `.calc__slider` (range + value display, reconcile 2 impls) | new | C2 `.people-slider`, C3 `.ux-slider` |
-| `.calc__repeat` + `.calc__add-btn` (add/remove row) | new | C2 `.day-row`, C3 `.oc-custom-rows`, C4 `.custom-rows` |
-| `.calc__day-row` (repeating date/time shell) | new | C2 native date/time, C4 AM/PM inset widget |
-| `.calc__contact` (inline email/contact form) | new | C2 full `.qf` form, C3/4/5 `.calc-contact-inline` |
+| Primitive | From | Used by | Status |
+|---|---|---|---|
+| `.calc__select` (custom chevron dropdown) | C1 `.calc__roster-select` — renamed, moved to `_calc-base.scss` | C2 addon select, C3 `.oc-select`, C1 roster | ✅ done |
+| `.calc__check` (custom checkbox/radio swatch primitive) | C1 `.annual-check`/`.checkbox__swatch` — renamed (`.calc__check-box`/`-label`), moved to base | C2 `.addon__check`/`.impact-toggle__check`, C3 booking checkbox, C4 `.checkbox`/`.radio`, C1 annual toggle | ✅ done |
+| `.calc__compare` (label/value row list + `--total`) | C1 `.compare__list`/`__row`/`__row--total` — renamed `-row`/`-row-label`/`-row-value`, moved to base | C2 `.quote-items`, C3 `.value-add`/`.offset-math`, C5 `.esg-export__row`, C1 breakdown | ✅ done |
+| `.calc-source` tooltip glyph + pop | C1 — moved to base as-is | C3 `.oc-tip` (structured panel variant), C1 breakdown | ✅ done |
+| `.calc__result-empty` (centred empty state in the dark card) | C1 override — moved to base with stretch centring | C2 `.quote-item--prompt`, C4/C5 result asides | ✅ done |
+| `.calc__body` stretch + result fill (stretched card) | C1 override — promoted to base default (`.calc__body` is now `align-items: stretch`, `.calc__result` flex column, `.calc__result-empty` fills) | all calcs (C1 proved the right default) | ✅ done |
+| `.calc__roster` / `-row` / `-label` | C1 roster list — moved to base | C1 roster, C2/C3 member rows | ✅ done |
+| `.calc__slider` (range + value display, reconcile 2 impls) | new | C2 `.people-slider`, C3 `.ux-slider` | ⏳ with C2 |
+| `.calc__repeat` + `.calc__add-btn` (add/remove row) | new | C2 `.day-row`, C3 `.oc-custom-rows`, C4 `.custom-rows` | ⏳ with C2 |
+| `.calc__day-row` (repeating date/time shell) | new | C2 native date/time, C4 AM/PM inset widget | ⏳ with C2 |
+| `.calc__contact` (inline email/contact form) | new | C2 full `.qf` form, C3/4/5 `.calc-contact-inline` | ⏳ with C2 |
 
 **Stay per-calc (genuinely unique):** C2 room-tile selector states (`recommended`/`disabled`), C2 `pricing-tiers` multi-rate table, C3 scenarios/compare dialog, chart bars, feature/inclusion card grids.
 

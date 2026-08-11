@@ -107,10 +107,10 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 						</span>
 					</span>
 					<ul class="calc__roster" data-calc-roster></ul>
-					<label class="annual-check" data-calc-annual-wrap hidden>
+					<label class="calc__check" data-calc-annual-wrap hidden>
 						<input type="checkbox" data-calc-annual aria-label="Pay annually and save on Dedicated Memberships">
-						<span class="checkbox__swatch" aria-hidden="true"></span>
-						<span class="annual-check__label | text-s">Pay annually and save <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% on Dedicated Memberships</span>
+						<span class="calc__check-box" aria-hidden="true"></span>
+						<span class="calc__check-label | text-s">Pay annually and save <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% on Dedicated Memberships</span>
 					</label>
 				</div>
 			</div>
@@ -201,15 +201,15 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 						<!-- Left column: private office line items -->
 						<div class="calc__breakdown-col | stack">
 							<h3 class="calc__breakdown-heading | text-l">Estimated private office costs <?php echo esc_html( gmdate( 'Y' ) ); ?></h3>
-							<div class="compare__list" data-calc-private-lines></div>
-							<div class="compare__list">
-								<div class="compare__row">
-									<div class="compare__row-label">Monthly total</div>
-									<div class="compare__row-value" data-calc-private-monthly>$0</div>
+							<div class="calc__compare" data-calc-private-lines></div>
+							<div class="calc__compare">
+								<div class="calc__compare-row">
+									<div class="calc__compare-row-label">Monthly total</div>
+									<div class="calc__compare-row-value" data-calc-private-monthly>$0</div>
 								</div>
-								<div class="compare__row compare__row--total">
-									<div class="compare__row-label font-bold">Annual total</div>
-									<div class="compare__row-value" data-calc-private-total>$0</div>
+								<div class="calc__compare-row calc__compare-row--total">
+									<div class="calc__compare-row-label font-bold">Annual total</div>
+									<div class="calc__compare-row-value" data-calc-private-total>$0</div>
 								</div>
 							</div>
 							<p class="calc__breakdown-prose | text-m">
@@ -220,19 +220,19 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 						<!-- Right column: memberships + giving -->
 						<div class="calc__breakdown-col | stack">
 							<h3 class="calc__breakdown-heading | text-l">Your memberships</h3>
-							<div class="compare__list" data-calc-ours-lines></div>
-							<div class="compare__list">
-								<div class="compare__row">
-									<div class="compare__row-label">Dedicated pays <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% less when paid annually</div>
-									<div class="compare__row-value" data-calc-dedicated-save>$0</div>
+							<div class="calc__compare" data-calc-ours-lines></div>
+							<div class="calc__compare">
+								<div class="calc__compare-row">
+									<div class="calc__compare-row-label">Dedicated pays <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% less when paid annually</div>
+									<div class="calc__compare-row-value" data-calc-dedicated-save>$0</div>
 								</div>
-								<div class="compare__row">
-									<div class="compare__row-label">Monthly total</div>
-									<div class="compare__row-value" data-calc-mini-total>$0</div>
+								<div class="calc__compare-row">
+									<div class="calc__compare-row-label">Monthly total</div>
+									<div class="calc__compare-row-value" data-calc-mini-total>$0</div>
 								</div>
-								<div class="compare__row compare__row--total">
-									<div class="compare__row-label font-bold">Annual total</div>
-									<div class="compare__row-value" data-calc-ours-total>$0</div>
+								<div class="calc__compare-row calc__compare-row--total">
+									<div class="calc__compare-row-label font-bold">Annual total</div>
+									<div class="calc__compare-row-value" data-calc-ours-total>$0</div>
 								</div>
 							</div>
 
