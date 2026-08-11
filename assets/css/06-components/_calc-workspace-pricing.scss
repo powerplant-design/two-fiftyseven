@@ -1,0 +1,385 @@
+@use '../02-tokens/breakpoints' as bp;
+
+// ============================================================
+// 257 Workspace Pricing Calculator — block-specific overrides
+// ============================================================
+
+// Shared calculator styling lives in _calc-base.scss (.calc__*).
+// This file holds the workspace-pricing roster, annual toggle,
+// source-tooltip rows, comparison chart + result accent.
+// ============================================================
+
+.workspace-pricing {
+	padding-block: var(--space-xl-3xl);
+}
+
+// ── Result headline ─────────────────────────────────────────
+// .calc__result-grid is a flex column with gap: space-l, so the two big
+// numbers stack with that same spacing (matching the shared base behaviour).
+.calc__result-grid .calc__result-grid-headline {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-l);
+}
+
+// Stretch the result column to match the inputs card height, and let the
+// result grid fill that space — so the empty state is already as tall as the
+// populated card and the height jumps less once a member is added.
+.workspace-pricing .calc__body {
+	align-items: stretch;
+}
+
+.workspace-pricing .calc__result {
+	display: flex;
+	flex-direction: column;
+}
+
+.workspace-pricing .calc__result-grid {
+	flex-grow: 1;
+}
+
+// Center the empty-state message in the stretched card.
+.workspace-pricing .calc__result-grid .calc__result-empty:not([hidden]) {
+	display: grid;
+	place-content: center;
+	flex: 1;
+}
+
+// Commitment radio labels are wider than the C6 digit buttons ("1 yr" vs "1")
+.workspace-pricing [data-calc-commitment-group] .calc__radio-label {
+	inline-size: auto;
+	min-inline-size: calc(var(--space-l) * 2);
+	padding-inline: var(--space-s);
+}
+
+// Field labels sit in a cluster with their "i" info tooltip — keep the gap tight.
+.workspace-pricing .calc__field-label {
+	--cluster-gap-columns: var(--space-2xs);
+	--cluster-gap-rows: var(--space-2xs);
+}
+
+// ── Member roster ───────────────────────────────────────────
+.calc__roster {
+	display: grid;
+	gap: var(--space-s);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.calc__roster-row {
+	display: grid;
+	grid-template-columns: minmax(80px, 8em) 1fr;
+	gap: var(--space-xs);
+	align-items: center;
+}
+
+@media (max-width: #{bp.$bp-sm}) {
+	.calc__roster-row {
+		grid-template-columns: 1fr;
+		align-items: start;
+	}
+}
+
+.calc__roster-label {
+	color: var(--color-content-secondary);
+}
+
+.calc__roster-select {
+	appearance: none;
+	-webkit-appearance: none;
+	inline-size: 100%;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-s);
+	padding-inline-end: var(--space-l);
+	border: var(--border-tertiary);
+	border-radius: var(--corner-radius-s);
+	background-color: var(--color-content-inverse);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right var(--space-xs) center;
+	background-size: 12px;
+	color: var(--color-content-primary);
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-s-size);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+// ── Annual prepay toggle ────────────────────────────────────
+.annual-check {
+	display: flex;
+	align-items: center !important;
+	justify-content: flex-end;
+	inline-size: unset !important;
+	margin-block-start: var(--space-xs);
+	cursor: pointer;
+
+	input {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.checkbox__swatch {
+		flex-shrink: 0;
+		margin-block-start: 2px;
+		inline-size: var(--space-s);
+		block-size: var(--space-s);
+		border-radius: 999px;
+		border: 2px solid var(--color-content-primary);
+		background-color: transparent;
+		transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+	}
+
+	input:checked + .checkbox__swatch {
+		background-color: var(--color-btn-primary-bg);
+		border-color: var(--color-btn-primary-bg);
+	}
+
+	input:focus-visible + .checkbox__swatch {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+// ── Comparison rows + source tooltips (in the breakdown) ────
+.compare__list {
+	display: flex;
+	flex-direction: column;
+}
+
+.compare__row {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: var(--space-m);
+	padding-block: var(--space-2xs);
+	border-bottom: 1px solid var(--color-border-tertiary);
+	align-items: baseline;
+}
+
+.compare__row:last-child {
+	border-bottom: 0;
+}
+
+.compare__row--total {
+	margin-block-start: var(--space-xs);
+	padding-block-start: var(--space-xs);
+	border-block-start: 2px solid var(--color-content-primary);
+}
+
+.compare__row--total .compare__row-value {
+	font-weight: 600;
+}
+
+.compare__row-label {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+}
+
+.compare__row-value {
+	font-family: var(--font-monospace-family);
+	font-variant-numeric: tabular-nums;
+}
+
+.calc-source__trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 18px;
+	block-size: 18px;
+	border-radius: 50%;
+	border: 1px solid var(--color-border-tertiary);
+	background-color: transparent;
+	color: var(--color-content-secondary);
+	font-family: var(--font-monospace-family);
+	font-size: 11px;
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+
+	&:hover,
+	&:focus-visible {
+		background-color: var(--color-content-primary);
+		color: var(--color-content-inverse);
+		border-color: var(--color-content-primary);
+	}
+}
+
+.calc-source {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2xs);
+}
+
+.calc-source__pop {
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 0;
+	z-index: 10;
+	inline-size: max-content;
+	max-inline-size: 280px;
+	padding: var(--space-2xs) var(--space-s);
+	background-color: var(--color-content-primary);
+	color: var(--color-content-inverse);
+	border-radius: var(--corner-radius-xs);
+	font-size: var(--text-xs-size);
+	line-height: 1.5;
+	box-shadow: 0 4px 24px color-mix(in srgb, var(--color-content-primary) 25%, transparent);
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(4px);
+	transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+
+	a {
+		color: var(--color-content-inverse);
+		text-decoration: underline;
+		word-break: break-word;
+	}
+}
+
+.calc-source[data-open="true"] .calc-source__pop,
+.calc-source:hover .calc-source__pop,
+.calc-source:focus-within .calc-source__pop {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.calc-source__pop-label {
+	display: block;
+	font-family: var(--font-monospace-family);
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+	margin-block-end: var(--space-2xs);
+	opacity: 0.75;
+}
+
+// ── Comparison chart (proposal panel) ───────────────────────
+// Lives inside the dark .calc__result-grid card, so all colours use the
+// inverse (light-on-dark) tokens resolved by the block's colour space.
+.workspace-pricing__chart {
+	gap: var(--space-xs);
+	// margin-block-start: var(--space-m);
+	// padding-block-start: var(--space-m);
+	// border-top: 1px solid color-mix(in srgb, var(--color-content-inverse) 22%, transparent);
+}
+
+.workspace-pricing__chart-row {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+// Label pushed left, value pushed right, on the same line.
+.workspace-pricing__chart-headline {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--space-s);
+}
+
+.workspace-pricing__chart-label {
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-xs-size);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+	opacity: 0.78;
+}
+
+.workspace-pricing__bar-wrap {
+	position: relative;
+	block-size: 8px;
+	background-color: color-mix(in srgb, var(--color-content-inverse) 16%, transparent);
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.workspace-pricing__bar {
+	position: absolute;
+	inset-block: 0;
+	left: 0;
+	inline-size: var(--bar-pct, 0%);
+	border-radius: 4px;
+	transition: inline-size 200ms ease-out;
+}
+
+.workspace-pricing__bar--private {
+	background-color: color-mix(in srgb, var(--color-content-inverse) 52%, transparent);
+}
+
+.workspace-pricing__bar--coworking-low {
+	background-color: color-mix(in srgb, var(--color-content-inverse) 38%, transparent);
+}
+
+.workspace-pricing__bar--coworking-high {
+	background-color: color-mix(in srgb, var(--color-content-inverse) 25%, transparent);
+}
+
+.workspace-pricing__bar--ours {
+	background-color: var(--color-content-inverse);
+}
+
+.workspace-pricing__chart-value {
+	font-family: var(--font-monospace-family);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--text-m-size);
+	color: var(--color-content-inverse);
+}
+
+.workspace-pricing__chart-row--ours .workspace-pricing__chart-value {
+	font-weight: 600;
+}
+
+.workspace-pricing__chart-savings {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	margin-block-start: var(--space-xs);
+	padding-block-start: var(--space-xs);
+	border-block-start: 1px solid color-mix(in srgb, var(--color-content-inverse) 22%, transparent);
+}
+
+// Same headline pattern as the bars above — text left, value right.
+.workspace-pricing__chart-savings .workspace-pricing__chart-headline {
+	align-items: baseline;
+}
+
+.workspace-pricing__chart-saving {
+	margin: 0;
+	color: color-mix(in srgb, var(--color-content-inverse) 72%, transparent);
+	font-size: var(--text-s-size);
+}
+
+.workspace-pricing__chart-saving-value {
+	font-family: var(--font-monospace-family);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--text-m-size);
+	color: var(--color-content-inverse);
+
+	strong {
+		color: var(--color-content-inverse);
+	}
+}
+
+// ── Result accent — highlight the teams' own annual total ───
+.workspace-pricing__result-col--accent {
+	// intentionally extends .calc__result-col; per-calc accent placeholder
+}
+
+// ── Result empty state (inside the dark .calc__result-grid card) ──
+.calc__result-empty {
+	margin: 0;
+	color: color-mix(in srgb, var(--color-content-inverse) 72%, transparent);
+	text-align: center;
+	padding-block: var(--space-m);
+}

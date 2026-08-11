@@ -1,0 +1,118 @@
+{
+    "key": "group_two57_block_workspace_pricing",
+    "title": "257 Workspace Pricing Calculator Block",
+    "fields": [
+        {
+            "key": "field_two57_wp_eyebrow",
+            "label": "Eyebrow",
+            "name": "wp_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional small label above the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Workspace pricing calculator",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_wp_heading",
+            "label": "Heading",
+            "name": "wp_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "The H1 heading for the calculator.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "a private office vs two/fiftyseven, let's price your team",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_wp_tagline",
+            "label": "Tagline",
+            "name": "wp_tagline",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Intro paragraph below the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Every team member picks their own membership, and the total is the sum of their rates. Compare that with what a private central-Wellington office would cost. All prices ex GST.",
+            "new_lines": "br",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_wp_colour_space",
+            "label": "Colour space",
+            "name": "colour_space",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Controls the colour theme for this block.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "neutral": "Neutral",
+                "forest": "Forest",
+                "purple": "Purple",
+                "maroon": "Maroon"
+            },
+            "default_value": "forest",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/workspace-pricing"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the heading and colour space for the 257 Workspace Pricing calculator block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1785813321642
+}

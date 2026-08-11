@@ -606,6 +606,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'workspace-pricing',
+		'title'           => __( '257 Calc Workspace Pricing', 'two-fiftyseven' ),
+		'description'     => __( 'Wellington office cost comparison calculator: private office vs two/fiftyseven memberships for a 1-15 person team.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/workspace-pricing/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'workspace', 'pricing', 'office', 'costs', 'membership' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 

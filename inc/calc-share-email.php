@@ -154,9 +154,47 @@ function two57_calc_sanitize_state( string $calc, array $state ) {
 				'weeksPerYear' => two57_calc_int( $state['weeks'] ?? $state['weeksPerYear'] ?? 46, 1, 52 ),
 				'hoursPerDay'  => two57_calc_float( $state['hours'] ?? $state['hoursPerDay'] ?? 8, 1, 24 ),
 			];
+		case 'workspace-pricing':
+			// Clamp team min 1: a zero-team "$0" email is meaningless (§C1 plan).
+			// Commitment snaps to the nearest valid term {1,3,5}.
+			$commitment = two57_calc_int( $state['commitment'] ?? 1, 1, 5 );
+			if ( ! in_array( $commitment, [ 1, 3, 5 ], true ) ) {
+				$commitment = ( $commitment <= 2 ) ? 1 : ( ( $commitment <= 4 ) ? 3 : 5 );
+			}
+			return [
+				'team'       => two57_calc_int( $state['team'] ?? 1, 1, 15 ),
+				'commitment' => $commitment,
+				'annual'     => ! empty( $state['annual'] ),
+				'members'    => two57_calc_sanitize_members( $state['members'] ?? [] ),
+			];
 	}
 
 	return new WP_Error( 'unsupported_calc', 'Unsupported calculator.' );
+}
+
+
+/**
+ * Sanitise the per-member roster for workspace-pricing. Each member is a
+ * single tier slug; unknown or empty tiers contribute nothing (mirrors the
+ * engine's unselected-member behaviour).
+ *
+ * @param array $members Raw roster.
+ * @return array List of tier slugs, trimmed to the allowed set.
+ */
+function two57_calc_sanitize_members( array $members ): array {
+	$allowed   = [ 'dedicated', 'flexi-5', 'flexi-4', 'flexi-3', 'flexi-2', 'flexi-1' ];
+	$sanitized = [];
+	foreach ( $members as $member ) {
+		$tier = is_array( $member ) ? sanitize_key( $member['tier'] ?? '' ) : sanitize_key( (string) $member );
+		if ( $tier === '' ) {
+			$sanitized[] = '';
+			continue;
+		}
+		if ( in_array( $tier, $allowed, true ) ) {
+			$sanitized[] = $tier;
+		}
+	}
+	return $sanitized;
 }
 
 
@@ -220,6 +258,95 @@ function two57_calc_figures_hours_to_impact( array $state ) {
 
 
 /**
+ * C1 — workspace-pricing recompute. Reads membership prices + annual prepay
+ * discount from ACF Options (the SSOT), never from the client.
+ *
+ * Private-office methodology constants (rent/sqm, opex %, power W/m², MHFR,
+ * admin load, etc.) stay in code — they're cited NZ methodology (§C1 plan).
+ *
+ * @param array $state sanitized { team, commitment, annual, members }
+ * @return array|WP_Error
+ */
+function two57_calc_figures_workspace_pricing( array $state ) {
+	if ( ! function_exists( 'get_field' ) ) {
+		return new WP_Error( 'acf_missing', 'Calculator data store unavailable.' );
+	}
+
+	// Membership prices from the SSOT.
+	$price = static function ( string $slug ): float {
+		$p = (float) get_field( 'membership_' . $slug . '_monthly', 'option' );
+		return $p > 0 ? $p : 0;
+	};
+	$prices = [
+		'dedicated' => $price( 'dedicated' ),
+		'flexi-5'   => $price( 'flexi_5' ),
+		'flexi-4'   => $price( 'flexi_4' ),
+		'flexi-3'   => $price( 'flexi_3' ),
+		'flexi-2'   => $price( 'flexi_2' ),
+		'flexi-1'   => $price( 'flexi_1' ),
+	];
+	$annual_discount = (float) get_field( 'annual_prepay_discount_pct', 'option' );
+	if ( $annual_discount <= 0 ) {
+		$annual_discount = 10;
+	}
+
+	// Private-office methodology (cited, stay in code — mirrors the engine).
+	$t   = (float) $state['team'];
+	$c   = max( 1, (float) $state['commitment'] );
+	$sqm = $t * 10;
+
+	$rent       = $sqm * 420;
+	$opex       = $rent * 0.27;
+	$furniture  = ( $t * 2000 ) / $c;
+	$internet   = 2400;
+	$power      = ( ( 50 * 8 * 230 * $sqm ) / 1000 ) * 0.30;
+	$cleaning   = 45 * 1.2 * $sqm;
+	$consumables = $t * 300;
+	$insurance  = $t * 200;
+	$mhfr       = ( ceil( $t / 12 ) * 445 ) / 2.5;
+	$admin      = $t * 8 * 46 * 5 * 0.06 * 70;
+	$legal      = 3500 / $c;
+	$booking    = ( $t >= 10 ) ? ( 75 * 12 ) : 0;
+
+	$private_total_yr = $rent + $opex + $furniture + $internet + $power
+		+ $cleaning + $consumables + $insurance + $mhfr + $admin + $legal + $booking;
+
+	// 257 — sum of memberships (annual_prepay_discount applies to Dedicated only).
+	$ours_total_yr = 0;
+	$ours_lines    = [];
+	foreach ( $state['members'] as $tier ) {
+		if ( '' === $tier ) {
+			continue;
+		}
+		if ( 'dedicated' === $tier ) {
+			$monthly = $state['annual'] ? $prices['dedicated'] * ( 1 - $annual_discount / 100 ) : $prices['dedicated'];
+		} else {
+			$monthly = $prices[ $tier ] ?? 0;
+		}
+		$ours_total_yr += $monthly * 12;
+		$ours_lines[] = [ 'tier' => $tier, 'monthly' => $monthly ];
+	}
+
+	$annual_saving     = $private_total_yr - $ours_total_yr;
+	$commitment_saving = $annual_saving * $c;
+	$capital_tied_up   = ( $t * 2000 ) + 3500;
+
+	return [
+		'calc'              => 'workspace-pricing',
+		'team'              => (int) $state['team'],
+		'commitment'        => (int) $state['commitment'],
+		'privateTotalYr'    => $private_total_yr,
+		'oursTotalYr'       => $ours_total_yr,
+		'oursMonthly'       => $ours_total_yr / 12,
+		'oursLines'         => $ours_lines,
+		'annualSaving'      => $annual_saving,
+		'commitmentSaving'  => $commitment_saving,
+		'capitalTiedUp'     => $capital_tied_up,
+	];
+}
+
+
+/**
  * Compose the plain + HTML email for a calc's figures.
  *
  * @param string $calc
@@ -233,6 +360,8 @@ function two57_calc_compose_email( string $calc, array $figures, array $state, s
 	switch ( $calc ) {
 		case 'hours-to-impact':
 			return two57_calc_compose_hours_to_impact( $figures, $state, $page, $to );
+		case 'workspace-pricing':
+			return two57_calc_compose_workspace_pricing( $figures, $state, $page, $to );
 	}
 
 	return [];
@@ -291,6 +420,104 @@ function two57_calc_compose_hours_to_impact( array $figures, array $state, strin
 			'<strong style="color:#111827;">' . esc_html( $hrs( $figures['hoursPerPerson'] ) ) . '</strong> per person, per year — ',
 			'<strong style="color:#111827;">' . esc_html( $money( $figures['givingPerPerson'] ) ) . '</strong> at ' . esc_html( $money( $figures['givingRate'] ) ) . ' per person-hour',
 		'</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;">',
+			'<a href="' . esc_url( $link ) . '" style="color:#2563eb;font-weight:600;">Open and share your calculation →</a>',
+		'</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;">two/fiftyseven, Wellington.<br>',
+			'<a href="' . esc_url( home_url( '/contact-policy/' ) ) . '" style="color:#6b7280;">Contact policy</a>',
+		'</p>',
+	] );
+
+	return [ 'subject' => $subject, 'summary' => $summary, 'plain' => $plain, 'html' => $html ];
+}
+
+
+/**
+ * C1 — workspace-pricing email copy.
+ */
+function two57_calc_compose_workspace_pricing( array $figures, array $state, string $page, string $to ): array {
+	$money = static function ( float $n ): string {
+		return '$' . number_format( round( $n ) );
+	};
+
+	$member_count = count( array_filter( $state['members'], static function ( $tier ): bool {
+		return '' !== $tier;
+	} ) );
+
+	$summary = sprintf(
+		'A team of %d across %d membership%s comes to %s a year at two/fiftyseven — %s less than a private Wellington office.',
+		$figures['team'],
+		max( 1, $member_count ),
+		1 === $member_count ? '' : 's',
+		$money( $figures['oursTotalYr'] ),
+		$money( max( 0, $figures['annualSaving'] ) )
+	);
+
+	$roster_plain = [];
+	$roster_html  = [];
+	foreach ( $figures['oursLines'] as $line ) {
+		$tier_label = static function ( string $slug ): string {
+			if ( 'dedicated' === $slug ) {
+				return 'Dedicated 7 days/week';
+			}
+			return 'Flexi ' . str_replace( 'flexi-', '', $slug ) . ' day' . ( 'flexi-1' === $slug ? '' : 's' ) . '/week';
+		};
+		$label = $tier_label( $line['tier'] );
+		$roster_plain[] = sprintf( '%s · %s/mo', $label, $money( $line['monthly'] ) );
+		$roster_html[]  = sprintf(
+			'<strong style="color:#111827;">%s</strong> · %s/mo',
+			esc_html( $label ),
+			esc_html( $money( $line['monthly'] ) )
+		);
+	}
+
+	$link = home_url( $page );
+	// Reproduce the engine's URL state so the link opens the same proposal.
+	$desks = '';
+	foreach ( $state['members'] as $tier ) {
+		if ( '' === $tier ) {
+			$desks .= 'x';
+		} elseif ( 'dedicated' === $tier ) {
+			$desks .= 'd';
+		} else {
+			$desks .= str_replace( 'flexi-', '', $tier );
+		}
+	}
+	$link = add_query_arg( [
+		'team'       => $figures['team'],
+		'commitment' => $figures['commitment'],
+		'annual'     => $state['annual'] ? 'true' : 'false',
+		'desks'      => $desks,
+	], $link );
+
+	$subject = 'Your two/fiftyseven workspace pricing';
+
+	$plain = implode( "\n\n", [
+		$summary,
+		'Your team’s monthly total: ' . $money( $figures['oursMonthly'] ) . '/mo',
+		'Your team’s annual total: ' . $money( $figures['oursTotalYr'] ) . '/yr',
+		'Private office benchmark: ' . $money( $figures['privateTotalYr'] ) . '/yr',
+		'Savings vs a private office: ' . $money( max( 0, $figures['annualSaving'] ) ) . '/yr',
+		'',
+		'Memberships:',
+		( $roster_plain ? implode( "\n", $roster_plain ) : '(none selected)' ),
+		'',
+		'Save or forward this calculation: ' . $link,
+		'',
+		'—',
+		'two/fiftyseven, Wellington · https://twofiftyseven.co/',
+		'Contact policy: ' . home_url( '/contact-policy/' ),
+	] );
+
+	$html = implode( '', [
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2937;">' . esc_html( $summary ) . '</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2937;">',
+			'<strong style="color:#111827;">' . esc_html( $money( $figures['oursMonthly'] ) ) . '</strong> /mo — your team’s monthly total<br>',
+			'<strong style="color:#111827;">' . esc_html( $money( $figures['oursTotalYr'] ) ) . '</strong> /yr — your team’s annual total<br>',
+			'<strong style="color:#111827;">' . esc_html( $money( $figures['privateTotalYr'] ) ) . '</strong> /yr — private office benchmark<br>',
+			'<strong style="color:#111827;">' . esc_html( $money( max( 0, $figures['annualSaving'] ) ) ) . '</strong> /yr — savings vs a private office',
+		'</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#374151;">Memberships:<br>' . implode( '<br>', $roster_html ) . '</p>',
 		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;">',
 			'<a href="' . esc_url( $link ) . '" style="color:#2563eb;font-weight:600;">Open and share your calculation →</a>',
 		'</p>',
