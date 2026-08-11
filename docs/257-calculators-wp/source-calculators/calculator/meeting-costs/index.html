@@ -1,0 +1,1541 @@
+<!-- two/fiftyseven · /calculator/meeting-costs/ · clean tool · 2026-05-18 build
+     Sibling of /calculator/office-costs/. Five chunks:
+       1. Top frame  (eyebrow + question + one-line tagline)
+       2. Calculator (inputs + 3-figure result + inline breakdown w/ inline sources)
+       3. Take this with you (email · share · print)
+       4. What's more, when you book with us…
+       5. FAQ (6 AEO questions, FAQPage JSON-LD)
+       + Footer (sitewide).
+     Engine: shared/js/calc-meeting-costs.js (purpose-built for this page).
+     One lime accent: the saving figure. Print stylesheet collapses to one
+     branded page. Honest framing on AV · projector + sound are SEPARATE
+     small add-ons at maintenance-replacement cost, not "all-in". -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Wellington meeting + workshop + event cost calculator · two/fiftyseven</title>
+  <meta name="description" content="How much does it cost to run a meeting, workshop or away day in Wellington? Build your event, see your number. Current local pricing bands sourced and side-by-side with what it costs at two/fiftyseven.">
+  <link rel="canonical" href="https://twofiftyseven.co/calculator/meeting-costs/">
+
+  <!-- Open Graph + Twitter. Static OG image · TODO: design lockup with
+       sample saving figure at /assets/og/calculator-meeting-costs.png
+       (1200×630, impact-aesthetic ground, lime ribbon, two/fiftyseven wordmark). -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://twofiftyseven.co/calculator/meeting-costs/">
+  <meta property="og:title" content="Wellington meeting cost · what an away day actually costs">
+  <meta property="og:description" content="Build your meeting, workshop or event · see your number with sourced industry bands and what it costs at two/fiftyseven.">
+  <meta property="og:image" content="https://twofiftyseven.co/assets/og/calculator-meeting-costs.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="two/fiftyseven">
+  <meta property="og:locale" content="en_NZ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Wellington meeting cost · what an away day actually costs">
+  <meta name="twitter:description" content="Build your meeting, workshop or event · see your number with sourced industry bands and what it costs at two/fiftyseven.">
+  <meta name="twitter:image" content="https://twofiftyseven.co/assets/og/calculator-meeting-costs.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="../../design-system/fonts.css">
+  <link rel="stylesheet" href="../../design-system/tokens.css">
+  <link rel="stylesheet" href="../../design-system/components.css">
+  <link rel="stylesheet" href="../../design-system/calculator.css">
+
+  <!-- Shared chrome -->
+  <script defer src="../../shared/js/nav.js"></script>
+  <script defer src="../../shared/js/faq.js"></script>
+  <script defer src="../../shared/js/chapter.js"></script>
+
+  <!-- Calc engine -->
+  <script defer src="../../shared/js/calc-meeting-costs.js"></script>
+  <script defer src="../../shared/js/inject-prices.js"></script>
+
+  <style id="page-meeting-costs-chrome">
+    body.page-meeting-costs { background: var(--ip-ground); color: var(--ip-ink); }
+
+    /* ── 1. TOP FRAME (shared in design-system/calculator.css) ──────────── */
+    /* MC keeps default extracted padding-top: clamp(20px, 3vh, 36px). */
+
+    /* ── 2. CALCULATOR · per-page overrides only ──────────────────────────── */
+    /* Tighten top padding so the calc sits close under the frame. */
+    .chapter--calc-wrap { padding-top: clamp(20px, 3vh, 32px); padding-bottom: clamp(40px, 5vh, 72px); }
+
+    /* Input column: each .calc__field is a paper card; the parent .calc is
+       display:block per a shared rule. Use explicit margin between cards. */
+    body.page-meeting-costs .calc > .calc__field + .calc__field {
+      margin-top: clamp(14px, 1.6vw, 22px);
+    }
+    body.page-meeting-costs .calc { margin-block: 0; }
+
+    /* Full-width breakdown sits in its own chapter; no extra margin needed. */
+    .breakdown-disclosure--full { margin: 0; }
+
+    /* Stepper output width override (MC uses wider min-width 70-90 for "0–200"). */
+    .calc-stepper output, .calc-stepper [data-mc-size-display] {
+      min-width: clamp(70px, 8vw, 90px);
+    }
+
+    /* 2026-05-18 FIX 6 · tight checklist rhythm (re-applied with
+       higher specificity to defeat any global label/.checkbox spacing). */
+    .calc .radio-row, .calc .check-row {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .calc .radio-row > label, .calc .check-row > label {
+      width: 100%;
+      background: transparent;
+      border-radius: 8px;
+      padding: 4px 0;
+      margin: 0;
+      transition: background-color 120ms ease;
+    }
+    .calc .radio-row > label:hover, .calc .check-row > label:hover {
+      background: rgba(20, 32, 11, 0.05);
+    }
+
+    /* Inputs · shared in design-system/calculator.css. MC also styles
+       input[type="time"] (not used on OC/G/C) so we mirror the shared rule
+       for that one type only. */
+    input[type="time"] {
+      font: inherit; font-family: var(--font-body);
+      font-size: 0.95rem; color: var(--ip-ink);
+      background: var(--ip-ground);
+      border: 0;
+      border-radius: var(--radius-md, 8px);
+      padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1.6vw, 18px);
+      outline: none;
+    }
+    input[type="time"]:focus-visible {
+      outline: 2px solid var(--ip-ink); outline-offset: 2px;
+    }
+
+    .custom-line {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    /* Specificity boost (attr selector) so flex + min-width beat shared
+       `.calc input[type="text|number"]` from design-system/calculator.css. */
+    .calc .custom-line input[type="text"] { flex: 1; min-width: 200px; max-width: none; }
+    .calc .custom-line input[type="number"] { width: 130px; max-width: none; }
+
+    /* Custom-line repeating rows (Fix 4) */
+    .custom-rows {
+      display: flex; flex-direction: column; gap: clamp(8px, 1vh, 12px);
+    }
+    .custom-row {
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    .calc .custom-row input[type="text"] { flex: 1; min-width: 200px; max-width: none; }
+    .calc .custom-row input[type="number"] { width: 130px; max-width: none; }
+    .custom-row__remove {
+      background: var(--ip-ground); color: var(--ip-ink);
+      border: 0; border-radius: var(--radius-md, 8px);
+      width: 36px; height: 36px; cursor: pointer;
+      font-size: 1.1rem; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .custom-row__remove:hover { background: var(--ip-ink); color: var(--ip-paper); }
+    .custom-rows[data-count="1"] .custom-row__remove { visibility: hidden; }
+    .custom-add {
+      align-self: flex-start; margin-top: 4px;
+      background: transparent; color: var(--ip-ink);
+      border: 0; border-radius: var(--radius-md, 8px);
+      padding: 8px 14px; cursor: pointer;
+      font-family: var(--font-mono); font-size: 0.78rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      text-decoration: underline; text-underline-offset: 4px;
+    }
+    .custom-add:hover { opacity: 0.7; }
+
+    /* Days + times · top row carries START / END column labels + the "+ add
+       day" action all on one horizontal line. Each input row below uses the
+       same 3-column grid: start input / end input / × remove. No section
+       heading above (saves vertical height). */
+    .day-headers,
+    .day-row {
+      display: grid;
+      grid-template-columns: minmax(140px, max-content) minmax(140px, max-content) max-content;
+      gap: 12px;
+      align-items: center;
+    }
+    .day-headers__col {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7;
+    }
+    .day-rows {
+      display: flex; flex-direction: column; gap: clamp(6px, 0.8vh, 10px);
+      margin-top: 6px;
+    }
+    /* Custom time input · the <input> itself is the pill (inherits the
+       global input[type="text"] paper-fill, rounded, padded rule). The
+       wrapper is purely a positioning container; AM/PM badge sits inside
+       the input via absolute positioning at the right edge. */
+    .time-input { position: relative; display: inline-block; }
+    /* Wider input + extra right padding to fit the AM / PM pair inside.
+       No focus outline (per Ash): the input sits on a paper card, the field
+       already reads as interactive on hover/click via its own paper fill.
+       Specificity boost (attribute selector) so the width + padding-right beat
+       the shared `.calc input[type="text"]` rule from design-system. */
+    .calc .time-input input.time-input__field[type="text"] { padding-right: 72px; width: 160px; outline: none; }
+    .calc .time-input input.time-input__field[type="text"]:focus,
+    .calc .time-input input.time-input__field[type="text"]:focus-visible { outline: none; box-shadow: none; }
+    /* AM / PM are two independent buttons sitting inside the input on the
+       right. Default = AM active. Clicking the other selects it; the
+       deselected one gets a strikethrough. Both darken on hover. */
+    .time-input__periods {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .time-input__period {
+      background: transparent;
+      border: 0; padding: 0; margin: 0; cursor: pointer;
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.45;
+      transition: opacity 120ms ease, text-decoration 120ms ease;
+    }
+    .time-input__period:hover { opacity: 1; }
+    .time-input__periods[data-active="am"] [data-period-btn="am"],
+    .time-input__periods[data-active="pm"] [data-period-btn="pm"] { opacity: 1; }
+    .time-input__periods[data-active="am"] [data-period-btn="pm"],
+    .time-input__periods[data-active="pm"] [data-period-btn="am"] {
+      text-decoration: line-through; text-decoration-thickness: 1px;
+    }
+    /* ×-remove sits at the start of the 3rd column (left-aligned in the wide
+       column where "+ add day" lives in the header row). No background fill. */
+    .day-row__remove {
+      background: transparent; color: var(--ip-ink);
+      border: 0;
+      width: 36px; height: 36px; cursor: pointer;
+      font-size: 1.1rem; line-height: 1;
+      display: inline-flex; align-items: center; justify-content: flex-start;
+      justify-self: start;
+      opacity: 0.6;
+    }
+    .day-row__remove:hover { opacity: 1; }
+    .day-rows[data-count="1"] .day-row__remove { visibility: hidden; }
+    .day-add {
+      background: transparent; color: var(--ip-ink);
+      border: 0; padding: 0; cursor: pointer;
+      font-family: var(--font-mono); font-size: 0.78rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      text-decoration: underline; text-underline-offset: 4px;
+      justify-self: start;
+    }
+    .day-add:hover { opacity: 0.7; }
+
+    /* Impact discount · uses the shared .checkbox pattern; override only to
+       top-align the swatch with multi-line label text. */
+    .impact-check { align-items: flex-start; max-width: 70ch; }
+    .impact-check .checkbox__swatch { margin-top: 3px; }
+    .impact-check .checkbox__label { line-height: 1.45; }
+
+    /* ── Live result · MC keeps per-page overrides for label/figure/unit
+       sizes (bigger headline figure than OC/G/C). Grid + col + save-lime are
+       inherited from design-system/calculator.css. */
+    /* FIX 8 · eyebrow mono labels bumped up from var(--type-mono-small). */
+    .calc-result__label {
+      font-size: clamp(0.95rem, 0.3vw + 0.85rem, 1.05rem);
+    }
+    /* FIX 8 · figures are the centrepiece: 32–52px scale, weight 700, tight line. */
+    .calc-result__figure {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(2rem, 2.5vw + 1.2rem, 3.25rem);
+      line-height: 1.05; letter-spacing: -0.025em;
+    }
+    /* FIX 8 · sub-detail lines body font (not mono). */
+    .calc-result__unit {
+      font-family: var(--font-body); font-size: var(--type-small, 0.9375rem);
+      opacity: 0.72;
+      text-transform: none; letter-spacing: 0;
+    }
+    @media (max-width: 900px) {
+      .calc-result {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px clamp(8px, 2vw, 18px);
+      }
+      .calc-result__figure { font-size: clamp(1rem, 2vw + 0.5rem, 1.4rem); }
+      .calc-result__label, .calc-result__unit { font-size: 0.6rem; }
+    }
+    /* The orphan flow-position breakdown hint is desktop-only · visible only
+       when something has gone wrong; hidden on every viewport otherwise. */
+    .breakdown-disclosure--flow { display: none; }
+
+    /* ── Breakdown · shared body/h3/rows/total/source in calculator.css.
+       MC adds: a custom-styled .breakdown-disclosure (non-full variant) with
+       its own visible summary chevron; not used by OC/G/C, kept inline. */
+    .breakdown-disclosure { margin-top: clamp(28px, 3.5vh, 44px); }
+    .breakdown-disclosure > summary {
+      list-style: none; cursor: pointer;
+      font-family: var(--font-mono); font-size: 0.9rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); padding: 14px 0;
+      border-top: 1px solid rgba(20, 32, 11, 0.25);
+      border-bottom: 1px solid rgba(20, 32, 11, 0.25);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .breakdown-disclosure > summary::-webkit-details-marker { display: none; }
+    .breakdown-disclosure > summary::after { content: "↓"; transition: transform 200ms; }
+    .breakdown-disclosure[open] > summary::after { transform: rotate(180deg); }
+    /* MC's source link uses a slightly different font-size from the shared
+       extracted rule (mono 0.9375rem vs --type-mono-small 0.78rem). */
+    .breakdown-row__source {
+      font-size: var(--type-mono-small, 0.9375rem);
+    }
+
+    .anchor-link {
+      display: inline-block; margin-top: clamp(20px, 2.5vh, 32px);
+      font-family: var(--font-mono); font-size: 0.85rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.78;
+      text-decoration: underline; text-underline-offset: 4px;
+    }
+    .anchor-link:hover { opacity: 1; }
+
+    /* ── 3. TAKE-IT · shared in design-system/calculator.css ─────────────── */
+
+    /* ── 4. WHAT'S MORE ──────────────────────────────────────────────────── */
+    /* No per-chunk margin/padding overrides · inherits .chapter + .chapter__inner. */
+    .whats-more__eyebrow {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.72; margin: 0 0 10px;
+    }
+    .whats-more__heading {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.6rem, 1.3vw + 1.1rem, 2.25rem);
+      line-height: 1.15; letter-spacing: -0.015em; color: var(--ip-ink);
+      margin: 0 0 clamp(28px, 3.5vh, 44px); max-width: 26ch;
+    }
+    /* 2026-05-18 · USPs tile grid (replaces long-form paragraph list).
+       6 tiles, paper fill, ink text, no border. 3-col desktop, 2-col tablet,
+       1-col mobile. Mirrors the workspace/base/ .usps pattern but scoped to
+       the calc page. */
+    .whats-more__tiles {
+      list-style: none; padding: 0; margin: 0;
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: clamp(16px, 2vw, 28px);
+    }
+    @media (max-width: 960px) {
+      .whats-more__tiles { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .whats-more__tiles { grid-template-columns: 1fr; }
+    }
+    /* Fix 6 · tiles take the section accent (lavender on body.section-meet). */
+    .whats-more__tile {
+      background: var(--ip-lime); color: var(--ip-ink);
+      border: 0; border-radius: var(--radius-lg, 16px);
+      padding: clamp(20px, 2.4vw, 32px) clamp(18px, 2vw, 28px);
+      display: flex; flex-direction: column; gap: clamp(8px, 1vh, 14px);
+    }
+    .whats-more__tile-data {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.78; margin: 0 0 clamp(2px, 0.4vh, 6px);
+    }
+    .whats-more__tile-claim {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.05rem, 0.55vw + 0.9rem, 1.35rem);
+      line-height: 1.2; letter-spacing: -0.012em; color: var(--ip-ink); margin: 0;
+    }
+    .whats-more__tile-detail {
+      font-family: var(--font-body); font-weight: 400;
+      font-size: clamp(0.92rem, 0.25vw + 0.85rem, 1rem);
+      line-height: 1.45; color: var(--ip-ink); opacity: 0.82; margin: 0;
+    }
+    .whats-more__tile-detail a {
+      color: var(--ip-ink); text-decoration: underline; text-underline-offset: 3px;
+    }
+    .whats-more__tile-detail a:hover { opacity: 0.7; }
+    .whats-more__after {
+      font-family: var(--font-body); font-size: clamp(1rem, 0.45vw + 0.85rem, 1.15rem);
+      line-height: 1.5; color: var(--ip-ink); opacity: 0.88;
+      margin: clamp(28px, 3.5vh, 44px) 0 0; max-width: 70ch;
+    }
+    .whats-more__after a {
+      color: var(--ip-ink); text-decoration: underline; text-underline-offset: 4px;
+    }
+    .whats-more__after a:hover { opacity: 0.7; }
+
+    /* ── 5. FAQ ─────────────────────────────────────────────────────────── */
+    /* No per-chunk overrides; inherits .chapter + .chapter__inner. */
+    .faq-wrap h2 {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: clamp(1.4rem, 1vw + 0.9rem, 1.9rem);
+      letter-spacing: -0.015em; color: var(--ip-ink);
+      margin: 0 0 clamp(20px, 2.5vh, 32px);
+    }
+
+    /* ── Print · MC-specific overrides on top of shared print rules in
+       design-system/calculator.css. Hides MC's additional sections
+       (take-it/whats-more/faq-wrap/anchor-link) and styles the per-card
+       radio/check/impact-check borders. */
+    @media print {
+      /* MC-extra section hides + per-card label borders. */
+      .take-it, .whats-more, .faq-wrap, .anchor-link { display: none !important; }
+      .radio-row label, .check-row label, .impact-check { background: white !important; border: 1px solid #ddd; }
+      /* MC-specific h3 print font (shared uses 11pt; MC is tighter). */
+      .breakdown-body h3 { font-size: 10pt; }
+    }
+  </style>
+
+  <!-- WebApplication JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Wellington meeting cost calculator",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "url": "https://twofiftyseven.co/calculator/meeting-costs/",
+    "description": "Free calculator comparing the cost of running a meeting, workshop, away day or event at a Wellington industry-standard venue against two/fiftyseven.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "NZD" },
+    "provider": { "@type": "Organization", "name": "two/fiftyseven", "url": "https://twofiftyseven.co/" }
+  }
+  </script>
+
+  <!-- Organization JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "two/fiftyseven",
+    "url": "https://twofiftyseven.co/",
+    "logo": "https://twofiftyseven.co/assets/logos/257-mark.svg",
+    "sameAs": [
+      "https://www.instagram.com/twofiftyseven/",
+      "https://www.linkedin.com/company/two-fiftyseven/"
+    ]
+  }
+  </script>
+
+  <!-- FAQPage JSON-LD · mirrors visible Q text exactly. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does it cost to hire a meeting room in Wellington?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "A small Wellington meeting room (4–8 people, half-day) typically runs $350–$650 at city-centre venues; a full-day workshop room for 20 people lands around $850–$1,900 once room hire, tea + coffee and a light lunch are in. At two/fiftyseven the same 20-person full-day workshop starts at $690 for the room, with tea + coffee at $5/head and catering free when you arrange it directly, charged at cost when we arrange it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does a typical Wellington workshop venue cost for a full day?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For 20 people, the typical Wellington workshop-venue full-day spend is $1,500–$3,000 once you add room hire, catering, AV and materials. The calculator above gives you the exact line items · and shows the equivalent build at two/fiftyseven, where the workshop space is $690/day, tea + coffee is included, and AV is offered as small separate add-ons at maintenance-replacement cost so teams not using AV aren't paying for it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the cheapest way to host an away day in Wellington?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For a small team (under 12), our Silver Linings room at $590/day or Studios Whātaitai + Ngake at $490/day with tea + coffee included tend to be the lowest credible spend. Add catering at cost from approved local suppliers and you can run a full-day away day for 10 people from around $700–$900 all-in."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's included in venue hire at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Room hire includes tea + coffee, fast wifi, whiteboards and flipcharts, hosting by an MHFR + First Aid-trained team, and a climate-positive venue with 200% verified offset. Projector + sound system are separate small add-ons at maintenance-replacement cost · accessible for teams who don't need them. Catering is free when you arrange it directly, charged at cost when we arrange it."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is there a discount for charities and not-for-profits hiring venues?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Our Impact Discount is 50% off room hire for charities, NGOs, indigenous-led organisations, community groups and social enterprises. Tick the Impact Discount box in the calculator above to see your number, or email kiaora@twofiftyseven.co with a line about your work."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I share this calculator with my team?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Use the Copy link button below the result · it copies a URL with your exact event configuration so your team can open the same number. You can also email yourself the breakdown or save it as a one-page PDF."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="page-calculator page-meeting-costs section-meet">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" data-js="site-header">
+    <a href="../../index.html" class="wordmark">two/fiftyseven</a>
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-dropdown nav-section-workspace">
+          <a href="../../workspace/index.html" aria-haspopup="true">Workspace</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../workspace/base/index.html" role="menuitem">Base</a></li>
+              <li><a href="../../workspace/hub/index.html" role="menuitem">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html" role="menuitem">Desk</a></li>
+              <li><a href="../../pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-meet">
+          <a href="../../meet/index.html" aria-haspopup="true">Meet</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../meetings/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html" role="menuitem">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html" role="menuitem">Away days</a></li>
+              <li><a href="../../meetings/pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-host">
+          <a href="../../events/index.html" aria-haspopup="true">Host</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../events/events/index.html" role="menuitem">Events</a></li>
+              <li><a href="../../events/functions/index.html" role="menuitem">Functions</a></li>
+              <li><a href="../../events/conferences/index.html" role="menuitem">Conferences</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../impact/index.html">Impact</a></li>
+        <li class="has-dropdown">
+          <a href="../../our-story/index.html" aria-haspopup="true">About</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../kaupapa/index.html" role="menuitem">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html" role="menuitem">Success stories</a></li>
+              <li><a href="../../organisations/index.html" role="menuitem">Organisations</a></li>
+              <li><a href="../../our-story/index.html" role="menuitem">Our story</a></li>
+              <li><a href="../../people/index.html" role="menuitem">People</a></li>
+              <li><a href="../../whatson/index.html" role="menuitem">What's on</a></li>
+              <li><a href="../../kōrero/index.html" role="menuitem">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html" role="menuitem">Press kit</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown">
+          <a href="../../calculator/index.html" aria-haspopup="true">Calculators</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html" role="menuitem">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html" role="menuitem">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html" role="menuitem">Carbon</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../contact/index.html">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="../../tours/" class="btn btn--primary btn--small">Book a tour</a>
+  </header>
+
+  <main id="main">
+
+    <div class="print-only print-wordmark" aria-hidden="true">
+      <img src="../../assets/logos/twofiftyseven_logo.svg" alt="two/fiftyseven">
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         1. TOP FRAME
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter chapter--calc-frame calc-frame" aria-labelledby="calc-title">
+      <div class="chapter__inner">
+        <p class="calc-frame__eyebrow calc-hero__eyebrow">Wellington meeting + workshop cost calculator</p>
+        <h1 id="calc-title" class="calc-frame__title calc-hero__title">how much does it cost to run a meeting, workshop or away day in Wellington?</h1>
+        <p class="calc-frame__tagline calc-hero__sub">Build your event, see your number. Current local pricing bands and what it costs at two/fiftyseven.</p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         2. CALCULATOR
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter chapter--calc-wrap calc-wrap" data-unclipped aria-label="Meeting cost calculator">
+      <div class="chapter__inner">
+
+      <!-- 2026-05-18 · one-fold layout: input grid on the left, sticky result
+           panel on the right. See .calc-layout / .calc-result-sticky CSS. -->
+      <div class="calc-layout">
+
+      <div class="calc" data-js="calc-meeting-costs">
+
+        <!-- Card 1 · Group size + Days+times (multi-row "+ add day" pattern) -->
+        <div class="calc__field calc__field--full">
+          <span class="calc__field-label">Group size</span>
+          <div class="calc-stepper">
+            <button type="button" data-mc-size-dec aria-label="Decrease group size">−</button>
+            <span data-mc-size-display aria-live="polite">0</span>
+            <button type="button" data-mc-size-inc aria-label="Increase group size">+</button>
+          </div>
+          <input type="hidden" data-mc-size value="0">
+
+          <div class="day-headers" style="margin-top: clamp(12px, 1.6vh, 20px);">
+            <span class="day-headers__col">Start</span>
+            <span class="day-headers__col">End</span>
+            <button type="button" class="day-add" data-mc-day-add>+ add day</button>
+          </div>
+          <div class="day-rows" data-mc-day-rows data-count="1">
+            <div class="day-row" data-mc-day-row>
+              <span class="time-input">
+                <input type="text" class="time-input__field" data-mc-day-start value="" placeholder="00:00" inputmode="numeric" maxlength="5" aria-label="Start time">
+                <span class="time-input__periods" data-mc-day-start-period data-period="am" data-active="am">
+                  <button type="button" class="time-input__period" data-period-btn="am">AM</button>
+                  <button type="button" class="time-input__period" data-period-btn="pm">PM</button>
+                </span>
+              </span>
+              <span class="time-input">
+                <input type="text" class="time-input__field" data-mc-day-end value="" placeholder="00:00" inputmode="numeric" maxlength="5" aria-label="End time">
+                <span class="time-input__periods" data-mc-day-end-period data-period="am" data-active="am">
+                  <button type="button" class="time-input__period" data-period-btn="am">AM</button>
+                  <button type="button" class="time-input__period" data-period-btn="pm">PM</button>
+                </span>
+              </span>
+              <button type="button" class="day-row__remove" data-mc-day-remove aria-label="Remove this day">×</button>
+            </div>
+          </div>
+          <template data-mc-day-template>
+            <div class="day-row" data-mc-day-row>
+              <span class="time-input">
+                <input type="text" class="time-input__field" data-mc-day-start value="" placeholder="00:00" inputmode="numeric" maxlength="5" aria-label="Start time">
+                <span class="time-input__periods" data-mc-day-start-period data-period="am" data-active="am">
+                  <button type="button" class="time-input__period" data-period-btn="am">AM</button>
+                  <button type="button" class="time-input__period" data-period-btn="pm">PM</button>
+                </span>
+              </span>
+              <span class="time-input">
+                <input type="text" class="time-input__field" data-mc-day-end value="" placeholder="00:00" inputmode="numeric" maxlength="5" aria-label="End time">
+                <span class="time-input__periods" data-mc-day-end-period data-period="am" data-active="am">
+                  <button type="button" class="time-input__period" data-period-btn="am">AM</button>
+                  <button type="button" class="time-input__period" data-period-btn="pm">PM</button>
+                </span>
+              </span>
+              <button type="button" class="day-row__remove" data-mc-day-remove aria-label="Remove this day">×</button>
+            </div>
+          </template>
+          <p class="calc__field-label" data-mc-duration-label style="margin-top:6px; text-transform:none; letter-spacing:0; opacity:0.85; font-family:var(--font-body); font-size:0.9rem;"></p>
+          <!-- Hidden value populated by engine; coordinator reads it for share-URL state. -->
+          <input type="hidden" data-mc-duration value="">
+        </div>
+
+        <!-- Catering -->
+        <div class="calc__field">
+          <span class="calc__field-label">Catering</span>
+          <div class="check-row calc-tile-grid">
+            <label class="checkbox"><input type="checkbox" data-mc-tea><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label">Tea + coffee (continuous)</span></label>
+            <label class="checkbox"><input type="checkbox" data-mc-breakfast><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label">Light breakfast / pastries</span></label>
+            <label class="checkbox"><input type="checkbox" data-mc-lunch-light><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label">Lunch · light ($20–25/head)</span></label>
+            <label class="checkbox"><input type="checkbox" data-mc-lunch-hearty><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label">Lunch · hearty ($30–40/head)</span></label>
+            <label class="checkbox"><input type="checkbox" data-mc-afternoon><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label">Afternoon tea</span></label>
+            <label class="checkbox"><input type="checkbox" data-mc-drinks><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label">Drinks (evening)</span></label>
+          </div>
+        </div>
+
+        <!-- AV -->
+        <div class="calc__field">
+          <span class="calc__field-label">AV</span>
+          <div class="check-row calc-segmented">
+            <label class="checkbox"><input type="checkbox" data-mc-av-projector><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label" style="white-space: nowrap;">Projector + screen</span></label>
+            <label class="checkbox"><input type="checkbox" data-mc-av-sound><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label" style="white-space: nowrap;">Sound system + mic</span></label>
+          </div>
+        </div>
+
+        <!-- Facilitation -->
+        <div class="calc__field">
+          <span class="calc__field-label">Facilitation</span>
+          <div class="radio-row calc-tile-grid">
+            <label class="radio"><input type="radio" name="fac" value="none" data-mc-fac checked><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">None</span></label>
+            <label class="radio"><input type="radio" name="fac" value="half" data-mc-fac><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">Half-day external (~$1.5k)</span></label>
+            <label class="radio"><input type="radio" name="fac" value="full" data-mc-fac><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">Full-day external (~$3k)</span></label>
+            <label class="radio"><input type="radio" name="fac" value="senior" data-mc-fac><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">Senior / multi-day ($5k+)</span></label>
+          </div>
+        </div>
+
+        <!-- Materials -->
+        <div class="calc__field">
+          <span class="calc__field-label">Materials</span>
+          <div class="check-row calc-segmented">
+            <label class="checkbox"><input type="checkbox" data-mc-mat-boards><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label">Whiteboards / flipcharts</span></label>
+            <label class="checkbox"><input type="checkbox" data-mc-mat-postits><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label">Post-its + pens</span></label>
+            <label class="checkbox"><input type="checkbox" data-mc-mat-printing><span class="checkbox__swatch" aria-hidden="true"></span><span class="checkbox__label">Printing</span></label>
+          </div>
+        </div>
+
+        <!-- Setup -->
+        <div class="calc__field calc__field--full">
+          <span class="calc__field-label">Setup + pack-down</span>
+          <div class="radio-row calc-segmented">
+            <label class="radio"><input type="radio" name="setup" value="included" data-mc-setup checked><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">Included</span></label>
+            <label class="radio"><input type="radio" name="setup" value="standard" data-mc-setup><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">Standard</span></label>
+            <label class="radio"><input type="radio" name="setup" value="complex" data-mc-setup><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">Complex</span></label>
+          </div>
+        </div>
+
+        <!-- Custom line · repeating rows (add / remove). -->
+        <div class="calc__field calc__field--full">
+          <span class="calc__field-label">Additional special expenses</span>
+          <div class="custom-rows" data-mc-custom-rows data-count="1">
+            <div class="custom-row" data-mc-custom-row>
+              <input type="text" data-mc-custom-label placeholder="e.g. Photographer">
+              <input type="number" data-mc-custom-value placeholder="$ value" min="0" step="50">
+              <button type="button" class="custom-row__remove" data-mc-custom-remove aria-label="Remove this line">×</button>
+            </div>
+          </div>
+          <template data-mc-custom-template>
+            <div class="custom-row" data-mc-custom-row>
+              <input type="text" data-mc-custom-label placeholder="e.g. Photographer">
+              <input type="number" data-mc-custom-value placeholder="$ value" min="0" step="50">
+              <button type="button" class="custom-row__remove" data-mc-custom-remove aria-label="Remove this line">×</button>
+            </div>
+          </template>
+          <button type="button" class="custom-add" data-mc-custom-add>+ Add another</button>
+        </div>
+
+        <!-- Impact discount -->
+        <div class="calc__field calc__field--full">
+          <label class="checkbox impact-check">
+            <input type="checkbox" data-mc-impact>
+            <span class="checkbox__swatch" aria-hidden="true"></span>
+            <span class="checkbox__label"><strong>Impact Discount</strong> · my organisation is a charity, NGO, indigenous-led organisation, community group or social enterprise. Applies 50% to the two/fiftyseven figure (not the current local pricing band).</span>
+          </label>
+        </div>
+
+        <!-- Hidden sinks (inside root for engine querySelector). Job 11 · all
+             initialise to $0; engine writes once user enters inputs. -->
+        <span hidden data-mc-sink-industry-low>$0</span>
+        <span hidden data-mc-sink-industry-high>$0</span>
+        <span hidden data-mc-sink-industry-band>$0</span>
+        <span hidden data-mc-sink-ours-total>$0</span>
+        <span hidden data-mc-sink-saving-low>$0</span>
+        <span hidden data-mc-sink-saving-high>$0</span>
+        <span hidden data-mc-sink-saving-band>$0</span>
+        <span hidden data-mc-sink-space-name></span>
+        <span hidden data-mc-sink-industry-lines>[]</span>
+        <span hidden data-mc-sink-ours-lines>[]</span>
+      </div><!-- /.calc -->
+
+      <!-- STICKY RESULT COLUMN (desktop) / pinned top bar (mobile) -->
+      <aside class="calc-result-sticky" aria-label="Live cost result">
+        <div class="calc-result" role="status" aria-live="polite">
+          <div class="calc-result__col">
+            <span class="calc-result__label">Current local pricing</span>
+            <span class="calc-result__figure" data-result-industry>$0</span>
+            <span class="calc-result__unit">Wellington venue · all-in</span>
+          </div>
+          <div class="calc-result__col">
+            <span class="calc-result__label">At two/fiftyseven</span>
+            <span class="calc-result__figure" data-result-ours>$0</span>
+            <span class="calc-result__unit" data-result-space-unit></span>
+          </div>
+          <div class="calc-result__col calc-result__col--save">
+            <span class="calc-result__label">You'd save</span>
+            <span class="calc-result__figure" data-result-save>$0</span>
+            <span class="calc-result__unit">vs industry band</span>
+          </div>
+        </div>
+
+        <!-- 2026-05-18 FIX 5 · breakdown trigger only. The actual <details>
+             lives full-width BELOW the two-column .calc-layout so the 4-col
+             table grid has room to render without overlap. JS proxies clicks
+             from this button to the real <details>. -->
+          <!-- #2 INLINE CONTACT — compact 'email this to yourself' form inside the
+               result aside. Mailto with calc name pre-filled in the subject so it
+               works without a backend; can be upgraded to a Fluent Forms POST later. -->
+          <form class="calc-contact-inline"
+                action="mailto:kiaora@twofiftyseven.co?subject=My%20meeting%20cost%20comparison"
+                method="post" enctype="text/plain" novalidate>
+            <p class="calc-contact-inline__title">Email this to your team</p>
+            <div class="calc-contact-inline__row">
+              <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Your email">
+              <button type="submit">Send &rarr;</button>
+            </div>
+            <p class="calc-contact-inline__note">We'll email your event spec and the comparison.</p>
+          </form>
+
+        <button type="button"
+                class="breakdown-trigger"
+                data-breakdown-trigger
+                aria-controls="methodology"
+                aria-expanded="false">
+          <span>See the line-by-line breakdown</span>
+          <span class="breakdown-trigger__caret" aria-hidden="true">↓</span>
+        </button>
+      </aside>
+
+      </div><!-- /.calc-layout -->
+
+      <!-- 2026-05-18 FIX 9 · full-width breakdown <details>. The native
+           <summary> is hidden via CSS; the SOLE trigger is the breakdown
+           button in the sticky result panel (proxied click + smooth scroll). -->
+      <details class="breakdown-disclosure breakdown-disclosure--full" id="methodology">
+        <summary aria-hidden="true">Breakdown</summary>
+        <div class="breakdown-body" id="breakdown-body">
+
+          <h3>Current local pricing</h3>
+          <div class="breakdown-rows" data-mc-industry-slot>
+            <div class="breakdown-total">
+              <span class="breakdown-total__label">Total · current local pricing</span>
+              <span class="breakdown-total__value" data-mc-industry-total>$0</span>
+              <span class="breakdown-total__source-spacer"></span>
+            </div>
+          </div>
+
+          <h3>two/fiftyseven</h3>
+          <div class="breakdown-rows" data-mc-ours-slot>
+            <div class="breakdown-total">
+              <span class="breakdown-total__label">Total · two/fiftyseven</span>
+              <span class="breakdown-total__value" data-mc-ours-total>$0</span>
+              <span class="breakdown-total__source-spacer"></span>
+            </div>
+          </div>
+
+        </div>
+      </details>
+
+      </div><!-- /.chapter__inner -->
+    </section>
+
+    <!-- METHODOLOGY — externally-sourced calc (audit #14/#15). The "current
+         local pricing band" figure is derived from a sampled set of Wellington
+         venues' published rates; every step traceable to its source. -->
+    <section class="calc-methodology" aria-labelledby="methodology-title">
+      <p class="calc-methodology__eyebrow">How the math works</p>
+      <h2 id="methodology-title" class="calc-methodology__title">where the Wellington pricing comes from.</h2>
+      <div class="calc-methodology__steps">
+        <article class="calc-methodology__step">
+          <h3 class="calc-methodology__step-title">Local room pricing band</h3>
+          <p class="calc-methodology__step-body">The "current local pricing" figure is sampled from five comparable central-Wellington venues' published 2026 rate cards. We take the mid of that sample, not the low or high &mdash; the calc compares against a realistic middle-of-market price, not a best- or worst-case quote. Source: Wellington City Council venue hire<sup><a href="#src-wcc" class="calc-citation">1</a></sup>, The Boatshed Wellington<sup><a href="#src-boatshed" class="calc-citation">2</a></sup>, Te Wharewaka o P&omacr;neke<sup><a href="#src-wharewaka" class="calc-citation">3</a></sup>, Spaces NZ Wellington<sup><a href="#src-spaces" class="calc-citation">4</a></sup>, Tory Street Co-op<sup><a href="#src-tory" class="calc-citation">5</a></sup>.</p>
+        </article>
+        <article class="calc-methodology__step">
+          <h3 class="calc-methodology__step-title">Catering per head</h3>
+          <p class="calc-methodology__step-body">Local catering rates are sampled from three operators we work with (and many teams independently engage). Per-head rates for tea &amp; coffee, light breakfast, lunch boxes, hot lunches, and evening drinks are taken from each operator's 2026 published menu, mid of the range. Source: Karaka Cafe (M&amacr;ori kai)<sup><a href="#src-karaka" class="calc-citation">6</a></sup>, Blue Carrot (plant-led)<sup><a href="#src-bluecarrot" class="calc-citation">7</a></sup>, Food Envy (full-service)<sup><a href="#src-foodenvy" class="calc-citation">8</a></sup>.</p>
+        </article>
+        <article class="calc-methodology__step">
+          <h3 class="calc-methodology__step-title">AV + technician time</h3>
+          <p class="calc-methodology__step-body">Projector + sound add-ons priced at Wellington event-industry standard hire rate ($50&ndash;$120/day depending on spec). Technician time at $75&ndash;$125/hour per NZ AV industry 2026 benchmark. Source: Production-Design NZ<sup><a href="#src-prodnz" class="calc-citation">9</a></sup>, NZ Event Production Industry pricing benchmark<sup><a href="#src-eventindustry" class="calc-citation">10</a></sup>.</p>
+        </article>
+        <article class="calc-methodology__step">
+          <h3 class="calc-methodology__step-title">two/fiftyseven figure</h3>
+          <p class="calc-methodology__step-body">Our number is our own published price for the same room + spec, applied identically to the same scenario. The Impact Discount toggle cuts that figure by 50% (rooms only, not catering or AV). Source: published rates at <a href="../../meetings/pricing/">meetings/pricing/</a>, current as of 2026.</p>
+        </article>
+      </div>
+      <ol class="calc-sources">
+        <li id="src-wcc"><strong>Wellington City Council</strong> &mdash; Venue hire rate card 2026 (Town Hall, Michael Fowler Centre, St James Theatre). <a href="https://wellington.govt.nz" target="_blank" rel="noopener">wellington.govt.nz &nearr;</a></li>
+        <li id="src-boatshed"><strong>The Boatshed Wellington</strong> &mdash; Published 2026 hire rates.</li>
+        <li id="src-wharewaka"><strong>Te Wharewaka o P&omacr;neke</strong> &mdash; Published 2026 hire rates.</li>
+        <li id="src-spaces"><strong>Spaces NZ Wellington</strong> &mdash; Published 2026 meeting and event hire rates.</li>
+        <li id="src-tory"><strong>Tory Street Co-op</strong> &mdash; Published 2026 community venue hire rates.</li>
+        <li id="src-karaka"><strong>Karaka Cafe</strong> &mdash; M&amacr;ori kai catering, 2026 per-head rate card. <a href="https://www.karakacafe.co.nz" target="_blank" rel="noopener">karakacafe.co.nz &nearr;</a></li>
+        <li id="src-bluecarrot"><strong>Blue Carrot</strong> &mdash; Plant-led catering, 2026 per-head rate card. <a href="https://www.bluecarrot.co.nz" target="_blank" rel="noopener">bluecarrot.co.nz &nearr;</a></li>
+        <li id="src-foodenvy"><strong>Food Envy</strong> &mdash; Full-service event catering, 2026 per-head rate card.</li>
+        <li id="src-prodnz"><strong>Production-Design NZ</strong> &mdash; Wellington AV hire rates 2026.</li>
+        <li id="src-eventindustry"><strong>NZ Event Production Industry</strong> &mdash; 2026 technician + crew rate benchmark.</li>
+      </ol>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         3. TAKE THIS WITH YOU
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter take-it" id="take-it" aria-labelledby="take-it-title">
+      <div class="chapter__inner">
+      <p class="calc-frame__eyebrow">Take this with you</p>
+      <h2 id="take-it-title" class="take-it__heading">Save your number, share it, send it on.</h2>
+
+      <div class="take-it__grid">
+
+        <div class="take-it__card" data-email-card>
+          <h3 class="take-it__title">Email me this breakdown</h3>
+          <p class="take-it__body">Get the comparison + sources in your inbox, ready to forward to your team.</p>
+          <p class="take-it__status" data-email-status></p>
+          <form class="take-it__form" data-email-form>
+            <label class="visually-hidden" for="take-email">Your email</label>
+            <input id="take-email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit">Send →</button>
+          </form>
+        </div>
+
+        <div class="take-it__card">
+          <h3 class="take-it__title">Share this calculation</h3>
+          <p class="take-it__body">Same numbers, any browser · your team clicks and sees the exact same event built.</p>
+          <button type="button" class="take-it__cta" data-share-btn>Copy link ↪</button>
+        </div>
+
+        <div class="take-it__card">
+          <h3 class="take-it__title">Save as PDF</h3>
+          <p class="take-it__body">Print-ready, branded version for procurement, finance, or board sign-off.</p>
+          <button type="button" class="take-it__cta" data-print-btn>Download PDF ↓</button>
+        </div>
+
+      </div>
+      </div><!-- /.chapter__inner -->
+    </section>
+
+    <div class="print-only print-footer" aria-hidden="true">
+      two/fiftyseven · twofiftyseven.co · kiaora@twofiftyseven.co · Book a tour at twofiftyseven.co/tours/
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         4. WHAT'S MORE, WHEN YOU BOOK WITH US
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter whats-more" aria-labelledby="whats-more-title">
+      <div class="chapter__inner">
+      <p class="whats-more__eyebrow">What's more</p>
+      <h2 id="whats-more-title" class="whats-more__heading">When you book with us, the number isn't the whole story.</h2>
+
+      <!-- 2026-05-18 · USPs tile grid (mirrors workspace/base/ .usps pattern).
+           Six tiles: mono data point, claim sentence, detail sentence. -->
+      <ul class="whats-more__tiles">
+        <li class="whats-more__tile">
+          <p class="whats-more__tile-data">200% offset</p>
+          <p class="whats-more__tile-claim">Climate-positive venue</p>
+          <p class="whats-more__tile-detail">Every booking is carbon-positive · verified 200% offset, audited annually.</p>
+        </li>
+        <li class="whats-more__tile">
+          <p class="whats-more__tile-data">Living wage</p>
+          <p class="whats-more__tile-claim">The team is paid fairly</p>
+          <p class="whats-more__tile-detail">Accredited NZ Living Wage employer. The people setting up your room are paid for it.</p>
+        </li>
+        <li class="whats-more__tile">
+          <p class="whats-more__tile-data">MHFR + first aid</p>
+          <p class="whats-more__tile-claim">Trained team on site</p>
+          <p class="whats-more__tile-detail">Mental Health First Response and physical first aid, every shift you're here.</p>
+        </li>
+        <li class="whats-more__tile">
+          <p class="whats-more__tile-data">Lift + ramp</p>
+          <p class="whats-more__tile-claim">Accessible from both streets</p>
+          <p class="whats-more__tile-detail">Central lift access from both Willis Street and Victoria Street entrances.</p>
+        </li>
+        <li class="whats-more__tile">
+          <p class="whats-more__tile-data">Kitchen + coffee</p>
+          <p class="whats-more__tile-claim">Welcome, kitchen, hosting</p>
+          <p class="whats-more__tile-detail">The kettle's on before you arrive. Someone meets your group. The room is ready the way you asked.</p>
+        </li>
+        <li class="whats-more__tile">
+          <p class="whats-more__tile-data">50% off</p>
+          <p class="whats-more__tile-claim">Impact Discount</p>
+          <p class="whats-more__tile-detail">50% off for charities, NGOs, indigenous-led orgs, community groups and social enterprises. <a href="mailto:kiaora@twofiftyseven.co?subject=Impact%20Discount%20enquiry">Tell us about your work →</a></p>
+        </li>
+      </ul>
+
+      <p class="whats-more__after">Your fee redirects into a wider kaupapa · <a href="../../impact/index.html">see where it goes →</a></p>
+      </div><!-- /.chapter__inner -->
+    </section>
+
+    <!-- CLOSE CTA — canonical .invite (audit #18). -->
+    <section class="chapter chapter--fit chapter--close" id="get-involved" aria-labelledby="ch-close-title">
+      <div class="chapter__inner">
+        <h2 id="ch-close-title" class="display display--mid">Numbers are clearer in the room.</h2>
+        <p class="lead">Bring your calculation. We'll walk the room you're considering, set out the catering options against the menu, and answer anything the calculator couldn't.</p>
+
+        <div class="invite">
+          <!-- PRIMARY — reader has just modelled their cost. Strongest next move:
+               walk the room before booking, calculator output in hand. -->
+          <a class="invite__primary" href="../../tours/">
+            <p class="invite__eyebrow">After the numbers</p>
+            <h3 class="invite__primary-title">Walk the rooms<span class="invite__arrow" aria-hidden="true">→</span></h3>
+            <p class="invite__primary-body">A 20-minute tour with whoever's hosting that day. Bring your calculator output and see the room that fits — we'll talk through fit, AV and catering in person.</p>
+            <p class="invite__meta"><span>Weekday mornings</span><span aria-hidden="true">·</span><span>With whoever's hosting</span><span aria-hidden="true">·</span><span>No pitch</span></p>
+          </a>
+
+          <!-- SECONDARY ROW — (1) send the shape of the day for a written quote,
+               (2) for the reader with a specific day to lock — the meetings pricing tool. -->
+          <div class="invite__row">
+            <a class="invite__secondary" href="mailto:kiaora@twofiftyseven.co?subject=Meeting%20enquiry%20from%20calculator">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">Email us your day<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">Day, rough shape, headcount, catering needs. Written quote back inside a working day. Same-hour response in business hours.</p>
+              </div>
+            </a>
+            <a class="invite__secondary" href="../../meetings/pricing/">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">Get a precise quote<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">Our meetings quote tool — pick the room, hours, AV and catering. Live total, written quote at the end, your day held while you decide.</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         5. FAQ
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter faq-wrap" aria-labelledby="faq-title">
+      <div class="chapter__inner">
+      <p class="chapter__marker">FAQ</p>
+      <h2 id="faq-title">Common questions</h2>
+      <div class="faq" data-js="faq-accordion">
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">How much does it cost to hire a meeting room in Wellington?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer"><div class="faq-item__answer-inner">
+            <p>A small Wellington meeting room (4–8 people, half-day) typically runs $350–$650 at city-centre venues; a full-day workshop room for 20 people lands around $850–$1,900 once room hire, tea + coffee and a light lunch are in. At two/fiftyseven the same 20-person full-day workshop starts at $690 for the room, with tea + coffee at $5/head and catering free when you arrange it directly, charged at cost when we arrange it.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">What does a typical Wellington workshop venue cost for a full day?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer"><div class="faq-item__answer-inner">
+            <p>For 20 people, the typical Wellington workshop-venue full-day spend is $1,500–$3,000 once you add room hire, catering, AV and materials. The calculator above gives you the exact line items · and shows the equivalent build at two/fiftyseven, where the workshop space is $690/day, tea + coffee is included, and AV is offered as small separate add-ons at maintenance-replacement cost so teams not using AV aren't paying for it.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">What's the cheapest way to host an away day in Wellington?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer"><div class="faq-item__answer-inner">
+            <p>For a small team (under 12), our Silver Linings room at $590/day or Studios Whātaitai + Ngake at $490/day with tea + coffee included tend to be the lowest credible spend. Add catering at cost from approved local suppliers and you can run a full-day away day for 10 people from around $700–$900 all-in.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">What's included in venue hire at two/fiftyseven?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer"><div class="faq-item__answer-inner">
+            <p>Room hire includes tea + coffee, fast wifi, whiteboards and flipcharts, hosting by an MHFR + First Aid-trained team, and a climate-positive venue with 200% verified offset. Projector + sound system are separate small add-ons at maintenance-replacement cost · accessible for teams who don't need them. Catering is free when you arrange it directly, charged at cost when we arrange it.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">Is there a discount for charities and not-for-profits hiring venues?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer"><div class="faq-item__answer-inner">
+            <p>Yes. Our Impact Discount is 50% off room hire for charities, NGOs, indigenous-led organisations, community groups and social enterprises. Tick the Impact Discount box in the calculator above to see your number, or email kiaora@twofiftyseven.co with a line about your work.</p>
+          </div></div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">Can I share this calculator with my team?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer"><div class="faq-item__answer-inner">
+            <p>Yes. Use the Copy link button below the result · it copies a URL with your exact event configuration so your team can open the same number. You can also email yourself the breakdown or save it as a one-page PDF.</p>
+          </div></div>
+        </div>
+
+      </div>
+      </div><!-- /.chapter__inner -->
+    </section>
+
+  </main>
+
+  <footer class="site-footer" data-theme="dark">
+    <div class="container">
+      <div class="site-footer__top">
+        <nav class="site-footer__nav" aria-label="Footer">
+          <div class="site-footer__col site-footer__col--find">
+            <h4>Find us</h4>
+            <address class="site-footer__address">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara</address>
+            <p class="site-footer__note">Central lift access from both the Willis Street and Victoria Street entrances. The Victoria Street entrance is opposite Matapihi ki te Ao Nui.</p>
+            <a class="site-footer__maplink" href="https://www.google.com/maps/search/?api=1&amp;query=57+Willis+Street+Te+Whanganui-a-Tara">View on map</a>
+          </div>
+          <div class="site-footer__col">
+            <h4>Workspace</h4>
+            <ul>
+              <li><a href="../../workspace/base/index.html">Base</a></li>
+              <li><a href="../../workspace/hub/index.html">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html">Desk</a></li>
+              <li><a href="../../pricing/index.html">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Meet &amp; Host</h4>
+            <ul>
+              <li><a href="../../meetings/index.html">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html">Away days</a></li>
+              <li><a href="../../events/index.html">Events</a></li>
+              <li><a href="../../events/functions/index.html">Functions</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col site-footer__col--about">
+            <h4>About</h4>
+            <ul>
+              <li><a href="../../kaupapa/index.html">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html">Success stories</a></li>
+              <li><a href="../../organisations/index.html">Organisations</a></li>
+              <li><a href="../../our-story/index.html">Our story</a></li>
+              <li><a href="../../people/index.html">People</a></li>
+              <li><a href="../../whatson/index.html">What's on</a></li>
+              <li><a href="../../kōrero/index.html">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html">Press kit</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Calculators</h4>
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html">Carbon</a></li>
+              <li><a href="../../contact/index.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <form class="site-footer__panui" method="post" action="#" aria-label="Pānui signup">
+          <h4>Pānui</h4>
+          <p>Occasional notes from inside two/fiftyseven · what's on, what's changed, what we're thinking about.</p>
+          <div class="site-footer__panui-row">
+            <label class="visually-hidden" for="panui-email">Email address</label>
+            <input type="email" id="panui-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit" class="btn btn--primary btn--small">Sign up</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="site-footer__beliefs" aria-label="What we believe">
+        <ul class="site-footer__beliefs-track">
+          <li>diversity is resilience</li>
+          <li>radical equality is good for all</li>
+          <li>complete decolonisation is a necessary future</li>
+          <li>climate justice is a human and environmental imperative</li>
+          <li aria-hidden="true">diversity is resilience</li>
+          <li aria-hidden="true">radical equality is good for all</li>
+          <li aria-hidden="true">complete decolonisation is a necessary future</li>
+          <li aria-hidden="true">climate justice is a human and environmental imperative</li>
+        </ul>
+      </div>
+
+      <div class="site-footer__wordmark" data-js="footer-reveal" role="img" aria-label="two/fiftyseven"></div>
+
+      <div class="site-footer__bottom">
+        <span>&copy; 2026 two/fiftyseven Limited</span>
+        <span>Aotearoa / New Zealand</span>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var wm = document.querySelector('[data-js="footer-reveal"]');
+        if (!wm) return;
+        if (!('IntersectionObserver' in window)) { wm.classList.add('is-revealed'); return; }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-revealed'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.25 });
+        io.observe(wm);
+      })();
+    </script>
+  </footer>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       PAGE COORDINATOR
+         (a) Mirror engine sinks → 3-figure result panel
+         (b) Render breakdown rows from JSON sinks
+         (c) URL state sync (so Copy-link works)
+         (d) Email · Share · Print actions
+       ════════════════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    // Source links per industry line key.
+    // FIX 3 · single authoritative source per line, short label.
+    var INDUSTRY_SOURCES = {
+      room:        { label: 'Willeston',     href: 'https://willeston.co.nz/our-rooms/' },
+      catering:    { label: 'MoneyHub',      href: 'https://www.moneyhub.co.nz/best-caterers-wellington.html' },
+      av:          { label: 'Edwards Sound', href: 'https://www.edwardsnz.co.nz/' },
+      facilitation:{ label: 'PayScale NZ',   href: 'https://www.payscale.com/research/NZ/Skill=Facilitator/Hourly_Rate' },
+      materials:   { label: 'Methodology',   href: '#methodology' },
+      setup:       { label: 'Willeston',     href: 'https://willeston.co.nz/our-rooms/' },
+      custom:      { label: 'Your line',     href: '#methodology' }
+    };
+
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function fmtBand(low, high) {
+      if (Math.round(low) === Math.round(high)) return '$' + Math.round(low).toLocaleString('en-NZ');
+      return '$' + Math.round(low).toLocaleString('en-NZ') + '–$' + Math.round(high).toLocaleString('en-NZ');
+    }
+    function fmtMoney(n) { return '$' + Math.round(n).toLocaleString('en-NZ'); }
+
+    function renderFromSinks() {
+      var root = document.querySelector('[data-js="calc-meeting-costs"]');
+      if (!root) return;
+
+      function sinkText(sel) { var el = root.querySelector(sel); return el ? el.textContent.trim() : ''; }
+
+      var indBand = sinkText('[data-mc-sink-industry-band]');
+      var ours    = sinkText('[data-mc-sink-ours-total]');
+      var savBand = sinkText('[data-mc-sink-saving-band]');
+      var space   = sinkText('[data-mc-sink-space-name]');
+
+      var resInd  = document.querySelector('[data-result-industry]');
+      var resOurs = document.querySelector('[data-result-ours]');
+      var resSave = document.querySelector('[data-result-save]');
+      var resSpace= document.querySelector('[data-result-space-unit]');
+
+      if (resInd && indBand)  resInd.textContent  = indBand;
+      if (resOurs && ours)    resOurs.textContent = ours;
+      if (resSave && savBand) resSave.textContent = savBand;
+      if (resSpace && space)  resSpace.textContent = space + ' · all-in';
+
+      // Industry lines
+      var indSlot = document.querySelector('[data-mc-industry-slot]');
+      var indLinesRaw = sinkText('[data-mc-sink-industry-lines]');
+      var indLines = [];
+      try { indLines = JSON.parse(indLinesRaw); } catch(e) {}
+      if (indSlot) {
+        var out = '';
+        var indTotalLow = 0, indTotalHigh = 0;
+        indLines.forEach(function (l) {
+          var src = INDUSTRY_SOURCES[l.key] || { label: 'Source', href: '#methodology' };
+          var valueTxt = (Math.round(l.low) === Math.round(l.high))
+            ? fmtMoney(l.low)
+            : fmtMoney(l.low) + '–' + fmtMoney(l.high);
+          out += '<div class="breakdown-row">'
+               +   '<div class="breakdown-row__label">' + escapeHTML(l.label) + '</div>'
+               +   '<div class="breakdown-row__note">' + escapeHTML(l.note || '') + '</div>'
+               +   '<div class="breakdown-row__value">' + valueTxt + '</div>'
+               +   '<a class="breakdown-row__source" href="' + src.href + '"' + (src.href.charAt(0) === '#' ? '' : ' target="_blank" rel="noopener"') + '>' + escapeHTML(src.label) + (src.href.charAt(0) === '#' ? '' : ' ↗') + '</a>'
+               + '</div>';
+          indTotalLow += +l.low; indTotalHigh += +l.high;
+        });
+        out += '<div class="breakdown-total">'
+             +   '<span class="breakdown-total__label">Total · current local pricing</span>'
+             +   '<span class="breakdown-total__value" data-mc-industry-total>' + fmtBand(indTotalLow, indTotalHigh) + '</span>'
+             +   '<span class="breakdown-total__source-spacer"></span>'
+             + '</div>';
+        indSlot.innerHTML = out;
+      }
+
+      // Ours lines
+      var oursSlot = document.querySelector('[data-mc-ours-slot]');
+      var oursLinesRaw = sinkText('[data-mc-sink-ours-lines]');
+      var oursLines = [];
+      try { oursLines = JSON.parse(oursLinesRaw); } catch(e) {}
+      if (oursSlot) {
+        var out2 = '';
+        var oursTotal = 0;
+        oursLines.forEach(function (l) {
+          var valueTxt = (l.value < 0 ? '−' : '') + fmtMoney(Math.abs(l.value));
+          // Job 2 · ours rows render an empty .source-spacer cell to preserve
+          // the shared 4-column grid so $ values align across both tables.
+          out2 += '<div class="breakdown-row">'
+                +   '<div class="breakdown-row__label">' + escapeHTML(l.label) + '</div>'
+                +   '<div class="breakdown-row__note">' + escapeHTML(l.note || '') + '</div>'
+                +   '<div class="breakdown-row__value">' + valueTxt + '</div>'
+                +   '<span class="breakdown-row__source-spacer"></span>'
+                + '</div>';
+          oursTotal += +l.value;
+        });
+        out2 += '<div class="breakdown-total">'
+              +   '<span class="breakdown-total__label">Total · two/fiftyseven</span>'
+              +   '<span class="breakdown-total__value" data-mc-ours-total>' + fmtMoney(oursTotal) + '</span>'
+              +   '<span class="breakdown-total__source-spacer"></span>'
+              + '</div>';
+        oursSlot.innerHTML = out2;
+      }
+    }
+
+    function syncUrlFromInputs() {
+      var root = document.querySelector('[data-js="calc-meeting-costs"]');
+      if (!root) return;
+      var params = new URLSearchParams();
+      var size = root.querySelector('[data-mc-size]');
+      if (size) params.set('size', size.value);
+      // Jobs 6–9 · encode each day's start/end as d0s/d0e/d1s/d1e/…
+      var dayRows = root.querySelectorAll('[data-mc-day-row]');
+      dayRows.forEach(function (row, i) {
+        var s = row.querySelector('[data-mc-day-start]');
+        var e = row.querySelector('[data-mc-day-end]');
+        if (s && s.value) params.set('d' + i + 's', s.value);
+        if (e && e.value) params.set('d' + i + 'e', e.value);
+      });
+      ['tea','breakfast','lunch-light','lunch-hearty','afternoon','drinks',
+       'av-projector','av-sound',
+       'mat-boards','mat-postits','mat-printing','impact'].forEach(function (k) {
+        var el = root.querySelector('[data-mc-' + k + ']');
+        if (el && el.checked) params.set(k, '1');
+      });
+      var fac = root.querySelector('[data-mc-fac]:checked');
+      if (fac && fac.value !== 'none') params.set('fac', fac.value);
+      var setup = root.querySelector('[data-mc-setup]:checked');
+      if (setup && setup.value !== 'included') params.set('setup', setup.value);
+      var cLabel = root.querySelector('[data-mc-custom-label]');
+      var cValue = root.querySelector('[data-mc-custom-value]');
+      if (cLabel && cLabel.value) params.set('cl', cLabel.value);
+      if (cValue && cValue.value) params.set('cv', cValue.value);
+      history.replaceState({}, '', window.location.pathname + (params.toString() ? '?' + params.toString() : '') + window.location.hash);
+    }
+
+    function applyUrlToInputs() {
+      var params = new URLSearchParams(window.location.search);
+      if (!Array.from(params.keys()).length) return;
+      var root = document.querySelector('[data-js="calc-meeting-costs"]');
+      if (!root) return;
+      if (params.has('size')) {
+        var size = root.querySelector('[data-mc-size]');
+        var disp = root.querySelector('[data-mc-size-display]');
+        if (size) size.value = params.get('size');
+        if (disp) disp.textContent = params.get('size');
+      }
+      // Jobs 6–9 · decode d0s/d0e/d1s/d1e/… into day rows. If params reference
+      // dayIndex >= current row count, clone the template to add rows.
+      var rowsHost = root.querySelector('[data-mc-day-rows]');
+      var dayTpl = root.querySelector('[data-mc-day-template]');
+      var maxDayIdx = -1;
+      params.forEach(function (_v, k) {
+        var m = k.match(/^d(\d+)[se]$/);
+        if (m) maxDayIdx = Math.max(maxDayIdx, parseInt(m[1], 10));
+      });
+      if (rowsHost && dayTpl) {
+        while (rowsHost.querySelectorAll('[data-mc-day-row]').length <= maxDayIdx) {
+          rowsHost.appendChild(dayTpl.content.firstElementChild.cloneNode(true));
+        }
+      }
+      var dayRows = root.querySelectorAll('[data-mc-day-row]');
+      dayRows.forEach(function (row, i) {
+        var s = row.querySelector('[data-mc-day-start]');
+        var e = row.querySelector('[data-mc-day-end]');
+        if (s && params.has('d' + i + 's')) s.value = params.get('d' + i + 's');
+        if (e && params.has('d' + i + 'e')) e.value = params.get('d' + i + 'e');
+      });
+      ['tea','breakfast','lunch-light','lunch-hearty','afternoon','drinks',
+       'av-projector','av-sound',
+       'mat-boards','mat-postits','mat-printing','impact'].forEach(function (k) {
+        var el = root.querySelector('[data-mc-' + k + ']');
+        if (el) el.checked = params.has(k);
+      });
+      if (params.has('fac')) {
+        var f = root.querySelector('[data-mc-fac][value="' + params.get('fac') + '"]');
+        if (f) f.checked = true;
+      }
+      if (params.has('setup')) {
+        var s = root.querySelector('[data-mc-setup][value="' + params.get('setup') + '"]');
+        if (s) s.checked = true;
+      }
+      if (params.has('cl')) {
+        var cl = root.querySelector('[data-mc-custom-label]');
+        if (cl) cl.value = params.get('cl');
+      }
+      if (params.has('cv')) {
+        var cv = root.querySelector('[data-mc-custom-value]');
+        if (cv) cv.value = params.get('cv');
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      applyUrlToInputs();
+
+      var root = document.querySelector('[data-js="calc-meeting-costs"]');
+      if (root) {
+        root.addEventListener('mc:rendered', function () { renderFromSinks(); syncUrlFromInputs(); });
+        root.addEventListener('input', function () { /* engine ticks; coordinator updates on mc:rendered */ });
+      }
+      // Initial render fallback (engine may have ticked before listener attached)
+      renderFromSinks();
+      setTimeout(renderFromSinks, 150);
+
+      // ── Share
+      var shareBtn = document.querySelector('[data-share-btn]');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', function () {
+          syncUrlFromInputs();
+          var url = window.location.href;
+          var original = shareBtn.textContent;
+          function done() {
+            shareBtn.textContent = 'Copied ✓';
+            setTimeout(function () { shareBtn.textContent = original; }, 2000);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(done).catch(function () { window.prompt('Copy this link', url); });
+          } else { window.prompt('Copy this link', url); }
+        });
+      }
+
+      // ── Email
+      var emailForm = document.querySelector('[data-email-form]');
+      var emailStatus = document.querySelector('[data-email-status]');
+      if (emailForm) {
+        emailForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          syncUrlFromInputs();
+          var input = emailForm.querySelector('input[type="email"]');
+          var email = input ? input.value.trim() : '';
+          if (!email) { if (emailStatus) emailStatus.textContent = 'Add your email and try again.'; return; }
+          var url = window.location.href;
+          var ind  = (document.querySelector('[data-result-industry]')||{}).textContent || '$0';
+          var ours = (document.querySelector('[data-result-ours]')||{}).textContent || '$0';
+          var sav  = (document.querySelector('[data-result-save]')||{}).textContent || '$0';
+          var sizeEl = document.querySelector('[data-mc-size-display]');
+          var size = sizeEl ? sizeEl.textContent : '·';
+          var subj = 'Your meeting cost breakdown · two/fiftyseven';
+          var body = 'Kia ora,\n\nHere is your meeting / workshop / event cost breakdown (' + size + ' people):\n\n'
+                   + '  Current local pricing:  ' + ind + '\n'
+                   + '  At two/fiftyseven:           ' + ours + '\n'
+                   + '  You would save:              ' + sav + '\n\n'
+                   + 'Open the live calculator with your exact build:\n' + url + '\n\n'
+                   + 'Full line-by-line breakdown (with sources) inside the calculator.\n\n'
+                   + '· two/fiftyseven\n'
+                   + 'kiaora@twofiftyseven.co · twofiftyseven.co\n'
+                   + 'Book a tour: twofiftyseven.co/tours/';
+          var mailto = 'mailto:' + encodeURIComponent(email)
+                     + '?subject=' + encodeURIComponent(subj)
+                     + '&body=' + encodeURIComponent(body);
+          window.location.href = mailto;
+          if (emailStatus) emailStatus.textContent = 'Opening your mail client…';
+        });
+      }
+
+      // ── Print
+      var printBtn = document.querySelector('[data-print-btn]');
+      if (printBtn) printBtn.addEventListener('click', function () { window.print(); });
+
+      // ── Custom-line add / remove
+      var rowsWrap = document.querySelector('[data-mc-custom-rows]');
+      var tpl      = document.querySelector('[data-mc-custom-template]');
+      var addBtn   = document.querySelector('[data-mc-custom-add]');
+      var calcRoot = document.querySelector('[data-js="calc-meeting-costs"]');
+      function refreshCount() {
+        if (!rowsWrap) return;
+        rowsWrap.setAttribute('data-count', rowsWrap.querySelectorAll('[data-mc-custom-row]').length);
+      }
+      function fireRecalc() {
+        if (calcRoot) calcRoot.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      if (addBtn && tpl && rowsWrap) {
+        addBtn.addEventListener('click', function () {
+          var clone = tpl.content.firstElementChild.cloneNode(true);
+          rowsWrap.appendChild(clone);
+          refreshCount();
+          fireRecalc();
+        });
+      }
+      if (rowsWrap) {
+        rowsWrap.addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-mc-custom-remove]');
+          if (!btn) return;
+          var rows = rowsWrap.querySelectorAll('[data-mc-custom-row]');
+          if (rows.length <= 1) {
+            // Clear the only row instead of removing it.
+            var row = btn.closest('[data-mc-custom-row]');
+            if (row) {
+              row.querySelectorAll('input').forEach(function (i) { i.value = ''; });
+            }
+          } else {
+            var row2 = btn.closest('[data-mc-custom-row]');
+            if (row2) row2.remove();
+          }
+          refreshCount();
+          fireRecalc();
+        });
+      }
+
+      // Jobs 6–9 · Day-rows add / remove. Mirrors the custom-line pattern.
+      var dayRowsWrap = document.querySelector('[data-mc-day-rows]');
+      var dayTpl      = document.querySelector('[data-mc-day-template]');
+      var dayAddBtn   = document.querySelector('[data-mc-day-add]');
+      function refreshDayCount() {
+        if (!dayRowsWrap) return;
+        var rows = dayRowsWrap.querySelectorAll('[data-mc-day-row]');
+        dayRowsWrap.setAttribute('data-count', rows.length);
+      }
+      if (dayAddBtn && dayTpl && dayRowsWrap) {
+        dayAddBtn.addEventListener('click', function () {
+          var clone = dayTpl.content.firstElementChild.cloneNode(true);
+          dayRowsWrap.appendChild(clone);
+          refreshDayCount();
+          fireRecalc();
+        });
+      }
+      if (dayRowsWrap) {
+        dayRowsWrap.addEventListener('click', function (e) {
+          // AM/PM select · clicking one sets data-active + data-period on the
+          // parent .time-input__periods (which is the same element the engine
+          // reads via [data-mc-day-{start,end}-period]).
+          var periodBtn = e.target.closest('[data-period-btn]');
+          if (periodBtn) {
+            var picked = periodBtn.getAttribute('data-period-btn');
+            var group = periodBtn.parentElement;
+            group.setAttribute('data-active', picked);
+            group.setAttribute('data-period', picked);
+            fireRecalc();
+            return;
+          }
+          // × remove
+          var btn = e.target.closest('[data-mc-day-remove]');
+          if (!btn) return;
+          var rows = dayRowsWrap.querySelectorAll('[data-mc-day-row]');
+          if (rows.length <= 1) {
+            var row = btn.closest('[data-mc-day-row]');
+            if (row) {
+              row.querySelectorAll('.time-input__field').forEach(function (i) { i.value = ''; });
+              row.querySelectorAll('.time-input__periods').forEach(function (g) {
+                g.setAttribute('data-active', 'am'); g.setAttribute('data-period', 'am');
+              });
+            }
+          } else {
+            var row2 = btn.closest('[data-mc-day-row]');
+            if (row2) row2.remove();
+          }
+          refreshDayCount();
+          fireRecalc();
+        });
+        // Auto-insert ":" after 2 digits + clamp to 4 digits.
+        dayRowsWrap.addEventListener('input', function (e) {
+          var f = e.target.closest('.time-input__field');
+          if (!f) return;
+          var raw = f.value.replace(/[^0-9]/g, '').slice(0, 4);
+          if (raw.length >= 3) f.value = raw.slice(0, 2) + ':' + raw.slice(2);
+          else f.value = raw;
+        });
+      }
+
+      // Job 11 · engine owns the stepper buttons (allows min 0 now).
+
+      // 2026-05-18 FIX 5 · breakdown trigger proxies into the real <details>
+      // that lives full-width below .calc-layout. Smooth-scrolls into view
+      // on expand; updates aria-expanded both ways.
+      var breakdownTrigger = document.querySelector('[data-breakdown-trigger]');
+      var breakdownDetails = document.getElementById('methodology');
+      if (breakdownTrigger && breakdownDetails) {
+        breakdownTrigger.addEventListener('click', function () {
+          var wasOpen = breakdownDetails.open;
+          breakdownDetails.open = !wasOpen;
+          breakdownTrigger.setAttribute('aria-expanded', String(!wasOpen));
+          if (!wasOpen) {
+            breakdownDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+        // Keep trigger state in sync if the user toggles the native summary.
+        breakdownDetails.addEventListener('toggle', function () {
+          breakdownTrigger.setAttribute('aria-expanded', String(breakdownDetails.open));
+        });
+      }
+    });
+  })();
+  </script>
+
+  <!-- FAQ accordion + sticky-header scroll indicator (mirrors office-costs). -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.faq-item__question').forEach(function (q) {
+        q.addEventListener('click', function() {
+          var item = q.closest('.faq-item');
+          var isOpen = item.getAttribute('data-open') === 'true';
+          item.setAttribute('data-open', !isOpen);
+          q.setAttribute('aria-expanded', !isOpen);
+        });
+      });
+      var header = document.querySelector('[data-js="site-header"]');
+      if (header) {
+        window.addEventListener('scroll', function() {
+          header.classList.toggle('is-scrolled', window.scrollY > 0);
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

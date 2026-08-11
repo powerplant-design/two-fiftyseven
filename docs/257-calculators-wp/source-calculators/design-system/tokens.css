@@ -1,0 +1,354 @@
+/* ============================================================================
+   two/fiftyseven · Phase 2 design system · tokens
+   ----------------------------------------------------------------------------
+   Direction 2 (Common) · soft-modernist · photo-led · generous · warm
+   ----------------------------------------------------------------------------
+   Updated 2026-05-07 — Ash confirmed 4-family palette (Tints & Shade Variants).
+   Hex values match the WP precedent _primitive.scss canonical palette.
+   Typography restraint: Gopher Display sparingly (large headings only),
+   Overused Grotesk weights for everything else.
+   ----------------------------------------------------------------------------
+   Order of layers (cascade):
+     1. fonts.css      — @font-face declarations
+     2. tokens.css     — this file, all CSS custom properties + theme engine
+     3. components.css — components built on tokens
+   ========================================================================== */
+
+:root {
+
+  /* ==========================================================================
+     COLOUR — primitives, 4 families × 6 steps (Neutral 5 steps)
+     ========================================================================== */
+
+  /* 257 Forest Fader — primary brand family (workspace, daily life, body bg) */
+  --forest-100: #F6FFE2;   /* very pale green-yellow, lightest ground */
+  --forest-200: #E3FCA9;   /* pale lime, soft ground */
+  --forest-300: #E5FFA9;   /* lime, the brand colour, primary light theme bg */
+  --forest-400: #DDFF8C;   /* bright chartreuse, accent emphasis */
+  --forest-500: #182D09;   /* deep forest, mid-dark text */
+  --forest-600: #111D08;   /* darkest forest, body text on light + body bg on dark */
+
+  /* 257 Purple Hazed — kaupapa, brand-layer pages, special moments */
+  --purple-100: #F1E1FF;
+  --purple-200: #E2C4FF;
+  --purple-300: #D3A7FE;
+  --purple-400: #C589FE;
+  --purple-500: #5B3860;
+  --purple-600: #3F2143;
+
+  /* 257 Maroon 257 — meetings, host, evening events, conversion CTAs */
+  --maroon-100: #FBE4E3;
+  --maroon-200: #F7C9C7;
+  --maroon-300: #F3AFAC;
+  --maroon-400: #EF9490;
+  --maroon-500: #471820;
+  --maroon-600: #2E0F14;
+
+  /* Neutral — greyscale, /people/, /press-kit/, neutral surfaces */
+  --neutral-100: #FFFFFF;
+  --neutral-200: #F1F1F1;
+  --neutral-300: #989898;
+  --neutral-400: #707070;
+  --neutral-500: #424242;
+  --neutral-600: #222222;
+
+  /* State (cross-family, never themed) */
+  --colour-focus:    #5B7FBF;   /* focus ring */
+  --colour-error:    #B83A2B;   /* error red */
+  --colour-success:  #3F7A3F;   /* success green */
+
+  /* Pattern texture (Samolevsky / 257-brain-coral, locked) */
+  --colour-pattern-line: #DEEFB3;
+  --colour-pattern-bg:   #F3FCDE;
+
+  /* ==========================================================================
+     COLOUR — IMPACT AESTHETIC (sitewide default, 2026-05-17)
+     ----------------------------------------------------------------------------
+     The impact-aesthetic palette is the canonical sitewide palette. Sampled
+     from the Half-Earth Socialism cover: a grey-green field as the ground,
+     pale lime as the accent, near-black as the ink, and a deeper grey-green
+     as the paper. Originally scoped to .page-impact; promoted to :root here
+     so every page reads from one source.
+     ========================================================================== */
+
+  --ip-ground:           #b0bca6;            /* grey-green field — the sitewide ground */
+  --ip-ground-2:         #a3b098;            /* half-step deeper, for quiet layering */
+  --ip-lime:             #e5ffa9;            /* pale brand lime — accents + drift shapes */
+  --ip-ink:              #14200b;            /* near-black ink — display + body */
+  --ip-paper:            #dde3d4;            /* pale grey-green paper — cards + panels */
+  --ip-ink-dim:          rgba(20, 32, 11, 0.62);
+
+  /* ==========================================================================
+     COLOUR — SEMANTIC TOKENS (alias the impact palette)
+     ----------------------------------------------------------------------------
+     The semantic --colour-* names alias the impact tokens, so any component
+     reading these names gets the impact aesthetic automatically.
+     ========================================================================== */
+
+  --colour-bg:           var(--ip-ground);   /* grey-green ground — site body background */
+  --colour-bg-2:         var(--ip-paper);    /* lighter ground — card fill */
+  --colour-bg-3:         var(--ip-paper);    /* secondary surface */
+  --colour-paper:        var(--ip-paper);    /* paper — card / panel fill */
+  --colour-surface:      var(--ip-paper);    /* card / surface fill */
+  --colour-surface-2:    var(--ip-ground-2); /* deeper surface */
+  --colour-text:         var(--ip-ink);      /* primary text */
+  --colour-text-2:       var(--ip-ink-dim);  /* secondary text */
+  --colour-text-3:       rgba(20, 32, 11, 0.45); /* tertiary / muted, derived from ip-ink */
+  --colour-border:       var(--ip-ink);      /* primary border */
+  --colour-border-2:     rgba(20, 32, 11, 0.18); /* hairline divider */
+  --colour-accent:       var(--ip-ink);      /* primary accent (CTAs) */
+  --colour-accent-on:    var(--ip-lime);     /* text on accent */
+  --colour-link:         var(--ip-ink);
+  --colour-link-hover:   var(--ip-ink-dim);
+
+  /* Brand lime — the punch colour, used as accent surface (saving cards,
+     hero pops, drift shape fill). Same hex across old + new aesthetic, so the
+     name carries the same meaning. */
+  --colour-lime:         var(--ip-lime);     /* brand lime — accent surface */
+  --colour-lime-deep:    var(--forest-400);  /* brand lime, hover state */
+  --colour-forest:       var(--ip-ink);      /* deep forest — eyebrow on lime */
+  --colour-forest-dark:  var(--ip-ink);      /* darkest forest — text on lime card */
+  --colour-bone:         var(--ip-paper);    /* warm near-white — hero body text on dark */
+  --colour-bone-2:       var(--ip-ground);   /* soft pale lime — hero eyebrow on dark */
+
+  /* Theme variables — the chapter system reads these so individual chapters
+     can override locally without restating every property. */
+  --chapter-bg:          var(--ip-ground);
+  --chapter-fg:          var(--ip-ink);
+  --chapter-padding-block: clamp(48px, 7vw, 112px);
+  --chapter-fit-padding-block: clamp(24px, 3.5vw, 56px);
+  --shape-fill:          var(--ip-lime);
+  --pop-bg:              var(--ip-lime);
+  --pop-fg:              var(--ip-ink);
+
+  /* Navigation height — used by sticky heroes to lock just below the header
+     so they don't slide on initial scroll. Roughly: 24px padding × 2 +
+     content (~32px wordmark/CTA line-height) = ~80px. */
+  --nav-h: 80px;
+
+  /* Shape system primitives (locked from 08-homepage-locked.md §10) */
+  --shape-natural:       rgba(17, 29, 8, 0.65);
+  --shape-projection:    var(--forest-300);
+
+  /* ==========================================================================
+     TYPOGRAPHY — font stacks (typography restraint rule applies in components)
+     ========================================================================== */
+
+  --font-display:        "Gopher Display", "Overused Grotesk", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body:           "Overused Grotesk", "Overused Grotesk Static", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono:           ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Type scale — fluid clamp() */
+  --type-hero:           clamp(2.5rem, 6vw + 1rem, 5.5rem);    /* 40 → 88px */
+  --type-h1:             clamp(2rem, 4vw + 0.75rem, 4.25rem);  /* 32 → 68px */
+  --type-h2:             clamp(1.75rem, 3vw + 0.5rem, 3rem);   /* 28 → 48px */
+  /* Canonical SECTION-H2 size — used by .chapter h2.display--mid plus every
+     bespoke H2 class (values-trio__title, success-stories__title, etc.).
+     Change this token to resize every section H2 across the entire site. */
+  --type-section-h2:     clamp(2.4rem, 5.6vw, 6.65rem); /* ~38 → 106px */
+
+  /* ────────────────────────────────────────────────────────────────────────
+     IMPACT STAT · single source of truth for the cumulative impact dollar
+     figure quoted across the site ("$450,000+ paid forward since 2021").
+     Change this ONE value and every page that uses the .js-impact-total
+     hook (script: /shared/js/impact-stats.js) or the var(--impact-total-display)
+     CSS injection updates automatically. Includes raw number for JS maths
+     plus the display string for CSS content injection.
+     ──────────────────────────────────────────────────────────────────────── */
+  --impact-total:         450000;             /* raw integer for JS calculations */
+  --impact-total-display: "$450,000+";        /* display string for CSS content */
+  --type-h2-lock:        clamp(2.75rem, 5vw + 1rem, 4.5rem);   /* locked override */
+  --type-h3:             clamp(1.375rem, 1.5vw + 0.375rem, 1.875rem); /* 22 → 30px */
+  --type-h4:             1.25rem;                               /* 20px */
+  --type-large:          1.125rem;                              /* 18px */
+  --type-base:           1rem;                                  /* 16px */
+  --type-small:          0.9375rem;                             /* 15px */
+  --type-tiny:           0.8125rem;                             /* 13px */
+  --type-mono-small:     0.9375rem;                             /* 15px mono — bumped 25% sitewide 2026-05-17 */
+
+  /* Weight tokens — Overused Grotesk variable spectrum */
+  --weight-light:    300;
+  --weight-book:     400;
+  --weight-regular:  400;   /* alias of --weight-book */
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-black:    900;
+
+  /* Leading */
+  --leading-tight:       1.05;
+  --leading-snug:        1.15;
+  --leading-normal:      1.5;
+  --leading-loose:       1.7;
+
+  /* Kerning */
+  --kerning-display:    -0.025em;
+  --kerning-heading:    -0.015em;
+  --kerning-body:       -0.005em;
+  --kerning-caps:        0.08em;
+
+  /* ==========================================================================
+     SPACING — 8px base scale
+     ========================================================================== */
+
+  --space-25:    2px;
+  --space-50:    4px;
+  --space-100:   8px;
+  --space-150:   12px;
+  --space-200:   16px;
+  --space-300:   24px;
+  --space-400:   32px;
+  --space-500:   40px;
+  --space-600:   48px;
+  --space-700:   56px;
+  --space-800:   64px;
+  --space-1000:  80px;
+  --space-1200:  96px;
+  --space-1600:  128px;
+  --space-2000:  160px;
+
+  --section-pad:        clamp(48px, 6vw, 80px);
+  --section-pad-tight:  clamp(32px, 4vw, 56px);
+  --section-pad-wide:   clamp(64px, 8vw, 104px);
+
+  /* ==========================================================================
+     LAYOUT
+     ========================================================================== */
+
+  --container-max:      1440px;
+  --container-wide:     1600px;
+  --container-narrow:   880px;
+  --container-prose:    640px;
+  --container-padding:  clamp(20px, 4vw, 56px);
+
+  --bp-sm:    640px;
+  --bp-md:    768px;
+  --bp-lg:    1024px;
+  --bp-xl:    1280px;
+  --bp-2xl:   1536px;
+
+  /* ==========================================================================
+     BORDER + RADIUS + SHADOW
+     ========================================================================== */
+
+  --border-thin:    1px;
+  --border-medium:  2px;
+  --border-thick:   4px;
+
+  --radius-sm:      4px;
+  --radius-md:      8px;
+  --radius-lg:      16px;     /* universal card outer radius (locked) */
+  --radius-xl:      24px;
+  --radius-2xl:     32px;
+  --radius-pill:    9999px;
+
+  --radius-photo-inset: 8px;
+  --photo-frame-padding: var(--space-100);
+
+  --shadow-sm:    0 1px 2px rgb(17 29 8 / 0.05);
+  --shadow-md:    0 4px 12px rgb(17 29 8 / 0.08);
+  --shadow-lg:    0 12px 32px rgb(17 29 8 / 0.12);
+  --shadow-xl:    0 24px 48px rgb(17 29 8 / 0.18);
+  --shadow-focus: 0 0 0 3px var(--colour-focus);
+
+  /* ==========================================================================
+     MOTION
+     ========================================================================== */
+
+  --motion-fast:    150ms;
+  --motion-base:    250ms;
+  --motion-slow:    400ms;
+  --motion-slower:  600ms;
+  --motion-tween:   1200ms;
+
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out:    cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ==========================================================================
+     FILTER — lime tint for partner logos on lime ground
+     ========================================================================== */
+
+  --filter-lime: brightness(0) saturate(100%) invert(86%) sepia(32%) saturate(900%) hue-rotate(15deg) brightness(95%) contrast(90%);
+
+  /* ==========================================================================
+     Z-INDEX
+     ========================================================================== */
+
+  --z-hide:      -1;
+  --z-base:       0;
+  --z-elevated:   10;
+  --z-sticky:     100;
+  --z-overlay:    1000;
+  --z-modal:      2000;
+  --z-toast:      3000;
+}
+
+/* ============================================================================
+   THEME ENGINE — unified lime palette
+   ----------------------------------------------------------------------------
+   One palette across the whole site. Page identity comes from content,
+   photography and the shape kit — never from per-page colour theming.
+   :root (above) is the light theme. Dark is infrastructure for the planned
+   theme toggle + section alternation — not active in the current all-light build.
+     <html data-theme="dark">             -- whole-page dark (toggle, later)
+     <section class="section--bg-dark">   -- scoped dark section (alternation)
+   ========================================================================== */
+
+/* Dark — unified dark palette (toggle + section alternation, future) */
+[data-theme="dark"],
+.section--bg-dark {
+  --colour-bg:         var(--forest-600);
+  --colour-bg-2:       var(--forest-500);
+  --colour-bg-3:       var(--forest-500);
+  --colour-surface:    var(--forest-500);
+  --colour-surface-2:  var(--forest-600);
+  --colour-text:       var(--forest-200);
+  --colour-text-2:     var(--forest-300);
+  --colour-text-3:     rgba(227, 252, 169, 0.55);
+  --colour-border:     var(--forest-300);
+  --colour-border-2:   rgba(227, 252, 169, 0.18);
+  --colour-accent:     var(--forest-300);
+  --colour-accent-on:  var(--forest-600);
+  --colour-link:       var(--forest-300);
+  --colour-link-hover: var(--forest-400);
+  --shape-natural:     var(--forest-300);
+  --shape-projection:  rgba(17, 29, 8, 0.65);
+}
+
+/* ============================================================================
+   SECTION ACCENT THEMING (added 2026-05-18 per locked-decisions.md §2)
+   ----------------------------------------------------------------------------
+   Each section overrides --ip-lime (and the four derived tokens that read
+   from it) at the body level. Every component that uses lime as its accent —
+   drift shapes, pop highlights, .chapter--lime grounds, .logos--lime trust
+   marquees, the lime saving panel on calc pages — automatically picks up the
+   section colour. Workspace stays on the canonical lime (no override).
+   ========================================================================== */
+
+body.section-meet {
+  --ip-lime:     #D3A7FE;   /* lavender — meet/meetings section accent */
+  --colour-lime: #D3A7FE;
+  --shape-fill:  #D3A7FE;
+  --pop-bg:      #D3A7FE;
+}
+
+body.section-host {
+  --ip-lime:     #F3AFAC;   /* soft coral — host/events section accent */
+  --colour-lime: #F3AFAC;
+  --shape-fill:  #F3AFAC;
+  --pop-bg:      #F3AFAC;
+}
+
+/* ============================================================================
+   REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

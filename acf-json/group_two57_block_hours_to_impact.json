@@ -1,0 +1,118 @@
+{
+    "key": "group_two57_block_hours_to_impact",
+    "title": "257 Hours to Impact Calculator Block",
+    "fields": [
+        {
+            "key": "field_two57_ht_eyebrow",
+            "label": "Eyebrow",
+            "name": "ht_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional small label above the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Hours-to-impact calculator",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_ht_heading",
+            "label": "Heading",
+            "name": "ht_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "The H1 heading for the calculator.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "how many hours of subsidised space would your team fund?",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_ht_tagline",
+            "label": "Tagline",
+            "name": "ht_tagline",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Intro paragraph below the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "For every hour someone is at two/fiftyseven, our community of paying members enables us to give away $1 worth of free or discounted space. Run the numbers for your team.",
+            "new_lines": "br",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_ht_colour_space",
+            "label": "Colour space",
+            "name": "colour_space",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Controls the colour theme for this block.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "neutral": "Neutral",
+                "forest": "Forest",
+                "purple": "Purple",
+                "maroon": "Maroon"
+            },
+            "default_value": "forest",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/hours-to-impact"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the heading and colour space for the 257 Hours to Impact calculator block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1785813321642
+}

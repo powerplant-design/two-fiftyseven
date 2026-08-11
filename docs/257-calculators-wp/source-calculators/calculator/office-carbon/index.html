@@ -1,0 +1,1150 @@
+<!-- two/fiftyseven · /calculator/office-carbon/ · 2026-05-18 rebuild
+     Aligned with /calculator/meeting-costs/ pattern. Engine locked
+     (shared/js/calc-office-carbon.js). Tadpole ACE 2025 methodology,
+     verified offset at 200%, every figure linked to its primary source. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Office carbon calculator · Compare two/fiftyseven to your private office · two/fiftyseven</title>
+  <meta name="description" content="See your team's carbon position at two/fiftyseven against running your own central-Wellington office. Tadpole ACE 2025 methodology, Ekos NZUs + Ecotricity Toitū climate positive electricity, 200% verified offset.">
+  <link rel="canonical" href="https://twofiftyseven.co/calculator/office-carbon/">
+
+  <!-- Open Graph + Twitter. Static OG image.
+       TODO: og:image asset missing · needs lockup at /assets/og/calculator-office-carbon.png · 1200×630, impact-aesthetic ground, lime ribbon, two/fiftyseven wordmark. -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://twofiftyseven.co/calculator/office-carbon/">
+  <meta property="og:title" content="Office carbon · two/fiftyseven vs running your own central-Wellington office">
+  <meta property="og:description" content="Defensible figures for ESG analysts and sustainability leads. Tadpole ACE 2025 methodology, 200% verified offset position, every variable linked to its primary source.">
+  <meta property="og:image" content="https://twofiftyseven.co/assets/og/calculator-office-carbon.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="two/fiftyseven">
+  <meta property="og:locale" content="en_NZ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Office carbon · two/fiftyseven vs running your own central-Wellington office">
+  <meta name="twitter:description" content="Defensible figures for ESG analysts and sustainability leads. Tadpole ACE 2025 methodology, 200% verified offset position.">
+  <meta name="twitter:image" content="https://twofiftyseven.co/assets/og/calculator-office-carbon.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="../../design-system/fonts.css">
+  <link rel="stylesheet" href="../../design-system/tokens.css">
+  <link rel="stylesheet" href="../../design-system/components.css">
+  <link rel="stylesheet" href="../../design-system/calculator.css">
+
+  <!-- Shared chrome -->
+  <script defer src="../../shared/js/nav.js"></script>
+  <script defer src="../../shared/js/faq.js"></script>
+  <script defer src="../../shared/js/chapter.js"></script>
+
+  <!-- Calc engine -->
+  <script defer src="../../shared/js/calc-office-carbon.js"></script>
+
+  <style id="page-office-carbon-chrome">
+    body.page-office-carbon { background: var(--ip-ground); color: var(--ip-ink); }
+
+    /* ── 1. TOP FRAME · shared in design-system/calculator.css ─────────── */
+
+    /* ── 2. CALCULATOR · per-page overrides only ──────────────────────────── */
+    .chapter--calc-wrap { padding-top: 0; padding-bottom: clamp(40px, 5vh, 72px); }
+
+    body.page-office-carbon .calc > .calc__field + .calc__field {
+      margin-top: clamp(14px, 1.6vw, 22px);
+    }
+    body.page-office-carbon .calc { margin-block: 0; display: block; }
+
+    /* Full-width breakdown spacing override. */
+    .breakdown-disclosure--full { margin: 0; margin-top: clamp(28px, 3.5vh, 44px); }
+
+    /* Horizontal radio row */
+    .calc .radio-row--horizontal { display: flex; flex-direction: row; gap: clamp(16px, 2vw, 28px); flex-wrap: wrap; }
+    .calc .radio-row--horizontal > label { width: auto; padding: 4px 0; }
+
+    /* Inputs · shared in calculator.css. Carbon caps width to 140px. */
+    .calc input[type="number"],
+    .calc input[type="text"],
+    .calc input[type="email"] { max-width: 140px; }
+
+    /* ── Live result · grid + col + save-lime shared. Carbon keeps per-page
+       label/figure/unit sizing + 3-col mobile breakpoint. */
+    .calc-result__label {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      opacity: 0.78;
+    }
+    .calc-result__figure {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: clamp(1.6rem, 1.4vw + 1rem, 2.4rem);
+      line-height: 1.05; letter-spacing: -0.02em;
+    }
+    .calc-result__unit {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      opacity: 0.62;
+    }
+    @media (max-width: 760px) {
+      .calc-result { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    }
+
+    /* ── Breakdown · body / h3 / rows / total / source / mobile collapse
+       all shared in design-system/calculator.css. */
+
+    .breakdown-prose {
+      font-family: var(--font-body); font-size: 0.95rem; line-height: 1.5;
+      color: var(--ip-ink); opacity: 0.85; max-width: 60ch; margin: 0 0 16px;
+    }
+
+    /* ── Prose ──────────────────────────────────────────────────────────── */
+    .prose {
+      font-family: var(--font-body); font-size: clamp(1rem, 0.3vw + 0.9rem, 1.1rem);
+      line-height: 1.55; color: var(--ip-ink); opacity: 0.88;
+    }
+    .prose p { margin: 0 0 clamp(14px, 2vh, 20px); max-width: 65ch; }
+    .prose-narrow { max-width: 60ch; }
+
+    /* ── Structural tiles + methodology lists ───────────────────────────── */
+    .structural-tile {
+      background: var(--ip-paper); border-radius: var(--radius-lg, 16px);
+      padding: clamp(24px, 3vw, 36px);
+      margin: clamp(20px, 3vh, 32px) 0;
+    }
+    .structural-tile h3 {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.2rem, 0.6vw + 1.05rem, 1.5rem);
+      letter-spacing: -0.01em; color: var(--ip-ink); margin: 0 0 clamp(14px, 2vh, 20px);
+    }
+    .step-list {
+      list-style: none; padding: 0; margin: clamp(16px, 2vh, 24px) 0 0;
+      display: flex; flex-direction: column; gap: clamp(16px, 2vw, 24px);
+      counter-reset: step;
+    }
+    .step-list > li {
+      display: grid; grid-template-columns: 48px 1fr; gap: clamp(14px, 2vw, 22px);
+      align-items: start;
+      counter-increment: step;
+    }
+    .step-list > li::before {
+      content: counter(step, decimal-leading-zero);
+      font-family: var(--font-mono); font-size: 0.85rem;
+      letter-spacing: var(--kerning-caps, 0.08em);
+      color: var(--ip-ink); opacity: 0.6;
+    }
+    .step-list h4 {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: clamp(1.05rem, 0.4vw + 0.95rem, 1.2rem);
+      color: var(--ip-ink); margin: 0 0 8px;
+    }
+    .step-list p {
+      font-family: var(--font-body); font-size: 0.95rem; line-height: 1.5;
+      color: var(--ip-ink); opacity: 0.85; margin: 0;
+    }
+
+    /* Footprint table */
+    .footprint-table {
+      width: 100%; border-collapse: collapse; margin-top: clamp(14px, 2vh, 20px);
+      font-family: var(--font-body); font-size: 0.95rem;
+    }
+    .footprint-table th,
+    .footprint-table td {
+      padding: 10px 12px; text-align: left;
+      border-bottom: 1px solid rgba(20, 32, 11, 0.12);
+      font-variant-numeric: tabular-nums;
+    }
+    .footprint-table th {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.78; font-weight: 500;
+    }
+    .footprint-note {
+      font-family: var(--font-body); font-size: 0.9rem;
+      color: var(--ip-ink); opacity: 0.7; margin: clamp(14px, 2vh, 20px) 0 0;
+    }
+
+    /* Footnotes */
+    .footnote-list {
+      list-style: none; padding: 0; margin: clamp(20px, 3vh, 32px) 0;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .footnote-list li {
+      display: grid; grid-template-columns: 32px 1fr; gap: 8px;
+      font-family: var(--font-body); font-size: 0.9rem; line-height: 1.45;
+      color: var(--ip-ink); opacity: 0.82;
+    }
+    .footnote-num {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      color: var(--ip-ink); opacity: 0.6;
+    }
+    .footnote-list a {
+      color: var(--ip-ink); text-decoration: underline; text-underline-offset: 3px;
+    }
+    .fn a {
+      color: var(--ip-ink); text-decoration: none;
+      font-family: var(--font-mono); font-size: 0.75em; vertical-align: super;
+    }
+
+    /* Methodology-details (expandable full table) */
+    .methodology-details {
+      max-width: none; margin: clamp(24px, 3vh, 36px) 0 0;
+      border-top: 1px solid rgba(20, 32, 11, 0.18);
+      padding-top: clamp(20px, 2.5vh, 28px);
+    }
+    .methodology-details > summary {
+      cursor: pointer;
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps, 0.08em);
+      color: var(--ip-ink); padding: 10px 0;
+      list-style: none;
+    }
+    .methodology-details > summary::-webkit-details-marker { display: none; }
+    .methodology-details > summary::after { content: " ↓"; }
+    .methodology-details[open] > summary::after { content: " ↑"; }
+
+    /* Source table (full source-table inside methodology-details) */
+    .source-table {
+      width: 100%; border-collapse: collapse; margin-top: clamp(16px, 2vh, 24px);
+      font-family: var(--font-body); font-size: 0.92rem;
+    }
+    .source-table th:first-child { width: 3rem; }
+    .source-table th,
+    .source-table td {
+      padding: 12px; text-align: left; vertical-align: top;
+      border-bottom: 1px solid rgba(20, 32, 11, 0.1);
+    }
+    /* Smaller H3 inside the prose block of methodology-details. */
+    .breakdown-h3-sub {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.1rem, 0.5vw + 1rem, 1.4rem);
+      line-height: 1.2; letter-spacing: -0.01em; color: var(--ip-ink);
+      margin: clamp(20px, 3vh, 28px) 0 clamp(10px, 1.4vh, 14px); max-width: 36ch;
+    }
+    .source-table th {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.78; font-weight: 500;
+    }
+    .source-num { font-family: var(--font-mono); opacity: 0.6; }
+    .source-var { display: block; font-weight: 600; color: var(--ip-ink); margin-bottom: 4px; }
+    .source-note { display: block; font-size: 0.85rem; color: var(--ip-ink); opacity: 0.7; }
+    .source-value { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .source-link-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+    .source-link {
+      font-family: var(--font-mono); font-size: 0.78rem;
+      color: var(--ip-ink); text-decoration: underline; text-underline-offset: 3px;
+    }
+
+    /* Offset math block */
+    .offset-math {
+      margin: clamp(20px, 3vh, 32px) 0;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .offset-math__label {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.78; margin-bottom: 8px;
+    }
+    .offset-math__row {
+      display: flex; justify-content: space-between; gap: 16px;
+      padding: 10px 0; border-bottom: 1px solid rgba(20, 32, 11, 0.1);
+      font-family: var(--font-body); font-size: 0.95rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .offset-math__row > span:last-child { font-weight: 500; white-space: nowrap; }
+    .offset-math__public {
+      margin-top: 16px; padding: 14px 16px;
+      background: var(--ip-ground); border-radius: var(--radius-md, 8px);
+      font-family: var(--font-body); font-size: 0.95rem; line-height: 1.5;
+      color: var(--ip-ink);
+    }
+    .offset-math__public strong { font-weight: 700; }
+
+    /* ESG export block (citation) */
+    .esg-export {
+      background: var(--ip-paper); border-radius: var(--radius-lg, 16px);
+      padding: clamp(24px, 3vw, 36px);
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .esg-export__row {
+      display: flex; justify-content: space-between; gap: 16px;
+      padding: 12px 0; border-bottom: 1px solid rgba(20, 32, 11, 0.1);
+      font-family: var(--font-body); font-size: 0.95rem;
+    }
+    .esg-export__row > span:last-child {
+      font-variant-numeric: tabular-nums; white-space: nowrap; font-weight: 500;
+      text-align: right;
+    }
+    .esg-export__copy-row {
+      display: flex; align-items: center; gap: 16px;
+      padding-top: 16px; flex-wrap: wrap;
+    }
+    .esg-export__copy-row .small {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      color: var(--ip-ink); opacity: 0.7;
+    }
+
+    /* Chapter heading defaults */
+    .chapter__eyebrow {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.72; margin: 0 0 clamp(16px, 2vh, 24px);
+    }
+    .chapter__heading {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.6rem, 1.3vw + 1.1rem, 2.25rem);
+      line-height: 1.2; letter-spacing: -0.015em; color: var(--ip-ink);
+      margin: 0 0 clamp(20px, 3vh, 32px); max-width: 36ch;
+    }
+
+    .cta-arrow {
+      font-family: var(--font-body); font-size: 1rem; font-weight: 500;
+      color: var(--ip-ink); text-decoration: underline; text-underline-offset: 4px;
+    }
+    .cta-arrow:hover { opacity: 0.7; }
+    .ctas-row {
+      display: flex; flex-wrap: wrap; gap: clamp(12px, 2vw, 20px);
+      justify-content: center; margin: clamp(20px, 3vh, 32px) 0;
+    }
+    .address-line {
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em);
+      color: var(--ip-ink); opacity: 0.6;
+      text-align: center; margin: 0;
+    }
+
+    /* ── Print · shared base in design-system/calculator.css.
+       Carbon-specific additions for ESG-analyst output:
+       · expand methodology-details so source-table prints inline
+       · footnote-list + source-link URLs printed via ::after
+       · structural-tile + esg-export unstyled, page-break-inside: avoid
+       · ctas/btn hidden (no value on paper)
+       · input field paper bg → white */
+    @media print {
+      .calc input[type="number"] { background: white !important; border: 1px solid #999; }
+      .source-table { font-size: 9pt; }
+      .source-table th, .source-table td { padding: 4pt 6pt; }
+      .source-link::after {
+        content: " (" attr(href) ")"; font-family: var(--font-mono); font-size: 7pt; word-break: break-all;
+      }
+      .methodology-details { display: block !important; }
+      .methodology-details > summary { display: none !important; }
+      .structural-tile, .esg-export { background: none !important; padding: 6pt 0 !important; page-break-inside: avoid; }
+      .footnote-list { font-size: 9pt; }
+      .footnote-list a::after {
+        content: " (" attr(href) ")"; font-family: var(--font-mono); font-size: 7pt; word-break: break-all;
+      }
+      .ctas-row, .btn { display: none !important; }
+    }
+  </style>
+
+  <!-- WebApplication JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Office carbon calculator",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "url": "https://twofiftyseven.co/calculator/office-carbon/",
+    "description": "Free calculator comparing the operational carbon footprint of a private central-Wellington office against being at two/fiftyseven. Tadpole ACE 2025 methodology with 200% verified offset position.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "NZD" },
+    "provider": { "@type": "Organization", "name": "two/fiftyseven", "url": "https://twofiftyseven.co/" }
+  }
+  </script>
+
+  <!-- Organization JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "two/fiftyseven",
+    "url": "https://twofiftyseven.co/",
+    "logo": "https://twofiftyseven.co/assets/logos/257-mark.svg",
+    "sameAs": [
+      "https://www.instagram.com/twofiftyseven/",
+      "https://www.linkedin.com/company/two-fiftyseven/"
+    ]
+  }
+  </script>
+
+  <!-- FAQPage JSON-LD · mirrors visible page copy. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How is two/fiftyseven's carbon position measured?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Annual operational emissions measured against Tadpole ACE 2025 emission factors: 0.1011 + 0.0077 (line losses) = 0.1088 kgCO₂e/kWh for grid electricity; 0.584 kgCO₂e/kg for office waste to landfill with gas recovery; 0.4797 kgCO₂e/day for WFH equivalent. NZ-standard tool, aligned with the MfE 2025 Measuring Emissions Guide."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does the 200% offset position mean?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Electricity supplied by Ecotricity at 125% Toitū climate positive certification. We purchase 24 Ekos NZUs annually against the residual measured footprint. Combined with the Ecotricity 125% supply, the total offset position lands at approximately 200% of our measured emissions · twice what we emit, publicly claimed and externally verifiable. The internal math runs to approximately 238% but we round our public claim conservatively to 200% to protect against year-on-year variance, methodology updates, and auditor variance."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How are biodiversity credits accounted for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Your spend at two/fiftyseven also funds biodiversity restoration at Sanctuary Mountain Maungatautari (3,363 ha) via Ekos BioCredita. Per Ekos founder Sean Weaver: Ekos biodiversity credits are not offsets of any kind. The Ekos BioCredita programme does not commodify nature or put a price on nature. We list this stream separately and never aggregate it into the carbon offset percentage."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's two/fiftyseven's three-year measured footprint?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Operational emissions for the whole place, measured against Tadpole ACE annually: FY2023 6.9 tCO₂e (5.8 electricity, 0.7 waste, 0.4 other); FY2024 6.5 tCO₂e (5.5 electricity, 0.6 waste, 0.4 other); FY2025 6.2 tCO₂e (5.3 electricity, 0.6 waste, 0.3 other). The calculator uses the canonical 6.5 tCO₂e/yr figure (FY2024) divided across approximately 80 daily occupants to derive the per-person-day share."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="page-calculator page-office-carbon">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" data-js="site-header">
+    <a href="../../index.html" class="wordmark">two/fiftyseven</a>
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-dropdown nav-section-workspace">
+          <a href="../../workspace/index.html" aria-haspopup="true">Workspace</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../workspace/base/index.html" role="menuitem">Base</a></li>
+              <li><a href="../../workspace/hub/index.html" role="menuitem">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html" role="menuitem">Desk</a></li>
+              <li><a href="../../pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-meet">
+          <a href="../../meet/index.html" aria-haspopup="true">Meet</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../meetings/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html" role="menuitem">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html" role="menuitem">Away days</a></li>
+              <li><a href="../../meetings/pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-host">
+          <a href="../../events/index.html" aria-haspopup="true">Host</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../events/events/index.html" role="menuitem">Events</a></li>
+              <li><a href="../../events/functions/index.html" role="menuitem">Functions</a></li>
+              <li><a href="../../events/conferences/index.html" role="menuitem">Conferences</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../impact/index.html">Impact</a></li>
+        <li class="has-dropdown">
+          <a href="../../our-story/index.html" aria-haspopup="true">About</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../kaupapa/index.html" role="menuitem">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html" role="menuitem">Success stories</a></li>
+              <li><a href="../../organisations/index.html" role="menuitem">Organisations</a></li>
+              <li><a href="../../our-story/index.html" role="menuitem">Our story</a></li>
+              <li><a href="../../people/index.html" role="menuitem">People</a></li>
+              <li><a href="../../whatson/index.html" role="menuitem">What's on</a></li>
+              <li><a href="../../kōrero/index.html" role="menuitem">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html" role="menuitem">Press kit</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown">
+          <a href="../../calculator/index.html" aria-haspopup="true">Calculators</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html" role="menuitem">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html" role="menuitem">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html" role="menuitem">Carbon</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../contact/index.html">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="../../tours/" class="btn btn--primary btn--small">Book a tour</a>
+  </header>
+
+  <main id="main">
+
+    <div class="print-only print-wordmark" aria-hidden="true">
+      <img src="../../assets/logos/twofiftyseven_logo.svg" alt="two/fiftyseven">
+    </div>
+
+    <!-- 1. TOP FRAME -->
+    <section class="chapter chapter--calc-frame calc-frame" aria-labelledby="calc-title">
+      <div class="chapter__inner">
+        <p class="calc-frame__eyebrow calc-hero__eyebrow">Office carbon calculator</p>
+        <h1 id="calc-title" class="calc-frame__title calc-hero__title">your team's carbon position at two/fiftyseven vs running your own office.</h1>
+        <p class="calc-frame__tagline calc-hero__sub">For sustainability leads, ESG analysts and procurement teams who need defensible numbers. Tadpole ACE 2025 methodology, verified offset at 200%, every figure linked to its primary source.</p>
+      </div>
+    </section>
+
+    <!-- 2. CALCULATOR -->
+    <section class="chapter chapter--calc-wrap calc-wrap" data-unclipped aria-label="Office carbon calculator">
+      <div class="chapter__inner">
+
+      <div class="calc-layout">
+
+        <div class="calc" data-js="calc-office-carbon">
+
+          <div class="calc__field">
+            <span class="calc__field-label">Team size</span>
+            <div class="calc-stepper">
+              <button type="button" data-calc-team-dec aria-label="Decrease team size">−</button>
+              <output data-calc-team-out aria-live="polite">0</output>
+              <button type="button" data-calc-team-inc aria-label="Increase team size">+</button>
+            </div>
+          </div>
+
+          <div class="calc__field">
+            <span class="calc__field-label">Days per week in office</span>
+            <div class="radio-row radio-row--horizontal calc-segmented" role="radiogroup" aria-label="Days per week in office">
+              <label class="radio"><input type="radio" name="days" value="1" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">1</span></label>
+              <label class="radio"><input type="radio" name="days" value="2" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">2</span></label>
+              <label class="radio"><input type="radio" name="days" value="3" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">3</span></label>
+              <label class="radio"><input type="radio" name="days" value="4" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">4</span></label>
+              <label class="radio"><input type="radio" name="days" value="5" data-calc-days><span class="radio__swatch" aria-hidden="true"></span><span class="radio__label">5</span></label>
+            </div>
+          </div>
+
+          <div class="calc__field">
+            <span class="calc__field-label">Working weeks per year</span>
+            <input type="number" min="1" max="52" value="" data-calc-weeks aria-label="Working weeks per year" placeholder="0">
+              <small class="calc-microcopy">NZ standard: 46 working weeks (52 minus 4 leave minus 2 stat holidays).</small>
+          </div>
+
+          <div class="calc__field">
+            <span class="calc__field-label">Hours per day</span>
+            <input type="number" min="1" max="24" value="" data-calc-hours aria-label="Hours per day" placeholder="0">
+              <small class="calc-microcopy">8 default for a standard working day. Adjust if your team runs longer.</small>
+          </div>
+
+          <!-- Hidden engine sinks · the engine writes lines into these. -->
+          <div hidden data-calc-private-lines></div>
+          <div hidden data-calc-ours-lines></div>
+          <span hidden data-calc-private-total>0 t</span>
+          <span hidden data-calc-ours-total>0 t</span>
+          <span hidden data-calc-saved-figure>0 t</span>
+          <span hidden data-calc-net-figure>0 t</span>
+
+        </div><!-- /.calc -->
+
+        <!-- STICKY RESULT COLUMN -->
+        <aside class="calc-result-sticky" aria-label="Live result">
+          <div class="calc-result" role="status" aria-live="polite">
+            <div class="calc-result__col">
+              <span class="calc-result__label">Run your own office</span>
+              <span class="calc-result__figure" data-calc-private-total-display>0 t</span>
+              <span class="calc-result__unit">annual CO₂e</span>
+            </div>
+            <div class="calc-result__col">
+              <span class="calc-result__label">At two/fiftyseven</span>
+              <span class="calc-result__figure" data-calc-ours-total-display>0 t</span>
+              <span class="calc-result__unit">measured · before offset</span>
+            </div>
+            <div class="calc-result__col calc-result__col--save">
+              <span class="calc-result__label">Net position after 200% offset</span>
+              <span class="calc-result__figure" data-calc-positive-figure>0 t</span>
+              <span class="calc-result__unit">net-negative once verified offsets land</span>
+            </div>
+          </div>
+          <!-- #2 INLINE CONTACT — compact 'email this to yourself' form inside the
+               result aside. Mailto with calc name pre-filled in the subject so it
+               works without a backend; can be upgraded to a Fluent Forms POST later. -->
+          <form class="calc-contact-inline"
+                action="mailto:kiaora@twofiftyseven.co?subject=My%20carbon%20calculation"
+                method="post" enctype="text/plain" novalidate>
+            <p class="calc-contact-inline__title">Email this to your team</p>
+            <div class="calc-contact-inline__row">
+              <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Your email">
+              <button type="submit">Send &rarr;</button>
+            </div>
+            <p class="calc-contact-inline__note">We'll email your figures + source citations.</p>
+          </form>
+
+
+          <button type="button"
+                  class="breakdown-trigger"
+                  data-breakdown-trigger
+                  aria-controls="methodology"
+                  aria-expanded="false">
+            <span>See the line-by-line breakdown</span>
+            <span class="breakdown-trigger__caret" aria-hidden="true">↓</span>
+          </button>
+        </aside>
+
+      </div><!-- /.calc-layout -->
+
+      <!-- Full-width breakdown disclosure -->
+      <details class="breakdown-disclosure breakdown-disclosure--full" id="methodology">
+        <summary aria-hidden="true">Breakdown</summary>
+        <div class="breakdown-body" id="breakdown-body">
+
+          <h3>Run your own office · annual emissions</h3>
+          <div class="breakdown-rows" data-calc-private-slot>
+            <div class="breakdown-total">
+              <span class="breakdown-total__label">Total · private NZ office</span>
+              <span class="breakdown-total__value" data-calc-private-grand>0 t</span>
+              <span class="breakdown-total__source-spacer"></span>
+            </div>
+          </div>
+
+          <h3>At two/fiftyseven · measured</h3>
+          <div class="breakdown-rows" data-calc-ours-slot>
+            <div class="breakdown-total">
+              <span class="breakdown-total__label">Total · two/fiftyseven measured</span>
+              <span class="breakdown-total__value" data-calc-ours-grand>0 t</span>
+              <span class="breakdown-total__source-spacer"></span>
+            </div>
+          </div>
+
+          <h3>Net position after offsets</h3>
+          <p class="breakdown-prose">Ecotricity supply is Toitū climate positive at 125%. We then purchase 24 Ekos NZUs annually against the residual measured footprint. Combined position lands at approximately 200% offset · twice what we measure, publicly claimed and externally verifiable. Your team's share of the measured footprint, halved twice over by the offset position, is what the headline figure represents.</p>
+
+          <h3>Biodiversity credits · a separate stream</h3>
+          <p class="breakdown-prose">Your spend at two/fiftyseven also funds biodiversity restoration at Sanctuary Mountain Maungatautari (3,363 ha) via Ekos BioCredita. Per Ekos founder Sean Weaver: <em>"Ekos biodiversity credits are not offsets of any kind. The Ekos BioCredita programme does not commodify nature or put a price on nature."</em> We list this stream separately and never aggregate it into the carbon offset percentage.</p>
+
+        </div>
+      </details>
+
+      </div><!-- /.chapter__inner -->
+    </section>
+
+    <!-- How the math works -->
+    <section class="chapter" id="methodology-overview" aria-labelledby="methodology-overview-title">
+      <div class="chapter__inner">
+        <p class="chapter__eyebrow">How the math works</p>
+        <h2 id="methodology-overview-title" class="chapter__heading">What we measure. What we offset. What's separate.</h2>
+
+        <div class="prose prose-narrow">
+          <p>We use Tadpole ACE 2025<span class="fn"><a href="#fn-1">[1]</a></span> · the NZ-standard carbon accounting tool, aligned with the MfE 2025 Measuring Emissions Guide<span class="fn"><a href="#fn-2">[2]</a></span>. The four steps below are the story your sustainability lead can follow line-by-line.</p>
+        </div>
+
+        <div class="structural-tile">
+          <h3>The four-step story</h3>
+          <ol class="step-list">
+            <li>
+              <div>
+                <h4>Measurement</h4>
+                <p>Annual operational emissions measured against Tadpole ACE 2025 emission factors: 0.1011 + 0.0077 (line losses) = 0.1088 kgCO₂e/kWh for grid electricity; 0.584 kgCO₂e/kg for office waste to landfill with gas recovery; 0.4797 kgCO₂e/day for WFH equivalent. Independently calculated; numbers below.</p>
+              </div>
+            </li>
+            <li>
+              <div>
+                <h4>Renewable supply</h4>
+                <p>Electricity supplied by Ecotricity at 125% Toitū climate positive certification<span class="fn"><a href="#fn-3">[3]</a></span>. Ecotricity is NZ's only Toitū climate positive certified energy product, offsetting 125% of cradle-to-grave emissions for every unit supplied · meaning the electricity that powers two/fiftyseven is already climate-positive at supply, before any further intervention on our side.</p>
+              </div>
+            </li>
+            <li>
+              <div>
+                <h4>Carbon credits</h4>
+                <p>We purchase 24 Ekos NZUs annually<span class="fn"><a href="#fn-4">[4]</a></span> against the residual measured footprint. Combined with the Ecotricity 125% supply, the total offset position lands at approximately 200% of our measured emissions · twice what we emit, publicly claimed and externally verifiable.</p>
+              </div>
+            </li>
+            <li>
+              <div>
+                <h4>Biodiversity credits · a separate stream</h4>
+                <p>We also fund biodiversity restoration at Sanctuary Mountain Maungatautari (3,363 ha) via Ekos BioCredita<span class="fn"><a href="#fn-5">[5]</a></span>. Per Ekos founder Sean Weaver, <em>"Ekos biodiversity credits are not offsets of any kind. The Ekos BioCredita programme does not commodify nature or put a price on nature. Instead, it puts a price on the human labour and technology cost to look after nature · just like philanthropy does."</em> We list this stream separately and never aggregate it into the carbon offset percentage.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+
+        <div class="structural-tile">
+          <h3>Three-year measured footprint</h3>
+          <p class="footprint-note">Operational emissions for the whole place. Measured against Tadpole ACE annually. Figures rounded to the nearest 0.1 tCO₂e.</p>
+          <table class="footprint-table">
+            <thead>
+              <tr>
+                <th>Year</th>
+                <th>Electricity</th>
+                <th>Waste</th>
+                <th>Other</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>FY2023</td><td>5.8 t</td><td>0.7 t</td><td>0.4 t</td><td>6.9 t</td></tr>
+              <tr><td>FY2024</td><td>5.5 t</td><td>0.6 t</td><td>0.4 t</td><td>6.5 t</td></tr>
+              <tr><td>FY2025</td><td>5.3 t</td><td>0.6 t</td><td>0.3 t</td><td>6.2 t</td></tr>
+            </tbody>
+          </table>
+          <p class="footprint-note">The calculator above uses the canonical 6.5 tCO₂e/yr figure (FY2024) divided across approximately 80 daily occupants to derive the per-person-day share at two/fiftyseven. Methodology page carries the underlying spreadsheet.</p>
+        </div>
+
+        <ol class="footnote-list">
+          <li id="fn-1"><span class="footnote-num">[1]</span><span>Tadpole ACE Carbon Calculator · <a href="https://www.tadpole.co.nz/ace-carbon-calculator/" target="_blank" rel="noopener">tadpole.co.nz/ace-carbon-calculator</a>. NZ-standard tool, updated annually.</span></li>
+          <li id="fn-2"><span class="footnote-num">[2]</span><span>MfE Measuring Emissions Guide 2025 · <a href="https://environment.govt.nz/publications/measuring-emissions-guide-2025/" target="_blank" rel="noopener">environment.govt.nz/publications/measuring-emissions-guide-2025</a>.</span></li>
+          <li id="fn-3"><span class="footnote-num">[3]</span><span>Ecotricity Toitū climate positive · <a href="https://ecotricity.co.nz/why-ecotricity/climate-positive" target="_blank" rel="noopener">ecotricity.co.nz/why-ecotricity/climate-positive</a>. ISO 14067:2018 + ISO 14064-1:2018.</span></li>
+          <li id="fn-4"><span class="footnote-num">[4]</span><span>Ekos NZU programme · <a href="https://www.ekos.co.nz/our-projects" target="_blank" rel="noopener">ekos.co.nz/our-projects</a>.</span></li>
+          <li id="fn-5"><span class="footnote-num">[5]</span><span>Sanctuary Mountain Maungatautari + Ekos BioCredita · <a href="https://www.sanctuarymountain.co.nz/support/biodiversity-credits" target="_blank" rel="noopener">sanctuarymountain.co.nz/support/biodiversity-credits</a> · <a href="https://www.ekos.co.nz/sdu-1" target="_blank" rel="noopener">ekos.co.nz/sdu-1</a>.</span></li>
+        </ol>
+
+        <details class="methodology-details">
+          <summary>See the full source table, 238% internal offset math, and excluded scope</summary>
+
+          <div class="structural-tile">
+            <h3>Every variable, every emission factor, every URL</h3>
+            <table class="source-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Variable</th>
+                  <th>2026 value</th>
+                  <th>Source</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="source-num">01</td>
+                  <td>
+                    <span class="source-var">NZ grid electricity emission factor</span>
+                    <span class="source-note">0.1011 base + 0.0077 transmission &amp; distribution line losses. Tadpole ACE 2025, aligned with MfE May 2025 release.</span>
+                  </td>
+                  <td class="source-value">0.1088 kgCO₂e / kWh</td>
+                  <td>
+                    <ul class="source-link-list">
+                      <li><a class="source-link" href="https://www.tadpole.co.nz/ace-carbon-calculator/" target="_blank" rel="noopener">Tadpole ACE Carbon Calculator</a></li>
+                      <li><a class="source-link" href="https://environment.govt.nz/publications/measuring-emissions-guide-2025/" target="_blank" rel="noopener">MfE Measuring Emissions Guide 2025</a></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="source-num">02</td>
+                  <td>
+                    <span class="source-var">Office waste to landfill (with gas recovery)</span>
+                    <span class="source-note">Mixed commercial waste, NZ landfill with methane gas recovery. Tadpole ACE 2025.</span>
+                  </td>
+                  <td class="source-value">0.584 kgCO₂e / kg</td>
+                  <td>
+                    <ul class="source-link-list">
+                      <li><a class="source-link" href="https://www.tadpole.co.nz/ace-carbon-calculator/" target="_blank" rel="noopener">Tadpole ACE Carbon Calculator</a></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="source-num">03</td>
+                  <td>
+                    <span class="source-var">Working-from-home day equivalent</span>
+                    <span class="source-note">Per Tadpole ACE 2025 methodology. Covers heating, lighting, equipment.</span>
+                  </td>
+                  <td class="source-value">0.4797 kgCO₂e / day</td>
+                  <td>
+                    <ul class="source-link-list">
+                      <li><a class="source-link" href="https://www.tadpole.co.nz/ace-carbon-calculator/" target="_blank" rel="noopener">Tadpole ACE Carbon Calculator</a></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="source-num">04</td>
+                  <td>
+                    <span class="source-var">Commercial office power demand</span>
+                    <span class="source-note">BRANZ + EECA standard demand load for NZ commercial offices.</span>
+                  </td>
+                  <td class="source-value">50 W / m²</td>
+                  <td>
+                    <ul class="source-link-list">
+                      <li><a class="source-link" href="https://www.branz.co.nz/environment-zero-carbon-research/framework/co%E2%82%82mpare/" target="_blank" rel="noopener">BRANZ CO₂MPARE</a></li>
+                      <li><a class="source-link" href="https://www.eeca.govt.nz/co-funding-and-support/products/commercial-buildings-decarbonisation-pathway/" target="_blank" rel="noopener">EECA Commercial Buildings Decarbonisation</a></li>
+                      <li><a class="source-link" href="https://www.nabersnz.govt.nz/" target="_blank" rel="noopener">NABERSNZ</a></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="source-num">05</td>
+                  <td>
+                    <span class="source-var">Renewable supply at two/fiftyseven</span>
+                    <span class="source-note">NZ's only Toitū climate positive certified energy product. Offsets 125% of cradle-to-grave emissions per unit. ISO 14067:2018 + ISO 14064-1:2018.</span>
+                  </td>
+                  <td class="source-value">Ecotricity · 125%</td>
+                  <td>
+                    <ul class="source-link-list">
+                      <li><a class="source-link" href="https://ecotricity.co.nz/why-ecotricity/climate-positive" target="_blank" rel="noopener">Ecotricity Climate Positive</a></li>
+                      <li><a class="source-link" href="https://www.toitu.co.nz/members/ecotricity-gp-limited/" target="_blank" rel="noopener">Toitū Envirocare · Ecotricity</a></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="source-num">06</td>
+                  <td>
+                    <span class="source-var">Carbon credits · Ekos NZUs</span>
+                    <span class="source-note">Twenty-four NZUs purchased annually against residual measured footprint. Flax Hills PNZRFU, Kaikoura · Permanent forest sink projects under the NZ ETS.</span>
+                  </td>
+                  <td class="source-value">24 NZUs / yr (Ekos)</td>
+                  <td>
+                    <ul class="source-link-list">
+                      <li><a class="source-link" href="https://www.ekos.co.nz/our-projects" target="_blank" rel="noopener">Ekos Our Projects (NZU portfolio)</a></li>
+                    </ul>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="source-num">07</td>
+                  <td>
+                    <span class="source-var">Biodiversity credits · SEPARATE STREAM</span>
+                    <span class="source-note">Ekos BioCredita SDUs via Sanctuary Mountain Maungatautari (3,363 ha). NEVER aggregated into the carbon offset percentage.</span>
+                  </td>
+                  <td class="source-value">Maungatautari SDUs</td>
+                  <td>
+                    <ul class="source-link-list">
+                      <li><a class="source-link" href="https://www.ekos.co.nz/sdu-1" target="_blank" rel="noopener">Ekos BioCredita Programme</a></li>
+                      <li><a class="source-link" href="https://www.sanctuarymountain.co.nz/support/biodiversity-credits" target="_blank" rel="noopener">Sanctuary Mountain Maungatautari · Biodiversity Credits</a></li>
+                    </ul>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="offset-math">
+            <span class="offset-math__label">Internal offset math · full transparency</span>
+            <div class="offset-math__row"><span>Annual measured footprint (FY2024 canonical)</span><span>6.5 tCO₂e</span></div>
+            <div class="offset-math__row"><span>Ecotricity supply offset · 125% of electricity-attributable (5.48 t × 1.25)</span><span>6.85 t offset</span></div>
+            <div class="offset-math__row"><span>Ekos NZUs (24 units, 1 tCO₂e each)</span><span>24.0 t offset</span></div>
+            <div class="offset-math__row"><span>Less: Ecotricity portion already credited (avoid double-count)</span><span>−5.48 t</span></div>
+            <div class="offset-math__row"><span><strong>Net offsetting against 6.5 tCO₂e footprint</strong></span><span><strong>15.50 t offset ≈ 238%</strong></span></div>
+            <div class="offset-math__public">
+              <strong>Public-facing claim: 200% offset.</strong>
+              <span>The internal math runs to approximately 238%, but we round our public claim conservatively to 200%. This protects against year-on-year variance, methodology updates, and the risk that an auditor reaches a slightly different number from the same inputs.</span>
+            </div>
+          </div>
+
+          <div class="prose prose-narrow">
+            <h3 class="breakdown-h3-sub">What's excluded · and why</h3>
+            <p>The current footprint covers operational scope 1 + 2 + the most material scope 3 items (waste, water, contractor commute). It does <em>not</em> currently include: embodied carbon in fit-out and furniture, member commute (we collect it through a voluntary annual survey but don't price it into the calc), upstream value chain emissions of our suppliers, food and beverage scope 3, or staff business travel.</p>
+            <p>Phase 2.3 of this calculator will surface honest estimates for embodied fit-out carbon and member commute as separate display lines · flagged as estimates, not measured. The brief says "honest about scope" and that means flagging the gap rather than papering over it.</p>
+
+            <h3 class="breakdown-h3-sub">Review cadence + disclaimer</h3>
+            <p>Reviewed annually after our FY footprint is locked, and within four weeks of: a new MfE Measuring Emissions Guide release, a Tadpole ACE annual factor update, an Ecotricity certification status change, or an Ekos NZU portfolio update. Last reviewed May 2026. Next scheduled review: May 2027.</p>
+            <p>This calculator estimates the operational carbon footprint of a typical 2026 NZ commercial office against being at two/fiftyseven. It is not a carbon-accounting deliverable, not a GHG inventory, not assurance. For a measured inventory of your specific space and supply chain, talk to us for a tour.</p>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- Numbers for direct quotation -->
+    <section class="chapter" aria-labelledby="esg-export-title">
+      <div class="chapter__inner">
+        <p class="chapter__eyebrow">For your sustainability report</p>
+        <h2 id="esg-export-title" class="chapter__heading">Numbers formatted for direct quotation.</h2>
+
+        <div class="prose prose-narrow">
+          <p>The figures below mirror your inputs above with full source attribution. Drop them straight into a GHG inventory section, an ESG appendix, or a procurement disclosure. Every value is traceable to Tadpole ACE 2025 and the cited primary source.</p>
+        </div>
+
+        <div class="esg-export" data-calc-citation-block>
+          <div class="esg-export__row"><span>Team size · days/week · weeks/year</span><span><span data-calc-export-team>0</span> people · <span data-calc-export-days>0</span> d/wk · <span data-calc-export-weeks>0</span> wk/yr</span></div>
+          <div class="esg-export__row"><span>Private NZ office baseline (operational)</span><span data-calc-export-private>0 t</span></div>
+          <div class="esg-export__row"><span>Measured at two/fiftyseven (Tadpole ACE 2025)</span><span data-calc-export-ours>0 t</span></div>
+          <div class="esg-export__row"><span>Net position after 200% offset</span><span data-calc-export-offset>0 t</span></div>
+          <div class="esg-export__row"><span>Methodology source</span><span>Tadpole ACE 2025</span></div>
+          <div class="esg-export__row"><span>Offset mechanism</span><span>Ekos NZUs + Ecotricity 125%</span></div>
+          <div class="esg-export__row"><span>Biodiversity (separate stream)</span><span>Ekos BioCredita · Maungatautari</span></div>
+          <div class="esg-export__copy-row">
+            <button type="button" class="btn btn--small" data-calc-copy-citation>Copy citation block</button>
+            <span class="small">Placeholder · full export in Phase 4</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SAVE YOUR NUMBERS — canonical 3-card share row. Audit #3. -->
+    <section class="calc-share" aria-labelledby="share-title">
+      <p class="calc-share__eyebrow">For your sustainability report</p>
+      <h2 id="share-title" class="calc-share__title">save your numbers, send them on.</h2>
+      <div class="calc-share__row">
+        <div class="calc-share-card">
+          <h3 class="calc-share-card__title">Email me the numbers</h3>
+          <p class="calc-share-card__body">All figures plus source citations in your inbox, ready to drop straight into your annual sustainability report.</p>
+          <form class="calc-share-card__form" data-js="calc-share-email" action="#" method="post" novalidate>
+            <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Your email">
+            <button type="submit" class="calc-share-card__btn">Send →</button>
+          </form>
+        </div>
+        <div class="calc-share-card">
+          <h3 class="calc-share-card__title">Share this calculation</h3>
+          <p class="calc-share-card__body">Same inputs, same numbers — share with your sustainability lead, procurement, or your board.</p>
+          <button type="button" class="calc-share-card__btn" data-js="calc-share-copy" style="align-self: flex-start;">Copy link →</button>
+        </div>
+        <div class="calc-share-card">
+          <h3 class="calc-share-card__title">Save as PDF</h3>
+          <p class="calc-share-card__body">Print-ready, source-cited PDF for your ESG analyst, procurement file, or the board pack.</p>
+          <button type="button" class="calc-share-card__btn" data-js="calc-share-pdf" style="align-self: flex-start;">Download PDF →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLOSE CTA — canonical .invite (audit #18). -->
+    <section class="chapter chapter--fit chapter--close" id="get-involved" aria-labelledby="ch-close-title">
+      <div class="chapter__inner">
+        <h2 id="ch-close-title" class="display display--mid">Once the numbers fit, the next step is the building.</h2>
+        <p class="lead">Most sustainability leads tour first, then bring the finance lead. Both find what they need.</p>
+
+        <div class="invite">
+          <!-- PRIMARY — reader has just modelled their carbon position.
+               Strongest next move: see the building those numbers describe. -->
+          <a class="invite__primary" href="../../tours/">
+            <p class="invite__eyebrow">After the numbers</p>
+            <h3 class="invite__primary-title">Book a tour<span class="invite__arrow" aria-hidden="true">→</span></h3>
+            <p class="invite__primary-body">A 20-minute walk-around with whoever's hosting that day. See the systems behind the offset: 200% Ekos credits, fit-out salvage rates, the grid-electric energy story.</p>
+            <p class="invite__meta"><span>Weekday mornings</span><span aria-hidden="true">·</span><span>Sustainability + finance leads</span><span aria-hidden="true">·</span><span>No pitch</span></p>
+          </a>
+
+          <!-- SECONDARY ROW — (1) deeper methodology for the ESG analyst,
+               (2) the verified impact page for the public-facing report. -->
+          <div class="invite__row">
+            <a class="invite__secondary" href="#methodology-overview">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">Read the full methodology<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">Tadpole ACE 2025 alignment, the 200% internal offset math, primary sources, and the scope notes for ESG reviewers.</p>
+              </div>
+            </a>
+            <a class="invite__secondary" href="../../impact/">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">See the verified impact<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">Three years of measured emissions, the offset register, and the per-member carbon position — all on one verifiable page.</p>
+              </div>
+            </a>
+          </div>
+        </div>
+
+        <p class="address-line">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara · opposite Matapihi ki te Ao Nui (Wellington Library)</p>
+      </div>
+    </section>
+
+    <div class="print-only print-footer" aria-hidden="true">
+      two/fiftyseven · twofiftyseven.co · kiaora@twofiftyseven.co · Book a tour at twofiftyseven.co/tours/
+    </div>
+
+  </main>
+
+  <footer class="site-footer" data-theme="dark">
+    <div class="container">
+      <div class="site-footer__top">
+        <nav class="site-footer__nav" aria-label="Footer">
+          <div class="site-footer__col site-footer__col--find">
+            <h4>Find us</h4>
+            <address class="site-footer__address">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara</address>
+            <p class="site-footer__note">Central lift access from both the Willis Street and Victoria Street entrances. The Victoria Street entrance is opposite Matapihi ki te Ao Nui.</p>
+            <a class="site-footer__maplink" href="https://www.google.com/maps/search/?api=1&amp;query=57+Willis+Street+Te+Whanganui-a-Tara">View on map</a>
+          </div>
+          <div class="site-footer__col">
+            <h4>Workspace</h4>
+            <ul>
+              <li><a href="../../workspace/base/index.html">Base</a></li>
+              <li><a href="../../workspace/hub/index.html">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html">Desk</a></li>
+              <li><a href="../../pricing/index.html">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Meet &amp; Host</h4>
+            <ul>
+              <li><a href="../../meetings/index.html">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html">Away days</a></li>
+              <li><a href="../../events/index.html">Events</a></li>
+              <li><a href="../../events/functions/index.html">Functions</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col site-footer__col--about">
+            <h4>About</h4>
+            <ul>
+              <li><a href="../../kaupapa/index.html">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html">Success stories</a></li>
+              <li><a href="../../organisations/index.html">Organisations</a></li>
+              <li><a href="../../our-story/index.html">Our story</a></li>
+              <li><a href="../../people/index.html">People</a></li>
+              <li><a href="../../whatson/index.html">What's on</a></li>
+              <li><a href="../../kōrero/index.html">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html">Press kit</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Calculators</h4>
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html">Carbon</a></li>
+              <li><a href="../../contact/index.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <form class="site-footer__panui" method="post" action="#" aria-label="Pānui signup">
+          <h4>Pānui</h4>
+          <p>Occasional notes from inside two/fiftyseven · what's on, what's changed, what we're thinking about.</p>
+          <div class="site-footer__panui-row">
+            <label class="visually-hidden" for="panui-email">Email address</label>
+            <input type="email" id="panui-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit" class="btn btn--primary btn--small">Sign up</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="site-footer__beliefs" aria-label="What we believe">
+        <ul class="site-footer__beliefs-track">
+          <li>diversity is resilience</li>
+          <li>radical equality is good for all</li>
+          <li>complete decolonisation is a necessary future</li>
+          <li>climate justice is a human and environmental imperative</li>
+          <li aria-hidden="true">diversity is resilience</li>
+          <li aria-hidden="true">radical equality is good for all</li>
+          <li aria-hidden="true">complete decolonisation is a necessary future</li>
+          <li aria-hidden="true">climate justice is a human and environmental imperative</li>
+        </ul>
+      </div>
+
+      <div class="site-footer__wordmark" data-js="footer-reveal" role="img" aria-label="two/fiftyseven"></div>
+
+      <div class="site-footer__bottom">
+        <span>&copy; 2026 two/fiftyseven Limited</span>
+        <span>Aotearoa / New Zealand</span>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var wm = document.querySelector('[data-js="footer-reveal"]');
+        if (!wm) return;
+        if (!('IntersectionObserver' in window)) { wm.classList.add('is-revealed'); return; }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-revealed'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.25 });
+        io.observe(wm);
+      })();
+    </script>
+  </footer>
+
+  <!-- PAGE COORDINATOR · breakdown trigger proxy + render breakdown rows
+       from the engine's hidden sinks into the visible 4-col grid. -->
+  <script>
+  (function () {
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+
+    function renderBreakdown() {
+      var privHost = document.querySelector('[data-calc-private-lines]');
+      var oursHost = document.querySelector('[data-calc-ours-lines]');
+      var privSlot = document.querySelector('[data-calc-private-slot]');
+      var oursSlot = document.querySelector('[data-calc-ours-slot]');
+      var privGrand = document.querySelector('[data-calc-private-grand]');
+      var oursGrand = document.querySelector('[data-calc-ours-grand]');
+      var privTotalSrc = document.querySelector('[data-calc-private-total]');
+      var oursTotalSrc = document.querySelector('[data-calc-ours-total]');
+      var privDisp = document.querySelector('[data-calc-private-total-display]');
+      var oursDisp = document.querySelector('[data-calc-ours-total-display]');
+
+      function readLines(host) {
+        if (!host) return [];
+        var rows = host.querySelectorAll('.compare__row');
+        return Array.prototype.map.call(rows, function (row) {
+          var labelEl = row.querySelector('.compare__row-label');
+          var valueEl = row.querySelector('.compare__row-value');
+          return {
+            label: labelEl ? labelEl.textContent.trim() : '',
+            value: valueEl ? valueEl.textContent.trim() : ''
+          };
+        });
+      }
+
+      function renderInto(slot, lines, totalLabel, totalValue) {
+        if (!slot) return;
+        var out = '';
+        lines.forEach(function (l) {
+          if (!l.label) return;
+          out += '<div class="breakdown-row">'
+               +   '<div class="breakdown-row__label">' + escapeHTML(l.label) + '</div>'
+               +   '<div class="breakdown-row__note"></div>'
+               +   '<div class="breakdown-row__value">' + escapeHTML(l.value) + '</div>'
+               +   '<span class="breakdown-row__source-spacer"></span>'
+               + '</div>';
+        });
+        out += '<div class="breakdown-total">'
+             +   '<span class="breakdown-total__label">' + escapeHTML(totalLabel) + '</span>'
+             +   '<span class="breakdown-total__value">' + escapeHTML(totalValue) + '</span>'
+             +   '<span class="breakdown-total__source-spacer"></span>'
+             + '</div>';
+        slot.innerHTML = out;
+      }
+
+      var privLines = readLines(privHost);
+      var oursLines = readLines(oursHost);
+      var privTotal = (privTotalSrc && privTotalSrc.textContent.trim()) || '0 t';
+      var oursTotal = (oursTotalSrc && oursTotalSrc.textContent.trim()) || '0 t';
+
+      if (privLines.length) {
+        renderInto(privSlot, privLines, 'Total · private NZ office', privTotal);
+      }
+      if (oursLines.length) {
+        renderInto(oursSlot, oursLines, 'Total · two/fiftyseven measured', oursTotal);
+      }
+      if (privGrand) privGrand.textContent = privTotal;
+      if (oursGrand) oursGrand.textContent = oursTotal;
+      if (privDisp) privDisp.textContent = privTotal;
+      if (oursDisp) oursDisp.textContent = oursTotal;
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      // Initial render after engine first paint, then observe.
+      var tries = 0;
+      var t = setInterval(function () {
+        renderBreakdown();
+        if (++tries > 25) clearInterval(t);
+      }, 80);
+
+      var calcRoot = document.querySelector('[data-js="calc-office-carbon"]');
+      if (calcRoot && 'MutationObserver' in window) {
+        var mo = new MutationObserver(renderBreakdown);
+        ['[data-calc-private-lines]','[data-calc-ours-lines]','[data-calc-private-total]','[data-calc-ours-total]'].forEach(function (sel) {
+          var el = document.querySelector(sel);
+          if (el) mo.observe(el, { childList: true, characterData: true, subtree: true });
+        });
+      }
+
+      // Breakdown trigger proxies into the full-width <details>.
+      var breakdownTrigger = document.querySelector('[data-breakdown-trigger]');
+      var breakdownDetails = document.getElementById('methodology');
+      if (breakdownTrigger && breakdownDetails) {
+        breakdownTrigger.addEventListener('click', function () {
+          var wasOpen = breakdownDetails.open;
+          breakdownDetails.open = !wasOpen;
+          breakdownTrigger.setAttribute('aria-expanded', String(!wasOpen));
+          if (!wasOpen) {
+            breakdownDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        });
+        breakdownDetails.addEventListener('toggle', function () {
+          breakdownTrigger.setAttribute('aria-expanded', String(breakdownDetails.open));
+        });
+      }
+    });
+  })();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+// ============================================================
+// 257 Hours to Impact Calculator — block-specific overrides
+// ============================================================
+// Shared calculator styling lives in _calc-base.scss (.calc__*).
+// This file holds only the hours-to-impact-specific shell +
+// anything that deviates from the shared defaults.
+// ============================================================
+
+.hours-to-impact {
+	padding-block: var(--space-xl-3xl);
+}
+
+// Accent result column — the "Subsidised space funded" figure
+.hours-to-impact__result-col--accent {
+	// intentionally extends .calc__result-col; placeholder for
+	// per-calc accent treatment (colour, weight) if needed later.
+}

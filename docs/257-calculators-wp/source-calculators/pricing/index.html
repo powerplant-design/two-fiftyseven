@@ -1,0 +1,1580 @@
+<!-- two/fiftyseven · /pricing/ · procurement-grade proposal document
+     in the /impact/ chapter vocabulary. Engine: shared/js/calc-office-costs.js. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>two/fiftyseven pricing &middot; Wellington coworking + dedicated desks</title>
+  <meta name="description" content="Transparent Wellington coworking pricing: $109/mo Flexi 1 day/week up to $659/mo Dedicated. Configure your team, see your number, see what's actually included. All-in rates, no hidden lines.">
+  <link rel="canonical" href="https://twofiftyseven.co/pricing/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://twofiftyseven.co/pricing/">
+  <meta property="og:title" content="Your two/fiftyseven proposal">
+  <meta property="og:description" content="Configure your team. See your number. Take it to finance.">
+  <meta property="og:image" content="https://twofiftyseven.co/assets/og/pricing.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="two/fiftyseven">
+  <meta property="og:locale" content="en_NZ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Your two/fiftyseven proposal">
+  <meta name="twitter:description" content="Configure your team. See your number. Take it to finance.">
+  <meta name="twitter:image" content="https://twofiftyseven.co/assets/og/pricing.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="../design-system/fonts.css">
+  <link rel="stylesheet" href="../design-system/tokens.css">
+  <link rel="stylesheet" href="../design-system/components.css">
+  <link rel="stylesheet" href="../design-system/calculator.css">
+  <link rel="stylesheet" href="../design-system/impact.css">
+
+  <!-- Shared chrome -->
+  <script defer src="../shared/js/nav.js"></script>
+  <script defer src="../shared/js/faq.js"></script>
+  <script defer src="../shared/js/chapter.js"></script>
+  <script defer src="../shared/js/impact.js"></script>
+
+  <!-- Legacy engine + price injector -->
+  <script defer src="../shared/js/calc-office-costs.js"></script>
+  <script defer src="../shared/js/inject-prices.js"></script>
+
+  <style id="page-pricing-chrome">
+    /* Pricing page palette mirrors /impact/. */
+    body.page-pricing {
+      --ip-ground: #b0bca6; --ip-ground-2: #a3b098; --ip-lime: #e5ffa9;
+      --ip-ink: #14200b; --ip-paper: #dde3d4; --ip-ink-dim: rgba(20, 32, 11, 0.62);
+      --type-mono-small: clamp(0.8125rem, 0.18vw + 0.78rem, 0.9rem);
+      background: var(--ip-ground); color: var(--ip-ink);
+    }
+    body.page-pricing .ip-pop {
+      font-style: normal; color: var(--ip-ink); background: var(--ip-lime);
+      box-decoration-break: clone; -webkit-box-decoration-break: clone;
+      padding: 0.04em 0.14em;
+    }
+    body.page-pricing.motion-off [data-reveal],
+    body.page-pricing.motion-off [data-reveal-words] .ip-word { opacity: 1; transform: none; transition: none; }
+    @media (prefers-reduced-motion: reduce) {
+      body.page-pricing [data-reveal],
+      body.page-pricing [data-reveal-words] .ip-word { opacity: 1; transform: none; transition: none; }
+    }
+
+    /* CHAPTER 1 · CONFIGURE (one lime card · in-flow) */
+    .pricing-configure__sticky-wrap { min-height: auto; }
+    .pricing-calc-lime-card {
+      position: static;
+      margin: clamp(28px, 4vh, 56px) 0 0;
+      /* Was one full lime card; now a transparent grid on the ground — each
+         config field + the result are their own cards (matches /meetings/pricing). */
+    }
+    .pricing-calc-lime-card .pricing-configure__inner {
+      display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: clamp(28px, 3vw, 56px); align-items: start;
+    }
+    @media (max-width: 1023px) { .pricing-calc-lime-card .pricing-configure__inner { grid-template-columns: 1fr; } }
+    .pricing-calc-lime-card .config-card,
+    .pricing-calc-lime-card .pricing-calc-frame,
+    .pricing-calc-lime-card .pricing-configure__card { background: transparent; padding: 0; border-radius: 0; }
+    .pricing-calc-lime-card input[type="text"],
+    .pricing-calc-lime-card input[type="number"],
+    .pricing-calc-lime-card select {
+      background: rgba(20, 32, 11, 0.06); border: 0; border-radius: var(--radius-md, 8px);
+      padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1.6vw, 18px); color: var(--ip-ink);
+    }
+    .pricing-calc-lime-card .ux-slider__track { background: rgba(20, 32, 11, 0.14); }
+    .pricing-calc-lime-card .ux-slider__progress { background: var(--ip-ink); }
+    .pricing-calc-lime-card .ux-slider__thumb { background: var(--ip-ink); border: none; box-shadow: 0 1px 3px rgba(20, 32, 11, 0.25); }
+
+    /* Configurator inner stack (no paper background · sits on lime). */
+    .config-card { display: flex; flex-direction: column; gap: clamp(28px, 4vh, 48px); }
+    .config-card .calc { display: flex; flex-direction: column; gap: clamp(28px, 4vh, 48px); margin-block: 0; }
+    .config-card__field {
+      display: flex; flex-direction: column; gap: clamp(14px, 1.8vh, 20px);
+      background: var(--ip-lime); border-radius: 24px;
+      padding: clamp(24px, 3vw, 36px);
+    }
+    .config-card__field-row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: clamp(12px, 1.6vw, 20px); }
+    .config-card__label {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      letter-spacing: var(--kerning-caps); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.78; margin: 0;
+    }
+    .config-card__value {
+      font-family: var(--font-body); font-size: clamp(1rem, 0.3vw + 0.92rem, 1.15rem);
+      color: var(--ip-ink); font-variant-numeric: tabular-nums; text-align: right;
+      min-width: 110px;
+    }
+    .config-card__value strong { font-weight: 700; }
+
+    /* Slider · hide-overlay pattern. */
+    .ux-slider { position: relative; width: 100%; height: 32px; --pct: 0%; }
+    .ux-slider__input {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      margin: 0; padding: 0; border: 0; background: transparent;
+      opacity: 0; cursor: pointer; z-index: 2;
+      -webkit-appearance: none; -moz-appearance: none; appearance: none;
+    }
+    .ux-slider__input:focus { outline: none; }
+    .ux-slider__visual { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+    .ux-slider__track {
+      position: absolute; top: 50%; left: 0; right: 0; height: 8px;
+      transform: translateY(-50%); background: rgba(20, 32, 11, 0.14); border-radius: 999px;
+    }
+    .ux-slider__progress {
+      position: absolute; top: 50%; left: 0; height: 8px; width: var(--pct, 0%);
+      transform: translateY(-50%); background: var(--ip-ink); border-radius: 999px;
+      transition: width 80ms ease-out;
+    }
+    .ux-slider__thumb {
+      position: absolute; top: 50%; left: var(--pct, 0%); width: 24px; height: 24px;
+      background: var(--ip-lime); border: 3px solid var(--ip-ink); border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: left 80ms ease-out, transform 150ms ease, box-shadow 150ms ease;
+    }
+    .ux-slider__input:hover ~ .ux-slider__visual .ux-slider__thumb { transform: translate(-50%, -50%) scale(1.08); }
+    .ux-slider__input:focus-visible ~ .ux-slider__visual .ux-slider__thumb { box-shadow: 0 0 0 4px rgba(20, 32, 11, 0.25); }
+    body.page-pricing .calc-stepper-hidden {
+      position: absolute; width: 1px; height: 1px;
+      overflow: hidden; opacity: 0; pointer-events: none; clip: rect(0 0 0 0);
+    }
+
+    /* Membership roster · single-column. */
+    [data-membership-default] { display: flex; flex-direction: column; gap: clamp(16px, 2vh, 22px); }
+    .member-roster { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: clamp(10px, 1.2vh, 14px); }
+    .member-row { display: grid; grid-template-columns: minmax(80px, 120px) minmax(0, 1fr); align-items: center; gap: clamp(14px, 1.6vw, 22px); }
+    .member-row__label {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      letter-spacing: var(--kerning-caps); text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.78;
+    }
+    .member-row__select {
+      width: 100%; min-width: 0; background: var(--ip-ground); color: var(--ip-ink);
+      border: 1px solid rgba(20, 32, 11, 0.22); border-radius: 8px;
+      padding: clamp(10px, 1.2vh, 14px) clamp(12px, 1.4vw, 16px);
+      font-family: var(--font-body); font-size: 0.98rem; line-height: 1.3;
+      cursor: pointer; transition: border-color 150ms ease, box-shadow 150ms ease;
+    }
+    .member-row__select:focus-visible { outline: none; border-color: var(--ip-ink); box-shadow: 0 0 0 3px rgba(229, 255, 169, 0.65); }
+
+    /* Bigger team card. */
+    .bigger-team-card { display: flex; flex-direction: column; gap: 12px; padding: clamp(12px, 1.4vh, 18px) 0; }
+    .bigger-team-card__heading { font-family: var(--font-body); font-weight: 700; font-size: clamp(1.2rem, 0.6vw + 0.95rem, 1.5rem); line-height: 1.2; letter-spacing: -0.01em; margin: 0; }
+    .bigger-team-card__lead { font-family: var(--font-body); font-size: 0.98rem; line-height: 1.5; opacity: 0.88; margin: 0; max-width: 56ch; }
+    .bigger-team-card__cta {
+      align-self: flex-start; font-family: var(--font-mono); font-size: var(--type-mono-small);
+      letter-spacing: var(--kerning-caps); text-transform: uppercase; color: var(--ip-ink);
+      text-decoration: underline; text-underline-offset: 4px; margin-top: 4px;
+    }
+
+    /* Annual + impact checkbox. */
+    .annual-check {
+      align-items: flex-start; max-width: 60ch; display: flex; gap: 12px;
+      cursor: pointer; position: relative; padding-top: clamp(6px, 0.8vh, 12px);
+      border-top: 1px solid rgba(20, 32, 11, 0.12);
+    }
+    .annual-check input { position: absolute; opacity: 0; pointer-events: none; }
+    .annual-check .checkbox__swatch { width: 22px; height: 22px; border-radius: 999px; border: 2px solid var(--ip-ink); flex-shrink: 0; margin-top: 1px; background: transparent; }
+    .annual-check input:checked + .checkbox__swatch { background: var(--ip-lime); }
+    .annual-check input:focus-visible + .checkbox__swatch { outline: 2px solid var(--ip-ink); outline-offset: 2px; }
+    .annual-check .checkbox__label { line-height: 1.45; font-family: var(--font-body); font-size: 0.95rem; color: var(--ip-ink); }
+    .oc-card-heading { font-family: var(--font-body); font-weight: 800; font-size: clamp(1.3rem, 1.2vw + 0.85rem, 1.85rem); line-height: 1.1; letter-spacing: -0.018em; color: var(--ip-ink); margin: 0; }
+    .calc__commit-hidden, .calc__mini-total { display: none; }
+    body.page-pricing [hidden] { display: none !important; }
+
+    /* Sticky proposal result panel + bar chart. */
+    .proposal-result-sticky {
+      position: sticky; top: clamp(108px, calc(var(--nav-h, 80px) + 32px), 140px);
+      align-self: start; display: flex; flex-direction: column;
+      gap: clamp(16px, 2vh, 24px); padding: clamp(28px, 3vw, 40px);
+      background: var(--ip-ink); color: var(--ip-paper); border-radius: 24px;
+    }
+    .proposal-result__label { font-family: var(--font-mono); font-size: var(--type-mono-small); letter-spacing: var(--kerning-caps); text-transform: uppercase; color: var(--ip-paper); opacity: 0.72; margin: 0; }
+    .proposal-result__figure { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.5rem, 2.4vw + 1.2rem, 3.6rem); line-height: 1; letter-spacing: -0.025em; color: var(--ip-paper); margin: 0; font-variant-numeric: tabular-nums; }
+    .proposal-result__figure::after { content: "/yr"; font-size: 0.34em; font-weight: 700; letter-spacing: 0; opacity: 0.55; margin-left: 0.14em; }
+    .proposal-result__sub { font-family: var(--font-mono); font-size: var(--type-mono-small); letter-spacing: var(--kerning-caps); color: var(--ip-paper); opacity: 0.7; margin: 0; }
+    .proposal-chart { display: flex; flex-direction: column; gap: 10px; padding-top: clamp(20px, 2.5vh, 28px); border-top: 1px solid rgba(221, 227, 212, 0.18); }
+    .proposal-chart__row {
+      display: grid;
+      grid-template-columns: minmax(0, 110px) 1fr minmax(110px, 130px);
+      align-items: center; gap: 12px;
+      font-size: 0.85rem;
+    }
+    .proposal-chart__label { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: var(--kerning-caps, 0.04em); text-transform: uppercase; opacity: 0.78; }
+    .proposal-chart__bar-wrap { height: 8px; background: rgba(221, 227, 212, 0.14); border-radius: 4px; overflow: hidden; position: relative; }
+    .proposal-chart__bar { position: absolute; left: 0; top: 0; bottom: 0; width: var(--bar-pct, 0%); border-radius: 4px; transition: width 200ms ease-out; }
+    .proposal-chart__bar--private   { background: rgba(221, 227, 212, 0.45); }
+    .proposal-chart__bar--coworking { background: rgba(221, 227, 212, 0.35); }
+    .proposal-chart__bar-high { position: absolute; left: 0; top: 0; bottom: 0; width: var(--bar-pct, 0%); border-radius: 4px; background: rgba(221, 227, 212, 0.22); }
+    .proposal-chart__bar--ours { background: var(--ip-lime); }
+    .proposal-chart__value {
+      font-family: var(--font-body);
+      font-variant-numeric: tabular-nums;
+      font-size: 0.85rem; opacity: 0.78;
+      text-align: right;
+    }
+    .proposal-chart__row--ours .proposal-chart__value { opacity: 1; font-weight: 600; }
+    .proposal-chart__savings {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(16px, 1.8vw, 24px);
+      margin: clamp(14px, 1.6vh, 20px) 0 0;
+      padding-top: clamp(14px, 1.6vh, 20px);
+      border-top: 1px solid rgba(221, 227, 212, 0.18);
+    }
+    .proposal-chart__saving { display: flex; flex-direction: column; gap: 6px; }
+    .proposal-chart__saving-label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: var(--kerning-caps, 0.04em);
+      text-transform: uppercase; opacity: 0.7;
+    }
+    .proposal-chart__saving-value {
+      font-family: var(--font-body);
+      font-size: 1.05rem;
+      line-height: 1.35; margin: 0; opacity: 0.92;
+    }
+    .proposal-chart__saving-value strong {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.55rem, 1vw + 1.15rem, 2.1rem);
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+    @media (max-width: 540px) {
+      .proposal-chart__savings { grid-template-columns: 1fr; }
+    }
+    .proposal-result__anchor { font-family: var(--font-mono); font-size: var(--type-mono-small); letter-spacing: var(--kerning-caps); text-transform: uppercase; color: var(--ip-ink); text-decoration: underline; text-underline-offset: 4px; margin-top: 8px; }
+    .proposal-result__anchor:hover { opacity: 0.7; }
+
+    /* INLINE BREAKDOWN DISCLOSURE */
+    .pricing-breakdown {
+      margin: clamp(40px, 5vh, 64px) 0 0;
+      /* max-width removed */
+      background: var(--ip-paper);
+      border-radius: var(--radius-lg, 16px);
+      overflow: hidden;
+    }
+    .pricing-breakdown__trigger {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: clamp(20px, 2.4vh, 28px) clamp(28px, 3vw, 40px);
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.05rem, 0.4vw + 0.9rem, 1.2rem);
+      cursor: pointer; list-style: none;
+    }
+    .pricing-breakdown__trigger::-webkit-details-marker { display: none; }
+    .pricing-breakdown[open] .pricing-breakdown__caret { transform: rotate(180deg); }
+    .pricing-breakdown__caret { transition: transform 200ms ease; display: inline-block; }
+    .pricing-breakdown__body { padding: 0 clamp(28px, 3vw, 40px) clamp(28px, 3vh, 40px); }
+    .pricing-breakdown__heading { font-family: var(--font-body); font-weight: 700; font-size: clamp(1rem, 0.3vw + 0.92rem, 1.15rem); color: var(--ip-ink); margin: clamp(8px, 1vh, 14px) 0; }
+    .pricing-breakdown__list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+    .pricing-breakdown__list li { font-family: var(--font-body); font-size: 0.95rem; line-height: 1.5; color: var(--ip-ink); padding-left: 16px; position: relative; }
+    .pricing-breakdown__list li::before { content: "·"; position: absolute; left: 0; top: 0; font-family: var(--font-mono); font-weight: 700; opacity: 0.5; }
+
+    /* CHAPTER 4 · PRICE LIST (membership tiers as list) */
+    body.page-pricing .pricing-tiers__list {
+      list-style: none; margin: clamp(24px, 3vh, 36px) 0 clamp(24px, 3vh, 36px);
+      background: var(--ip-paper);
+      border-radius: var(--radius-md, 8px);
+      padding: clamp(12px, 1.4vh, 18px) clamp(20px, 2.2vw, 28px);
+      display: flex; flex-direction: column;
+    }
+    body.page-pricing .pricing-tiers-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: clamp(20px, 2.4vw, 36px);
+      margin: clamp(24px, 3vh, 36px) 0 clamp(24px, 3vh, 36px);
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      body.page-pricing .pricing-tiers-grid { grid-template-columns: 1fr; }
+    }
+    body.page-pricing .pricing-tiers-col__heading {
+      font-family: var(--font-mono);
+      font-size: var(--type-mono-small);
+      letter-spacing: var(--kerning-caps);
+      text-transform: uppercase;
+      color: var(--ip-ink); opacity: 0.78;
+      margin: 0 0 clamp(10px, 1.2vh, 14px);
+      font-weight: 400;
+    }
+    body.page-pricing .pricing-tiers-col .pricing-tiers__list {
+      margin: 0;
+    }
+    body.page-pricing .pricing-tiers__row {
+      display: grid;
+      grid-template-columns: 1fr minmax(70px, max-content) minmax(60px, max-content);
+      grid-template-areas:
+        "label price unit"
+        "detail detail detail";
+      align-items: baseline;
+      gap: 4px 12px;
+      padding: clamp(12px, 1.4vh, 16px) 0;
+      border-bottom: 1px solid rgba(20, 32, 11, 0.12);
+      font-family: var(--font-body); font-size: 0.95rem;
+    }
+    body.page-pricing .pricing-tiers__row:last-child { border-bottom: 0; }
+    body.page-pricing .pricing-tiers__label  { grid-area: label;  font-weight: 700; }
+    body.page-pricing .pricing-tiers__price  {
+      grid-area: price;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      text-align: right;
+    }
+    body.page-pricing .pricing-tiers__unit   {
+      grid-area: unit;
+      font-family: var(--font-mono); font-size: 0.78rem;
+      letter-spacing: var(--kerning-caps, 0.04em); opacity: 0.7;
+      text-align: right;
+    }
+    body.page-pricing .pricing-tiers__detail {
+      grid-area: detail;
+      font-size: 0.88rem; opacity: 0.78;
+      text-align: left;
+      margin-top: 2px;
+    }
+
+    .pricing-voices .pricing-link { display: inline-block; margin-top: clamp(20px, 2.5vh, 32px); font-family: var(--font-mono); font-size: var(--type-mono-small); letter-spacing: var(--kerning-caps); text-transform: uppercase; color: var(--ip-ink); text-decoration: underline; text-underline-offset: 4px; }
+
+    body.page-pricing .sector-pillars__grid {
+      list-style: none; padding: 0;
+      margin: clamp(32px, 4vh, 56px) 0 clamp(24px, 3vh, 36px);
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: clamp(28px, 3vw, 48px);
+    }
+    @media (max-width: 1024px) { body.page-pricing .sector-pillars__grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 720px)  { body.page-pricing .sector-pillars__grid { grid-template-columns: repeat(2, 1fr); gap: clamp(20px, 2.5vw, 32px); } }
+    body.page-pricing .sector-pillar {
+      padding: clamp(20px, 2.4vh, 28px) 0 0;
+      border-top: 1px solid rgba(20, 32, 11, 0.15);
+      display: flex; flex-direction: column;
+      gap: 8px;
+    }
+    body.page-pricing .sector-pillar__name {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.15rem, 0.5vw + 1rem, 1.35rem);
+      line-height: 1.2;
+      color: var(--ip-ink); margin: 0;
+    }
+    body.page-pricing .sector-pillar__logos {
+      display: flex; flex-wrap: wrap; align-items: center;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    body.page-pricing .sector-pillar__logos img {
+      max-height: 24px; max-width: 96px;
+      width: auto; height: auto; object-fit: contain;
+      filter: brightness(0); opacity: 0.8;
+    }
+
+    body.page-pricing .faq-wrap h2 { font-family: var(--font-body); font-weight: 600; font-size: clamp(1.4rem, 1vw + 0.9rem, 1.9rem); letter-spacing: -0.015em; color: var(--ip-ink); margin: 0 0 clamp(20px, 2.5vh, 32px); }
+
+    /* TAKE THIS WITH YOU + CLOSING CTA */
+    .take-it__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(14px, 1.4vw, 22px); margin-top: clamp(32px, 4vh, 48px); }
+    @media (max-width: 800px) { .take-it__grid { grid-template-columns: 1fr; } }
+    .take-it__card { background: var(--ip-paper); border-radius: var(--radius-lg, 16px); padding: clamp(24px, 2.4vw, 32px); display: flex; flex-direction: column; gap: 10px; }
+    .take-it__title { font-family: var(--font-body); font-weight: 700; font-size: clamp(1.1rem, 0.5vw + 0.95rem, 1.35rem); line-height: 1.2; letter-spacing: -0.01em; margin: 0; }
+    .take-it__body { font-family: var(--font-body); font-size: 0.95rem; line-height: 1.45; opacity: 0.85; margin: 0; }
+    .take-it__form { display: flex; align-items: flex-end; gap: 8px; margin-top: 4px; }
+    .take-it__form button { align-self: flex-end; }
+    .take-it__form input[type="email"] { flex: 1; min-width: 0; padding: 10px 12px; border: 1px solid rgba(20, 32, 11, 0.22); border-radius: 8px; background: var(--ip-ground); color: var(--ip-ink); font-family: var(--font-body); font-size: 0.95rem; }
+    .take-it__form button,
+    .take-it__cta { align-self: flex-start; font-family: var(--font-mono); font-size: var(--type-mono-small); letter-spacing: var(--kerning-caps); text-transform: uppercase; background: var(--ip-ink); color: var(--ip-paper); border: 0; border-radius: var(--radius-sm); padding: 10px 16px; cursor: pointer; }
+    .take-it__cta { margin-top: 4px; }
+    body.page-pricing .take-it__card { display: flex; flex-direction: column; }
+    body.page-pricing .take-it__cta,
+    body.page-pricing .take-it__form { margin-top: auto; }
+    .take-it__status { font-family: var(--font-mono); font-size: var(--type-mono-small); opacity: 0.7; margin: 0; }
+
+    .pricing-closing-cta .ip-chapter__inner { gap: clamp(14px, 1.4vh, 22px); display: flex; flex-direction: column; }
+    .cta-card { display: flex; flex-direction: column; gap: 12px; padding: clamp(28px, 3vw, 48px); border-radius: var(--radius-lg, 16px); text-decoration: none; color: var(--ip-ink); transition: transform 200ms ease, box-shadow 200ms ease; }
+    .cta-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px -18px rgba(20, 32, 11, 0.35); }
+    .cta-card--lime { background: var(--ip-lime); }
+    .cta-card--ground { background: var(--ip-paper); }
+    .cta-card__eyebrow { font-family: var(--font-mono); font-size: var(--type-mono-small); letter-spacing: var(--kerning-caps); text-transform: uppercase; opacity: 0.78; margin: 0 0 clamp(12px, 1.4vh, 18px); }
+    .cta-card--primary .cta-card__heading { font-family: var(--font-body); font-weight: 700; font-size: clamp(2rem, 2vw + 1rem, 3rem); line-height: 1.05; letter-spacing: -0.02em; margin: 0; }
+    .cta-card--secondary .cta-card__heading,
+    .cta-card--tertiary .cta-card__heading { font-family: var(--font-body); font-weight: 700; font-size: clamp(1.3rem, 0.8vw + 0.9rem, 1.7rem); line-height: 1.15; letter-spacing: -0.015em; margin: 0; }
+    .cta-card__lead { font-family: var(--font-body); font-size: clamp(1rem, 0.4vw + 0.85rem, 1.15rem); line-height: 1.5; opacity: 0.88; margin: clamp(10px, 1.2vh, 16px) 0 0; max-width: 56ch; }
+    .cta-card__details { font-family: var(--font-mono); font-size: var(--type-mono-small); letter-spacing: var(--kerning-caps); opacity: 0.7; margin: clamp(14px, 1.6vh, 20px) 0 0; }
+    .closing-cta-row { display: grid; grid-template-columns: 3fr 1fr; gap: clamp(14px, 1.4vw, 22px); }
+    @media (max-width: 720px) { .closing-cta-row { grid-template-columns: 1fr; } }
+    .cta-card--tertiary { padding: clamp(20px, 2vw, 28px); }
+    .cta-card--tertiary .cta-card__lead { font-size: 0.92rem; }
+
+    /* Jobs gateway + impact discount toggle. */
+    .jobs-gateway { display: flex; flex-wrap: wrap; gap: clamp(16px, 2vw, 28px); margin-top: clamp(20px, 2.5vh, 32px); }
+    .jobs-gateway__link { font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem); letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase; color: var(--ip-ink); opacity: 0.75; text-decoration: underline; text-underline-offset: 4px; transition: opacity 200ms ease; }
+    .jobs-gateway__link:hover { opacity: 1; }
+    /* Need-based workspace support block (replaces the old Impact Discount toggle).
+       Impact Discount is a fixed 50% off rooms/events only; workspace support is
+       a conversation, based on the org's situation. */
+    .need-based-block {
+      max-width: 70ch;
+      margin-top: clamp(4px, 0.6vh, 8px);
+      padding: clamp(14px, 1.6vh, 20px) clamp(16px, 2vw, 22px);
+      background: rgba(20, 32, 11, 0.04);
+      border-radius: 12px;
+    }
+    .need-based-block__heading {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: 0.95rem; line-height: 1.3;
+      color: var(--ip-ink);
+      margin: 0 0 4px;
+    }
+    .need-based-block__body {
+      font-family: var(--font-body); font-size: 0.92rem; line-height: 1.5;
+      color: var(--ip-ink); opacity: 0.85;
+      margin: 0;
+    }
+    .need-based-block__link {
+      font-weight: 700;
+      text-decoration: underline; text-underline-offset: 3px;
+      color: var(--ip-ink);
+      white-space: nowrap;
+    }
+
+    /* GST note, empty state, intro spacing. */
+    .proposal-result__gst-note { font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: var(--kerning-caps, 0.04em); color: var(--ip-paper); opacity: 0.55; margin: 8px 0 0; }
+    .proposal-result__empty { display: flex; flex-direction: column; gap: 10px; }
+    .proposal-result__empty-lead { font-family: var(--font-body); font-size: clamp(1.1rem, 0.4vw + 0.95rem, 1.35rem); font-weight: 500; color: var(--ip-paper); margin: 0; line-height: 1.3; }
+    /* Giving inset — mirrors /meetings/pricing .quote-impact (lighter card in the dark panel). */
+    .proposal-giving {
+      padding: clamp(16px, 2vh, 22px); border-radius: 16px;
+      background: rgba(221, 227, 212, 0.10);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .proposal-giving__label { font-family: var(--font-mono); font-size: var(--type-mono-small); text-transform: uppercase; letter-spacing: var(--kerning-caps); color: var(--ip-paper); opacity: 0.7; margin: 0; }
+    .proposal-giving__amount { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.8rem, 1.5vw + 1rem, 2.6rem); line-height: 1; letter-spacing: -0.024em; color: var(--ip-paper); margin: 0; font-variant-numeric: tabular-nums; }
+    .proposal-giving__context { font-family: var(--font-body); font-size: clamp(0.92rem, 0.2vw + 0.88rem, 1.02rem); line-height: 1.45; color: var(--ip-paper); opacity: 0.85; margin: 0; }
+    /* In-panel contact CTA (option B — the panel is the whole ask, matches /meetings/pricing). */
+    .proposal-form-block {
+      display: flex; flex-direction: column; gap: clamp(12px, 1.6vh, 18px);
+      padding-top: clamp(16px, 2vh, 22px);
+      border-top: 1px solid rgba(221, 227, 212, 0.18);
+    }
+    .proposal-form-block__title {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      color: var(--ip-paper); opacity: 0.7; margin: 0;
+    }
+    .pf { display: flex; flex-direction: column; gap: 6px; }
+    .pf label {
+      font-family: var(--font-mono); font-size: 0.7rem;
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      color: var(--ip-paper); opacity: 0.6;
+    }
+    .proposal-form-block .pf input {
+      width: 100%; padding: 12px 14px;
+      background: var(--ip-paper); color: var(--ip-ink);
+      border: 2px solid transparent; border-radius: 12px;
+      font-family: var(--font-body); font-weight: 500; font-size: 0.98rem;
+    }
+    .proposal-form-block .pf input:focus { outline: none; border-color: var(--ip-lime); }
+    .proposal-cta {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 14px; width: 100%; margin-top: 4px;
+      padding: 16px 22px;
+      background: var(--ip-lime); color: var(--ip-ink);
+      border: none; border-radius: 14px;
+      font-family: var(--font-body); font-weight: 800;
+      font-size: clamp(1rem, 0.2vw + 0.95rem, 1.15rem);
+      cursor: pointer; text-align: left;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .proposal-cta:hover { transform: translateY(-2px); }
+    .pricing-configure__intro { margin-bottom: clamp(40px, 6vh, 80px); }
+
+    /* Print. */
+    @media print {
+      .ip-shapes, .site-header, .site-footer, .pricing-closing-cta, .take-it, .faq-wrap { display: none !important; }
+      .pricing-tiers__list { display: none !important; }
+      .ip-chapter { padding-block: 24px !important; }
+      .config-card { background: white !important; border: 1px solid #ddd; page-break-inside: avoid; }
+      .proposal-result-sticky { background: #fff !important; color: #14200b !important; page-break-inside: avoid; }
+      .proposal-result__label, .proposal-result__figure, .proposal-result__sub,
+      .proposal-result__gst-note, .proposal-result__empty-lead { color: #14200b !important; }
+      .proposal-chart__bar--ours { background: #14200b !important; }
+      .proposal-form-block { display: none !important; }
+      .pricing-configure__sticky-wrap { min-height: 0 !important; }
+      .pricing-calc-lime-card { position: static !important; background: white !important; padding: 0 !important; }
+      .pricing-breakdown__trigger { display: none !important; }
+      .pricing-breakdown[open] .pricing-breakdown__body,
+      .pricing-breakdown .pricing-breakdown__body { display: grid !important; }
+      .pricing-breakdown { background: white !important; border: 1px solid #ddd; page-break-inside: avoid; }
+    }
+
+    /* Pricing headings (override impact.css). */
+    body.page-pricing .ip-display,
+    body.page-pricing .ip-display--mid,
+    body.page-pricing h2.pricing-h2 { font-family: var(--font-body) !important; font-weight: 700; letter-spacing: -0.015em; line-height: 1.15; }
+    body.page-pricing .ip-display { font-size: clamp(1.8rem, 1.4vw + 1.1rem, 2.4rem); }
+    body.page-pricing .ip-display--mid { font-size: clamp(1.5rem, 1vw + 1rem, 2rem); }
+    body.page-pricing .pricing-h2 { font-size: clamp(1.5rem, 1vw + 1rem, 2rem); margin: 0; }
+    body.page-pricing .pricing-cards__after { font-family: var(--font-body); font-size: clamp(0.95rem, 0.3vw + 0.85rem, 1.05rem); color: var(--ip-ink); opacity: 0.85; margin: clamp(20px, 2.4vh, 32px) 0 0; max-width: 56ch; }
+
+    /* TIGHTENING PASS · chapter gaps, FAQ density, cards, day-pass packs, 4-col inclusions. */
+    body.page-pricing .ip-chapter { padding-block: clamp(40px, 5vh, 64px); }
+    body.page-pricing .ip-chapter.ip-chapter--fit { padding-block: clamp(28px, 3.5vh, 48px); }
+    body.page-pricing .pricing-configure { padding-block: clamp(48px, 6vh, 80px) clamp(80px, 10vh, 140px); }
+    /* JOB 2 · Sticky fix · .ip-chapter has overflow:hidden in impact.css line 87,
+       which becomes the sticky container and traps it. Override here so sticky
+       binds to the viewport. Shape clipping is re-established via .ip-shapes-clip. */
+    body.page-pricing .pricing-configure { overflow: visible; }
+    body.page-pricing .ip-shapes-clip {
+      position: absolute; inset: 0;
+      overflow: hidden; pointer-events: none; z-index: 1;
+    }
+    body.page-pricing .day-pass-packs__cta {
+      display: inline-block;
+      margin-top: clamp(14px, 1.6vh, 20px);
+      font-family: var(--font-mono); font-size: var(--type-mono-small, 0.78rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      color: var(--ip-ink); text-decoration: underline; text-underline-offset: 4px;
+    }
+
+    /* Job 5 · Inclusions · subtitle + list together per section. */
+    body.page-pricing .pricing-breakdown__body {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: clamp(24px, 2.6vw, 40px);
+    }
+    @media (max-width: 1000px) { body.page-pricing .pricing-breakdown__body { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px)  { body.page-pricing .pricing-breakdown__body { grid-template-columns: 1fr; } }
+    body.page-pricing .pricing-breakdown__section {
+      display: flex; flex-direction: column;
+      gap: clamp(10px, 1.2vh, 14px);
+    }
+    body.page-pricing .pricing-breakdown__section.pricing-breakdown__verified {
+      grid-column: 1 / -1;
+      margin-top: clamp(16px, 2vh, 24px);
+      padding-top: clamp(16px, 2vh, 24px);
+      border-top: 1px solid rgba(20, 32, 11, 0.15);
+    }
+    body.page-pricing .pricing-breakdown__heading {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: 0.95rem; letter-spacing: 0;
+      margin: 0;
+      text-transform: none; opacity: 1;
+    }
+    body.page-pricing .pricing-breakdown__list { gap: 6px; }
+    body.page-pricing .pricing-breakdown__list li { font-size: 0.95rem; line-height: 1.45; }
+  </style>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Two/fiftyseven proposal builder","applicationCategory":"BusinessApplication","operatingSystem":"Any","url":"https://twofiftyseven.co/pricing/","description":"Configure a team across six published two/fiftyseven membership tiers and see the annual cost compared with running a private Wellington office or other Wellington coworking. Procurement-ready, share-friendly, no surprises.","offers":{"@type":"Offer","price":"0","priceCurrency":"NZD"},"provider":{"@type":"Organization","name":"two/fiftyseven","url":"https://twofiftyseven.co/"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"two/fiftyseven","url":"https://twofiftyseven.co/","logo":"https://twofiftyseven.co/assets/logos/257-mark.svg","sameAs":["https://www.instagram.com/twofiftyseven/","https://www.linkedin.com/company/two-fiftyseven/"]}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"Product","name":"two/fiftyseven membership","description":"Wellington coworking + dedicated desk memberships. All-in pricing.","brand":{"@type":"Organization","name":"two/fiftyseven"},"offers":[{"@type":"Offer","name":"Dedicated","description":"7 days/week, permanent desk, everything included","price":"659","priceCurrency":"NZD","availability":"https://schema.org/InStock","url":"https://twofiftyseven.co/pricing/"},{"@type":"Offer","name":"Flexi 5 days/week","price":"509","priceCurrency":"NZD","availability":"https://schema.org/InStock","url":"https://twofiftyseven.co/pricing/"},{"@type":"Offer","name":"Flexi 4 days/week","price":"409","priceCurrency":"NZD","availability":"https://schema.org/InStock","url":"https://twofiftyseven.co/pricing/"},{"@type":"Offer","name":"Flexi 3 days/week","price":"309","priceCurrency":"NZD","availability":"https://schema.org/InStock","url":"https://twofiftyseven.co/pricing/"},{"@type":"Offer","name":"Flexi 2 days/week","price":"209","priceCurrency":"NZD","availability":"https://schema.org/InStock","url":"https://twofiftyseven.co/pricing/"},{"@type":"Offer","name":"Flexi 1 day/week","price":"109","priceCurrency":"NZD","availability":"https://schema.org/InStock","url":"https://twofiftyseven.co/pricing/"}]}</script>
+
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How much does coworking cost in Wellington?","acceptedAnswer":{"@type":"Answer","text":"At two/fiftyseven, monthly memberships start at $109 for one day a week (Flexi 1) and run up to $659 for a permanent desk seven days a week (Dedicated). All prices ex GST. Day passes start at $40 single, or as low as $28 per day in a 50-pack. Comparable Wellington coworking sits at $450 to $650 per month for flexible memberships and $700 to $830 for dedicated desks."}},{"@type":"Question","name":"What's included in a two/fiftyseven coworking membership?","acceptedAnswer":{"@type":"Answer","text":"Desk access (Dedicated or Flexi), all meeting rooms, kitchen, fast internet, power, cleaning, accessible facilities, a Mental Health First Aid trained team on site, the 257 booking app, and access to community events. There are no fit-out costs, no utility bills, no surprise surcharges. Pricing is published; everyone pays the same rate."}},{"@type":"Question","name":"What's the difference between Flexi and Dedicated?","acceptedAnswer":{"@type":"Answer","text":"Dedicated ($659/mo) is your own permanent desk, seven days a week. Leave your gear, set up a second monitor, walk in to the same desk every day. Flexi (1 to 5 days a week, $109 to $509/mo) is a hot desk on the days you're in. Same access to meeting rooms, kitchen, internet, and everything else."}},{"@type":"Question","name":"Is there a minimum contract or lock-in period?","acceptedAnswer":{"@type":"Answer","text":"No. Month-to-month, no minimum term. Your membership continues until you give notice. We don't require fixed-term contracts like traditional office leases or some peer coworking providers in Wellington."}},{"@type":"Question","name":"Do you offer day passes or casual coworking options?","acceptedAnswer":{"@type":"Answer","text":"Yes. $40 for a single day pass, $350 for a 10-pack ($35/day), $650 for a 20-pack ($32.50/day), and $1,400 for a 50-pack ($28/day). All weekday-valid. Useful if you're visiting Wellington, between roles, or want to test the workspace before committing to a monthly membership."}},{"@type":"Question","name":"Do you offer discounts for charities, NGOs or social enterprises?","acceptedAnswer":{"@type":"Answer","text":"Workspace support for charities, NGOs, indigenous-led orgs, community groups and social enterprises at two/fiftyseven is need-based, not a fixed percentage. Tell us about your work and we'll figure out what fits. The 50% Impact Discount applies separately to meeting rooms and events — not to memberships."}},{"@type":"Question","name":"Are GST and other taxes included in the price?","acceptedAnswer":{"@type":"Answer","text":"All prices on this page are ex GST. NZ GST is currently 15%. Monthly invoices, standard payment terms."}},{"@type":"Question","name":"How does pricing work for a mixed team?","acceptedAnswer":{"@type":"Answer","text":"Each team member picks their own tier (Dedicated 7 days/week, or Flexi 5/4/3/2/1 days a week). The team total is the sum of those per-member rates. Use the proposal builder above to configure a mixed team, for example 2 Dedicated + 3 Flexi 3, and see the live monthly and annual total."}},{"@type":"Question","name":"Can I pay annually for a discount?","acceptedAnswer":{"@type":"Answer","text":"Yes. Pay annually upfront and save 10% on the Dedicated tier ($7,116/yr vs $7,908/yr). Tick \"Pay annually\" in the proposal builder to see the discount applied to your live figure. Flexi tiers are billed monthly only with no annual prepay discount."}},{"@type":"Question","name":"How does two/fiftyseven compare to other Wellington coworking?","acceptedAnswer":{"@type":"Answer","text":"Wellington's flexible-membership coworking sits at $450 to $650 per person per month (low end: The Exchange Te Aro; high end: The Space Wellington, Urban Hub). Dedicated desks sit $700 to $830 (e.g. The Hangar, Icehouse, WOTSO, Thinkspace). two/fiftyseven Flexi starts at $109/mo for one day a week up to $509/mo for five days; Dedicated is $659/mo. Regus is excluded from the benchmark because its 24-month lock-in isn't comparable flexibility."}},{"@type":"Question","name":"How is the \"saving vs private office\" figure calculated?","acceptedAnswer":{"@type":"Answer","text":"The private-office benchmark is $14,200 per person per year. It's modelled on a central-Wellington B-grade private office and covers rent, outgoings, fit-out amortised over five years, internet, power, cleaning, kitchen and bathroom consumables, insurance, MHFA training, admin time, and lease legals. Your saving is that benchmark times your team size minus your configured two/fiftyseven total."}},{"@type":"Question","name":"Can I tour the space before signing up or share this proposal with my finance team?","acceptedAnswer":{"@type":"Answer","text":"Yes to both. Book a tour for an in-person walkthrough with Ash, same-day response. To share with finance, use the \"Take it\" row above: email yourself the proposal (with the share link and inclusion list pre-formatted), copy a share link that preserves your team configuration in the URL, or download a print-ready PDF."}}]}</script>
+</head>
+<body class="page-pricing">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" data-js="site-header">
+    <a href="../index.html" class="wordmark">two/fiftyseven</a>
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-dropdown nav-section-workspace">
+          <a href="../workspace/index.html" aria-haspopup="true">Workspace</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../workspace/base/index.html" role="menuitem">Base</a></li>
+              <li><a href="../workspace/hub/index.html" role="menuitem">Hub</a></li>
+              <li><a href="../workspace/desk/index.html" role="menuitem">Desk</a></li>
+              <li><a href="../pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-meet">
+          <a href="../meet/index.html" aria-haspopup="true">Meet</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../meetings/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../meetings/workshops/index.html" role="menuitem">Workshops</a></li>
+              <li><a href="../meetings/away-days/index.html" role="menuitem">Away days</a></li>
+              <li><a href="../meetings/pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-host">
+          <a href="../events/index.html" aria-haspopup="true">Host</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../events/events/index.html" role="menuitem">Events</a></li>
+              <li><a href="../events/functions/index.html" role="menuitem">Functions</a></li>
+              <li><a href="../events/conferences/index.html" role="menuitem">Conferences</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../impact/index.html">Impact</a></li>
+        <li class="has-dropdown">
+          <a href="../our-story/index.html" aria-haspopup="true">About</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../kaupapa/index.html" role="menuitem">Kaupapa</a></li>
+              <li><a href="../case-studies/index.html" role="menuitem">Success stories</a></li>
+              <li><a href="../organisations/index.html" role="menuitem">Organisations</a></li>
+              <li><a href="../our-story/index.html" role="menuitem">Our story</a></li>
+              <li><a href="../people/index.html" role="menuitem">People</a></li>
+              <li><a href="../whatson/index.html" role="menuitem">What's on</a></li>
+              <li><a href="../kōrero/index.html" role="menuitem">Kōrero</a></li>
+              <li><a href="../press-kit/index.html" role="menuitem">Press kit</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown">
+          <a href="../calculator/index.html" aria-haspopup="true">Calculators</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../calculator/office-costs/index.html" role="menuitem">Office costs</a></li>
+              <li><a href="../calculator/meeting-costs/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../calculator/hours-to-impact/index.html" role="menuitem">Giving</a></li>
+              <li><a href="../calculator/office-carbon/index.html" role="menuitem">Carbon</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../contact/index.html">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="../tours/" class="btn btn--primary btn--small">Book a tour</a>
+  </header>
+
+  <main id="main">
+
+    <div class="print-only print-wordmark" aria-hidden="true">
+      <img src="../assets/logos/twofiftyseven_logo.svg" alt="two/fiftyseven">
+    </div>
+
+    <!-- CHAPTER 1 · CONFIGURE -->
+    <section class="ip-chapter ip-chapter--open pricing-configure" id="configure" aria-labelledby="pricing-title">
+      <div class="ip-shapes-clip" aria-hidden="true">
+      <div class="ip-shapes" aria-hidden="true">
+        <span class="ip-shape" style="--shape:url('/shared/svg/shapes/shape-12.svg'); --s:clamp(300px,42vw,620px); left:-9%; top:2%; --r:-12deg;" data-drift="0.32" data-rot="-12deg"></span>
+        <span class="ip-shape" style="--shape:url('/shared/svg/shapes/shape-67.svg'); --s:clamp(170px,22vw,340px); left:56%; top:-4%; --r:18deg;" data-drift="-0.14" data-rot="18deg"></span>
+        <span class="ip-shape" style="--shape:url('/shared/svg/shapes/shape-04.svg'); --s:clamp(130px,16vw,240px); left:84%; top:22%; --r:-7deg;" data-drift="0.46" data-rot="-7deg"></span>
+        <span class="ip-shape" style="--shape:url('/shared/svg/shapes/shape-79.svg'); --s:clamp(120px,15vw,210px); left:2%; top:58%; --r:24deg;" data-drift="-0.24" data-rot="24deg"></span>
+        <span class="ip-shape" style="--shape:url('/shared/svg/shapes/shape-94.svg'); --s:clamp(260px,34vw,500px); left:66%; top:54%; --r:-16deg;" data-drift="0.10" data-rot="-16deg"></span>
+        <span class="ip-shape" style="--shape:url('/shared/svg/shapes/shape-19.svg'); --s:clamp(160px,20vw,300px); left:30%; top:88%; --r:9deg;" data-drift="0.22" data-rot="9deg"></span>
+      </div>
+      </div>
+
+      <div class="ip-chapter__inner">
+        <div class="pricing-configure__intro">
+          <p class="ip-marker">Pricing</p>
+          <h1 id="pricing-title" class="ip-display ip-display--mid" data-reveal-words style="text-transform: lowercase;">build your team's two/fiftyseven.</h1>
+          <p class="ip-lead" data-reveal data-reveal-delay="1">Configure your team. See your <span class="ip-pop">number</span>. Take it to finance.</p>
+        </div>
+
+        <div class="pricing-configure__sticky-wrap">
+        <div class="pricing-calc-lime-card">
+        <div class="pricing-configure__inner">
+
+          <!-- LEFT · Configurator card -->
+          <div class="config-card" data-reveal data-reveal-delay="1">
+            <div class="calc" data-js="calc-office-costs">
+
+              <div class="config-card__field">
+                <h3 class="oc-card-heading">Team size</h3>
+                <div class="config-card__field-row">
+                  <label class="config-card__label" for="pricing-team-size">Team size</label>
+                  <span class="config-card__value"><strong data-pricing-team-out>1</strong> <span data-pricing-team-suffix>person</span></span>
+                </div>
+                <div class="ux-slider" data-slider-min="1" data-slider-max="15" data-slider-value="1">
+                  <input id="pricing-team-size" type="range" min="1" max="15" step="1" value="1"
+                         class="ux-slider__input" data-pricing-team-slider aria-label="Team size">
+                  <div class="ux-slider__visual" aria-hidden="true">
+                    <div class="ux-slider__track"></div>
+                    <div class="ux-slider__progress"></div>
+                    <div class="ux-slider__thumb"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="calc-stepper-hidden" aria-hidden="true">
+                <button type="button" data-calc-team-dec tabindex="-1">&minus;</button>
+                <output data-calc-team-out>0</output>
+                <button type="button" data-calc-team-inc tabindex="-1">+</button>
+              </div>
+
+              <div class="config-card__field" data-membership-card>
+                <div data-membership-default>
+                  <h3 class="oc-card-heading">Membership selection</h3>
+
+                  <ul class="member-roster team-roster" data-calc-roster></ul>
+
+                  <div class="calc__commit-hidden">
+                    <input type="radio" name="commitment" id="c1" value="1" data-calc-commitment checked>
+                    <label for="c1">1 yr</label>
+                  </div>
+
+                  <label class="annual-check">
+                    <input type="checkbox" data-calc-annual>
+                    <span class="checkbox__swatch" aria-hidden="true"></span>
+                    <span class="checkbox__label">Pay annually &middot; save 10% on Dedicated.</span>
+                  </label>
+
+                  <!-- For-purpose workspace support — need-based, NOT a fixed % discount.
+                       Impact Discount (50% off) applies to rooms/events bookings only.
+                       Workspace for charities, NGOs, indigenous-led orgs and social
+                       enterprises is by conversation, based on the org's situation. -->
+                  <div class="need-based-block">
+                    <p class="need-based-block__heading">For-purpose work?</p>
+                    <p class="need-based-block__body">We support charities, NGOs, indigenous-led orgs, community groups and social enterprises with discounted space. <a href="mailto:kiaora@twofiftyseven.co?subject=Workspace%20for%20a%20for-purpose%20org" class="need-based-block__link">Tell us about your work &rarr;</a></p>
+                  </div>
+                </div>
+
+                <div class="bigger-team-card" data-bigger-team-card hidden>
+                  <h3 class="bigger-team-card__heading">More than 15? It&rsquo;s a conversation, not a dropdown.</h3>
+                  <p class="bigger-team-card__lead">
+                    Rough estimate: <strong>$109&ndash;$659 per person per month</strong> (Flexi 1 day/week up to Dedicated 7 days/week). For a 25-person team that&rsquo;s roughly <strong>$33k&ndash;$198k/yr</strong> depending on tier mix.
+                  </p>
+                  <p class="bigger-team-card__lead">Bigger teams, multi-org setups, custom arrangements need a person, not a slider. Talk to Ash directly &mdash; same-day response, no template emails.</p>
+                  <a href="mailto:ash@twofiftyseven.co?subject=Bigger%20team%20setup" class="bigger-team-card__cta">Email Ash &rarr;</a>
+                </div>
+              </div>
+
+              <div class="calc__mini-total" aria-hidden="true">
+                <span class="calc__mini-total-label">monthly total</span>
+                <span class="calc__mini-total-value" data-calc-mini-total>$0</span>
+              </div>
+
+              <!-- Hidden engine sinks. MUST be INSIDE .calc · engine queries descendants only. -->
+              <div hidden data-calc-private-lines></div>
+              <div hidden data-calc-ours-lines></div>
+              <span hidden data-calc-private-total>$0</span>
+              <span hidden data-calc-ours-total>$0</span>
+              <span hidden data-calc-saving-figure>$0</span>
+              <span hidden data-calc-saving-annual>$0</span>
+              <span hidden data-calc-saving-capital>$0</span>
+              <span hidden data-calc-period>1 year</span>
+            </div><!-- /.calc -->
+          </div>
+
+          <!-- RIGHT · Sticky proposal result panel -->
+          <aside class="proposal-result-sticky" aria-label="Live proposal result" data-reveal data-reveal-delay="2">
+            <p class="proposal-result__label">This proposal &middot; two/fiftyseven</p>
+            <div data-result-headline>
+              <p class="proposal-result__figure" data-result-ours-annual>$0</p>
+              <p class="proposal-result__gst-note">All prices ex GST &middot; Wellington/Aotearoa</p>
+              <p class="proposal-result__sub">
+                <span data-result-ours-monthly>$0</span>/month &middot; <span data-result-team-size>0</span> <span data-result-team-suffix>team members</span>
+              </p>
+            </div>
+            <div class="proposal-result__empty" data-result-empty hidden>
+              <p class="proposal-result__empty-lead">Set your team size above to see your number.</p>
+            </div>
+            <div class="proposal-chart" data-result-compare data-result-chart>
+              <div class="proposal-chart__row">
+                <span class="proposal-chart__label">Private Wellington office</span>
+                <div class="proposal-chart__bar-wrap">
+                  <div class="proposal-chart__bar proposal-chart__bar--private" style="--bar-pct: 100%"></div>
+                </div>
+                <span class="proposal-chart__value" data-result-private>$0</span>
+              </div>
+              <div class="proposal-chart__row">
+                <span class="proposal-chart__label">Other Wellington coworking</span>
+                <div class="proposal-chart__bar-wrap">
+                  <div class="proposal-chart__bar proposal-chart__bar--coworking" style="--bar-pct: 0%"></div>
+                  <div class="proposal-chart__bar-high" style="--bar-pct: 0%"></div>
+                </div>
+                <span class="proposal-chart__value">
+                  <span data-result-other-coworking-low>$0</span>&ndash;<span data-result-other-coworking-high>$0</span>
+                </span>
+              </div>
+              <div class="proposal-chart__row proposal-chart__row--ours">
+                <span class="proposal-chart__label">two/fiftyseven</span>
+                <div class="proposal-chart__bar-wrap">
+                  <div class="proposal-chart__bar proposal-chart__bar--ours" style="--bar-pct: 0%"></div>
+                </div>
+                <span class="proposal-chart__value" data-result-ours-annual>$0</span>
+              </div>
+              <div class="proposal-chart__savings">
+                <div class="proposal-chart__saving">
+                  <span class="proposal-chart__saving-label">vs private office</span>
+                  <p class="proposal-chart__saving-value">
+                    Save <strong data-result-save-private>$0</strong>/yr
+                  </p>
+                </div>
+                <div class="proposal-chart__saving">
+                  <span class="proposal-chart__saving-label">vs other coworking</span>
+                  <p class="proposal-chart__saving-value">
+                    Save <strong data-result-save-coworking-low>$0</strong>&ndash;<strong data-result-save-coworking-high>$0</strong>/yr
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Giving · team hours in the space valued at $1/hr (Dedicated 5 days · 8h · 46 wks), same basis as the venue calc -->
+            <div class="proposal-giving" data-result-giving-block>
+              <p class="proposal-giving__label">Your team also funds</p>
+              <p class="proposal-giving__amount" data-result-giving>$0</p>
+              <p class="proposal-giving__context">of subsidised space for charities + community orgs. Contributing to $450,000+ paid forward since 2021.</p>
+            </div>
+
+            <!-- Option B · contact CTA lives in the panel so the result is the whole ask -->
+            <form class="proposal-form-block" data-js="proposal-contact-form" novalidate>
+              <p class="proposal-form-block__title">Your details</p>
+              <div class="pf">
+                <label for="pricing-name">Name</label>
+                <input type="text" id="pricing-name" name="name" autocomplete="name" required>
+              </div>
+              <div class="pf">
+                <label for="pricing-email">Email</label>
+                <input type="email" id="pricing-email" name="email" autocomplete="email" required>
+              </div>
+              <button type="submit" class="proposal-cta" data-js="proposal-cta">
+                <span>Send this proposal to yourself and two/fiftyseven</span>
+                <span aria-hidden="true">&rarr;</span>
+              </button>
+            </form>
+          </aside>
+
+        </div><!-- /.pricing-configure__inner -->
+        </div><!-- /.pricing-calc-lime-card -->
+        </div><!-- /.pricing-configure__sticky-wrap -->
+
+        <details class="pricing-breakdown" id="includes">
+          <summary class="pricing-breakdown__trigger">
+            <span>See what&rsquo;s included in this proposal</span>
+            <span class="pricing-breakdown__caret" aria-hidden="true">&darr;</span>
+          </summary>
+          <div class="pricing-breakdown__body">
+            <div class="pricing-breakdown__section">
+              <h3 class="pricing-breakdown__heading">Workspace</h3>
+              <ul class="pricing-breakdown__list">
+                <li>Dedicated workspace within one of Aotearoa&rsquo;s most thoughtfully designed coworking spaces</li>
+                <li>Newly installed state-of-the-art ventilation system, engineered above standard occupancy</li>
+                <li>Custom fit-out support before your programme starts</li>
+                <li>Use of events and meeting spaces</li>
+                <li>Access to all kitchen, bathroom and showering facilities</li>
+                <li>Certified Climate Positive space</li>
+                <li>Living Wage accredited space</li>
+              </ul>
+            </div>
+            <div class="pricing-breakdown__section">
+              <h3 class="pricing-breakdown__heading">All rental and outgoings</h3>
+              <ul class="pricing-breakdown__list">
+                <li>Rates</li>
+                <li>Insurance</li>
+                <li>Property management fees</li>
+                <li>Building Warrant of Fitness costs</li>
+                <li>Repairs and maintenance</li>
+                <li>Electricity (certified Carbon Zero at source)</li>
+                <li>All rubbish and recycling costs</li>
+                <li>Internet service provider costs</li>
+                <li>Printer rental and maintenance</li>
+                <li>Regular cleaning costs</li>
+              </ul>
+            </div>
+            <div class="pricing-breakdown__section">
+              <h3 class="pricing-breakdown__heading">Services</h3>
+              <ul class="pricing-breakdown__list">
+                <li>Reception services</li>
+                <li>Automated room booking system</li>
+                <li>Space management and maintenance of supplies and fixings</li>
+                <li>Physical Health First Aid</li>
+                <li>Mental Health First Aid</li>
+                <li>Civil Defence provisions</li>
+                <li>Fire Warden responsibilities</li>
+              </ul>
+            </div>
+            <div class="pricing-breakdown__section">
+              <h3 class="pricing-breakdown__heading">Consumables</h3>
+              <ul class="pricing-breakdown__list">
+                <li>Organic fair trade coffee</li>
+                <li>A range of teas and milks</li>
+                <li>Sparkling, boiling and chilled water on tap</li>
+                <li>All bathroom supplies</li>
+              </ul>
+            </div>
+            <div class="pricing-breakdown__section pricing-breakdown__verified">
+              <h3 class="pricing-breakdown__heading">Verified</h3>
+              <ul class="pricing-breakdown__list">
+                <li>Climate Positive electricity supply via Ecotricity (Toit&#363; Envirocare certified at 125% offset, ISO 14067:2018 + ISO 14064-1:2018)</li>
+                <li>200% verified offset overall position via Ekos NZUs against measured operational footprint</li>
+                <li>Living Wage Aotearoa accredited &middot; all on-site staff at or above Living Wage rate</li>
+                <li>Mental Health First Aid certified team &middot; trained via Stepping Stone Trust to MHFA Aotearoa standard</li>
+                <li>Building Warrant of Fitness current &middot; annual Wellington City Council compliance</li>
+                <li>Lift access from both Willis Street and Victoria Street entrances &middot; single-level workspace</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- CHAPTER 2 · SAVE YOUR NUMBER -->
+    <section class="ip-chapter ip-chapter--fit take-it" id="take-it" aria-labelledby="take-it-title">
+      <div class="ip-chapter__inner">
+        <p class="ip-marker" id="take-it-title">Save your number. Send it on.</p>
+
+        <div class="take-it__grid">
+          <div class="take-it__card" data-email-card>
+            <h3 class="take-it__title">Email me this proposal</h3>
+            <p class="take-it__body">Get the comparison + sources in your inbox, ready to forward to your team.</p>
+            <p class="take-it__status" data-email-status></p>
+            <form class="take-it__form" data-email-form>
+              <label class="visually-hidden" for="take-email">Your email</label>
+              <input id="take-email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+              <button type="submit">Send &rarr;</button>
+            </form>
+          </div>
+
+          <div class="take-it__card">
+            <h3 class="take-it__title">Share this proposal</h3>
+            <p class="take-it__body">Same numbers, any browser &middot; your team clicks and sees the exact same result.</p>
+            <button type="button" class="take-it__cta" data-share-btn>Copy link &#x21AA;</button>
+          </div>
+
+          <div class="take-it__card">
+            <h3 class="take-it__title">Save as PDF</h3>
+            <p class="take-it__body">Print-ready, branded version for procurement and finance teams.</p>
+            <button type="button" class="take-it__cta" data-print-btn>Download PDF &darr;</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 3 · MEMBERSHIPS -->
+    <section class="ip-chapter pricing-pricelist" id="price-list" aria-labelledby="price-list-title">
+      <div class="ip-chapter__inner">
+        <p class="ip-marker">Memberships</p>
+        <h2 id="price-list-title" class="ip-display ip-display--mid" data-reveal-words>Flexible &middot; from one to seven days a week.</h2>
+
+        <div class="pricing-tiers-grid" data-reveal data-reveal-delay="2">
+          <div class="pricing-tiers-col">
+            <h3 class="pricing-tiers-col__heading">Monthly memberships</h3>
+            <ul class="pricing-tiers__list">
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Dedicated</span>
+                <span class="pricing-tiers__price">$659</span>
+                <span class="pricing-tiers__unit">/month</span>
+                <span class="pricing-tiers__detail">7 days/week &middot; permanent desk &middot; everything included.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Flexi 5</span>
+                <span class="pricing-tiers__price">$509</span>
+                <span class="pricing-tiers__unit">/month</span>
+                <span class="pricing-tiers__detail">5 days/week &middot; hot desk &middot; everything included.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Flexi 4</span>
+                <span class="pricing-tiers__price">$409</span>
+                <span class="pricing-tiers__unit">/month</span>
+                <span class="pricing-tiers__detail">4 days/week &middot; hot desk &middot; everything included.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Flexi 3</span>
+                <span class="pricing-tiers__price">$309</span>
+                <span class="pricing-tiers__unit">/month</span>
+                <span class="pricing-tiers__detail">3 days/week &middot; hot desk &middot; everything included.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Flexi 2</span>
+                <span class="pricing-tiers__price">$209</span>
+                <span class="pricing-tiers__unit">/month</span>
+                <span class="pricing-tiers__detail">2 days/week &middot; hot desk &middot; everything included.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Flexi 1</span>
+                <span class="pricing-tiers__price">$109</span>
+                <span class="pricing-tiers__unit">/month</span>
+                <span class="pricing-tiers__detail">1 day/week &middot; hot desk &middot; everything included.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="pricing-tiers-col">
+            <h3 class="pricing-tiers-col__heading">Day passes</h3>
+            <ul class="pricing-tiers__list">
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">Single day pass</span>
+                <span class="pricing-tiers__price">$40</span>
+                <span class="pricing-tiers__unit">/day</span>
+                <span class="pricing-tiers__detail">Casual &middot; no commitment.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">10 pass pack</span>
+                <span class="pricing-tiers__price">$350</span>
+                <span class="pricing-tiers__unit">one-off</span>
+                <span class="pricing-tiers__detail">$35/day &middot; weekdays.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">20 pass pack</span>
+                <span class="pricing-tiers__price">$650</span>
+                <span class="pricing-tiers__unit">one-off</span>
+                <span class="pricing-tiers__detail">$32.50/day &middot; weekdays.</span>
+              </li>
+              <li class="pricing-tiers__row">
+                <span class="pricing-tiers__label">50 pass pack</span>
+                <span class="pricing-tiers__price">$1,400</span>
+                <span class="pricing-tiers__unit">one-off</span>
+                <span class="pricing-tiers__detail">$28/day &middot; weekdays.</span>
+              </li>
+            </ul>
+            <a class="day-pass-packs__cta" href="/day-pass/">Buy a day pass &rarr;</a>
+          </div>
+        </div>
+
+        <p class="pricing-cards__after" data-reveal data-reveal-delay="3">Month-to-month, no lock-in. Pay annually &middot; save 10% on Dedicated. All prices ex GST.</p>
+      </div>
+    </section>
+
+    <!-- CHAPTER 4 · IN GOOD COMPANY -->
+    <section class="ip-chapter pricing-voices" id="voices" aria-labelledby="voices-title">
+      <div class="ip-chapter__inner">
+        <p class="ip-marker">In good company</p>
+        <h2 id="voices-title" class="pricing-h2">A community across seven sectors.</h2>
+        <ul class="sector-pillars__grid" data-reveal>
+          <li class="sector-pillar">
+            <h3 class="sector-pillar__name">Tech</h3>
+            <div class="sector-pillar__logos">
+              <img src="../assets/logos/257-logo-atlassian.svg" alt="Atlassian" loading="lazy">
+              <img src="../assets/logos/logo-volley (1).svg" alt="Volley" loading="lazy">
+              <img src="../assets/logos/logo-humble-bee.svg" alt="Humble Bee Bio" loading="lazy">
+            </div>
+          </li>
+          <li class="sector-pillar">
+            <h3 class="sector-pillar__name">Environment &amp; Energy</h3>
+            <div class="sector-pillar__logos">
+              <img src="../assets/logos/mountains to sea wellington w.png" alt="Mountains to Sea Wellington" loading="lazy">
+              <img src="../assets/logos/logo-rewiring (1).svg" alt="Rewiring Aotearoa" loading="lazy">
+              <img src="../assets/logos/logo-mfe.svg" alt="Ministry for the Environment" loading="lazy">
+            </div>
+          </li>
+          <li class="sector-pillar">
+            <h3 class="sector-pillar__name">Social Enterprise &amp; Charity</h3>
+            <div class="sector-pillar__logos">
+              <img src="../assets/logos/logo-kaibosh.svg" alt="Kaibosh" loading="lazy">
+              <img src="../assets/logos/oxfam aotearoa w.png" alt="Oxfam Aotearoa" loading="lazy">
+              <img src="../assets/logos/seeds to feeds w.png" alt="Seeds to Feeds" loading="lazy">
+            </div>
+          </li>
+          <li class="sector-pillar">
+            <h3 class="sector-pillar__name">Design &amp; Creative</h3>
+            <div class="sector-pillar__logos">
+              <img src="../assets/logos/logo-creative-mornings-white.svg" alt="Creative Mornings" loading="lazy">
+              <img src="../assets/logos/logo-fairground.svg" alt="Fairground" loading="lazy">
+            </div>
+          </li>
+          <li class="sector-pillar">
+            <h3 class="sector-pillar__name">Government &amp; Policy</h3>
+            <div class="sector-pillar__logos">
+              <img src="../assets/logos/lawyers for climate action w.png" alt="Lawyers for Climate Action NZ" loading="lazy">
+              <img src="../assets/logos/abley.svg" alt="Abley" loading="lazy">
+            </div>
+          </li>
+          <li class="sector-pillar">
+            <h3 class="sector-pillar__name">Climate &amp; Sustainability</h3>
+            <div class="sector-pillar__logos">
+              <img src="../assets/logos/sustainability trust w.png" alt="Sustainability Trust" loading="lazy">
+              <img src="../assets/logos/climate club w.png" alt="Climate Club" loading="lazy">
+            </div>
+          </li>
+          <li class="sector-pillar">
+            <h3 class="sector-pillar__name">Arts &amp; Culture</h3>
+            <div class="sector-pillar__logos">
+              <img src="../assets/logos/Karbon.svg" alt="Karbon" loading="lazy">
+              <img src="../assets/logos/action station w.png" alt="ActionStation" loading="lazy">
+            </div>
+          </li>
+        </ul>
+        <a href="../organisations/index.html" class="pricing-link">See the full community of 160+ organisations &rarr;</a>
+      </div>
+    </section>
+
+    <!-- CHAPTER 5 · CLOSE CTA — canonical .invite (audit #18). Replaces the old
+         .cta-card pattern so pricing/ shares chrome with every other page. -->
+    <section class="ip-chapter ip-chapter--fit pricing-closing-cta" id="tour" aria-labelledby="closing-cta-title">
+      <div class="ip-shapes" aria-hidden="true">
+        <span class="ip-shape" style="--shape:url('/shared/svg/shapes/shape-55.svg'); --s:clamp(200px,26vw,400px); left:-6%; top:18%; --r:14deg;" data-drift="0.20" data-rot="14deg"></span>
+        <span class="ip-shape" style="--shape:url('/shared/svg/shapes/shape-21.svg'); --s:clamp(130px,16vw,240px); left:86%; top:60%; --r:-10deg;" data-drift="-0.16" data-rot="-10deg"></span>
+      </div>
+      <div class="ip-chapter__inner">
+        <h2 id="closing-cta-title" class="visually-hidden">Book a tour or talk to us</h2>
+        <div class="invite">
+          <!-- PRIMARY — reader has just built a per-team proposal. Tour is the strongest
+               next move: walk the place with the spreadsheet in hand. -->
+          <a class="invite__primary" href="/tours/">
+            <p class="invite__eyebrow">Most people start here</p>
+            <h3 class="invite__primary-title">Book a tour<span class="invite__arrow" aria-hidden="true">→</span></h3>
+            <p class="invite__primary-body">A 20-minute walk-around with whoever&rsquo;s hosting that day. Bring the proposal you just built, see the desk you&rsquo;d sit at, meet the team.</p>
+            <p class="invite__meta"><span>Weekday mornings</span><span aria-hidden="true">·</span><span>With whoever&rsquo;s hosting</span><span aria-hidden="true">·</span><span>Bring a colleague</span></p>
+          </a>
+
+          <!-- SECONDARY ROW — (1) for-purpose workspace support is need-based (NOT a
+               fixed % Impact Discount — that applies to rooms only); (2) the room-booking
+               alternative for the not-actually-a-membership reader. -->
+          <div class="invite__row">
+            <a class="invite__secondary" href="mailto:kiaora@twofiftyseven.co?subject=Workspace%20for%20a%20for-purpose%20org">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">For-purpose work?<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">Charities, NGOs, indigenous-led orgs, community groups and social enterprises &mdash; we support workspace by conversation, based on the org&rsquo;s situation. Tell us about your work.</p>
+              </div>
+            </a>
+            <a class="invite__secondary" href="/meetings/">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">Not a membership?<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">Meeting rooms, workshops, away days, events. Six rooms, six to 150 people, all on the meetings page.</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHAPTER 6 · FAQ -->
+    <section class="ip-chapter ip-chapter--fit faq-wrap" id="faq" aria-labelledby="faq-title">
+      <div class="ip-chapter__inner">
+        <p class="ip-marker">FAQ</p>
+        <h2 id="faq-title" class="ip-display ip-display--mid" data-reveal-words>Procurement answers, plainly.</h2>
+
+        <div class="faq" data-js="faq-accordion" style="margin-top: clamp(24px, 3vh, 40px);">
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How much does coworking cost in Wellington?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>At two/fiftyseven, monthly memberships start at $109 for one day a week (Flexi 1) and run up to $659 for a permanent desk seven days a week (Dedicated). All prices ex GST. Day passes start at $40 single, or as low as $28 per day in a 50-pack. Comparable Wellington coworking sits at $450 to $650 per month for flexible memberships and $700 to $830 for dedicated desks.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">What&rsquo;s included in a two/fiftyseven coworking membership?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Desk access (Dedicated or Flexi), all meeting rooms, kitchen, fast internet, power, cleaning, accessible facilities, a Mental Health First Aid trained team on site, the 257 booking app, and access to community events. There are no fit-out costs, no utility bills, no surprise surcharges. Pricing is published; everyone pays the same rate.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">What&rsquo;s the difference between Flexi and Dedicated?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Dedicated ($659/mo) is your own permanent desk, seven days a week. Leave your gear, set up a second monitor, walk in to the same desk every day. Flexi (1 to 5 days a week, $109 to $509/mo) is a hot desk on the days you&rsquo;re in. Same access to meeting rooms, kitchen, internet, and everything else.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Is there a minimum contract or lock-in period?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>No. Month-to-month, no minimum term. Your membership continues until you give notice. We don&rsquo;t require fixed-term contracts like traditional office leases or some peer coworking providers in Wellington.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Do you offer day passes or casual coworking options?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Yes. $40 for a single day pass, $350 for a 10-pack ($35/day), $650 for a 20-pack ($32.50/day), and $1,400 for a 50-pack ($28/day). All weekday-valid. Useful if you&rsquo;re visiting Wellington, between roles, or want to test the workspace before committing to a monthly membership.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Do you offer discounts for charities, NGOs or social enterprises?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Workspace support for charities, NGOs, indigenous-led orgs, community groups and social enterprises is need-based, not a fixed percentage. Tell us about your work and your situation, and we&rsquo;ll figure out what fits. Email <a href="mailto:kiaora@twofiftyseven.co?subject=Workspace%20for%20a%20for-purpose%20org">kiaora@twofiftyseven.co</a>.</p>
+              <p>Our Impact Discount of 50% off applies separately to meeting rooms and events &mdash; not to memberships. See the <a href="../impact/index.html">Impact</a> page for the full criteria.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Are GST and other taxes included in the price?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>All prices on this page are ex GST. NZ GST is currently 15%. Monthly invoices, standard payment terms.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How does pricing work for a mixed team?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Each team member picks their own tier (Dedicated 7 days/week, or Flexi 5/4/3/2/1 days a week). The team total is the sum of those per-member rates. Use the proposal builder above to configure a mixed team, for example 2 Dedicated + 3 Flexi 3, and see the live monthly and annual total.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Can I pay annually for a discount?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Yes. Pay annually upfront and save 10% on the Dedicated tier ($7,116/yr vs $7,908/yr). Tick &ldquo;Pay annually&rdquo; in the proposal builder to see the discount applied to your live figure. Flexi tiers are billed monthly only with no annual prepay discount.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How does two/fiftyseven compare to other Wellington coworking?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Wellington&rsquo;s flexible-membership coworking sits at $450 to $650 per person per month (low end: The Exchange Te Aro; high end: The Space Wellington, Urban Hub). Dedicated desks sit $700 to $830 (e.g. The Hangar, Icehouse, WOTSO, Thinkspace). two/fiftyseven Flexi starts at $109/mo for one day a week up to $509/mo for five days; Dedicated is $659/mo. Regus is excluded from the benchmark because its 24-month lock-in isn&rsquo;t comparable flexibility.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How is the &ldquo;saving vs private office&rdquo; figure calculated?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>The private-office benchmark is $14,200 per person per year. It&rsquo;s modelled on a central-Wellington B-grade private office and covers rent, outgoings, fit-out amortised over five years, internet, power, cleaning, kitchen and bathroom consumables, insurance, MHFA training, admin time, and lease legals. Your saving is that benchmark times your team size minus your configured two/fiftyseven total.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Can I tour the space before signing up or share this proposal with my finance team?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Yes to both. <a href="../tours/index.html">Book a tour</a> for an in-person walkthrough with Ash, same-day response. To share with finance, use the &ldquo;Take it&rdquo; row above: email yourself the proposal (with the share link and inclusion list pre-formatted), copy a share link that preserves your team configuration in the URL, or download a print-ready PDF.</p>
+            </div></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="print-only print-footer" aria-hidden="true">
+      two/fiftyseven &middot; twofiftyseven.co &middot; kiaora@twofiftyseven.co &middot; Book a tour at twofiftyseven.co/tours/
+    </div>
+
+  </main>
+
+  <footer class="site-footer" data-theme="dark">
+    <div class="container">
+      <div class="site-footer__top">
+        <nav class="site-footer__nav" aria-label="Footer">
+          <div class="site-footer__col site-footer__col--find">
+            <h4>Find us</h4>
+            <address class="site-footer__address">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara</address>
+            <p class="site-footer__note">Central lift access from both the Willis Street and Victoria Street entrances. The Victoria Street entrance is opposite Matapihi ki te Ao Nui.</p>
+            <a class="site-footer__maplink" href="https://www.google.com/maps/search/?api=1&amp;query=57+Willis+Street+Te+Whanganui-a-Tara">View on map</a>
+          </div>
+          <div class="site-footer__col">
+            <h4>Workspace</h4>
+            <ul>
+              <li><a href="../workspace/base/index.html">Base</a></li>
+              <li><a href="../workspace/hub/index.html">Hub</a></li>
+              <li><a href="../workspace/desk/index.html">Desk</a></li>
+              <li><a href="../pricing/index.html">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Meet &amp; Host</h4>
+            <ul>
+              <li><a href="../meetings/index.html">Meetings</a></li>
+              <li><a href="../meetings/workshops/index.html">Workshops</a></li>
+              <li><a href="../meetings/away-days/index.html">Away days</a></li>
+              <li><a href="../events/index.html">Events</a></li>
+              <li><a href="../events/functions/index.html">Functions</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col site-footer__col--about">
+            <h4>About</h4>
+            <ul>
+              <li><a href="../our-story/index.html">Our story</a></li>
+              <li><a href="../impact/index.html">Impact</a></li>
+              <li><a href="../kaupapa/index.html">Kaupapa</a></li>
+              <li><a href="../organisations/index.html">Organisations</a></li>
+              <li><a href="../whatson/index.html">What&rsquo;s on</a></li>
+              <li><a href="../kōrero/index.html">Kōrero</a></li>
+              <li><a href="../people/index.html">People</a></li>
+              <li><a href="../press-kit/index.html">Press kit</a></li>
+              <li><a href="../calculator/index.html">Calculators</a></li>
+              <li><a href="../contact/index.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <form class="site-footer__panui" method="post" action="#" aria-label="Pānui signup">
+          <h4>Pānui</h4>
+          <p>Occasional notes from inside two/fiftyseven &middot; what&rsquo;s on, what&rsquo;s changed, what we&rsquo;re thinking about.</p>
+          <div class="site-footer__panui-row">
+            <label class="visually-hidden" for="panui-email">Email address</label>
+            <input type="email" id="panui-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit" class="btn btn--primary btn--small">Sign up</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="site-footer__beliefs" aria-label="What we believe">
+        <ul class="site-footer__beliefs-track">
+          <li>diversity is resilience</li>
+          <li>radical equality is good for all</li>
+          <li>complete decolonisation is a necessary future</li>
+          <li>climate justice is a human and environmental imperative</li>
+          <li aria-hidden="true">diversity is resilience</li>
+          <li aria-hidden="true">radical equality is good for all</li>
+          <li aria-hidden="true">complete decolonisation is a necessary future</li>
+          <li aria-hidden="true">climate justice is a human and environmental imperative</li>
+        </ul>
+      </div>
+
+      <div class="site-footer__wordmark" data-js="footer-reveal" role="img" aria-label="two/fiftyseven"></div>
+
+      <div class="site-footer__bottom">
+        <span>&copy; 2026 two/fiftyseven Limited</span>
+        <span>Aotearoa / New Zealand</span>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var wm = document.querySelector('[data-js="footer-reveal"]');
+        if (!wm) return;
+        if (!('IntersectionObserver' in window)) { wm.classList.add('is-revealed'); return; }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-revealed'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.25 });
+        io.observe(wm);
+      })();
+    </script>
+  </footer>
+
+  <!-- PAGE COORDINATOR · mirrors engine sinks into the sticky panel,
+       computes dual comparison, drives slider, swaps roster modes. -->
+  <script>
+  (function () {
+    document.addEventListener('DOMContentLoaded', function () {
+
+      var PRIVATE_OFFICE_PER_PERSON_YR = 14200;
+      // Tier-aware peer-coworking benchmarks (NZ 2026 verified).
+      // Flexi: $450-$650/mo. Dedicated: $700-$830/mo.
+      var COMPETITOR_FLEXI_LOW_MO = 450, COMPETITOR_FLEXI_HIGH_MO = 650;
+      var COMPETITOR_DEDICATED_LOW_MO = 700, COMPETITOR_DEDICATED_HIGH_MO = 830;
+
+      function comparableForTier(tier) {
+        if (tier === 'dedicated') return { low: COMPETITOR_DEDICATED_LOW_MO * 12, high: COMPETITOR_DEDICATED_HIGH_MO * 12 };
+        return { low: COMPETITOR_FLEXI_LOW_MO * 12, high: COMPETITOR_FLEXI_HIGH_MO * 12 };
+      }
+      // Giving · hours in the space valued at $1/hr (same basis as the venue calc).
+      // Dedicated is 5 days in practice; Flexi N = N days. 8h day, 46 working weeks.
+      var GIVING_HOURS_DAY = 8, GIVING_WEEKS = 46, GIVING_RATE = 1;
+      function daysForTier(tier) { if (tier === 'dedicated') return 5; var m = /flexi-(\d)/.exec(tier || ''); return m ? parseInt(m[1], 10) : 0; }
+      function computeGivingDollars(tiers) { var h = 0; for (var i = 0; i < tiers.length; i++) h += daysForTier(tiers[i]) * GIVING_HOURS_DAY * GIVING_WEEKS; return h * GIVING_RATE; }
+      function rosterTiers() {
+        var out = [];
+        document.querySelectorAll('[data-calc-roster] select').forEach(function (s) { if (s.value) out.push(s.value); });
+        return out;
+      }
+      function computeCoworkingComparison(tiers) {
+        var low = 0, high = 0;
+        for (var i = 0; i < tiers.length; i++) { var c = comparableForTier(tiers[i]); low += c.low; high += c.high; }
+        return { low: low, high: high };
+      }
+      function fmt$(n) { if (!isFinite(n)) n = 0; return '$' + Math.round(n).toLocaleString('en-NZ'); }
+      function parse$(s) { return s ? (parseInt(String(s).replace(/[^0-9\-]/g, ''), 10) || 0) : 0; }
+
+      var srcOurs = document.querySelector('[data-calc-ours-total]');
+      var srcMo   = document.querySelector('[data-calc-mini-total]');
+      var teamOut = document.querySelector('[data-calc-team-out]');
+
+      var sinksOursAnnualAll = document.querySelectorAll('[data-result-ours-annual]');
+      var sinkOursAnnual  = sinksOursAnnualAll[0] || null;
+      var sinkOursMonthly = document.querySelector('[data-result-ours-monthly]');
+      var sinkTeamSize    = document.querySelector('[data-result-team-size]');
+      var sinkTeamSuffix  = document.querySelector('[data-result-team-suffix]');
+      var sinkSavePrivate = document.querySelector('[data-result-save-private]');
+      var sinkSaveCwLow   = document.querySelector('[data-result-save-coworking-low]');
+      var sinkSaveCwHigh  = document.querySelector('[data-result-save-coworking-high]');
+
+      var sinkChartPrivate = document.querySelector('[data-result-private]');
+      var sinkChartCwLow   = document.querySelector('[data-result-other-coworking-low]');
+      var sinkChartCwHigh  = document.querySelector('[data-result-other-coworking-high]');
+      var barPrivate       = document.querySelector('.proposal-chart__bar--private');
+      var barCoworking     = document.querySelector('.proposal-chart__bar--coworking');
+      var barCoworkingHigh = document.querySelector('.proposal-chart__bar-high');
+      var barOurs          = document.querySelector('.proposal-chart__bar--ours');
+      var impactToggle = document.querySelector('[data-calc-impact-discount]');
+      function impactActive() { return !!(impactToggle && impactToggle.checked); }
+      var resultHeadline = document.querySelector('[data-result-headline]');
+      var resultEmpty    = document.querySelector('[data-result-empty]');
+      var resultCompare  = document.querySelector('[data-result-compare]');
+      var sinkGiving       = document.querySelector('[data-result-giving]');
+      var resultGivingBlock = document.querySelector('[data-result-giving-block]');
+
+      function mirror() {
+        var teamSize = teamOut ? (parseInt(teamOut.value || teamOut.textContent || '0', 10) || 0) : 0;
+        var oursAnnualRaw = parse$(srcOurs && srcOurs.textContent);
+        var oursMonthlyRaw = parse$(srcMo && srcMo.textContent);
+        if (!oursMonthlyRaw && oursAnnualRaw) oursMonthlyRaw = Math.round(oursAnnualRaw / 12);
+        var discountFactor = impactActive() ? 0.5 : 1;
+        var oursAnnual  = Math.round(oursAnnualRaw  * discountFactor);
+        var oursMonthly = Math.round(oursMonthlyRaw * discountFactor);
+        var privateAnnual = teamSize * PRIVATE_OFFICE_PER_PERSON_YR;
+        var tiers = rosterTiers();
+        var cw = computeCoworkingComparison(tiers);
+        var givingDollars = computeGivingDollars(tiers);
+        var saveVsPrivate = Math.max(0, privateAnnual - oursAnnual);
+        var saveVsCwLow   = Math.max(0, cw.low  - oursAnnual);
+        var saveVsCwHigh  = Math.max(0, cw.high - oursAnnual);
+        var oursStr = fmt$(oursAnnual);
+        if (sinksOursAnnualAll) for (var i = 0; i < sinksOursAnnualAll.length; i++) sinksOursAnnualAll[i].textContent = oursStr;
+        if (sinkOursMonthly) sinkOursMonthly.textContent = fmt$(oursMonthly);
+        if (sinkTeamSize)    sinkTeamSize.textContent    = String(teamSize);
+        if (sinkTeamSuffix)  sinkTeamSuffix.textContent  = (teamSize === 1 ? 'team member' : 'team members');
+        if (sinkSavePrivate) sinkSavePrivate.textContent = fmt$(saveVsPrivate);
+        if (sinkSaveCwLow)   sinkSaveCwLow.textContent   = fmt$(saveVsCwLow);
+        if (sinkSaveCwHigh)  sinkSaveCwHigh.textContent  = fmt$(saveVsCwHigh);
+        if (sinkChartPrivate) sinkChartPrivate.textContent = fmt$(privateAnnual);
+        if (sinkChartCwLow)   sinkChartCwLow.textContent   = fmt$(cw.low);
+        if (sinkChartCwHigh)  sinkChartCwHigh.textContent  = fmt$(cw.high);
+        if (sinkGiving)       sinkGiving.textContent       = fmt$(givingDollars);
+        var pctCwLow  = privateAnnual > 0 ? Math.max(0, Math.min(100, (cw.low  / privateAnnual) * 100)) : 0;
+        var pctCwHigh = privateAnnual > 0 ? Math.max(0, Math.min(100, (cw.high / privateAnnual) * 100)) : 0;
+        var pctOurs   = privateAnnual > 0 ? Math.max(0, Math.min(100, (oursAnnual / privateAnnual) * 100)) : 0;
+        if (barPrivate)       barPrivate.style.setProperty('--bar-pct', '100%');
+        if (barCoworking)     barCoworking.style.setProperty('--bar-pct', pctCwLow + '%');
+        if (barCoworkingHigh) barCoworkingHigh.style.setProperty('--bar-pct', pctCwHigh + '%');
+        if (barOurs)          barOurs.style.setProperty('--bar-pct', pctOurs + '%');
+        var empty = teamSize <= 0;
+        if (resultHeadline) resultHeadline.hidden = empty;
+        if (resultEmpty)    resultEmpty.hidden    = !empty;
+        if (resultCompare)  resultCompare.hidden  = empty;
+        if (resultGivingBlock) resultGivingBlock.hidden = empty;
+        updateRosterMode(teamSize);
+      }
+
+      var memberDefault  = document.querySelector('[data-membership-default]');
+      var biggerTeamCard = document.querySelector('[data-bigger-team-card]');
+      var initialUrlTeamOverflow = (function () {
+        try { var u = new URL(window.location.href); return (parseInt(u.searchParams.get('team') || '0', 10) > 15); }
+        catch (e) { return false; }
+      })();
+      var stickyOverflow = initialUrlTeamOverflow;
+      function updateRosterMode(teamSize) {
+        if (teamSize > 15) stickyOverflow = true;
+        var oversize = stickyOverflow;
+        if (memberDefault)  memberDefault.hidden  = oversize;
+        if (biggerTeamCard) biggerTeamCard.hidden = !oversize;
+      }
+
+      var tries = 0;
+      var t = setInterval(function () { mirror(); if (++tries > 25) clearInterval(t); }, 80);
+
+      if (document.querySelector('[data-js="calc-office-costs"]') && 'MutationObserver' in window) {
+        var mo = new MutationObserver(mirror);
+        [srcOurs, srcMo, teamOut,
+         document.querySelector('[data-calc-private-lines]'),
+         document.querySelector('[data-calc-ours-lines]'),
+         document.querySelector('[data-calc-roster]')
+        ].forEach(function (el) { if (el) mo.observe(el, { childList: true, characterData: true, subtree: true }); });
+      }
+      var rosterEl = document.querySelector('[data-calc-roster]');
+      if (rosterEl) rosterEl.addEventListener('change', function () { setTimeout(mirror, 0); }, true);
+
+      // Default every blank roster row to flexi-3 (most common tier).
+      function defaultRosterRowsToFlexi3() {
+        if (!rosterEl) return;
+        rosterEl.querySelectorAll('select').forEach(function (sel) {
+          if (sel.value) return;
+          for (var i = 0; i < sel.options.length; i++) {
+            if (sel.options[i].value === 'flexi-3') {
+              sel.value = 'flexi-3'; sel.dispatchEvent(new Event('change', { bubbles: true })); return;
+            }
+          }
+        });
+      }
+      if (rosterEl && 'MutationObserver' in window) {
+        new MutationObserver(function () { setTimeout(defaultRosterRowsToFlexi3, 0); })
+          .observe(rosterEl, { childList: true, subtree: true });
+      }
+      setTimeout(defaultRosterRowsToFlexi3, 120);
+      setTimeout(defaultRosterRowsToFlexi3, 400);
+
+      if (impactToggle) impactToggle.addEventListener('change', function () { setTimeout(mirror, 0); });
+
+      document.querySelectorAll('.jobs-gateway__link').forEach(function (a) {
+        var href = a.getAttribute('href') || ''; if (href.charAt(0) !== '#') return;
+        a.addEventListener('click', function (e) {
+          var target = document.querySelector(href); if (!target) return;
+          e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', href);
+        });
+      });
+
+      // Slider · drives hidden engine stepper.
+      var slider    = document.querySelector('[data-pricing-team-slider]');
+      var sliderOut = document.querySelector('[data-pricing-team-out]');
+      var sliderSfx = document.querySelector('[data-pricing-team-suffix]');
+      var btnDec    = document.querySelector('[data-calc-team-dec]');
+      var btnInc    = document.querySelector('[data-calc-team-inc]');
+      function paintTrack(el) {
+        if (!el) return;
+        var min = parseFloat(el.min) || 0, max = parseFloat(el.max) || 100;
+        var pct = ((parseFloat(el.value) - min) / (max - min)) * 100;
+        el.style.setProperty('--pct', pct + '%');
+        var wrap = el.closest('.ux-slider'); if (wrap) wrap.style.setProperty('--pct', pct + '%');
+      }
+      function syncSliderReadout() {
+        if (!slider) return;
+        var v = parseInt(slider.value, 10) || 0;
+        if (sliderOut) sliderOut.textContent = String(v);
+        if (sliderSfx) sliderSfx.textContent = (v === 1 ? 'person' : 'people');
+        paintTrack(slider);
+      }
+      function clickN(btn, n) { if (!btn || n <= 0) return; for (var i = 0; i < n; i++) btn.click(); }
+      if (slider) {
+        slider.addEventListener('input', function () {
+          var target = parseInt(slider.value, 10) || 0;
+          var current = teamOut ? (parseInt(teamOut.value || teamOut.textContent || '0', 10) || 0) : 0;
+          var delta = target - current;
+          if (delta > 0) clickN(btnInc, delta); else if (delta < 0) clickN(btnDec, -delta);
+          syncSliderReadout();
+        });
+        syncSliderReadout();
+      }
+
+      function syncSliderToEngine() {
+        if (!slider || !teamOut) return;
+        var target = parseInt(slider.value, 10) || 1;
+        var current = parseInt(teamOut.value || teamOut.textContent || '0', 10) || 0;
+        var delta = target - current;
+        if (delta > 0) clickN(btnInc, delta);
+        else if (delta < 0) clickN(btnDec, -delta);
+      }
+      setTimeout(syncSliderToEngine, 0);
+      setTimeout(syncSliderToEngine, 120);
+
+      // Take-it · Share.
+      var shareBtn = document.querySelector('[data-share-btn]');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', function () {
+          var url = window.location.href, original = shareBtn.textContent;
+          function done() { shareBtn.textContent = 'Copied ✓'; setTimeout(function () { shareBtn.textContent = original; }, 2000); }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(done).catch(function () { window.prompt('Copy this link', url); });
+          } else { window.prompt('Copy this link', url); }
+        });
+      }
+
+      // Take-it · Email.
+      var emailForm = document.querySelector('[data-email-form]');
+      var emailStatus = document.querySelector('[data-email-status]');
+      if (emailForm) {
+        emailForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var input = emailForm.querySelector('input[type="email"]');
+          var email = input ? input.value.trim() : '';
+          if (!email) { if (emailStatus) emailStatus.textContent = 'Add your email and try again.'; return; }
+          var teamN = teamOut ? (teamOut.value || teamOut.textContent || '0') : '0';
+          var oursTxt = sinkOursAnnual ? sinkOursAnnual.textContent : '$0';
+          var saveTxt = sinkSavePrivate ? sinkSavePrivate.textContent : '$0';
+          function inclusionText() {
+            var bd = document.querySelector('.pricing-breakdown__body'); if (!bd) return '';
+            var out = [];
+            bd.querySelectorAll('.pricing-breakdown__section').forEach(function (sec) {
+              var h = sec.querySelector('h3'); if (h) { out.push(''); out.push(h.textContent.trim()); }
+              sec.querySelectorAll('li').forEach(function (li) { out.push('  · ' + li.textContent.trim()); });
+            });
+            return out.join('\n').trim();
+          }
+          var body = 'Kia ora,\n\nHere is your two/fiftyseven proposal for a ' + teamN + '-person team:\n\n'
+                   + '  At two/fiftyseven:               ' + oursTxt + ' / yr\n'
+                   + '  Saving vs private office:        ' + saveTxt + ' / yr\n\n'
+                   + 'Open the live proposal with these exact numbers:\n' + window.location.href + '\n\n'
+                   + 'What is included in this proposal:\n' + inclusionText() + '\n\n'
+                   + '· two/fiftyseven\nkiaora@twofiftyseven.co · twofiftyseven.co\nBook a tour: twofiftyseven.co/tours/';
+          window.location.href = 'mailto:' + encodeURIComponent(email)
+                     + '?subject=' + encodeURIComponent('Your two/fiftyseven proposal')
+                     + '&body=' + encodeURIComponent(body);
+          if (emailStatus) emailStatus.textContent = 'Opening your mail client…';
+        });
+      }
+
+      // Take-it · Print.
+      var printBtn = document.querySelector('[data-print-btn]');
+      if (printBtn) printBtn.addEventListener('click', function () { window.print(); });
+
+    });
+  })();
+  </script>
+
+</body>
+</html>
