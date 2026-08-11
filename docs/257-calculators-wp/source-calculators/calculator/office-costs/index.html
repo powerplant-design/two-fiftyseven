@@ -1,0 +1,2093 @@
+<!-- two/fiftyseven · /calculator/office-costs/ · v2 industry-leading rebuild
+     2026-05-19. Public utility tool for the Wellington office-cost question.
+     Engine: shared/js/calc-office-costs-v2.js (purpose-built; legacy
+     calc-office-costs.js still drives the in-page workspace calc and is
+     untouched). Zero-start, every variable editable, every default sourced,
+     tooltips carry default + range + source links. Subtle two/fiftyseven value-add
+     quantification sits below the calculator. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Wellington office cost calculator · two/fiftyseven</title>
+  <meta name="description" content="True cost accounting on a Wellington office. Estimate the full cost with sourced figures on admin, compliance, lease legals, cleaning, toilet paper. No surprises.">
+  <link rel="canonical" href="https://twofiftyseven.co/calculator/office-costs/">
+
+  <!-- OG / Twitter · TODO design asset: /assets/og/calculator-office-costs.png
+       (1200×630, impact aesthetic, paper ground, ink wordmark, lime chip with
+       the headline annual figure). -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://twofiftyseven.co/calculator/office-costs/">
+  <meta property="og:title" content="How much does it cost to run an office in Wellington?">
+  <meta property="og:description" content="True cost accounting on a Wellington office. Estimate the full cost with sourced figures on admin, compliance, lease legals, cleaning, toilet paper. No surprises.">
+  <meta property="og:image" content="https://twofiftyseven.co/assets/og/calculator-office-costs.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="two/fiftyseven">
+  <meta property="og:locale" content="en_NZ">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="How much does it cost to run an office in Wellington?">
+  <meta name="twitter:description" content="True cost accounting on a Wellington office. Estimate the full cost with sourced figures on admin, compliance, lease legals, cleaning, toilet paper. No surprises.">
+  <meta name="twitter:image" content="https://twofiftyseven.co/assets/og/calculator-office-costs.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+
+  <!-- Design system -->
+  <link rel="stylesheet" href="../../design-system/fonts.css">
+  <link rel="stylesheet" href="../../design-system/tokens.css">
+  <link rel="stylesheet" href="../../design-system/components.css">
+  <link rel="stylesheet" href="../../design-system/calculator.css">
+
+  <!-- Shared chrome -->
+  <script defer src="../../shared/js/nav.js"></script>
+  <script defer src="../../shared/js/faq.js"></script>
+  <script defer src="../../shared/js/chapter.js"></script>
+
+  <!-- v2 engine (purpose-built for this page; legacy calc-office-costs.js
+       still drives the in-page workspace calc and is untouched). -->
+  <script defer src="../../shared/js/calc-office-costs-v2.js"></script>
+  <script defer src="../../shared/js/inject-prices.js"></script>
+  <script>
+    /* Team + per-member days · learned from the /pricing/ roster mechanism.
+       A team ux-slider drives the hidden stepper (keeps the v2 engine team wiring
+       + occv2:team-changed event). On team change we regenerate one Member-N row
+       per person, each a small days ux-slider carrying [data-occv2-days-per-week] —
+       which the engine already reads into its per-person days array. Engine untouched. */
+    document.addEventListener('DOMContentLoaded', function () {
+      var root = document.querySelector('[data-js="calc-office-costs-v2"]');
+      if (!root) return;
+      function paint(sl) {
+        if (!sl) return;
+        var min = parseFloat(sl.min) || 0, max = parseFloat(sl.max) || 1;
+        var v = parseFloat(sl.value); if (isNaN(v)) v = min;
+        var pct = max > min ? ((v - min) / (max - min)) * 100 : 0;
+        var wrap = sl.closest('.ux-slider'); if (wrap) wrap.style.setProperty('--pct', pct + '%');
+      }
+      function paintAll() { root.querySelectorAll('.ux-slider__input').forEach(paint); }
+
+      var teamSlider = root.querySelector('[data-oc-team-slider]');
+      var teamOut    = root.querySelector('[data-oc-team-out]');
+      var teamSuffix = root.querySelector('[data-oc-team-suffix]');
+      var inc = root.querySelector('[data-occv2-team-inc]');
+      var dec = root.querySelector('[data-occv2-team-dec]');
+      var teamHidden = root.querySelector('[data-occv2-team-size]');
+      function curTeam() { return parseInt((teamHidden && teamHidden.value) || '0', 10) || 0; }
+      function clickN(btn, n) { if (!btn) return; for (var i = 0; i < n; i++) btn.click(); }
+      if (teamSlider) {
+        teamSlider.addEventListener('input', function () {
+          var target = parseInt(teamSlider.value, 10) || 0;
+          var d = target - curTeam();
+          if (d > 0) clickN(inc, d); else if (d < 0) clickN(dec, -d);
+          if (teamOut) teamOut.textContent = String(target);
+          if (teamSuffix) teamSuffix.textContent = (target === 1 ? 'person' : 'people');
+          paint(teamSlider);
+        });
+      }
+
+      var roster  = root.querySelector('[data-oc-days-roster]');
+      var section = root.querySelector('[data-oc-days-section]');
+      function rowHtml(i, val) {
+        return '<li class="member-row oc-member-row">'
+          + '<span class="member-row__label">Member ' + (i + 1) + '</span>'
+          + '<div class="oc-member-days">'
+          +   '<div class="ux-slider" data-slider-min="1" data-slider-max="5" data-slider-value="' + val + '">'
+          +     '<input type="range" data-occv2-days-per-week data-oc-day-slider min="1" max="5" step="1" value="' + val + '" class="ux-slider__input" aria-label="Member ' + (i + 1) + ' days per week">'
+          +     '<div class="ux-slider__visual" aria-hidden="true"><div class="ux-slider__track"></div><div class="ux-slider__progress"></div><div class="ux-slider__thumb"></div></div>'
+          +   '</div>'
+          +   '<span class="oc-member-days__out"><output>' + val + (val === 1 ? ' day' : ' days') + '</output></span>'
+          + '</div>'
+          + '</li>';
+      }
+      function rebuild(team) {
+        if (!roster) return;
+        var prev = [];
+        roster.querySelectorAll('[data-oc-day-slider]').forEach(function (s2) { prev.push(parseInt(s2.value, 10) || 5); });
+        var html = '';
+        for (var i = 0; i < team; i++) html += rowHtml(i, prev[i] != null ? prev[i] : 5);
+        roster.innerHTML = html;
+        if (section) section.hidden = (team < 1);
+        paintAll();
+      }
+      var scheduled = false;
+      root.addEventListener('occv2:team-changed', function () {
+        if (scheduled) return; scheduled = true;
+        setTimeout(function () {
+          scheduled = false;
+          var team = curTeam();
+          if (teamSlider && parseInt(teamSlider.value, 10) !== team) { teamSlider.value = team; paint(teamSlider); }
+          if (teamOut) teamOut.textContent = String(team);
+          if (teamSuffix) teamSuffix.textContent = (team === 1 ? 'person' : 'people');
+          rebuild(team);
+          root.dispatchEvent(new Event('input', { bubbles: true }));
+        }, 0);
+      });
+
+      root.addEventListener('input', function (e) {
+        var t = e.target;
+        if (t && t.classList && t.classList.contains('ux-slider__input')) {
+          paint(t);
+          if (t.hasAttribute('data-oc-day-slider')) {
+            var box = t.closest('.oc-member-days');
+            var o = box && box.querySelector('output');
+            if (o) { var dv = parseInt(t.value, 10) || 0; o.textContent = dv + (dv === 1 ? ' day' : ' days'); }
+          }
+        }
+      });
+
+      rebuild(curTeam());
+      paintAll();
+    });
+  </script>
+    <script>
+      /* Grade -> rent box · the VISIBLE box shows the grade-adjusted rate; a hidden
+         [data-occv2-rent-sqm] holds the base the engine reads (engine still applies
+         GRADE_MODIFIER, untouched — no double-count). Grade change refreshes the box;
+         editing the box backs out the base for the engine. */
+      document.addEventListener('DOMContentLoaded', function () {
+        var GRADE_MODIFIER = { 'A-grade': 1.35, 'B-grade fitted': 1.00, 'B-grade unfitted': 0.78, 'C-grade': 0.62 };
+        var baseEl = document.querySelector('[data-occv2-rent-sqm]');
+        var dispEl = document.querySelector('[data-oc-rent-display]');
+        if (!baseEl || !dispEl) return;
+        var label = document.querySelector('[data-oc-grade-label]');
+        function gradeName() { var g = document.querySelector('[data-occv2-grade]:checked'); return g ? g.value : 'B-grade fitted'; }
+        function mod() { var m = GRADE_MODIFIER[gradeName()]; return m != null ? m : 1; }
+        function refreshDisplay() {
+          dispEl.value = Math.round((parseFloat(baseEl.value) || 0) * mod());
+          if (label) label.textContent = gradeName();
+        }
+        document.addEventListener('change', function (e) {
+          if (e.target && e.target.matches && e.target.matches('[data-occv2-grade]')) refreshDisplay();
+        });
+        dispEl.addEventListener('input', function () {
+          var eff = parseFloat(dispEl.value) || 0;
+          baseEl.value = Math.round(eff / (mod() || 1));
+          baseEl.dispatchEvent(new Event('input', { bubbles: true }));
+          if (label) label.textContent = gradeName();
+        });
+        refreshDisplay();
+      });
+    </script>
+
+  <script>
+    /* Savings band · each member's days -> Flexi tier (5 days = Flexi 5 low ..
+       Dedicated high). 257 annual = sum x12. Saving = office total - 257, across the
+       WHOLE stack (rent, fit-out, cleaning, power, insurance, admin, everything) —
+       NOT just fewer days. Office total from window.occv2 (engine untouched). */
+    document.addEventListener('DOMContentLoaded', function () {
+      var root = document.querySelector('[data-js="calc-office-costs-v2"]');
+      var box  = document.querySelector('[data-oc-vs257]');
+      if (!root || !box) return;
+      var FLEXI = { 1: 109, 2: 209, 3: 309, 4: 409, 5: 509 };
+      var DEDICATED = 659;
+      var saveEl = box.querySelector('[data-oc-save-figure]');
+      function money(n) { n = Math.round(n); return '$' + String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+      function compute() {
+        var days = [].map.call(root.querySelectorAll('[data-oc-day-slider]'), function (sl) {
+          var d = parseInt(sl.value, 10) || 5; return d < 1 ? 1 : (d > 5 ? 5 : d);
+        });
+        if (!days.length) { box.hidden = true; return; }
+        var lo = 0, hi = 0;
+        days.forEach(function (d) { lo += FLEXI[d]; hi += (d === 5 ? DEDICATED : FLEXI[d]); });
+        lo *= 12; hi *= 12;
+        var office = 0;
+        try { if (window.occv2 && window.occv2.compute && window.occv2.readState) office = window.occv2.compute(window.occv2.readState()).annualTotal || 0; } catch (e) {}
+        var saveFloor = office - hi, saveCeil = office - lo;
+        if (office <= 0 || saveFloor <= 0) { box.hidden = true; return; }
+        box.hidden = false;
+        saveEl.textContent = (saveFloor === saveCeil) ? money(saveFloor) : (money(saveFloor) + '\u2013' + money(saveCeil));
+      }
+      root.addEventListener('input', compute);
+      root.addEventListener('change', compute);
+      root.addEventListener('occv2:team-changed', function () { setTimeout(compute, 0); });
+      compute();
+    });
+  </script>
+
+  <style id="page-office-costs-chrome">
+    body.page-office-costs { background: var(--ip-ground); color: var(--ip-ink); }
+
+    /* Tighten chapter rhythm so calc + breakdown read as one unit. */
+    .chapter--calc-wrap { padding-top: 0; padding-bottom: clamp(40px, 5vh, 72px); }
+    body.page-office-costs .calc > .calc__field + .calc__field {
+      margin-top: clamp(14px, 1.6vw, 22px);
+    }
+    body.page-office-costs .calc { margin-block: 0; display: block; }
+    .breakdown-disclosure--full { margin: 0; margin-top: clamp(28px, 3.5vh, 44px); }
+    /* Only the whole column is the sticky block — never pin the annual-total card on its own. */
+    body.page-office-costs .calc-result { position: static; top: auto; }
+    @media (max-width: 900px) {
+      body.page-office-costs .calc-result-sticky .calc-result { margin: 0; box-shadow: none; }
+    }
+    /* Push · value-add table is a lime card (not a lime section). */
+    body.page-office-costs .value-add__table { background: var(--ip-lime); border-radius: var(--radius-lg, 16px); padding: clamp(20px, 2.6vw, 36px) clamp(20px, 3vw, 40px); }
+
+    /* Job 2 · Tagline-to-calc gap. */
+    body.page-office-costs .chapter--calc-frame { padding-bottom: clamp(20px, 2.5vh, 32px); }
+
+    /* OC v2 input cap (matches MC pattern). */
+    .calc input[type="number"],
+    .calc input[type="text"] { max-width: 160px; }
+    .calc .oc-var__field-row input[type="number"] { max-width: 140px; }
+
+    /* Row rhythm consolidated from ~18 repeated inline margin-top styles (functions untouched). */
+    .oc-var--gap { margin-top: clamp(14px, 1.6vh, 22px); }
+
+    /* Touch targets ≥44px — public/mainstream tool (a11y + mobile). */
+    .calc input[type="number"],
+    .calc input[type="text"] { min-height: 44px; }
+    .calc-stepper button { min-height: 44px; min-width: 44px; }
+
+    /* ux-slider — ported from the pricing calc, matches --ip palette. Functions untouched. */
+    .oc-var__field-row--slider { display: flex; align-items: center; gap: clamp(12px, 1.6vw, 20px); flex-wrap: wrap; }
+
+    /* Hidden stepper — team slider drives it; keeps engine team wiring + events. */
+    .oc-stepper-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none; clip: rect(0 0 0 0); }
+    /* Per-member days roster (pattern from /pricing/ member-roster). */
+    .member-roster { list-style: none; padding: 0; margin: 8px 0 0; display: flex; flex-direction: column; gap: clamp(10px, 1.2vh, 14px); }
+    .oc-member-row { display: grid; grid-template-columns: minmax(78px, 108px) 1fr; align-items: center; gap: clamp(12px, 1.6vw, 20px); }
+    .oc-member-row .member-row__label { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: var(--kerning-caps, 0.06em); text-transform: uppercase; color: var(--ip-ink); opacity: 0.72; }
+    .oc-member-days { display: flex; align-items: center; gap: clamp(18px, 2vw, 26px); min-width: 0; }
+    .oc-member-days .ux-slider { max-width: 200px; }
+    .oc-member-days__out { font-family: var(--font-mono); font-size: 0.72rem; color: var(--ip-ink); opacity: 0.72; white-space: nowrap; }
+
+    /* Savings band · just the number, named + bold. No outline. */
+    .oc-savings { margin-top: clamp(16px, 2vh, 24px); padding: clamp(16px, 2vh, 22px) clamp(18px, 2.2vw, 24px); background: var(--ip-lime); border-radius: var(--radius-md, 12px); }
+    .oc-savings__save { font-family: var(--font-body); font-weight: 700; font-size: clamp(1.05rem, 0.4vw + 0.9rem, 1.25rem); line-height: 1.25; margin: 0; color: var(--ip-ink); }
+    .oc-savings__link { display: inline-block; margin-top: 8px; font-family: var(--font-body); font-size: 0.85rem; font-weight: 600; color: var(--ip-ink); text-decoration: underline; text-underline-offset: 3px; }
+    .ux-slider { position: relative; width: 100%; max-width: 320px; height: 32px; --pct: 0%; }
+    .ux-slider__input {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      margin: 0; padding: 0; border: 0; background: transparent;
+      opacity: 0; cursor: pointer; z-index: 2;
+      -webkit-appearance: none; -moz-appearance: none; appearance: none;
+    }
+    .ux-slider__input:focus { outline: none; }
+    .ux-slider__visual { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
+    .ux-slider__track {
+      position: absolute; top: 50%; left: 0; right: 0; height: 4px;
+      transform: translateY(-50%); background: rgba(20, 32, 11, 0.22); border-radius: 2px;
+    }
+    .ux-slider__progress {
+      position: absolute; top: 50%; left: 0; height: 4px; width: var(--pct, 0%);
+      transform: translateY(-50%); background: var(--ip-ink); border-radius: 2px;
+      transition: width 80ms ease-out;
+    }
+    .ux-slider__thumb {
+      position: absolute; top: 50%; left: var(--pct, 0%); width: 24px; height: 24px;
+      background: var(--ip-ink); border-radius: 50%;
+      transform: translate(-50%, -50%);
+      transition: left 80ms ease-out, transform 150ms ease, box-shadow 150ms ease;
+    }
+    .ux-slider__input:hover ~ .ux-slider__visual .ux-slider__thumb { transform: translate(-50%, -50%) scale(1.08); }
+    .ux-slider__input:focus-visible ~ .ux-slider__visual .ux-slider__thumb { box-shadow: 0 0 0 4px rgba(20, 32, 11, 0.25); }
+
+    /* Job 1 · Section-card headings (two-tier hierarchy with mono variable labels inside). */
+    .oc-card-heading {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: clamp(1.05rem, 0.5vw + 0.85rem, 1.2rem);
+      letter-spacing: -0.005em;
+      color: var(--ip-ink);
+      text-transform: none;
+      margin: 0 0 clamp(14px, 1.6vh, 20px);
+    }
+
+    /* Job 5A · Annual total label bigger + padding. */
+    .calc-result__label {
+      font-family: var(--font-mono);
+      font-size: clamp(0.85rem, 0.2vw + 0.78rem, 0.95rem);
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      opacity: 0.85;
+      margin-bottom: clamp(8px, 1vh, 12px);
+    }
+    .calc-result__figure {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(2rem, 2.4vw + 1.2rem, 3.25rem);
+      line-height: 1.05; letter-spacing: -0.02em;
+      margin-bottom: clamp(6px, 0.8vh, 10px);
+    }
+    .calc-result__unit {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: var(--kerning-caps, 0.08em); text-transform: uppercase;
+      opacity: 0.62;
+    }
+
+    /* Job 5B · Secondary cells collapsed to single inline mono row. */
+    .oc-result-secondary-line {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: var(--kerning-caps, 0.04em);
+      color: var(--ip-paper);
+      opacity: 0.82;
+      margin: clamp(10px, 1.2vh, 14px) 0 0;
+      display: flex; flex-wrap: wrap; gap: 6px;
+      line-height: 1.6;
+    }
+    .oc-result-secondary-line__val {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+    .oc-result-secondary-line__sep {
+      opacity: 0.4;
+    }
+
+    /* Grade indication shown live in the rent box (display only). */
+    .oc-grade-rent { font-weight: 600; opacity: 0.95; white-space: nowrap; }
+
+    /* Job 4 · Filled scenario slot goes lime. Overrides shared rule in calculator.css. */
+    .oc-scenario-slot--filled {
+      background: var(--ip-lime);
+      color: var(--ip-ink);
+    }
+    .oc-scenario-slot--filled .oc-scenario-slot__num {
+      opacity: 0.55;
+    }
+
+    /* Job 6 · Tooltip glyph · filled circle, hover animation, no rest outline.
+       Overrides shared .oc-tip in calculator.css. */
+    .oc-tip {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--ip-ground-2, rgba(20, 32, 11, 0.18));
+      color: var(--ip-ink);
+      border: 0;
+      opacity: 1;
+      font-family: var(--font-mono); font-size: 0.7rem;
+      font-style: italic; font-weight: 700;
+      cursor: pointer; padding: 0;
+      transition: transform 200ms ease, background-color 200ms ease, color 200ms ease;
+    }
+    .oc-tip:hover {
+      background: var(--ip-ink);
+      color: var(--ip-paper);
+      transform: scale(1.15);
+      opacity: 1;
+    }
+    .oc-tip:focus-visible {
+      outline: 2px solid var(--ip-ink);
+      outline-offset: 2px;
+    }
+
+    /* Job 7 · Discover-CTA block (closing CTA in value-add chapter). */
+    .discover-cta {
+      margin-top: clamp(40px, 5vh, 64px);
+      padding-top: clamp(28px, 3.5vh, 40px);
+      border-top: 1px solid rgba(20, 32, 11, 0.12);
+      text-align: left;
+    }
+    .discover-cta__heading {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: clamp(1.5rem, 1.2vw + 1rem, 2rem);
+      line-height: 1.15;
+      letter-spacing: -0.015em;
+      color: var(--ip-ink);
+      margin: 0 0 clamp(10px, 1.2vh, 16px);
+      max-width: 24ch;
+    }
+    .discover-cta__lead {
+      font-family: var(--font-body);
+      font-size: clamp(1.05rem, 0.45vw + 0.9rem, 1.25rem);
+      line-height: 1.5;
+      color: var(--ip-ink);
+      opacity: 0.85;
+      margin: 0 0 clamp(20px, 2.5vh, 28px);
+      max-width: 50ch;
+    }
+    .discover-cta__button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--ip-ink);
+      color: var(--ip-paper);
+      text-decoration: none;
+      padding: clamp(14px, 1.6vh, 18px) clamp(22px, 2.5vw, 32px);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 1rem;
+      transition: transform 200ms ease, opacity 200ms ease;
+    }
+    .discover-cta__button:hover {
+      transform: translateY(-2px);
+      opacity: 0.92;
+    }
+    .discover-cta__button:focus-visible {
+      outline: 2px solid var(--ip-ink);
+      outline-offset: 4px;
+    }
+
+    /* FAQ heading */
+    .faq-wrap h2 {
+      font-family: var(--font-body); font-weight: 600;
+      font-size: clamp(1.4rem, 1vw + 0.9rem, 1.9rem);
+      letter-spacing: -0.015em; color: var(--ip-ink);
+      margin: 0 0 clamp(20px, 2.5vh, 32px);
+    }
+
+    /* Print · per-page additions on top of shared print rules. */
+    @media print {
+      .take-it, .faq-wrap, .oc-scenarios,
+      .further-considerations, .value-add { display: none !important; }
+      /* Variable cards collapse to single column with their tooltip glyphs hidden. */
+      .oc-tip { display: none !important; }
+      .oc-tip__panel { display: none !important; }
+      .calc__field { background: white !important; border: 1px solid #ddd; page-break-inside: avoid; }
+      .oc-category, .breakdown-body { background: white !important; }
+      .breakdown-body h3 { font-size: 10pt; }
+      .oc-category-grid { grid-template-columns: 1fr 1fr; }
+      /* Print every breakdown source as a visible URL via shared @media print rule. */
+    }
+  </style>
+
+  <!-- WebApplication JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "Wellington office cost calculator",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Any",
+    "url": "https://twofiftyseven.co/calculator/office-costs/",
+    "description": "Configure a Wellington office cost top-to-bottom: rent, outgoings, utilities, cleaning, consumables, compliance, insurance, furniture amortisation, admin overhead, lease legals, booking software, custom lines. Every assumption editable; every default sourced; defensible benchmark for procurement and finance teams.",
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "NZD" },
+    "provider": { "@type": "Organization", "name": "two/fiftyseven", "url": "https://twofiftyseven.co/" }
+  }
+  </script>
+
+  <!-- Organization JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "two/fiftyseven",
+    "url": "https://twofiftyseven.co/",
+    "logo": "https://twofiftyseven.co/assets/logos/257-mark.svg",
+    "sameAs": [
+      "https://www.instagram.com/twofiftyseven/",
+      "https://www.linkedin.com/company/two-fiftyseven/"
+    ]
+  }
+  </script>
+
+  <!-- FAQPage JSON-LD · mirrors visible Q text exactly. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does it cost to run an office in Wellington?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For a 5-person team in a central-Wellington B-grade fitted office, the all-in annual cost is around $71,000/year. That covers rent, outgoings, fit-out amortised, internet, power, cleaning, kitchen + bathroom consumables, commercial insurance, first-aid + fire-warden training, admin time at a loaded $70/hour, and lease legals amortised. The calculator above lets you override every assumption and writes the breakdown line-by-line."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's included in this calculation?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Rent (Colliers Wellington 2026 midmarket), outgoings (Property Council NZ benchmark), furniture amortised over your fit-out term, business fibre internet, electricity (BRANZ + EECA), commercial cleaning, kitchen + bathroom consumables, commercial insurance (ICNZ), first-aid and fire-warden training, admin time (6% of team hours at $70/hour loaded), and lease legals amortised. Booking software is added automatically for teams of 10+. Custom lines are unlimited."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Where do these numbers come from?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Every variable's tooltip carries the default, the credible range, and a link to the primary source. Rent and grade modifiers come from Colliers and REINZ; outgoings from Property Council NZ; m²/person standard from CBRE, JLL and the British Council for Offices; power from BRANZ and EECA; cleaning from NZ industry benchmarks; insurance from ICNZ; training from St John NZ and FENZ; admin loaded rate from PayScale NZ."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I adjust the assumptions?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Every input on the page is editable. Click the small ⓘ next to any variable label to see the default, the credible range and the source. Numbers update live; the breakdown reflects exactly what you've changed."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How is this different from a real estate quote?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "This is a defensible benchmark, not a binding offer. Use it for procurement, finance modelling, board sign-off or to sanity-check an agent's quote. A real estate quote covers a specific building with negotiated terms; the calculator covers the all-in operating cost of running an office at midmarket Wellington rates."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I save my scenario and come back to it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. You can save up to three scenarios locally in your browser and compare them side-by-side. You can also copy a share link that encodes every override in the URL so you can email a snapshot to your team."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I share or PDF this for my finance team?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The Take it with you row offers three actions: email yourself the breakdown, copy a share link that preserves your overrides, and download a print-ready PDF that lists every line with its derivation and source URL."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's NOT in this calculator?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Out of scope: ground-up construction, base-build, architectural fit-out, mechanical and electrical works, partitions, IT cabling install, leasehold improvements at scale. The calculator covers running costs plus standard amortised furniture only. See the Further considerations section for lease incentives, make-good, bank guarantees and capex on top of furniture."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What would my team cost at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Visit /pricing/ to build a team plan and see your monthly figure including everything two/fiftyseven covers by default (living-wage cleaners, verified 200% carbon offset, climate-positive electricity, giving programme contributions, MHFR-trained team on site)."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="page-calculator page-office-costs section-workspace">
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <header class="site-header" data-js="site-header">
+    <a href="../../index.html" class="wordmark">two/fiftyseven</a>
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-dropdown nav-section-workspace">
+          <a href="../../workspace/index.html" aria-haspopup="true">Workspace</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../workspace/base/index.html" role="menuitem">Base</a></li>
+              <li><a href="../../workspace/hub/index.html" role="menuitem">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html" role="menuitem">Desk</a></li>
+              <li><a href="../../pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-meet">
+          <a href="../../meet/index.html" aria-haspopup="true">Meet</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../meetings/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html" role="menuitem">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html" role="menuitem">Away days</a></li>
+              <li><a href="../../meetings/pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-host">
+          <a href="../../events/index.html" aria-haspopup="true">Host</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../events/events/index.html" role="menuitem">Events</a></li>
+              <li><a href="../../events/functions/index.html" role="menuitem">Functions</a></li>
+              <li><a href="../../events/conferences/index.html" role="menuitem">Conferences</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../impact/index.html">Impact</a></li>
+        <li class="has-dropdown">
+          <a href="../../our-story/index.html" aria-haspopup="true">About</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../kaupapa/index.html" role="menuitem">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html" role="menuitem">Success stories</a></li>
+              <li><a href="../../organisations/index.html" role="menuitem">Organisations</a></li>
+              <li><a href="../../our-story/index.html" role="menuitem">Our story</a></li>
+              <li><a href="../../people/index.html" role="menuitem">People</a></li>
+              <li><a href="../../whatson/index.html" role="menuitem">What's on</a></li>
+              <li><a href="../../kōrero/index.html" role="menuitem">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html" role="menuitem">Press kit</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown">
+          <a href="../../calculator/index.html" aria-haspopup="true">Calculators</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html" role="menuitem">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html" role="menuitem">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html" role="menuitem">Carbon</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../../contact/index.html">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="../../tours/" class="btn btn--primary btn--small">Book a tour</a>
+  </header>
+
+  <main id="main">
+
+    <div class="print-only print-wordmark" aria-hidden="true">
+      <img src="../../assets/logos/twofiftyseven_logo.svg" alt="two/fiftyseven">
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         1. TOP FRAME (Job 2)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter chapter--calc-frame calc-frame" aria-labelledby="calc-title">
+      <div class="chapter__inner">
+        <p class="calc-frame__eyebrow calc-hero__eyebrow">Wellington office cost calculator</p>
+        <h1 id="calc-title" class="calc-frame__title calc-hero__title">how much does it cost to run an office in Wellington?</h1>
+        <p class="calc-frame__tagline calc-hero__sub">Your tool for true cost accounting on a Wellington office. Estimate the full costs with sourced figures on admin, compliance, lease legals, cleaning and toilet paper. No surprises.</p>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         2. CALCULATOR (Jobs 3 · 4 · 5 · 6 · 7 · 9)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter chapter--calc-wrap calc-wrap" data-unclipped aria-label="Office cost calculator">
+      <div class="chapter__inner">
+
+      <div class="calc-layout">
+
+        <div class="calc" data-js="calc-office-costs-v2">
+
+          <!-- ── Card 1 · Team ─────────────────────────────────────────── -->
+          <div class="calc__field">
+            <h3 class="oc-card-heading">Team</h3>
+
+            <div class="oc-var">
+              <span class="oc-var__label">Team size
+                <button type="button" class="oc-tip" aria-label="About team size" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 1 person. Drag to set your team size.</p>
+                <p class="oc-tip__range">Range: 1·15. At team ≥ 10, booking software auto-enables ($8/pp/mo).</p>
+                <p class="oc-tip__sources">Sources: configuration only. See per-line tooltips for sourced figures.</p>
+              </div>
+              <div class="oc-var__field-row oc-var__field-row--slider" style="margin-top: 8px;">
+                <div class="ux-slider" data-slider-min="1" data-slider-max="15" data-slider-value="1">
+                  <input type="range" data-oc-team-slider min="1" max="15" step="1" value="1" class="ux-slider__input" aria-label="Team size">
+                  <div class="ux-slider__visual" aria-hidden="true">
+                    <div class="ux-slider__track"></div>
+                    <div class="ux-slider__progress"></div>
+                    <div class="ux-slider__thumb"></div>
+                  </div>
+                </div>
+                <span class="oc-var__suffix"><output data-oc-team-out>1</output> <span data-oc-team-suffix>person</span></span>
+              </div>
+              <div class="calc-stepper oc-stepper-hidden" aria-hidden="true" style="margin-top: 8px;">
+                <button type="button" data-occv2-team-dec aria-label="Decrease team size">−</button>
+                <output data-occv2-team-display aria-live="polite">1</output>
+                <button type="button" data-occv2-team-inc aria-label="Increase team size">+</button>
+              </div>
+              <input type="hidden" data-occv2-team-size value="1">
+            </div>
+
+            <div class="oc-var oc-var--gap" data-oc-days-section hidden>
+              <span class="oc-var__label">Days per week — per person
+                <button type="button" class="oc-tip" aria-label="About days per week" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 5 days/week (standard NZ full-time pattern).</p>
+                <p class="oc-tip__range">Range: 1·5 days. Used to derive the per-person-per-day figure (annual ÷ team ÷ days/yr at 46 working weeks).</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.employment.govt.nz/leave-and-holidays/" target="_blank" rel="noopener">Employment NZ leave + holidays</a>.</p>
+              </div>
+              <ul class="member-roster" data-oc-days-roster></ul>
+            </div>
+          </div>
+
+          <!-- ── Card 2 · Office ────────────────────────────────────────── -->
+          <div class="calc__field">
+            <h3 class="oc-card-heading">Office</h3>
+
+            <div class="oc-var">
+              <span class="oc-var__label">Grade
+                <button type="button" class="oc-tip" aria-label="About office grade" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: B-grade fitted (midmarket Wellington CBD).</p>
+                <p class="oc-tip__range">A-grade adds ~35%, B-grade unfitted ~22% less, C-grade ~38% less.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.propertycouncil.co.nz/" target="_blank" rel="noopener">Property Council NZ</a> office-grading classification.</p>
+              </div>
+              <div class="radio-row calc-segmented" style="margin-top: 8px;">
+                <label><input type="radio" name="occv2-grade" data-occv2-grade value="A-grade"> A-grade</label>
+                <label><input type="radio" name="occv2-grade" data-occv2-grade value="B-grade fitted" checked> B-grade fitted</label>
+                <label><input type="radio" name="occv2-grade" data-occv2-grade value="B-grade unfitted"> B-grade unfitted</label>
+                <label><input type="radio" name="occv2-grade" data-occv2-grade value="C-grade"> C-grade</label>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Precinct
+                <button type="button" class="oc-tip" aria-label="About precinct" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: CBD core (~Willis / Lambton / Featherston axis).</p>
+                <p class="oc-tip__range">Modifier on rent: Lambton 1.20 · CBD core 1.15 · Thorndon 1.05 · CBD fringe 1.00 · Mt Vic 0.95 · Te Aro 0.92 · Kelburn 0.85.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.colliers.co.nz/en-nz/research" target="_blank" rel="noopener">Colliers NZ Wellington Office Outlook 2026</a>.</p>
+              </div>
+              <select class="oc-select" data-occv2-precinct style="margin-top: 8px;">
+                <option value="CBD core" selected>CBD core</option>
+                <option value="CBD fringe">CBD fringe</option>
+                <option value="Te Aro">Te Aro</option>
+                <option value="Thorndon">Thorndon</option>
+                <option value="Lambton">Lambton</option>
+                <option value="Kelburn">Kelburn</option>
+                <option value="Mt Vic">Mt Vic</option>
+              </select>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">m² per person
+                <button type="button" class="oc-tip" aria-label="About m² per person" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 9 m²/person · current midmarket Wellington density.</p>
+                <p class="oc-tip__range">Range: 6·15 m². 6 = high-density activity-based; 10 = conventional NZ workplace standard; 15 = generous private-office spec.</p>
+                <p class="oc-tip__sources">Sources: <a href="https://www.cbre.co.nz/insights" target="_blank" rel="noopener">CBRE NZ Workplace Occupancy 2025</a> · <a href="https://www.jll.nz/en/trends-and-insights" target="_blank" rel="noopener">JLL Wellington Workplace Trends 2026</a> · British Council for Offices NZ.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-sqm-pp value="9" min="6" max="15" step="0.5" aria-label="m² per person">
+                <span class="oc-var__suffix">m² per person</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Rent ($/m²/yr)
+                <button type="button" class="oc-tip" aria-label="About rent" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $310/m²/yr · Wellington B-grade fitted CBD core 2026 midmarket. Grade + precinct modifiers apply on top.</p>
+                <p class="oc-tip__range">Credible range: $200·$420/m²/yr. Te Aro lower; Lambton premium; A-grade adds ~35%; C-grade ~38% less.</p>
+                <p class="oc-tip__sources">Sources: <a href="https://www.colliers.co.nz/en-nz/research" target="_blank" rel="noopener">Colliers NZ Wellington Office Outlook 2026</a> · <a href="https://www.reinz.co.nz/commercial" target="_blank" rel="noopener">REINZ Commercial Wellington</a> · <a href="https://www.jll.nz/en/trends-and-insights" target="_blank" rel="noopener">JLL NZ Office Snapshot</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-oc-rent-display value="310" min="120" max="570" step="5" aria-label="Rent per m² per year (reflects grade)">
+                <input type="hidden" data-occv2-rent-sqm value="310">
+                <span class="oc-var__suffix">$/m²/yr · <span class="oc-grade-rent" data-oc-grade-label>B-grade fitted</span></span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Outgoings (% of rent)
+                <button type="button" class="oc-tip" aria-label="About outgoings" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 27% of rent · NZ commercial benchmark for body-corporate + opex pass-through.</p>
+                <p class="oc-tip__range">Range: 20·35%. Older buildings + larger common areas push this up; modern A-grade with lower-fixed services trends lower.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.propertycouncil.co.nz/" target="_blank" rel="noopener">Property Council NZ Benchmark Report 2026</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-outgoings-pct value="0.27" min="0.20" max="0.35" step="0.01" aria-label="Outgoings percent of rent">
+                <span class="oc-var__suffix">as decimal (0.27 = 27%)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 3 · Utilities ─────────────────────────────────────── -->
+          <div class="calc__field">
+            <h3 class="oc-card-heading">Utilities</h3>
+
+            <div class="oc-var">
+              <span class="oc-var__label">Internet ($/mo)
+                <button type="button" class="oc-tip" aria-label="About internet" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $200/mo · business fibre with static IP at NZ midmarket.</p>
+                <p class="oc-tip__range">Range: $99·$400/mo. Entry-tier fibre starts ~$99; high-availability dual-circuit setups push past $400.</p>
+                <p class="oc-tip__sources">Sources: <a href="https://www.2degrees.nz/business/broadband/plans" target="_blank" rel="noopener">2degrees Business</a> · <a href="https://www.spark.co.nz/business/broadband-network" target="_blank" rel="noopener">Spark Business Fibre</a> · <a href="https://www.vodafone.co.nz/business/" target="_blank" rel="noopener">Vodafone NZ Business</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-internet-mo value="200" min="99" max="400" step="10" aria-label="Internet per month">
+                <span class="oc-var__suffix">$/month</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Power (W/m²)
+                <button type="button" class="oc-tip" aria-label="About power watts per m²" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 50 W/m² · BRANZ standard for an active NZ office (lighting, equipment, HVAC fans).</p>
+                <p class="oc-tip__range">Range: 40·70 W/m². Newer fit-outs with LED + efficient HVAC trend lower; legacy buildings with electric heating push higher.</p>
+                <p class="oc-tip__sources">Sources: <a href="https://www.branz.co.nz/co2mpare/" target="_blank" rel="noopener">BRANZ CO₂MPARE</a> · <a href="https://www.eeca.govt.nz/co-funding-and-support/products/commercial-buildings-decarbonisation-pathway/" target="_blank" rel="noopener">EECA Commercial Buildings Decarbonisation</a> · <a href="https://www.nabersnz.govt.nz/" target="_blank" rel="noopener">NABERSNZ</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-power-w-sqm value="50" min="40" max="70" step="1" aria-label="Power watts per m²">
+                <span class="oc-var__suffix">W/m² active load</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Power hours/year
+                <button type="button" class="oc-tip" aria-label="About power hours per year" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 1,840 hours/year · 46 working weeks × 5 days × 8 hours (standard NZ working year net of public holidays + standard leave).</p>
+                <p class="oc-tip__range">Range: 1,500·2,400. Lower if you run a 4-day week; higher for extended-hours operations.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.employment.govt.nz/leave-and-holidays/public-holidays/" target="_blank" rel="noopener">Employment NZ public holidays</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-power-hrs value="1840" min="1500" max="2400" step="20" aria-label="Power hours per year">
+                <span class="oc-var__suffix">active hours/year</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Power price ($/kWh)
+                <button type="button" class="oc-tip" aria-label="About power price" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $0.30/kWh · all-up NZ commercial rate including lines + carbon.</p>
+                <p class="oc-tip__range">Range: $0.22·$0.42/kWh. Larger consumers with negotiated supply trend lower; small loads on standard tariffs trend higher.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.eeca.govt.nz/insights/data-tools/energy-end-use-database/" target="_blank" rel="noopener">EECA NZ commercial energy prices 2026</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-power-kwh value="0.30" min="0.22" max="0.42" step="0.01" aria-label="Power price per kWh">
+                <span class="oc-var__suffix">$/kWh all-up</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 4 · Cleaning + Consumables ────────────────────────── -->
+          <div class="calc__field">
+            <h3 class="oc-card-heading">Cleaning + consumables</h3>
+
+            <div class="oc-var">
+              <span class="oc-var__label">Cleaning hours per m²/yr
+                <button type="button" class="oc-tip" aria-label="About cleaning hours per m² per year" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 1.2 hr/m²/yr · NZ commercial cleaning industry standard for daily cleans + weekly deep clean.</p>
+                <p class="oc-tip__range">Range: 1.0·1.5 hr/m²/yr. Lower for simple open-plan with weekly cleans; higher with kitchens + meeting rooms cleaned daily.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.bsca.org.nz/" target="_blank" rel="noopener">NZ Cleaning Industry Association (BSCA)</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-cleaning-hr-sqm value="1.2" min="1.0" max="1.5" step="0.1" aria-label="Cleaning hours per m² per year">
+                <span class="oc-var__suffix">hr/m²/yr</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Cleaning rate ($/hr)
+                <button type="button" class="oc-tip" aria-label="About cleaning rate" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $45/hr · Wellington midmarket commercial cleaning charge-out rate.</p>
+                <p class="oc-tip__range">Range: $38·$55/hr. Living-wage contractors land at the upper end; minimum-wage providers at the lower.</p>
+                <p class="oc-tip__sources">Sources: <a href="https://www.cleanplanetwellington.co.nz/commercial-cleaning-prices-wellington-2026" target="_blank" rel="noopener">Clean Planet Wellington 2026</a> · <a href="https://www.bsca.org.nz/" target="_blank" rel="noopener">NZ Cleaning Industry Association</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-cleaning-hr value="45" min="38" max="55" step="1" aria-label="Cleaning rate per hour">
+                <span class="oc-var__suffix">$/hr charge-out</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Kitchen + bathroom ($/pp/yr)
+                <button type="button" class="oc-tip" aria-label="About kitchen + bathroom consumables" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $300/pp/yr · tea, coffee, milk, paper goods, dishwasher tabs, soap, toilet paper.</p>
+                <p class="oc-tip__range">Range: $200·$450/pp/yr. Lower if the team buys their own coffee; higher with barista-grade machine + premium consumables.</p>
+                <p class="oc-tip__sources">Sources: NZ supplier benchmark · <a href="https://www.officemax.co.nz/" target="_blank" rel="noopener">Officemax NZ</a> · <a href="https://www.reliance.co.nz/" target="_blank" rel="noopener">Reliance Office Supplies</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-kb-pp value="300" min="200" max="450" step="10" aria-label="Kitchen + bathroom per person per year">
+                <span class="oc-var__suffix">$/pp/yr</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 5 · Compliance + Insurance ─────────────────────────── -->
+          <div class="calc__field">
+            <h3 class="oc-card-heading">Compliance + insurance</h3>
+
+            <div class="oc-var">
+              <span class="oc-var__label">Insurance ($/pp/yr)
+                <button type="button" class="oc-tip" aria-label="About insurance" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $200/pp/yr · combined public liability + contents + business interruption at midmarket NZ rates.</p>
+                <p class="oc-tip__range">Range: $150·$400/pp/yr. Smaller teams pay more per head; specialist liability sectors push higher.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.icnz.org.nz/individuals/commercial/" target="_blank" rel="noopener">Insurance Council of NZ (ICNZ) commercial benchmarks</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-insurance-pp value="200" min="150" max="400" step="10" aria-label="Insurance per person per year">
+                <span class="oc-var__suffix">$/pp/yr combined</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">First aid training ($/pp/yr)
+                <button type="button" class="oc-tip" aria-label="About first aid training" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $28/pp/yr · workplace first-aid certificate amortised across the team and over the cert renewal cycle.</p>
+                <p class="oc-tip__range">Range: $15·$50/pp/yr. Depends on team size, ratio of trained staff (H&S Act 2015 requires sufficient cover), and renewal cadence.</p>
+                <p class="oc-tip__sources">Sources: <a href="https://www.stjohn.org.nz/first-aid/training/" target="_blank" rel="noopener">St John NZ workplace training</a> · <a href="https://www.legislation.govt.nz/act/public/2015/0070/latest/DLM5976660.html" target="_blank" rel="noopener">Health and Safety at Work Act 2015</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-first-aid-pp value="28" min="15" max="50" step="1" aria-label="First aid per person per year">
+                <span class="oc-var__suffix">$/pp/yr amortised</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Fire warden training ($/pp/yr)
+                <button type="button" class="oc-tip" aria-label="About fire warden training" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $18/pp/yr · FENZ-recognised fire warden training amortised across the team.</p>
+                <p class="oc-tip__range">Range: $10·$35/pp/yr. Required for any tenancy with an evacuation scheme.</p>
+                <p class="oc-tip__sources">Sources: <a href="https://www.fireandemergency.nz/businesses-and-landlords/" target="_blank" rel="noopener">FENZ Businesses + Landlords</a> · NZ Fire Service training.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-fire-warden-pp value="18" min="10" max="35" step="1" aria-label="Fire warden per person per year">
+                <span class="oc-var__suffix">$/pp/yr amortised</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 6 · Furniture + Admin + Legals ────────────────────── -->
+          <div class="calc__field">
+            <h3 class="oc-card-heading">Furniture + admin + legals</h3>
+
+            <div class="oc-var">
+              <span class="oc-var__label">Furniture ($/pp)
+                <button type="button" class="oc-tip" aria-label="About furniture" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $2,000/pp · standard NZ workplace spec (desk, chair, monitor arm, share of meeting + breakout furniture).</p>
+                <p class="oc-tip__range">Range: $1,200·$3,500/pp. Lower-spec second-hand at the low end; ergo-spec + design-led at the high end.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.gpg.govt.nz/workplace-design/" target="_blank" rel="noopener">Government Property Group NZ workplace design</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-furniture-pp value="2000" min="1200" max="3500" step="100" aria-label="Furniture per person">
+                <span class="oc-var__suffix">$/pp one-off</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Furniture amort (years)
+                <button type="button" class="oc-tip" aria-label="About furniture amortisation" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 5 years · NZ IFRS standard depreciation period for office furniture.</p>
+                <p class="oc-tip__range">Range: 3·10 years. Match this to your actual depreciation policy.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.ird.govt.nz/income-tax/income-tax-for-businesses-and-organisations/types-of-business-expenditure/depreciation" target="_blank" rel="noopener">Inland Revenue NZ · depreciation</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-furniture-yrs value="5" min="3" max="10" step="1" aria-label="Furniture amortisation years">
+                <span class="oc-var__suffix">years</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Admin (% of team hours)
+                <button type="button" class="oc-tip" aria-label="About admin % of hours" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 6% of team hours · NZ workplace overhead studies for office-management activities (vendor management, lease, H&S, supplies, IT helpdesk).</p>
+                <p class="oc-tip__range">Range: 4·10%. Lower for outsourced facility management; higher for small teams handling everything in-house.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.productivity.govt.nz/" target="_blank" rel="noopener">NZ Productivity Commission workplace overhead</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-admin-pct value="0.06" min="0.04" max="0.10" step="0.01" aria-label="Admin percent of hours">
+                <span class="oc-var__suffix">as decimal (0.06 = 6%)</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Admin rate ($/hr loaded)
+                <button type="button" class="oc-tip" aria-label="About admin loaded rate" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $70/hr · NZ office-administrator midmarket hourly + ~30% loading for KiwiSaver, ACC, leave + on-costs.</p>
+                <p class="oc-tip__range">Range: $55·$90/hr loaded. Lower for entry-level + part-time; higher for senior office managers or EAs covering admin work.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.payscale.com/research/NZ/Job=Office_Administrator/Hourly_Rate" target="_blank" rel="noopener">PayScale NZ Office Administrator 2026</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-admin-rate value="70" min="55" max="90" step="1" aria-label="Admin rate per hour">
+                <span class="oc-var__suffix">$/hr loaded</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Lease legals (one-off)
+                <button type="button" class="oc-tip" aria-label="About lease legals" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: $3,500 one-off · NZ commercial-lease review + sign-off (mid-sized firm).</p>
+                <p class="oc-tip__range">Range: $2,000·$6,000. Standard ADLS lease at the low end; bespoke + heads-of-agreement work at the high end.</p>
+                <p class="oc-tip__sources">Source: <a href="https://lawyerfinder.co.nz/resources/costs/lawyer-fees/" target="_blank" rel="noopener">LawyerFinder NZ commercial lease costs</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-legals value="3500" min="2000" max="6000" step="100" aria-label="Lease legals one-off">
+                <span class="oc-var__suffix">$ one-off</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Lease term (years)
+                <button type="button" class="oc-tip" aria-label="About lease term" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: 3 years · NZ Property Council standard commercial term for small + mid-sized tenants.</p>
+                <p class="oc-tip__range">Range: 1·10. Lease legals amortise across this term in the calculator.</p>
+                <p class="oc-tip__sources">Source: <a href="https://www.propertycouncil.co.nz/" target="_blank" rel="noopener">Property Council NZ standard commercial term</a>.</p>
+              </div>
+              <div class="oc-var__field-row">
+                <input type="number" data-occv2-lease-yrs value="3" min="1" max="10" step="1" aria-label="Lease term years">
+                <span class="oc-var__suffix">years</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- ── Card 7 · Add-ons + Custom ─────────────────────────────── -->
+          <div class="calc__field">
+            <h3 class="oc-card-heading">Add-ons + custom lines</h3>
+
+            <div class="oc-var">
+              <span class="oc-var__label">Booking software
+                <button type="button" class="oc-tip" aria-label="About booking software" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Default: off (auto-on at team ≥ 10). Off when not needed; auto-enabled when desk-sharing matters.</p>
+                <p class="oc-tip__range">Cost: $8/pp/mo midmarket. Range: $5·$15/pp/mo. Skedda, Officely + 5KB sit in this bracket.</p>
+                <p class="oc-tip__sources">Sources: <a href="https://www.skedda.com/" target="_blank" rel="noopener">Skedda pricing 2026</a> · <a href="https://www.getofficely.com/" target="_blank" rel="noopener">Officely</a> · 5KB.</p>
+              </div>
+              <label class="checkbox" style="margin-top: 8px;">
+                <input type="checkbox" data-occv2-booking-toggle>
+                <span class="checkbox__swatch" aria-hidden="true"></span>
+                <span class="checkbox__label">Force booking software on (auto-enables at team ≥ 10)</span>
+              </label>
+              <div class="oc-var__field-row" style="margin-top: 8px;">
+                <input type="number" data-occv2-booking-cost value="8" min="5" max="15" step="1" aria-label="Booking software cost per person per month">
+                <span class="oc-var__suffix">$/pp/mo</span>
+              </div>
+            </div>
+
+            <div class="oc-var oc-var--gap">
+              <span class="oc-var__label">Custom lines
+                <button type="button" class="oc-tip" aria-label="About custom lines" data-oc-tip aria-expanded="false"><span aria-hidden="true">i</span></button>
+              </span>
+              <div class="oc-tip__panel" hidden>
+                <p class="oc-tip__default">Add any line not covered above. Each carries straight through to the annual total.</p>
+                <p class="oc-tip__range">Examples: receptionist, plants, security guard, parking, makegood reserve, IT helpdesk contract.</p>
+                <p class="oc-tip__sources">Source: your own.</p>
+              </div>
+              <div class="oc-custom-rows" data-occv2-custom-rows data-count="1" style="margin-top: 8px;">
+                <div class="oc-custom-row" data-occv2-custom-row>
+                  <input type="text" data-occv2-custom-label placeholder="e.g. Reception">
+                  <input type="number" data-occv2-custom-value placeholder="$ value/yr" min="0" step="100">
+                  <button type="button" class="oc-custom-row__remove" data-occv2-custom-remove aria-label="Remove this line">×</button>
+                </div>
+              </div>
+              <template data-occv2-custom-template>
+                <div class="oc-custom-row" data-occv2-custom-row>
+                  <input type="text" data-occv2-custom-label placeholder="e.g. Reception">
+                  <input type="number" data-occv2-custom-value placeholder="$ value/yr" min="0" step="100">
+                  <button type="button" class="oc-custom-row__remove" data-occv2-custom-remove aria-label="Remove this line">×</button>
+                </div>
+              </template>
+              <button type="button" class="oc-custom-add" data-occv2-custom-add>+ Add another</button>
+            </div>
+          </div>
+
+          <!-- Hidden sinks · engine writes computed values here. -->
+          <span hidden data-occv2-sink-annual-total>$0</span>
+          <span hidden data-occv2-sink-monthly-total>$0</span>
+          <span hidden data-occv2-sink-per-person-month>$0</span>
+          <span hidden data-occv2-sink-per-person-day>$0</span>
+          <span hidden data-occv2-sink-per-sqm-yr>$0</span>
+          <span hidden data-occv2-sink-sqm-total>0 m²</span>
+          <span hidden data-occv2-sink-lines-json>[]</span>
+          <span hidden data-occv2-sink-categories-json>{}</span>
+          <span hidden data-occv2-sink-line-rent>$0</span>
+          <span hidden data-occv2-sink-line-outgoings>$0</span>
+          <span hidden data-occv2-sink-line-furniture>$0</span>
+          <span hidden data-occv2-sink-line-internet>$0</span>
+          <span hidden data-occv2-sink-line-power>$0</span>
+          <span hidden data-occv2-sink-line-cleaning>$0</span>
+          <span hidden data-occv2-sink-line-kb>$0</span>
+          <span hidden data-occv2-sink-line-insurance>$0</span>
+          <span hidden data-occv2-sink-line-firstAid>$0</span>
+          <span hidden data-occv2-sink-line-fireWarden>$0</span>
+          <span hidden data-occv2-sink-line-admin>$0</span>
+          <span hidden data-occv2-sink-line-legals>$0</span>
+          <span hidden data-occv2-sink-line-booking>$0</span>
+          <span hidden data-occv2-sink-cat-rent-opex>$0</span>
+          <span hidden data-occv2-sink-cat-utilities>$0</span>
+          <span hidden data-occv2-sink-cat-cleaning-kb>$0</span>
+          <span hidden data-occv2-sink-cat-compliance-insurance>$0</span>
+          <span hidden data-occv2-sink-cat-furniture-admin-legals>$0</span>
+          <span hidden data-occv2-sink-cat-addons-custom>$0</span>
+          <span hidden data-occv2-sink-cat-pct-rent-opex>0%</span>
+          <span hidden data-occv2-sink-cat-pct-utilities>0%</span>
+          <span hidden data-occv2-sink-cat-pct-cleaning-kb>0%</span>
+          <span hidden data-occv2-sink-cat-pct-compliance-insurance>0%</span>
+          <span hidden data-occv2-sink-cat-pct-furniture-admin-legals>0%</span>
+          <span hidden data-occv2-sink-cat-pct-addons-custom>0%</span>
+          <span hidden data-occv2-sink-value-add-living-wage>$0</span>
+          <span hidden data-occv2-sink-value-add-carbon>$0</span>
+          <span hidden data-occv2-sink-value-add-climate-power>$0</span>
+          <span hidden data-occv2-sink-value-add-giving>$0</span>
+          <span hidden data-occv2-sink-value-add-mhfr>$0</span>
+          <span hidden data-occv2-sink-value-add-total>$0</span>
+        </div><!-- /.calc -->
+
+        <!-- ── Sticky result column (Job 6) + scenarios (Job 9) ────────── -->
+        <aside class="calc-result-sticky" aria-label="Live cost result">
+          <div class="calc-result" role="status" aria-live="polite">
+            <div class="calc-result__col">
+              <span class="calc-result__label">Annual total</span>
+              <span class="calc-result__figure" data-result-annual>$0</span>
+              <span class="calc-result__unit">all-in, sourced</span>
+            </div>
+            <p class="oc-result-secondary-line">
+              <span><span class="oc-result-secondary-line__val" data-result-monthly>$0</span>/month</span>
+              <span class="oc-result-secondary-line__sep">·</span>
+              <span><span class="oc-result-secondary-line__val" data-result-pp-month>$0</span>/pp·month</span>
+              <span class="oc-result-secondary-line__sep">·</span>
+              <span><span class="oc-result-secondary-line__val" data-result-pp-day>$0</span>/pp·day</span>
+              <span class="oc-result-secondary-line__sep">·</span>
+              <span><span class="oc-result-secondary-line__val" data-result-per-sqm>$0</span>/sqm·yr</span>
+            </p>
+          </div>
+          <!-- #2 INLINE CONTACT — compact 'email this to yourself' form inside the
+               result aside. Mailto with calc name pre-filled in the subject so it
+               works without a backend; can be upgraded to a Fluent Forms POST later. -->
+          <form class="calc-contact-inline"
+                action="mailto:kiaora@twofiftyseven.co?subject=My%20office%20cost%20calculation"
+                method="post" enctype="text/plain" novalidate>
+            <p class="calc-contact-inline__title">Email this to your team</p>
+            <div class="calc-contact-inline__row">
+              <input type="email" name="email" placeholder="you@example.com" autocomplete="email" required aria-label="Your email">
+              <button type="submit">Send &rarr;</button>
+            </div>
+            <p class="calc-contact-inline__note">We'll email a snapshot of your cost breakdown.</p>
+          </form>
+
+
+          <button type="button"
+                  class="breakdown-trigger"
+                  data-breakdown-trigger
+                  aria-controls="methodology">
+            <span>See the cost breakdown</span>
+            <span class="breakdown-trigger__caret" aria-hidden="true">↓</span>
+          </button>
+
+          <!-- Scenarios (Job 9) -->
+          <div class="oc-scenarios">
+            <span class="oc-scenarios__label">Scenarios</span>
+            <div class="oc-scenarios__row">
+              <button type="button" class="oc-scenario-slot" data-scenario-slot="1" aria-label="Scenario 1">
+                <span class="oc-scenario-slot__num">1</span>
+                <span class="oc-scenario-slot__name">Empty</span>
+                <span class="oc-scenario-slot__value">·</span>
+              </button>
+              <button type="button" class="oc-scenario-slot" data-scenario-slot="2" aria-label="Scenario 2">
+                <span class="oc-scenario-slot__num">2</span>
+                <span class="oc-scenario-slot__name">Empty</span>
+                <span class="oc-scenario-slot__value">·</span>
+              </button>
+              <button type="button" class="oc-scenario-slot" data-scenario-slot="3" aria-label="Scenario 3">
+                <span class="oc-scenario-slot__num">3</span>
+                <span class="oc-scenario-slot__name">Empty</span>
+                <span class="oc-scenario-slot__value">·</span>
+              </button>
+            </div>
+            <div class="oc-scenarios__actions">
+              <button type="button" data-scenario-save class="oc-scenarios__btn">Save current →</button>
+              <button type="button" data-scenario-compare class="oc-scenarios__btn">Compare all →</button>
+            </div>
+          </div>
+          <div class="oc-savings" data-oc-vs257 hidden>
+            <p class="oc-savings__save">Save <span data-oc-save-figure>$0</span>/year</p>
+            <a class="oc-savings__link" href="../../pricing/">See our pricing &rarr;</a>
+          </div>
+        </aside>
+
+      </div><!-- /.calc-layout -->
+
+      <!-- Breakdown disclosure (Job 7) -->
+      <section class="breakdown-disclosure breakdown-disclosure--full" id="methodology">
+        <p class="calc-frame__eyebrow">Cost breakdown</p>
+        <h2 class="take-it__heading">Where every dollar goes</h2>
+        <div class="breakdown-body" id="breakdown-body">
+          <div class="breakdown-rows" data-occv2-lines-slot>
+            <div class="breakdown-total">
+              <span class="breakdown-total__label">Annual total</span>
+              <span class="breakdown-total__value" data-occv2-lines-total>$0</span>
+              <span class="breakdown-total__source-spacer"></span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      </div><!-- /.chapter__inner -->
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         3. TAKE THIS WITH YOU (Job 8)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter take-it" id="take-it" aria-labelledby="take-it-title">
+      <div class="chapter__inner">
+        <p class="calc-frame__eyebrow">Take this with you</p>
+        <h2 id="take-it-title" class="take-it__heading">Save your number, share it, send it on</h2>
+
+        <div class="take-it__grid">
+
+          <div class="take-it__card" data-email-card>
+            <h3 class="take-it__title">Email me this breakdown</h3>
+            <p class="take-it__body">Get the line-by-line + sources in your inbox, ready to forward to procurement or finance.</p>
+            <p class="take-it__status" data-email-status></p>
+            <form class="take-it__form" data-email-form>
+              <label class="visually-hidden" for="take-email">Your email</label>
+              <input id="take-email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+              <button type="submit">Send →</button>
+            </form>
+          </div>
+
+          <div class="take-it__card">
+            <h3 class="take-it__title">Share this calculation</h3>
+            <p class="take-it__body">Same numbers, any browser · your team clicks and sees the exact same overrides.</p>
+            <button type="button" class="take-it__cta" data-share-btn>Copy link ↪</button>
+          </div>
+
+          <div class="take-it__card">
+            <h3 class="take-it__title">Save as PDF</h3>
+            <p class="take-it__body">Print-ready, branded version. Every line includes its derivation + source URL.</p>
+            <button type="button" class="take-it__cta" data-print-btn>Download PDF ↓</button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div class="print-only print-footer" aria-hidden="true">
+      two/fiftyseven · twofiftyseven.co · kiaora@twofiftyseven.co · Book a tour at twofiftyseven.co/tours/
+    </div>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         4. FURTHER CONSIDERATIONS (Job 10)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter further-considerations" aria-labelledby="further-title">
+      <div class="chapter__inner">
+        <p class="calc-frame__eyebrow">Further considerations</p>
+        <h2 id="further-title" class="further-considerations__heading">Real costs the calculator above doesn't model</h2>
+        <ul class="further-considerations__list">
+          <li class="further-considerations__item">
+            <h3 class="further-considerations__title">Lease term + CPI escalation</h3>
+            <p class="further-considerations__body">Standard NZ commercial term is 3 years; rent typically escalates 2·4% per year tied to CPI or a fixed schedule. Multi-year cashflow modelling needs this on top of the calculator's year-1 base.</p>
+          </li>
+          <li class="further-considerations__item">
+            <h3 class="further-considerations__title">End-of-lease make-good</h3>
+            <p class="further-considerations__body">Most ADLS leases require return-to-original-condition · paint, carpet, partition removal, plant reinstatement. Budget 1·3 months of rent equivalent as a make-good reserve.</p>
+          </li>
+          <li class="further-considerations__item">
+            <h3 class="further-considerations__title">Lease incentives</h3>
+            <p class="further-considerations__body">Landlord-side concessions: rent-free periods of 1·6 months; fit-out contributions of $300·$800/m². These offset year-1 cost but aren't standard on every deal · negotiate.</p>
+          </li>
+          <li class="further-considerations__item">
+            <h3 class="further-considerations__title">Bank guarantee + bond</h3>
+            <p class="further-considerations__body">Most landlords require a 3-month bank guarantee on top of any cash bond. The guarantee ties up working capital and carries its own bank fee.</p>
+          </li>
+          <li class="further-considerations__item">
+            <h3 class="further-considerations__title">Personal guarantee</h3>
+            <p class="further-considerations__body">Sole traders + small businesses are routinely asked for personal guarantees. This is a real risk · default on the lease and the landlord can pursue you personally for the remaining term.</p>
+          </li>
+          <li class="further-considerations__item">
+            <h3 class="further-considerations__title">Tenant vs landlord insurance overlap</h3>
+            <p class="further-considerations__body">Public liability, contents and business interruption typically sit with the tenant; building insurance with the landlord (recovered via outgoings). Confirm the split with your broker before relying on the calculator's insurance line.</p>
+          </li>
+          <li class="further-considerations__item">
+            <h3 class="further-considerations__title">Capex on top of furniture</h3>
+            <p class="further-considerations__body">Out of scope above: phone system, IT cabling install, signage, partitions + walls, kitchen install, AV. Budget separately if your fit-out scope extends beyond standard amortised furniture.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         5. VALUE-ADD QUANTIFICATION (Job 11)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter value-add" aria-labelledby="value-add-title">
+      <div class="chapter__inner">
+        <p class="calc-frame__eyebrow">Included at two/fiftyseven</p>
+        <h2 id="value-add-title" class="calc-frame__title" style="font-size: clamp(1.6rem, 1.4vw + 1.1rem, 2.4rem); max-width: 24ch;">What you'd otherwise pay for, separately</h2>
+
+        <div class="value-add__table">
+          <div class="value-add__row">
+            <div class="value-add__label">Living-wage cleaners</div>
+            <div class="value-add__sub">Difference vs minimum-wage contractors · 2.4 hr/m²/yr × ($26 − $22.70)</div>
+            <div class="value-add__value" data-occv2-sink-value-add-living-wage>$0</div>
+            <a class="value-add__source" href="https://www.livingwage.org.nz/" target="_blank" rel="noopener">Living Wage NZ ↗</a>
+          </div>
+          <div class="value-add__row">
+            <div class="value-add__label">Verified 200% carbon offset</div>
+            <div class="value-add__sub">Procuring NZUs separately · 0.05 t CO₂e/pp/yr × team × $25/t</div>
+            <div class="value-add__value" data-occv2-sink-value-add-carbon>$0</div>
+            <a class="value-add__source" href="https://www.epa.govt.nz/industry-areas/emissions-trading-scheme/" target="_blank" rel="noopener">NZ ETS · EPA ↗</a>
+          </div>
+          <div class="value-add__row">
+            <div class="value-add__label">Climate-positive electricity</div>
+            <div class="value-add__sub">~5% premium on a standard grid supply</div>
+            <div class="value-add__value" data-occv2-sink-value-add-climate-power>$0</div>
+            <a class="value-add__source" href="https://www.ecotricity.co.nz/" target="_blank" rel="noopener">Ecotricity NZ ↗</a>
+          </div>
+          <div class="value-add__row">
+            <div class="value-add__label">Giving programme contribution</div>
+            <div class="value-add__sub">Equivalent direct donation · $1 per team-hour × team × hours/yr</div>
+            <div class="value-add__value" data-occv2-sink-value-add-giving>$0</div>
+            <a class="value-add__source" href="../../impact/index.html">two/fiftyseven impact</a>
+          </div>
+          <div class="value-add__row">
+            <div class="value-add__label">MHFR-trained team on site</div>
+            <div class="value-add__sub">$445 per certification × (team ÷ 12) ÷ 2.5 year cert</div>
+            <div class="value-add__value" data-occv2-sink-value-add-mhfr>$0</div>
+            <a class="value-add__source" href="https://stepstone.org.nz/education/mhfaaotearoa/" target="_blank" rel="noopener">Stepping Stone Trust ↗</a>
+          </div>
+          <div class="value-add__total">
+            <span class="value-add__total-label">Equivalent procured-separately value</span>
+            <span class="value-add__total-value" data-occv2-sink-value-add-total>$0</span>
+            <span class="value-add__total-spacer"></span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- CLOSE CTA — canonical .invite (audit #18). Replaces the old .discover-cta.
+         For-purpose orgs: workspace support is need-based (not a fixed Impact Discount %)
+         so the secondary speaks to that directly rather than offering a toggle. -->
+    <section class="chapter chapter--fit chapter--close" id="get-involved" aria-labelledby="ch-close-title">
+      <div class="chapter__inner">
+        <h2 id="ch-close-title" class="display display--mid">The two/fiftyseven alternative</h2>
+        <p class="lead">Your office numbers, our published prices — side by side.</p>
+
+        <div class="invite">
+          <!-- PRIMARY — reader has just modelled their private-office cost.
+               Strongest next step: see the comparison side-by-side at /pricing/. -->
+          <a class="invite__primary" href="/pricing/">
+            <p class="invite__eyebrow">After the numbers</p>
+            <h3 class="invite__primary-title">See the comparison<span class="invite__arrow" aria-hidden="true">→</span></h3>
+            <p class="invite__primary-body">Pricing page. Per-desk membership tiers, what's included, what you don't pay for separately. Real numbers, all published.</p>
+            <p class="invite__meta"><span>All-in pricing</span><span aria-hidden="true">·</span><span>Month-to-month</span><span aria-hidden="true">·</span><span>No lock-in</span></p>
+          </a>
+
+          <!-- SECONDARY ROW — (1) book a tour, the strongest validation move,
+               (2) need-based workspace support for for-purpose orgs (NOT a fixed
+               Impact Discount — that applies to rooms/events only; workspace support
+               is by conversation, based on the org's situation). -->
+          <div class="invite__row">
+            <a class="invite__secondary" href="../../tours/">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">Walk the space first<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">A 20-minute tour with whoever's hosting that day. Bring the spreadsheet, we'll talk through which assumptions hold up and which don't.</p>
+              </div>
+            </a>
+            <a class="invite__secondary" href="mailto:kiaora@twofiftyseven.co?subject=Workspace%20for%20a%20for-purpose%20org">
+              <div class="invite__secondary-text">
+                <h3 class="invite__secondary-title">For-purpose work?<span class="invite__arrow" aria-hidden="true">→</span></h3>
+                <p class="invite__secondary-body">Charities, NGOs, indigenous-led orgs, community groups and social enterprises — we support workspace by conversation, based on need. Tell us about your work.</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ════════════════════════════════════════════════════════════════════
+         6. FAQ (Job 12)
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="chapter faq-wrap" aria-labelledby="faq-title">
+      <div class="chapter__inner">
+        <p class="chapter__marker">FAQ</p>
+        <h2 id="faq-title">Common questions</h2>
+        <div class="faq" data-js="faq-accordion">
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How much does it cost to run an office in Wellington?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>For a 5-person team in a central-Wellington B-grade fitted office, the all-in annual cost is around $71,000/year. That covers rent, outgoings, fit-out amortised, internet, power, cleaning, kitchen + bathroom consumables, commercial insurance, first-aid + fire-warden training, admin time at a loaded $70/hour, and lease legals amortised. The calculator above lets you override every assumption and writes the breakdown line-by-line.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">What's included in this calculation?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Rent (Colliers Wellington 2026 midmarket), outgoings (Property Council NZ benchmark), furniture amortised over your fit-out term, business fibre internet, electricity (BRANZ + EECA), commercial cleaning, kitchen + bathroom consumables, commercial insurance (ICNZ), first-aid and fire-warden training, admin time (6% of team hours at $70/hour loaded), and lease legals amortised. Booking software is added automatically for teams of 10+. Custom lines are unlimited.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Where do these numbers come from?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Every variable's tooltip carries the default, the credible range, and a link to the primary source. Rent and grade modifiers come from Colliers and REINZ; outgoings from Property Council NZ; m²/person standard from CBRE, JLL and the British Council for Offices; power from BRANZ and EECA; cleaning from NZ industry benchmarks; insurance from ICNZ; training from St John NZ and FENZ; admin loaded rate from PayScale NZ.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Can I adjust the assumptions?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Yes. Every input on the page is editable. Click the small ⓘ next to any variable label to see the default, the credible range and the source. Numbers update live; the breakdown reflects exactly what you've changed.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">How is this different from a real estate quote?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>This is a defensible benchmark, not a binding offer. Use it for procurement, finance modelling, board sign-off or to sanity-check an agent's quote. A real estate quote covers a specific building with negotiated terms; the calculator covers the all-in operating cost of running an office at midmarket Wellington rates.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Can I save my scenario and come back to it?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Yes. You can save up to three scenarios locally in your browser and compare them side-by-side. You can also copy a share link that encodes every override in the URL so you can email a snapshot to your team.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">Can I share or PDF this for my finance team?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Yes. The Take it with you row offers three actions: email yourself the breakdown, copy a share link that preserves your overrides, and download a print-ready PDF that lists every line with its derivation and source URL.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">What's NOT in this calculator?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Out of scope: ground-up construction, base-build, architectural fit-out, mechanical and electrical works, partitions, IT cabling install, leasehold improvements at scale. The calculator covers running costs plus standard amortised furniture only. See the Further considerations section for lease incentives, make-good, bank guarantees and capex on top of furniture.</p>
+            </div></div>
+          </div>
+
+          <div class="faq-item" data-open="false">
+            <button class="faq-item__question" type="button" aria-expanded="false">What would my team cost at two/fiftyseven?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+            <div class="faq-item__answer"><div class="faq-item__answer-inner">
+              <p>Visit <a href="../../pricing/index.html">/pricing/</a> to build a team plan and see your monthly figure including everything two/fiftyseven covers by default (living-wage cleaners, verified 200% carbon offset, climate-positive electricity, giving programme contributions, MHFR-trained team on site).</p>
+            </div></div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer" data-theme="dark">
+    <div class="container">
+      <div class="site-footer__top">
+        <nav class="site-footer__nav" aria-label="Footer">
+          <div class="site-footer__col site-footer__col--find">
+            <h4>Find us</h4>
+            <address class="site-footer__address">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara</address>
+            <p class="site-footer__note">Central lift access from both the Willis Street and Victoria Street entrances. The Victoria Street entrance is opposite Matapihi ki te Ao Nui.</p>
+            <a class="site-footer__maplink" href="https://www.google.com/maps/search/?api=1&amp;query=57+Willis+Street+Te+Whanganui-a-Tara">View on map</a>
+          </div>
+          <div class="site-footer__col">
+            <h4>Workspace</h4>
+            <ul>
+              <li><a href="../../workspace/base/index.html">Base</a></li>
+              <li><a href="../../workspace/hub/index.html">Hub</a></li>
+              <li><a href="../../workspace/desk/index.html">Desk</a></li>
+              <li><a href="../../pricing/index.html">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Meet &amp; Host</h4>
+            <ul>
+              <li><a href="../../meetings/index.html">Meetings</a></li>
+              <li><a href="../../meetings/workshops/index.html">Workshops</a></li>
+              <li><a href="../../meetings/away-days/index.html">Away days</a></li>
+              <li><a href="../../events/index.html">Events</a></li>
+              <li><a href="../../events/functions/index.html">Functions</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col site-footer__col--about">
+            <h4>About</h4>
+            <ul>
+              <li><a href="../../kaupapa/index.html">Kaupapa</a></li>
+              <li><a href="../../case-studies/index.html">Success stories</a></li>
+              <li><a href="../../organisations/index.html">Organisations</a></li>
+              <li><a href="../../our-story/index.html">Our story</a></li>
+              <li><a href="../../people/index.html">People</a></li>
+              <li><a href="../../whatson/index.html">What's on</a></li>
+              <li><a href="../../kōrero/index.html">Kōrero</a></li>
+              <li><a href="../../press-kit/index.html">Press kit</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Calculators</h4>
+            <ul>
+              <li><a href="../../calculator/office-costs/index.html">Office costs</a></li>
+              <li><a href="../../calculator/meeting-costs/index.html">Meetings</a></li>
+              <li><a href="../../calculator/hours-to-impact/index.html">Giving</a></li>
+              <li><a href="../../calculator/office-carbon/index.html">Carbon</a></li>
+              <li><a href="../../contact/index.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <form class="site-footer__panui" method="post" action="#" aria-label="Pānui signup">
+          <h4>Pānui</h4>
+          <p>Occasional notes from inside two/fiftyseven · what's on, what's changed, what we're thinking about.</p>
+          <div class="site-footer__panui-row">
+            <label class="visually-hidden" for="panui-email">Email address</label>
+            <input type="email" id="panui-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit" class="btn btn--primary btn--small">Sign up</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="site-footer__beliefs" aria-label="What we believe">
+        <ul class="site-footer__beliefs-track">
+          <li>diversity is resilience</li>
+          <li>radical equality is good for all</li>
+          <li>complete decolonisation is a necessary future</li>
+          <li>climate justice is a human and environmental imperative</li>
+          <li aria-hidden="true">diversity is resilience</li>
+          <li aria-hidden="true">radical equality is good for all</li>
+          <li aria-hidden="true">complete decolonisation is a necessary future</li>
+          <li aria-hidden="true">climate justice is a human and environmental imperative</li>
+        </ul>
+      </div>
+
+      <div class="site-footer__wordmark" data-js="footer-reveal" role="img" aria-label="two/fiftyseven"></div>
+
+      <div class="site-footer__bottom">
+        <span>&copy; 2026 two/fiftyseven Limited</span>
+        <span>Aotearoa / New Zealand</span>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var wm = document.querySelector('[data-js="footer-reveal"]');
+        if (!wm) return;
+        if (!('IntersectionObserver' in window)) { wm.classList.add('is-revealed'); return; }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-revealed'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.25 });
+        io.observe(wm);
+      })();
+    </script>
+  </footer>
+
+  <!-- Scenario compare dialog (Job 9) -->
+  <dialog class="oc-compare" data-scenario-compare-dialog aria-labelledby="oc-compare-title">
+    <div class="oc-compare__inner">
+      <div class="oc-compare__head">
+        <h2 id="oc-compare-title" class="oc-compare__title">Compare scenarios</h2>
+        <button type="button" class="oc-compare__close" data-scenario-compare-close aria-label="Close">×</button>
+      </div>
+      <div class="oc-compare__grid" data-scenario-compare-grid>
+        <!-- Populated by coordinator. -->
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ════════════════════════════════════════════════════════════════════
+       PAGE COORDINATOR
+       Mirrors engine sinks → 3-figure result panel, renders breakdown rows
+       + category grid, wires tooltips, scenarios, take-it actions, URL
+       state sync.
+       ════════════════════════════════════════════════════════════════════ -->
+  <script>
+  (function () {
+    'use strict';
+
+    function $  (sel, root) { return (root || document).querySelector(sel); }
+    function $$ (sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function fmtMoney(n) {
+      if (!isFinite(n)) n = 0;
+      return '$' + Math.round(n).toLocaleString('en-NZ');
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var root = $('[data-js="calc-office-costs-v2"]');
+      if (!root) return;
+
+      // ───── Mirror sinks → visible result panel
+      function mirror() {
+        function sinkText(sel) {
+          var el = root.querySelector(sel);
+          return el ? el.textContent.trim() : '';
+        }
+        var pairs = [
+          ['[data-result-annual]',    '[data-occv2-sink-annual-total]'],
+          ['[data-result-monthly]',   '[data-occv2-sink-monthly-total]'],
+          ['[data-result-pp-month]',  '[data-occv2-sink-per-person-month]'],
+          ['[data-result-pp-day]',    '[data-occv2-sink-per-person-day]'],
+          ['[data-result-per-sqm]',   '[data-occv2-sink-per-sqm-yr]']
+        ];
+        pairs.forEach(function (p) {
+          var visible = document.querySelector(p[0]);
+          var sink    = root.querySelector(p[1]);
+          if (visible && sink) visible.textContent = sink.textContent || '$0';
+        });
+      }
+
+      // ───── Render breakdown rows + category grid from JSON sinks.
+      // The slot elements live in the full-width <details> OUTSIDE the .calc
+      // root, so we query the document (root only holds the hidden sinks).
+      function renderBreakdown() {
+        var slot = document.querySelector('[data-occv2-lines-slot]');
+        if (!slot) return;
+        var rawLines = root.querySelector('[data-occv2-sink-lines-json]');
+        if (!rawLines) return;
+        var lines = [];
+        try { lines = JSON.parse(rawLines.textContent || '[]'); } catch (e) { lines = []; }
+
+        var html = '';
+        var total = 0;
+        lines.forEach(function (l) {
+          var isExt = l.sourceHref && l.sourceHref.charAt(0) !== '#';
+          html += '<div class="breakdown-row">'
+                + '<div class="breakdown-row__label">' + escapeHTML(l.label) + '</div>'
+                + '<div class="breakdown-row__note">' + escapeHTML(l.note || '') + '</div>'
+                + '<div class="breakdown-row__value">' + fmtMoney(l.value) + '</div>'
+                + '<a class="breakdown-row__source" href="' + l.sourceHref + '"'
+                  + (isExt ? ' target="_blank" rel="noopener"' : '') + '>'
+                  + escapeHTML(l.sourceLabel) + (isExt ? ' ↗' : '') + '</a>'
+                + '</div>';
+          total += +l.value;
+        });
+        html += '<div class="breakdown-total">'
+              +   '<span class="breakdown-total__label">Annual total</span>'
+              +   '<span class="breakdown-total__value" data-occv2-lines-total>' + fmtMoney(total) + '</span>'
+              +   '<span class="breakdown-total__source-spacer"></span>'
+              + '</div>';
+        slot.innerHTML = html;
+
+        // Category grid (also outside .calc root)
+        var catSlot = document.querySelector('[data-occv2-category-slot]');
+        var rawCats = root.querySelector('[data-occv2-sink-categories-json]');
+        if (catSlot && rawCats) {
+          var cats = {};
+          try { cats = JSON.parse(rawCats.textContent || '{}'); } catch (e) { cats = {}; }
+          var catHTML = '';
+          Object.keys(cats).forEach(function (k) {
+            var c = cats[k];
+            catHTML += '<div class="oc-category">'
+                     + '<span class="oc-category__label">' + escapeHTML(c.label) + '</span>'
+                     + '<span class="oc-category__value">' + fmtMoney(c.value) + '</span>'
+                     + '<span class="oc-category__pct">' + Math.round((c.pct || 0) * 100) + '% of total</span>'
+                     + '</div>';
+          });
+          catSlot.innerHTML = catHTML;
+        }
+      }
+
+      root.addEventListener('occv2:rendered', function () {
+        mirror();
+        renderBreakdown();
+        syncUrlFromInputs();
+        refreshScenarioRow();
+      });
+      // Initial paint in case engine ticked before listener attached.
+      mirror();
+      renderBreakdown();
+
+      // ─────────────────────────────────────────────────────────────────
+      // Tooltips · click toggle, outside-click close, escape close, single-open
+      // ─────────────────────────────────────────────────────────────────
+      // Panels are siblings of the .oc-var__label inside the same .oc-var.
+      function panelFor(btn) {
+        var ocVar = btn.closest('.oc-var');
+        return ocVar ? ocVar.querySelector('.oc-tip__panel') : null;
+      }
+      function closeAllTips(except) {
+        $$('.oc-tip').forEach(function (btn) {
+          if (btn === except) return;
+          btn.setAttribute('aria-expanded', 'false');
+          var panel = panelFor(btn);
+          if (panel) panel.hidden = true;
+        });
+      }
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-oc-tip]');
+        if (btn) {
+          var panel = panelFor(btn);
+          if (!panel) return;
+          var open = !panel.hidden;
+          closeAllTips(btn);
+          panel.hidden = open;
+          btn.setAttribute('aria-expanded', String(!open));
+          e.stopPropagation();
+          return;
+        }
+        // Click outside any panel closes everything.
+        if (!e.target.closest('.oc-tip__panel')) closeAllTips(null);
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') closeAllTips(null);
+      });
+
+      // ─────────────────────────────────────────────────────────────────
+      // Custom-line add / remove (mirrors MC pattern)
+      // ─────────────────────────────────────────────────────────────────
+      var customRowsWrap = root.querySelector('[data-occv2-custom-rows]');
+      var customTpl      = root.querySelector('[data-occv2-custom-template]');
+      var customAdd      = root.querySelector('[data-occv2-custom-add]');
+      function refreshCustomCount() {
+        if (!customRowsWrap) return;
+        customRowsWrap.setAttribute('data-count',
+          customRowsWrap.querySelectorAll('[data-occv2-custom-row]').length);
+      }
+      function fireRecalc() {
+        root.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      if (customAdd && customTpl && customRowsWrap) {
+        customAdd.addEventListener('click', function () {
+          var clone = customTpl.content.firstElementChild.cloneNode(true);
+          customRowsWrap.appendChild(clone);
+          refreshCustomCount();
+          fireRecalc();
+        });
+      }
+      if (customRowsWrap) {
+        customRowsWrap.addEventListener('click', function (e) {
+          var btn = e.target.closest('[data-occv2-custom-remove]');
+          if (!btn) return;
+          var rows = customRowsWrap.querySelectorAll('[data-occv2-custom-row]');
+          if (rows.length <= 1) {
+            var row = btn.closest('[data-occv2-custom-row]');
+            if (row) row.querySelectorAll('input').forEach(function (i) { i.value = ''; });
+          } else {
+            var row2 = btn.closest('[data-occv2-custom-row]');
+            if (row2) row2.remove();
+          }
+          refreshCustomCount();
+          fireRecalc();
+        });
+      }
+      // Engine asks for a restoreCustomLines hook so scenario load can rebuild
+      // the row count to match the saved snapshot.
+      window.occv2 = window.occv2 || {};
+      window.occv2.restoreCustomLines = function (saved) {
+        if (!customRowsWrap || !customTpl || !saved) return;
+        // Wipe to one row, then clone to match saved length.
+        var keep = customRowsWrap.querySelector('[data-occv2-custom-row]');
+        customRowsWrap.innerHTML = '';
+        if (keep) customRowsWrap.appendChild(keep);
+        else customRowsWrap.appendChild(customTpl.content.firstElementChild.cloneNode(true));
+        while (customRowsWrap.querySelectorAll('[data-occv2-custom-row]').length < Math.max(1, saved.length)) {
+          customRowsWrap.appendChild(customTpl.content.firstElementChild.cloneNode(true));
+        }
+        var rows = customRowsWrap.querySelectorAll('[data-occv2-custom-row]');
+        saved.forEach(function (sLine, i) {
+          var r = rows[i];
+          if (!r) return;
+          var lbl = r.querySelector('[data-occv2-custom-label]');
+          var val = r.querySelector('[data-occv2-custom-value]');
+          if (lbl) lbl.value = sLine.label || '';
+          if (val) val.value = sLine.value || '';
+        });
+        refreshCustomCount();
+      };
+
+      // ─────────────────────────────────────────────────────────────────
+      // Scenarios (Job 9)
+      // ─────────────────────────────────────────────────────────────────
+      function refreshScenarioRow() {
+        if (!window.occv2 || !window.occv2.listScenarios) return;
+        var all = window.occv2.listScenarios();
+        for (var i = 1; i <= 3; i++) {
+          var btn  = document.querySelector('[data-scenario-slot="' + i + '"]');
+          if (!btn) continue;
+          var s = all[i - 1];
+          var nameEl  = btn.querySelector('.oc-scenario-slot__name');
+          var valEl   = btn.querySelector('.oc-scenario-slot__value');
+          if (s) {
+            btn.classList.add('oc-scenario-slot--filled');
+            if (nameEl) nameEl.textContent = s.name || ('Scenario ' + i);
+            if (valEl)  valEl.textContent  = fmtMoney(s.annualTotal);
+          } else {
+            btn.classList.remove('oc-scenario-slot--filled');
+            if (nameEl) nameEl.textContent = 'Empty';
+            if (valEl)  valEl.textContent  = '·';
+          }
+        }
+      }
+      $$('[data-scenario-slot]').forEach(function (btn) {
+        var slot = parseInt(btn.getAttribute('data-scenario-slot'), 10);
+        btn.addEventListener('click', function () {
+          var existing = window.occv2.getScenarioSnapshot(slot);
+          if (existing) {
+            window.occv2.loadScenario(slot);
+          } else {
+            // Save current as this slot, prompt for name.
+            var name = window.prompt('Name this scenario:', 'Scenario ' + slot);
+            if (name === null) return;
+            window.occv2.saveScenario(slot, name || ('Scenario ' + slot));
+            refreshScenarioRow();
+          }
+        });
+        // Right-click / long-press to clear.
+        btn.addEventListener('contextmenu', function (e) {
+          e.preventDefault();
+          var existing = window.occv2.getScenarioSnapshot(slot);
+          if (!existing) return;
+          if (window.confirm('Clear scenario "' + (existing.name || slot) + '"?')) {
+            window.occv2.clearScenario(slot);
+            refreshScenarioRow();
+          }
+        });
+      });
+      var saveBtn = document.querySelector('[data-scenario-save]');
+      if (saveBtn) saveBtn.addEventListener('click', function () {
+        var all = window.occv2.listScenarios();
+        var nextEmpty = all.findIndex(function (s) { return !s; }) + 1;
+        if (!nextEmpty) {
+          if (!window.confirm('All three slots are full. Replace slot 1?')) return;
+          nextEmpty = 1;
+        }
+        var name = window.prompt('Name this scenario:', 'Scenario ' + nextEmpty);
+        if (name === null) return;
+        window.occv2.saveScenario(nextEmpty, name || ('Scenario ' + nextEmpty));
+        refreshScenarioRow();
+      });
+
+      // Compare dialog
+      var compareBtn    = document.querySelector('[data-scenario-compare]');
+      var compareDialog = document.querySelector('[data-scenario-compare-dialog]');
+      var compareClose  = document.querySelector('[data-scenario-compare-close]');
+      var compareGrid   = document.querySelector('[data-scenario-compare-grid]');
+      if (compareBtn && compareDialog && compareGrid) {
+        compareBtn.addEventListener('click', function () {
+          var all = window.occv2.listScenarios();
+          var html = '';
+          for (var i = 0; i < 3; i++) {
+            var s = all[i];
+            if (s) {
+              var perPpYr = s.perPersonMonth ? (s.perPersonMonth * 12) : 0;
+              html += '<div class="oc-compare__col">'
+                    + '<span class="oc-compare__col-name">' + escapeHTML(s.name) + '</span>'
+                    + '<span class="oc-compare__col-value">' + fmtMoney(s.annualTotal) + '</span>'
+                    + '<span class="oc-compare__col-meta">' + s.teamSize + ' people · '
+                      + fmtMoney(perPpYr) + '/pp/yr</span>'
+                    + '</div>';
+            } else {
+              html += '<div class="oc-compare__col"><span class="oc-compare__col-name">Slot ' + (i + 1) + '</span>'
+                    + '<span class="oc-compare__empty">Empty</span></div>';
+            }
+          }
+          compareGrid.innerHTML = html;
+          if (typeof compareDialog.showModal === 'function') compareDialog.showModal();
+          else compareDialog.setAttribute('open', 'open');
+        });
+      }
+      if (compareClose && compareDialog) {
+        compareClose.addEventListener('click', function () {
+          if (typeof compareDialog.close === 'function') compareDialog.close();
+          else compareDialog.removeAttribute('open');
+        });
+      }
+
+      refreshScenarioRow();
+
+      // ─────────────────────────────────────────────────────────────────
+      // Breakdown trigger proxies into <details>
+      // ─────────────────────────────────────────────────────────────────
+      var breakdownTrigger = document.querySelector('[data-breakdown-trigger]');
+      var breakdownTarget = document.getElementById('methodology');
+      if (breakdownTrigger && breakdownTarget) {
+        breakdownTrigger.addEventListener('click', function () {
+          breakdownTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // URL state sync · encode all overrides into ?param=value pairs.
+      // ─────────────────────────────────────────────────────────────────
+      // Map of input attribute → short query-string key.
+      var URL_FIELDS = [
+        ['data-occv2-team-size',          'team'],
+        ['data-occv2-days-per-week',      'days'],
+        ['data-occv2-precinct',           'pre'],
+        ['data-occv2-sqm-pp',             'sqm'],
+        ['data-occv2-rent-sqm',           'rent'],
+        ['data-occv2-outgoings-pct',      'opex'],
+        ['data-occv2-internet-mo',        'net'],
+        ['data-occv2-power-w-sqm',        'pw'],
+        ['data-occv2-power-hrs',          'phr'],
+        ['data-occv2-power-kwh',          'pkw'],
+        ['data-occv2-cleaning-hr-sqm',    'chrs'],
+        ['data-occv2-cleaning-hr',        'crt'],
+        ['data-occv2-kb-pp',              'kb'],
+        ['data-occv2-insurance-pp',       'ins'],
+        ['data-occv2-first-aid-pp',       'fa'],
+        ['data-occv2-fire-warden-pp',     'fw'],
+        ['data-occv2-admin-pct',          'adp'],
+        ['data-occv2-admin-rate',         'adr'],
+        ['data-occv2-legals',             'leg'],
+        ['data-occv2-lease-yrs',          'lty'],
+        ['data-occv2-furniture-pp',       'fpp'],
+        ['data-occv2-furniture-yrs',      'fy'],
+        ['data-occv2-booking-cost',       'bc']
+      ];
+      function syncUrlFromInputs() {
+        var params = new URLSearchParams();
+        URL_FIELDS.forEach(function (f) {
+          var el = root.querySelector('[' + f[0] + ']');
+          if (el && el.value !== '') params.set(f[1], el.value);
+        });
+        // Grade radio
+        var g = root.querySelector('[data-occv2-grade]:checked');
+        if (g) params.set('grade', g.value);
+        // Booking toggle
+        var bt = root.querySelector('[data-occv2-booking-toggle]');
+        if (bt && bt.checked) params.set('bt', '1');
+        // Custom rows · cN-label / cN-value
+        var customRows = root.querySelectorAll('[data-occv2-custom-row]');
+        customRows.forEach(function (row, i) {
+          var lbl = row.querySelector('[data-occv2-custom-label]');
+          var val = row.querySelector('[data-occv2-custom-value]');
+          if (lbl && lbl.value) params.set('c' + i + 'l', lbl.value);
+          if (val && val.value) params.set('c' + i + 'v', val.value);
+        });
+        var qs = params.toString();
+        history.replaceState({}, '', window.location.pathname + (qs ? '?' + qs : '') + window.location.hash);
+      }
+      function applyUrlToInputs() {
+        var params = new URLSearchParams(window.location.search);
+        if (!Array.from(params.keys()).length) return;
+        URL_FIELDS.forEach(function (f) {
+          if (params.has(f[1])) {
+            var el = root.querySelector('[' + f[0] + ']');
+            if (el) el.value = params.get(f[1]);
+            if (f[0] === 'data-occv2-team-size') {
+              var disp = root.querySelector('[data-occv2-team-display]');
+              if (disp) disp.textContent = params.get(f[1]);
+            }
+          }
+        });
+        if (params.has('grade')) {
+          var g = root.querySelector('[data-occv2-grade][value="' + params.get('grade') + '"]');
+          if (g) g.checked = true;
+        }
+        if (params.has('bt')) {
+          var bt = root.querySelector('[data-occv2-booking-toggle]');
+          if (bt) bt.checked = true;
+        }
+        // Custom rows · count how many cN-label keys exist, clone template to match.
+        var customRowsWrap = root.querySelector('[data-occv2-custom-rows]');
+        var customTpl      = root.querySelector('[data-occv2-custom-template]');
+        var maxIdx = -1;
+        params.forEach(function (_v, k) {
+          var m = k.match(/^c(\d+)[lv]$/);
+          if (m) maxIdx = Math.max(maxIdx, parseInt(m[1], 10));
+        });
+        if (customRowsWrap && customTpl && maxIdx >= 0) {
+          while (customRowsWrap.querySelectorAll('[data-occv2-custom-row]').length <= maxIdx) {
+            customRowsWrap.appendChild(customTpl.content.firstElementChild.cloneNode(true));
+          }
+          var rows = customRowsWrap.querySelectorAll('[data-occv2-custom-row]');
+          rows.forEach(function (r, i) {
+            var lbl = r.querySelector('[data-occv2-custom-label]');
+            var val = r.querySelector('[data-occv2-custom-value]');
+            if (lbl && params.has('c' + i + 'l')) lbl.value = params.get('c' + i + 'l');
+            if (val && params.has('c' + i + 'v')) val.value = params.get('c' + i + 'v');
+          });
+          customRowsWrap.setAttribute('data-count', customRowsWrap.querySelectorAll('[data-occv2-custom-row]').length);
+        }
+        // Ask engine to retick now that DOM matches the URL.
+        if (window.occv2 && typeof window.occv2.tick === 'function') {
+          window.occv2.tick();
+        }
+      }
+      applyUrlToInputs();
+
+      // ─────────────────────────────────────────────────────────────────
+      // Take-it actions (Job 8)
+      // ─────────────────────────────────────────────────────────────────
+      var shareBtn = document.querySelector('[data-share-btn]');
+      if (shareBtn) {
+        shareBtn.addEventListener('click', function () {
+          syncUrlFromInputs();
+          var url = window.location.href;
+          var original = shareBtn.textContent;
+          function done() {
+            shareBtn.textContent = 'Copied ✓';
+            setTimeout(function () { shareBtn.textContent = original; }, 2000);
+          }
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(done).catch(function () { window.prompt('Copy this link', url); });
+          } else {
+            window.prompt('Copy this link', url);
+          }
+        });
+      }
+      var emailForm = document.querySelector('[data-email-form]');
+      var emailStatus = document.querySelector('[data-email-status]');
+      if (emailForm) {
+        emailForm.addEventListener('submit', function (e) {
+          e.preventDefault();
+          syncUrlFromInputs();
+          var input = emailForm.querySelector('input[type="email"]');
+          var email = input ? input.value.trim() : '';
+          if (!email) { if (emailStatus) emailStatus.textContent = 'Add your email and try again.'; return; }
+          var url = window.location.href;
+          var annual = (document.querySelector('[data-result-annual]') || {}).textContent || '$0';
+          var monthly = (document.querySelector('[data-result-monthly]') || {}).textContent || '$0';
+          var ppMo = (document.querySelector('[data-result-pp-month]') || {}).textContent || '$0';
+          var teamOut = root.querySelector('[data-occv2-team-display]');
+          var teamN = teamOut ? teamOut.value : '·';
+          var subj = 'Your Wellington office cost breakdown · two/fiftyseven';
+          var body = 'Kia ora,\n\nHere is your Wellington office cost breakdown for a ' + teamN + '-person team:\n\n'
+                   + '  Annual total:               ' + annual + '\n'
+                   + '  Per month:                  ' + monthly + '\n'
+                   + '  Per person, per month:      ' + ppMo + '\n\n'
+                   + 'Open the live calculator with these exact overrides:\n' + url + '\n\n'
+                   + 'See the full line-by-line breakdown (with sources) inside the calculator.\n\n'
+                   + '· two/fiftyseven\n'
+                   + 'kiaora@twofiftyseven.co · twofiftyseven.co\n'
+                   + 'Book a tour: twofiftyseven.co/tours/';
+          var mailto = 'mailto:' + encodeURIComponent(email)
+                     + '?subject=' + encodeURIComponent(subj)
+                     + '&body=' + encodeURIComponent(body);
+          window.location.href = mailto;
+          if (emailStatus) emailStatus.textContent = 'Opening your mail client…';
+        });
+      }
+      var printBtn = document.querySelector('[data-print-btn]');
+      if (printBtn) printBtn.addEventListener('click', function () { window.print(); });
+    });
+  })();
+  </script>
+
+  <!-- FAQ accordion + sticky-header scroll indicator -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.faq-item__question').forEach(function (q) {
+        q.addEventListener('click', function() {
+          var item = q.closest('.faq-item');
+          var isOpen = item.getAttribute('data-open') === 'true';
+          item.setAttribute('data-open', !isOpen);
+          q.setAttribute('aria-expanded', !isOpen);
+        });
+      });
+      var header = document.querySelector('[data-js="site-header"]');
+      if (header) {
+        window.addEventListener('scroll', function() {
+          header.classList.toggle('is-scrolled', window.scrollY > 0);
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

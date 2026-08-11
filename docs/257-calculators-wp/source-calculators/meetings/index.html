@@ -1,0 +1,1275 @@
+<!-- two/fiftyseven · /meetings/ product-detail router · Phase 2.2 · full structural rebuild against /meet/ chrome + AEO product-detail voice · 2026-05-18 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Which meeting room at two/fiftyseven fits my booking? · Five room types in central Wellington · two/fiftyseven</title>
+  <meta name="description" content="The room-finder for two/fiftyseven — four sound-isolated meeting rooms for 6 each, the Silver Linings boardroom for 12, the Whātaitai + Ngake studios for 2×16, a workshop space for up to 40, and a 150-cap event space. Central Pōneke. From $70/hr. Charities and NGOs at 50% off under the Impact Discount.">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://twofiftyseven.co/meetings/">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://twofiftyseven.co/meetings/">
+  <meta property="og:title" content="Which meeting room at two/fiftyseven fits my booking? · Five room types · Pōneke">
+  <meta property="og:description" content="The room-finder for two/fiftyseven — five room types in central Wellington. From a closed-door six-seater to a 150-cap event space. From $70/hr, half-price for charities and NGOs.">
+  <meta property="og:image" content="https://twofiftyseven.co/share/twofiftyseven-meetings-og.jpg">
+  <meta property="og:site_name" content="two/fiftyseven">
+  <meta property="og:locale" content="en_NZ">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://twofiftyseven.co/meetings/">
+  <meta name="twitter:title" content="Which meeting room at two/fiftyseven fits my booking? · Five room types · Pōneke">
+  <meta name="twitter:description" content="The room-finder for two/fiftyseven — five room types in central Wellington. From $70/hr, half-price for charities and NGOs.">
+  <meta name="twitter:image" content="https://twofiftyseven.co/share/twofiftyseven-meetings-og.jpg">
+
+  <!-- @include:head-common -->
+  <!-- Preconnect to critical resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+
+  <!-- Design system — linked, not inlined -->
+  <link rel="stylesheet" href="../design-system/fonts.css">
+  <link rel="stylesheet" href="../design-system/tokens.css">
+  <link rel="stylesheet" href="../design-system/components.css">
+  <link rel="stylesheet" href="../design-system/quote-preview.css">
+
+  <!-- Site nav behaviour (aria-current + scroll indicator) -->
+  <script defer src="../shared/js/nav.js"></script>
+
+  <!-- Sitewide FAQ accordion -->
+  <script defer src="../shared/js/faq.js"></script>
+
+  <!-- Sitewide chapter scroll engine (reveals, count-ups, drift) -->
+  <script defer src="../shared/js/chapter.js"></script>
+  <script defer src="../shared/js/quote-preview.js"></script>
+  <!-- @endinclude -->
+
+  <!-- Page-scoped chrome — rooms-grid + price table + included-strip.
+       Everything else (chapter, display, shape, marker, hero, hero--lobby, lime/dark/fit,
+       voices, invite, faq, pop, logos) is shared in design-system/. -->
+  <style id="page-meetings-chrome">
+    /* Page ground — grey-green field, sitewide impact aesthetic. */
+    body.page-meetings { background: var(--ip-ground); color: var(--ip-ink); }
+
+    /* z-index lift so chapters scroll over the sticky hero--lobby photo. */
+    body.page-meetings .chapter { z-index: 1; }
+
+    /* ── ROOMS GRID — 6 rooms, 3-col desktop, 2-col tablet, 1-col mobile.
+         Each card: photo top, body below with tier eyebrow + name + cap-line
+         + body + rate + link. Lime panel ground per impact aesthetic.
+         (Same shape as /meet/ — they're sibling routers, this is the
+          product-detail / AEO sibling.) */
+    body.page-meetings .rooms {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(20px, 2vw, 32px);
+      margin-top: clamp(40px, 5vh, 72px);
+    }
+    /* Whole-card-as-link — the entire card is an anchor; lift + photo zoom +
+       arrow translate on hover. */
+    body.page-meetings .room {
+      display: flex;
+      flex-direction: column;
+      background: var(--ip-lime);
+      border-radius: var(--radius-lg, 16px);
+      overflow: hidden;
+      color: var(--ip-ink);
+      text-decoration: none;
+      box-shadow: 0 8px 22px -16px rgba(20,32,11,0.32);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body.page-meetings a.room:hover,
+    body.page-meetings a.room:focus-visible {
+      transform: translateY(-8px);
+      box-shadow: 0 30px 50px -22px rgba(20,32,11,0.4);
+    }
+    body.page-meetings a.room:hover .room__link {
+      transform: translateX(8px);
+    }
+    body.page-meetings a.room:hover .room__photo img,
+    body.page-meetings a.room:hover .room__photo picture img {
+      transform: scale(1.05);
+    }
+    body.page-meetings .room__photo {
+      aspect-ratio: 4 / 3;
+      background: var(--ip-ink);
+      overflow: hidden;
+    }
+    body.page-meetings .room__photo picture,
+    body.page-meetings .room__photo img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body.page-meetings .room__body {
+      display: flex; flex-direction: column;
+      gap: clamp(10px, 1.4vh, 16px);
+      padding: clamp(24px, 2.8vw, 36px) clamp(24px, 2.5vw, 32px) clamp(28px, 3vw, 36px);
+      flex: 1;
+    }
+    body.page-meetings .room__eyebrow,
+    body.page-meetings .room__meta,
+    body.page-meetings .room__rate {
+      font-family: var(--font-mono);
+      font-size: var(--type-mono-small);
+      text-transform: uppercase;
+      letter-spacing: var(--kerning-caps);
+      color: var(--ip-ink);
+      margin: 0;
+    }
+    body.page-meetings .room__eyebrow { opacity: 0.72; }
+    body.page-meetings .room__meta { opacity: 0.7; }
+    body.page-meetings .room__rate { opacity: 0.78; }
+    body.page-meetings .room__name {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: clamp(1.35rem, 0.9vw + 0.95rem, 1.85rem);
+      line-height: 1.1;
+      letter-spacing: -0.018em;
+      color: var(--ip-ink);
+      margin: 0;
+    }
+    body.page-meetings .room__body-text {
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: clamp(0.98rem, 0.3vw + 0.9rem, 1.08rem);
+      line-height: 1.5;
+      color: var(--ip-ink);
+      margin: 0;
+      max-width: 42ch;
+    }
+    body.page-meetings .room__link {
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: var(--type-base, 1rem);
+      color: var(--ip-ink);
+      text-decoration: none !important;
+      margin-top: auto;
+      padding-top: clamp(8px, 1.2vh, 14px);
+      align-self: flex-start;
+      transition: transform 150ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    /* Hover on the parent .room card now drives the arrow translate */
+    @media (max-width: 680px) {
+      body.page-meetings .rooms { grid-template-columns: 1fr; }
+    }
+
+    /* ── INCLUDED STRIP — three columns of inclusions, lime panels. */
+    body.page-meetings .included {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(20px, 2.5vw, 40px);
+      margin-top: clamp(48px, 6vh, 88px);
+    }
+    body.page-meetings .included-col {
+      padding: clamp(28px, 3vw, 44px) clamp(24px, 2.5vw, 36px);
+      background: var(--ip-lime);
+      border-radius: var(--radius-lg, 16px);
+      display: flex; flex-direction: column;
+      gap: clamp(14px, 1.8vh, 22px);
+    }
+    body.page-meetings .included-col__title {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      color: var(--ip-ink); opacity: 0.75; margin: 0;
+    }
+    body.page-meetings .included-col__list {
+      list-style: none; padding: 0; margin: 0;
+      display: flex; flex-direction: column; gap: clamp(8px, 1vh, 14px);
+    }
+    body.page-meetings .included-col__list li {
+      font-family: var(--font-body); font-weight: 500;
+      font-size: clamp(1rem, 0.35vw + 0.92rem, 1.15rem);
+      line-height: 1.4; color: var(--ip-ink);
+      letter-spacing: -0.005em; padding-left: 18px; position: relative;
+    }
+    body.page-meetings .included-col__list li::before {
+      content: "·"; position: absolute; left: 4px; top: -2px;
+      font-weight: 700; font-size: 1.2em; color: var(--ip-ink); opacity: 0.6;
+    }
+    @media (max-width: 880px) {
+      body.page-meetings .included { grid-template-columns: 1fr; }
+    }
+
+    /* ── PRICE TABLE — rooms cost snapshot inside the FAQ answer.
+         Mono caps headers, body rows on ip-paper. Built for the
+         "How much do meeting rooms at two/fiftyseven cost?" FAQ row. */
+    body.page-meetings .price-table {
+      width: 100%; border-collapse: collapse;
+      margin: clamp(16px, 2vh, 24px) 0 clamp(8px, 1.5vh, 16px);
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      color: var(--ip-ink);
+    }
+    body.page-meetings .price-table th,
+    body.page-meetings .price-table td {
+      padding: 10px 12px; text-align: left; vertical-align: top;
+      border-bottom: 1px solid rgba(20, 32, 11, 0.14);
+    }
+    body.page-meetings .price-table th {
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      font-weight: 600; opacity: 0.75; font-size: 11.5px;
+    }
+    body.page-meetings .price-table td.room { font-weight: 700; }
+    body.page-meetings .price-table td.dash { opacity: 0.45; }
+    @media (max-width: 640px) {
+      body.page-meetings .price-table th,
+      body.page-meetings .price-table td { padding: 8px 6px; font-size: 11px; }
+    }
+
+    /* ── INVITE BLOCK CLOSE — same pattern as /meet/, base, hub. */
+
+    /* ── WHY HERE · 3 lime cards (mirrors workshops template). */
+    body.page-meetings .why-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: clamp(16px, 2vw, 28px);
+      margin-top: clamp(48px, 6vh, 88px);
+    }
+    body.page-meetings .why-card {
+      padding: clamp(28px, 3vw, 42px) clamp(24px, 2.5vw, 34px);
+      background: var(--ip-lime);
+      border-radius: var(--radius-lg, 16px);
+      display: flex; flex-direction: column;
+      gap: clamp(10px, 1.4vh, 16px);
+    }
+    body.page-meetings .why-card__tag {
+      font-family: var(--font-mono); font-size: var(--type-mono-small);
+      text-transform: uppercase; letter-spacing: var(--kerning-caps);
+      color: var(--ip-ink); opacity: 0.65; margin: 0;
+    }
+    body.page-meetings .why-card__title {
+      font-family: var(--font-body); font-weight: 700;
+      font-size: clamp(1.2rem, 0.6vw + 0.95rem, 1.5rem);
+      line-height: 1.18; letter-spacing: -0.018em;
+      color: var(--ip-ink); margin: 0;
+    }
+    body.page-meetings .why-card__body {
+      font-size: clamp(0.98rem, 0.3vw + 0.88rem, 1.08rem);
+      line-height: 1.5; color: var(--ip-ink); margin: 0;
+    }
+    @media (max-width: 900px) {
+      body.page-meetings .why-grid { grid-template-columns: 1fr; }
+    }
+    /* ── WHAT'S INCLUDED · heading-on-left, card-grid-on-right, with each
+       inclusion as a lavender card. Same brand pattern as the workspace
+       lime "basics" cards, themed for the meet section. Each card carries
+       a subtle purple-500 SVG watermark in its own corner. */
+    body.page-meetings .incl {
+      display: grid; grid-template-columns: 0.85fr 1fr;
+      gap: clamp(32px, 5vw, 76px); align-items: start;
+      margin-top: clamp(8px, 1vh, 16px);
+    }
+    body.page-meetings .incl-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: clamp(12px, 1.4vw, 22px);
+    }
+    body.page-meetings .incl-card {
+      position: relative;
+      padding: clamp(20px, 2vw, 30px) clamp(18px, 1.8vw, 26px);
+      background: var(--purple-300);
+      border-radius: var(--radius-lg, 16px);
+      overflow: hidden;
+      isolation: isolate;
+      color: var(--purple-600);
+    }
+    body.page-meetings .incl-card::before {
+      content: '';
+      position: absolute;
+      inset: -25% -18% -25% 35%;
+      z-index: 0;
+      background-image: var(--shape-url, none);
+      background-repeat: no-repeat;
+      background-position: right center;
+      background-size: contain;
+      pointer-events: none;
+    }
+    body.page-meetings .incl-card > * {
+      position: relative;
+      z-index: 1;
+    }
+    body.page-meetings .incl-card__label {
+      display: block; font-weight: 800;
+      font-size: clamp(1.06rem, 0.4vw + 0.95rem, 1.18rem);
+      letter-spacing: -0.014em; margin: 0 0 6px;
+      color: inherit;
+    }
+    body.page-meetings .incl-card__detail {
+      display: block;
+      font-size: clamp(0.95rem, 0.3vw + 0.88rem, 1.05rem);
+      line-height: 1.4;
+      color: inherit;
+      opacity: 0.85;
+      margin: 0;
+    }
+    /* Eight distinct shapes — no repeats across the section. */
+    body.page-meetings .incl-cards .incl-card:nth-child(1) {
+      --shape-url: url('../shared/svg/shapes/shape-12-purple200.svg');
+    }
+    body.page-meetings .incl-cards .incl-card:nth-child(2) {
+      --shape-url: url('../shared/svg/shapes/shape-37-purple200.svg');
+    }
+    body.page-meetings .incl-cards .incl-card:nth-child(3) {
+      --shape-url: url('../shared/svg/shapes/shape-49-purple200.svg');
+    }
+    body.page-meetings .incl-cards .incl-card:nth-child(4) {
+      --shape-url: url('../shared/svg/shapes/shape-86-purple200.svg');
+    }
+    body.page-meetings .incl-cards .incl-card:nth-child(5) {
+      --shape-url: url('../shared/svg/shapes/shape-95-purple200.svg');
+    }
+    body.page-meetings .incl-cards .incl-card:nth-child(6) {
+      --shape-url: url('../shared/svg/shapes/shape-110-purple200.svg');
+    }
+    body.page-meetings .incl-cards .incl-card:nth-child(7) {
+      --shape-url: url('../shared/svg/shapes/shape-66-purple200.svg');
+    }
+    body.page-meetings .incl-cards .incl-card:nth-child(8) {
+      --shape-url: url('../shared/svg/shapes/shape-22-purple200.svg');
+    }
+    @media (max-width: 900px) {
+      body.page-meetings .incl { grid-template-columns: 1fr; gap: clamp(20px, 3vh, 32px); }
+      body.page-meetings .incl-cards { grid-template-columns: 1fr; }
+    }
+
+  </style>
+
+  <!-- Organization JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "two/fiftyseven",
+    "url": "https://twofiftyseven.co/",
+    "logo": "https://twofiftyseven.co/assets/logos/257-mark.svg",
+    "sameAs": [
+      "https://www.instagram.com/twofiftyseven/",
+      "https://www.linkedin.com/company/two-fiftyseven/"
+    ]
+  }
+  </script>
+
+  <!-- LocalBusiness JSON-LD — Wellington office. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "two/fiftyseven · Meeting rooms",
+    "url": "https://twofiftyseven.co/meetings/",
+    "image": "https://twofiftyseven.co/share/twofiftyseven-meetings-og.jpg",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Level 2, 57 Willis Street + 70 Victoria Street",
+      "addressLocality": "Te Whanganui-a-Tara / Wellington",
+      "addressCountry": "NZ"
+    },
+    "openingHours": "Mo-Fr 08:00-18:00",
+    "telephone": "+64-4-974-3299",
+    "priceRange": "$$"
+  }
+  </script>
+
+  <!-- BreadcrumbList JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://twofiftyseven.co/"},
+      {"@type": "ListItem", "position": 2, "name": "Meetings", "item": "https://twofiftyseven.co/meetings/"}
+    ]
+  }
+  </script>
+
+  <!-- FAQPage JSON-LD — mirrors visible FAQ. Required on product-detail pages. -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Which two/fiftyseven room fits a 6-person meeting?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "The Meeting Room — a sound-isolated six-person room with a full-wall whiteboard, screen, wireless screen-share, fast wifi and tea/coffee on the table. Booked by the hour or the day: $70/hr or $290/day. Best for confidential discussions, focused video calls, and one-on-ones that need privacy."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which two/fiftyseven room fits a 12-person workshop?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Two options. Silver Linings is a twelve-person boardroom with natural light and high-quality video conferencing — $120/hr, $360/evening, $590/day — best when the room itself needs to take the meeting seriously. Studios Whātaitai + Ngake are slightly more relaxed sixteen-person studios at $90/hr, $290/evening, $490/day per studio — book one studio or both as two separate rooms."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I book a meeting room at two/fiftyseven for an evening event?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. The Event Space is built for evening hire · 150 people, full AV, optional bar service, Victoria Street entry that runs into the evening opposite Matapihi ki te Ao Nui. DIY rental from $280/hr or $1,190/day. Silver Linings and the studios also book by the evening for smaller after-hours functions: Silver Linings at $360/evening (4-hour block), studios at $290/evening per studio."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much do meeting rooms at two/fiftyseven cost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "All. Meeting Rooms (four sound-isolated rooms, each up to 6): $70/hr or $290/day per room. Studios Whātaitai + Ngake (up to 16 per studio): $90/hr, $290/evening, $490/day. Silver Linings (up to 12): $120/hr, $360/evening, $590/day. Workshop Space (up to 40): $180/hr, $440/evening, $690/day. Event Space (up to 150): $240/hr, $590/evening, $990/day. Charities, NGOs and indigenous-led organisations book at up to 50% off under the Impact Discount."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is two/fiftyseven accessible?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Step-free entry from both Willis Street and Victoria Street, lift access to Level 2 from both, accessible bathrooms, non-gendered facilities, a shower on site. The whole space is on one level, with wide pathways between rooms. We can pre-arrange seating, hearing-loop equipment and a quiet breakout room — flag anything we should set up at booking."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I bring catering to a meeting room booking, or does two/fiftyseven provide it?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Both. We work with three local catering partners — Karaka Cafe (Māori kai), Blue Carrot (plant-led platters) and Food Envy (full-service hot meals and canapés) — at no markup, no minimum, ordered through us. Or you can BYO. For evening events the bar is run by our team, or you can BYO that too."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How does the Impact Discount apply to meeting bookings at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Charities, NGOs, indigenous-led organisations, community groups and social enterprises doing for-purpose work in Aotearoa book any meeting room at up to 50% off — same room, same access, different invoice. The discount is offered automatically once we've confirmed eligibility; no separate application form. It applies to room hire only, not workspace memberships. Every hour booked here funds about $1 of subsidised space for another for-purpose org."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How do I book a meeting room at two/fiftyseven?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Email kiaora@twofiftyseven.co with the day, the room you have in mind (or what you're running and we'll suggest one), rough shape, number of people and any catering needs. We send a written quote within a working day and hold the room while you decide. Same-day bookings answered within an hour during business hours (08:00–18:00 weekdays). Members book through the 257 app on their meeting-room credits."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body class="page-meetings section-meet">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<header class="site-header" data-js="site-header">
+    <a href="../index.html" class="wordmark">two/fiftyseven</a>
+    <nav class="nav" role="navigation" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-dropdown nav-section-workspace">
+          <a href="../workspace/index.html" aria-haspopup="true">Workspace</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../workspace/base/index.html" role="menuitem">Base</a></li>
+              <li><a href="../workspace/hub/index.html" role="menuitem">Hub</a></li>
+              <li><a href="../workspace/desk/index.html" role="menuitem">Desk</a></li>
+              <li><a href="../pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-meet">
+          <a href="../meet/index.html" aria-haspopup="true">Meet</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../meetings/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../meetings/workshops/index.html" role="menuitem">Workshops</a></li>
+              <li><a href="../meetings/away-days/index.html" role="menuitem">Away days</a></li>
+              <li><a href="../meetings/pricing/index.html" role="menuitem">Pricing</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown nav-section-host">
+          <a href="../events/index.html" aria-haspopup="true">Host</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../events/events/index.html" role="menuitem">Events</a></li>
+              <li><a href="../events/functions/index.html" role="menuitem">Functions</a></li>
+              <li><a href="../events/conferences/index.html" role="menuitem">Conferences</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../impact/index.html">Impact</a></li>
+        <li class="has-dropdown">
+          <a href="../our-story/index.html" aria-haspopup="true">About</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../kaupapa/index.html" role="menuitem">Kaupapa</a></li>
+              <li><a href="../case-studies/index.html" role="menuitem">Success stories</a></li>
+              <li><a href="../organisations/index.html" role="menuitem">Organisations</a></li>
+              <li><a href="../our-story/index.html" role="menuitem">Our story</a></li>
+              <li><a href="../people/index.html" role="menuitem">People</a></li>
+              <li><a href="../whatson/index.html" role="menuitem">What's on</a></li>
+              <li><a href="../kōrero/index.html" role="menuitem">Kōrero</a></li>
+              <li><a href="../press-kit/index.html" role="menuitem">Press kit</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="has-dropdown">
+          <a href="../calculator/index.html" aria-haspopup="true">Calculators</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../calculator/office-costs/index.html" role="menuitem">Office costs</a></li>
+              <li><a href="../calculator/meeting-costs/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../calculator/hours-to-impact/index.html" role="menuitem">Giving</a></li>
+              <li><a href="../calculator/office-carbon/index.html" role="menuitem">Carbon</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../contact/index.html">Contact</a></li>
+      </ul>
+    </nav>
+    <a href="../tours/" class="btn btn--primary btn--small">Book a tour</a>
+  </header>
+
+<main id="main">
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       HERO — STICKY-PHOTO LOBBY VARIANT · product-detail archetype hero.
+       Photo full-bleed below nav, chapter sections scroll over it.
+       Sibling band (.hero__logos / .logos--lime) sits directly below per
+       the product-detail logos rule (locked-decisions §2).
+       ══════════════════════════════════════════════════════════════════════ -->
+  <section class="hero hero--lobby" aria-labelledby="hero-title">
+    <div class="hero__photo" aria-hidden="true">
+      <picture>
+        <source type="image/webp" srcset="../assets/photography/web/1-space-february2026-640w.webp 640w, ../assets/photography/web/1-space-february2026-1280w.webp 1280w, ../assets/photography/web/1-space-february2026-2400w.webp 2400w" sizes="100vw">
+        <img src="../assets/photography/web/1-space-february2026-1280w.jpg" srcset="../assets/photography/web/1-space-february2026-640w.jpg 640w, ../assets/photography/web/1-space-february2026-1280w.jpg 1280w, ../assets/photography/web/1-space-february2026-2400w.jpg 2400w" sizes="100vw" alt="Silver Linings boardroom at two/fiftyseven — pink wall, polished concrete, view to Matapihi ki te Ao Nui." loading="eager" fetchpriority="high">
+      </picture>
+    </div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+    <div class="hero__panel">
+      <p class="chapter__marker hero__eyebrow">meetings</p>
+      <h1 id="hero-title" class="hero__display">meeting options to suit your needs</h1>
+      <p class="hero__sub">Flexible rooms where every booking funds space for charities and organisations changing the world.</p>
+      <div class="hero__ctas">
+        <a href="#rooms" class="btn btn--primary">See the rooms</a>
+        <a href="mailto:kiaora@twofiftyseven.co?subject=Meeting%20enquiry" class="btn btn--ghost">Get a quote</a>
+      </div>
+    </div>
+  </section>
+  <!-- VALUES TRIO · the three brand pillars (impact / kaupapa / story),
+       tailored for the meetings audience. Impact card claim adapted to
+       "your booking" since this is the meeting-booker's action. Kaupapa
+       + story carry the brand's canonical claims as-is. Same chrome as the
+       homepage trio so visitors recognise the system. -->
+  <style>
+    body.page-meetings .values-trio {
+      position: relative;
+      z-index: 1;
+      isolation: isolate;
+      background: var(--ip-ground);
+      padding: clamp(48px, 7vh, 88px) clamp(28px, 5vw, 96px);
+    }
+    body.page-meetings .values-trio__stage {
+      max-width: 1480px; margin: 0 auto; width: 100%;
+    }
+    body.page-meetings .values-trio__marker {
+      font-family: var(--font-mono);
+      font-size: var(--type-mono-small);
+      text-transform: uppercase;
+      letter-spacing: var(--kerning-caps);
+      color: var(--ip-ink); opacity: 0.7;
+      margin: 0 0 clamp(16px, 2vh, 24px);
+    }
+    body.page-meetings .values-trio__title {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: var(--type-section-h2);
+      line-height: 0.92; letter-spacing: -0.03em;
+      color: var(--ip-ink); margin: 0 0 clamp(40px, 5vh, 64px);
+      max-width: 18ch; text-wrap: balance;
+      text-transform: lowercase;
+    }
+    body.page-meetings .values-trio__grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(20px, 2vw, 32px);
+      align-items: stretch;
+    }
+    @media (max-width: 900px) {
+      body.page-meetings .values-trio__grid { grid-template-columns: 1fr; }
+    }
+    body.page-meetings .values-trio .photo-card {
+      display: block; text-decoration: none; color: var(--ip-paper);
+    }
+    body.page-meetings .values-trio .photo-card__inner {
+      position: relative; overflow: hidden;
+      border-radius: 24px;
+      height: clamp(280px, 36vh, 380px);
+      display: flex; flex-direction: column; justify-content: flex-end;
+      padding: clamp(28px, 2.8vw, 40px);
+      isolation: isolate;
+      background: var(--card-bg, var(--ip-ink));
+      color: var(--card-fg, var(--ip-paper));
+      box-shadow: 0 16px 32px -20px rgba(20,32,11,0.45);
+      transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+                  box-shadow 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body.page-meetings .values-trio .photo-card:hover .photo-card__inner,
+    body.page-meetings .values-trio .photo-card:focus-visible .photo-card__inner {
+      transform: translateY(-14px) scale(1.012);
+      box-shadow: 0 38px 60px -28px rgba(20,32,11,0.6);
+    }
+    body.page-meetings .values-trio .photo-card__photo {
+      position: absolute; inset: -22%; z-index: 0;
+      background-image: var(--shape-url);
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: contain;
+      transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body.page-meetings .values-trio .photo-card:hover .photo-card__photo {
+      transform: scale(1.08) rotate(var(--shape-hover-rotate, 6deg));
+    }
+    body.page-meetings .values-trio .photo-card__claim {
+      position: relative; z-index: 3;
+      font-family: var(--font-body); font-weight: 800;
+      font-size: clamp(1.55rem, 1.4vw + 0.95rem, 2.2rem);
+      line-height: 1.05; letter-spacing: -0.022em;
+      margin: 0 0 clamp(18px, 2.4vh, 28px);
+      max-width: 14ch;
+      color: inherit;
+    }
+    body.page-meetings .values-trio .photo-card__link {
+      position: relative; z-index: 3;
+      font-family: var(--font-mono);
+      font-size: var(--type-mono-small);
+      text-transform: uppercase;
+      letter-spacing: var(--kerning-caps);
+      color: inherit;
+      display: inline-flex; align-items: center; gap: 14px;
+    }
+    body.page-meetings .values-trio .photo-card__link .arrow {
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    body.page-meetings .values-trio .photo-card:hover .photo-card__link .arrow {
+      transform: translateX(12px);
+    }
+    /* Three cards in the two meet-section dark purples (purple-500 + 600).
+       Each card pairs one bg with the OTHER tone as its SVG so the shape
+       reads as a subtle tonal watermark — same pattern as the workspace
+       USPs. Cream text throughout. */
+    body.page-meetings .values-trio .photo-card--impact {
+      --shape-url: url('../shared/svg/shapes/shape-44-purple500.svg');
+      --card-bg: var(--purple-600);
+      --card-fg: var(--ip-paper);
+      --shape-hover-rotate: 14deg;
+    }
+    body.page-meetings .values-trio .photo-card--kaupapa {
+      --shape-url: url('../shared/svg/shapes/shape-77-purple500.svg');
+      --card-bg: var(--purple-600);
+      --card-fg: var(--ip-paper);
+      --shape-hover-rotate: -22deg;
+    }
+    body.page-meetings .values-trio .photo-card--story {
+      --shape-url: url('../shared/svg/shapes/shape-67-purple500.svg');
+      --card-bg: var(--purple-600);
+      --card-fg: var(--ip-paper);
+      --shape-hover-rotate: 8deg;
+    }
+  </style>
+  <section class="values-trio" aria-labelledby="ch-values-title">
+    <div class="values-trio__stage">
+      <p class="values-trio__marker">Why here</p>
+      <h2 id="ch-values-title" class="values-trio__title">we're rethinking how meetings work</h2>
+
+      <div class="values-trio__grid">
+
+        <a class="photo-card photo-card--impact" href="../impact/">
+          <div class="photo-card__inner">
+            <div class="photo-card__photo" aria-hidden="true"></div>
+            <h3 class="photo-card__claim">Your booking pays it forward.</h3>
+            <span class="photo-card__link">See where it goes <span class="arrow" aria-hidden="true">→</span></span>
+          </div>
+        </a>
+
+        <a class="photo-card photo-card--kaupapa" href="../kaupapa/">
+          <div class="photo-card__inner">
+            <div class="photo-card__photo" aria-hidden="true"></div>
+            <h3 class="photo-card__claim">We're backed by values.</h3>
+            <span class="photo-card__link">Read the kaupapa <span class="arrow" aria-hidden="true">→</span></span>
+          </div>
+        </a>
+
+        <a class="photo-card photo-card--story" href="../our-story/">
+          <div class="photo-card__inner">
+            <div class="photo-card__photo" aria-hidden="true"></div>
+            <h3 class="photo-card__claim">Our space is a tool for change.</h3>
+            <span class="photo-card__link">Read the story <span class="arrow" aria-hidden="true">→</span></span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+<!-- THE ROOMS · the routing payload. AEO H2. Each room represents one type -->
+  <section class="chapter" id="rooms" aria-labelledby="ch-rooms-title">
+    <div class="shapes" aria-hidden="true">
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-22.svg'); --s:clamp(220px,28vw,400px); left:-12%; top:-4%; --r:-10deg;" data-drift="0.18" data-rot="-10deg"></span>
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-67.svg'); --s:clamp(140px,18vw,240px); left:86%; top:62%; --r:12deg;" data-drift="-0.22" data-rot="12deg"></span>
+    </div>
+    <div class="chapter__inner">
+      <p class="chapter__marker">The rooms</p>
+      <h2 id="ch-rooms-title" class="display display--mid" data-reveal-words>Which room is right for you?</h2>
+      <p class="lead" data-reveal data-reveal-delay="1">From six-seaters to 150-cap evenings. Sorted small to large.</p>
+
+      <div class="rooms" data-reveal data-reveal-delay="2">
+
+        <!-- ROOM 1 — MEETING ROOM (6) -->
+        <a class="room" href="../meetings/meeting-room/">
+          <div class="room__photo">
+            <picture>
+              <source type="image/webp" srcset="../assets/photography/web/8-creativemornings-january23-dsc04417-640w.webp 640w, ../assets/photography/web/8-creativemornings-january23-dsc04417-1280w.webp 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw">
+              <img src="../assets/photography/web/8-creativemornings-january23-dsc04417-1280w.jpg" srcset="../assets/photography/web/8-creativemornings-january23-dsc04417-640w.jpg 640w, ../assets/photography/web/8-creativemornings-january23-dsc04417-1280w.jpg 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw" alt="The Meeting Room — six-person closed-door room with full-wall whiteboard." loading="lazy">
+            </picture>
+          </div>
+          <div class="room__body">
+            <h3 class="room__name">Meeting Rooms</h3>
+            <p class="room__meta">Up to 6</p>
+            <p class="room__rate">From $70/hr · $290/day</p>
+            <span class="room__link">See the Meeting Rooms <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+
+        <!-- ROOM 2 — STUDIOS WHĀTAITAI + NGAKE (2 × 16) -->
+        <a class="room" href="../meetings/studios-whataitai-ngake/">
+          <div class="room__photo">
+            <picture>
+              <source type="image/webp" srcset="../assets/photography/web/9-space-february2026-640w.webp 640w, ../assets/photography/web/9-space-february2026-1280w.webp 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw">
+              <img src="../assets/photography/web/9-space-february2026-1280w.jpg" srcset="../assets/photography/web/9-space-february2026-640w.jpg 640w, ../assets/photography/web/9-space-february2026-1280w.jpg 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw" alt="Studios Whātaitai + Ngake — two studios named for the taniwha, each booked individually." loading="lazy">
+            </picture>
+          </div>
+          <div class="room__body">
+            <h3 class="room__name">Studios Whātaitai + Ngake</h3>
+            <p class="room__meta">Up to 16</p>
+            <p class="room__rate">From $110/hr · $340/evening · $590/day per studio</p>
+            <span class="room__link">See the Studios <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+
+        <!-- ROOM 3 — SILVER LININGS (12) -->
+        <a class="room" href="../meetings/silver-linings/">
+          <div class="room__photo">
+            <picture>
+              <source type="image/webp" srcset="../assets/photography/web/2-space-february2026-640w.webp 640w, ../assets/photography/web/2-space-february2026-1280w.webp 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw">
+              <img src="../assets/photography/web/2-space-february2026-1280w.jpg" srcset="../assets/photography/web/2-space-february2026-640w.jpg 640w, ../assets/photography/web/2-space-february2026-1280w.jpg 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw" alt="Silver Linings — twelve-person boardroom with pink wall, natural light, polished concrete." loading="lazy">
+            </picture>
+          </div>
+          <div class="room__body">
+            <h3 class="room__name">Silver Linings</h3>
+            <p class="room__meta">Up to 12</p>
+            <p class="room__rate">From $140/hr · $420/evening · $690/day</p>
+            <span class="room__link">See Silver Linings <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+
+        <!-- ROOM 4 — WORKSHOP SPACE (up to 40) -->
+        <a class="room" href="../meetings/workshop-space/">
+          <div class="room__photo">
+            <picture>
+              <source type="image/webp" srcset="../assets/photography/web/j017448-0005-640w.webp 640w, ../assets/photography/web/j017448-0005-1280w.webp 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw">
+              <img src="../assets/photography/web/j017448-0005-1280w.jpg" srcset="../assets/photography/web/j017448-0005-640w.jpg 640w, ../assets/photography/web/j017448-0005-1280w.jpg 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw" alt="Workshop space — chairs reconfigured for a facilitated session, full-wall whiteboards, pinnable walls." loading="lazy">
+            </picture>
+          </div>
+          <div class="room__body">
+            <h3 class="room__name">Workshop Space</h3>
+            <p class="room__meta">Up to 40</p>
+            <p class="room__rate">From $180/hr · $490/evening · $790/day</p>
+            <span class="room__link">See the workshop space <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+
+        <!-- ROOM 5 — EVENT SPACE (150) -->
+        <a class="room" href="../meetings/event-space/">
+          <div class="room__photo">
+            <picture>
+              <source type="image/webp" srcset="../assets/photography/web/j017448-0035-640w.webp 640w, ../assets/photography/web/j017448-0035-1280w.webp 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw">
+              <img src="../assets/photography/web/j017448-0035-1280w.jpg" srcset="../assets/photography/web/j017448-0035-640w.jpg 640w, ../assets/photography/web/j017448-0035-1280w.jpg 1280w" sizes="(min-width: 1100px) 33vw, (min-width: 680px) 50vw, 100vw" alt="The Event Space · AV rig, bar service, set for an evening launch." loading="lazy">
+            </picture>
+          </div>
+          <div class="room__body">
+            <h3 class="room__name">Event Space</h3>
+            <p class="room__meta">Up to 150</p>
+            <p class="room__rate">From $280/hr · $1,190/day</p>
+            <span class="room__link">See the Event Space <span aria-hidden="true">→</span></span>
+          </div>
+        </a>
+
+</div>
+    </div>
+  </section>
+
+  <!-- QUOTE PREVIEW — embedded estimator. Default config: all 6 rooms, 6 people. -->
+  <section class="chapter" aria-label="Quote estimate">
+    <div class="chapter__inner">
+      <section
+        class="quick-quote"
+        aria-label="Quick quote estimate"
+        data-default-people="6"
+        data-default-hours="4"
+        data-rooms="meeting,silver-linings,studio,workshop,event,entire"
+        data-pricing-url="pricing/">
+        <div class="quick-quote__head">
+          <p class="quick-quote__eyebrow">Estimate</p>
+          <h2 class="quick-quote__title">get a number for your meeting</h2>
+          <p class="quick-quote__sub">Pick a room, your duration and how many people. We'll show you a starting estimate, then carry it through to the full quote for dates, multi-day and add-ons.</p>
+          <div class="quick-quote__inputs">
+            <div class="qq-field">
+              <span class="qq-field__label">People</span>
+              <div class="qq-slider-row">
+                <input type="range" class="qq-slider" data-js="qq-people" min="0" max="73" step="1" value="5">
+                <output class="qq-slider-value" data-js="qq-people-value">6 people</output>
+              </div>
+            </div>
+            <div class="qq-field">
+              <span class="qq-field__label">Hours</span>
+              <div class="qq-slider-row">
+                <input type="range" class="qq-slider" data-js="qq-hours" min="1" max="12" step="1" value="4">
+                <output class="qq-slider-value" data-js="qq-hours-value">4 hrs</output>
+              </div>
+            </div>
+            <div class="qq-field">
+              <span class="qq-field__label">Room <span style="opacity: 0.55; font-size: 0.7rem;">auto-picked, tap to change</span></span>
+              <div class="qq-pills" data-js="rooms">
+                <label class="qq-pill" data-room="meeting"        data-day="290"  data-hour="70"  data-evening="0"   data-cap="6">Meeting Room</label>
+                <label class="qq-pill" data-room="silver-linings" data-day="690"  data-hour="140" data-evening="420" data-cap="12">Silver Linings</label>
+                <label class="qq-pill" data-room="studio"         data-day="590"  data-hour="110" data-evening="340" data-cap="16">Studio</label>
+                <label class="qq-pill" data-room="workshop"       data-day="790"  data-hour="180" data-evening="490" data-cap="40">Workshop Space</label>
+                <label class="qq-pill" data-room="event"          data-day="1190" data-hour="280" data-evening="740" data-cap="100">Event Space</label>
+                <label class="qq-pill" data-room="entire"         data-day="1900" data-hour="380" data-evening="990" data-cap="200">Entire two/fiftyseven</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <aside class="qq-estimate" aria-live="polite">
+          <div class="qq-estimate__head">
+            <p class="qq-estimate__label">Estimated total</p>
+            <p class="qq-estimate__amount" data-js="qq-amount">$0</p>
+            <p class="qq-estimate__small">excl. GST · room only</p>
+          </div>
+          <div class="qq-impact" data-js="qq-impact" hidden>
+            <p class="qq-impact__label">Your booking also funds</p>
+            <p class="qq-impact__amount"><span data-js="qq-impact-amount">$0</span> of subsidised space</p>
+            <p class="qq-impact__context">contributing to <span class="qq-impact__total"></span> paid forward since 2021</p>
+          </div>
+          <div class="qq-impact-toggle" data-js="qq-impact-toggle" data-on="false" role="button" tabindex="0" aria-pressed="false" aria-label="Apply Impact Discount, 50% off room rate">
+            <span class="qq-impact-toggle__check" aria-hidden="true"></span>
+            <span class="qq-impact-toggle__title">Apply Impact Discount · 50% off</span>
+          </div>
+          <span class="qq-impact-toggle__criteria">For charity, NGO, B-Corp under $200k · carbon-zero under $200k · community volunteer · tangata whenua / indigenous-led.</span>
+          <div>
+            <a href="pricing/" class="qq-cta" data-js="qq-cta-detailed">
+              Get a full quote
+              <span class="qq-cta__arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+          <div class="qq-talk">
+            <p class="qq-talk__lead">Still feels out of reach? Our kaupapa is making space accessible — let's kōrero.</p>
+            <a href="mailto:kiaora@twofiftyseven.co?subject=Talk%20to%20us%20about%20access" class="qq-talk__cta">
+              Talk to us about your kaupapa
+              <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </aside>
+      </section>
+    </div>
+  </section>
+
+  <!-- WHAT'S INCLUDED · 2-col split (heading | list). Mirrors workshops template. -->
+  <section class="chapter" aria-labelledby="ch-included-title">
+    <div class="shapes" aria-hidden="true">
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-103.svg'); --s:clamp(200px,26vw,360px); left:84%; top:-8%; --r:14deg;" data-drift="-0.20" data-rot="14deg"></span>
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-72.svg'); --s:clamp(160px,20vw,280px); left:-8%; top:62%; --r:-12deg;" data-drift="0.24" data-rot="-12deg"></span>
+    </div>
+    <div class="chapter__inner">
+      <div class="incl">
+        <div class="incl__head">
+          <p class="chapter__marker">What's included</p>
+          <h2 id="ch-included-title" class="display display--mid" data-reveal-words>What's included with every room booking?</h2>
+          <p class="lead" data-reveal data-reveal-delay="1">Every room comes set up before you arrive. Same care that runs the workspace runs every booking · no hidden hire fees, no surprise extras.</p>
+        </div>
+        <div class="incl-cards" data-reveal data-reveal-delay="2">
+          <article class="incl-card">
+            <p class="incl-card__label">Set-up and pack-down</p>
+            <p class="incl-card__detail">The room arranged to your shape before you arrive, cleared by us after you leave.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Tea + coffee</p>
+            <p class="incl-card__detail">Organic, brewed fresh and in your room when you arrive.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Wifi</p>
+            <p class="incl-card__detail">Fast business-grade wifi on every device, every room.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">AV, ready to go</p>
+            <p class="incl-card__detail">Screens, projector, mics, dongles, wireless screen-share · checked before you arrive, in the rooms that have it.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Whiteboards</p>
+            <p class="incl-card__detail">Full-wall whiteboards in the rooms that take them, with markers, erasers, and a pinnable surface.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Catering sorted</p>
+            <p class="incl-card__detail">Through Karaka Cafe, Blue Carrot or Food Envy · passed through to you at cost, no markup.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">Full accessibility</p>
+            <p class="incl-card__detail">Lift access from both Willis Street and Victoria Street entrances. Designed for everyone, every meeting.</p>
+          </article>
+          <article class="incl-card">
+            <p class="incl-card__label">The Impact Discount</p>
+            <p class="incl-card__detail">Up to 50% off for qualifying charities, NGOs, indigenous-led organisations, community groups and social enterprises.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+<!-- VOICES · three quotes from people who've held meetings -->
+  <section class="chapter" aria-label="What teams say">
+    <div class="shapes" aria-hidden="true">
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-72.svg'); --s:clamp(120px,15vw,220px); left:6%; top:14%; --r:-10deg;" data-drift="0.22" data-rot="-10deg"></span>
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-88.svg'); --s:clamp(160px,20vw,280px); left:80%; top:68%; --r:14deg;" data-drift="-0.18" data-rot="14deg"></span>
+    </div>
+    <div class="chapter__inner">
+      <p class="chapter__marker">What teams say</p>
+
+      <div class="voices" data-reveal data-reveal-delay="2">
+        <!-- Voice 1 — Liz, Aged Care Association · Event space (verified, preserved from prior page) -->
+        <blockquote class="voice" style="--quote-shape: url('../shared/svg/shapes/shape-100-lavender.svg');">
+          <p class="voice__text">The perfect venue. The kaupapa of the space enhanced our mahi, and I hope we can use it more often.</p>
+          <p class="voice__attr">Liz &nbsp;/&nbsp; Aged Care Association &nbsp;/&nbsp; Event Space</p>
+        </blockquote>
+
+        <!-- Voice 2 — Kathy, IHC · Meeting room (verified, preserved from prior page) -->
+        <blockquote class="voice" style="--quote-shape: url('../shared/svg/shapes/shape-101-lavender.svg');">
+          <p class="voice__text">So many comments from our team as to what a good vibe it had. The effortless inclusion — Humans sign on the bathroom, the shower, a very disability-friendly attribute.</p>
+          <p class="voice__attr">Kathy &nbsp;/&nbsp; IHC &nbsp;/&nbsp; Meeting Room</p>
+        </blockquote>
+
+        <!-- Voice 3 — Alyssa, Predator Free 2050 · Meeting room (verified, preserved from prior page) -->
+        <blockquote class="voice" style="--quote-shape: url('../shared/svg/shapes/shape-91-lavender.svg');">
+          <p class="voice__text">Everything went smoothly and the service was great. They loved the catering with Blue Carrot. All round a positive experience.</p>
+          <p class="voice__attr">Alyssa &nbsp;/&nbsp; Predator Free 2050 &nbsp;/&nbsp; Board meeting</p>
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <!-- TALK TO US · invite block close, AEO H2. Mirrors /meet/. -->
+  <section class="chapter chapter--fit" id="book" aria-labelledby="ch-close-title">
+    <div class="shapes" aria-hidden="true">
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-05.svg'); --s:clamp(380px,46vw,720px); left:-20%; top:-10%; --r:-12deg;" data-drift="-0.22" data-rot="-12deg"></span>
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-128.svg'); --s:clamp(320px,40vw,600px); left:62%; top:58%; --r:-14deg;" data-drift="0.18" data-rot="-14deg"></span>
+    </div>
+    <div class="chapter__inner">
+      <p class="chapter__marker">Get started</p>
+      <h2 id="ch-close-title" class="display display--mid" data-reveal-words>Talk to us about your booking.</h2>
+      <p class="lead" data-reveal data-reveal-delay="1">Tell us the day, the rough shape, the number of people — and which room you have in mind, or what you're running and we'll suggest one. <span class="pop">Written quote within a working day</span>, room held while you decide.</p>
+
+      <div class="invite" data-reveal data-reveal-delay="2">
+        <!-- PRIMARY — reader is room-shopping. Tour is the strongest "help me choose" move:
+             see all six rooms in person, pick the one that fits the booking. -->
+        <a class="invite__primary" href="../tours/">
+          <p class="invite__eyebrow">Not sure which room</p>
+          <h3 class="invite__primary-title">Walk the rooms<span class="invite__arrow" aria-hidden="true">→</span></h3>
+          <p class="invite__primary-body">A 20-minute tour with whoever's hosting. See every room in person, work out which one fits the booking. Tea on arrival.</p>
+          <p class="invite__meta"><span>Weekday mornings</span><span aria-hidden="true">·</span><span>With whoever's hosting</span><span aria-hidden="true">·</span><span>Bring a colleague</span></p>
+        </a>
+
+        <!-- SECONDARY ROW — two transactional paths:
+             (1) written quote for the reader with a specific day in mind,
+             (2) self-serve pricing for the reader who wants to work it out themselves. -->
+        <div class="invite__row">
+          <a class="invite__secondary" href="mailto:kiaora@twofiftyseven.co?subject=Meeting%20room%20enquiry">
+            <div class="invite__secondary-text">
+              <h3 class="invite__secondary-title">Email us your day<span class="invite__arrow" aria-hidden="true">→</span></h3>
+              <p class="invite__secondary-body">Day, rough shape, headcount, catering needs. Written quote back inside a working day. Same-hour response in business hours.</p>
+            </div>
+          </a>
+          <a class="invite__secondary" href="pricing/">
+            <div class="invite__secondary-text">
+              <h3 class="invite__secondary-title">Price it yourself<span class="invite__arrow" aria-hidden="true">→</span></h3>
+              <p class="invite__secondary-body">Our pricing tool. Pick the room, hours, catering and AV. Live total, written quote at the end. No commitment.</p>
+            </div>
+          </a>
+        </div>
+
+        <!-- TERTIARY — Impact Discount for for-purpose orgs. -->
+        <div class="invite__impact">
+          <p class="invite__impact-heading">For-purpose work?</p>
+          <p class="invite__impact-body">Charities, NGOs, indigenous-led orgs, community groups and social enterprises book at up to 50% off under the Impact Discount.</p>
+          <a class="invite__impact-link" href="mailto:kiaora@twofiftyseven.co?subject=Impact%20Discount%20enquiry">Tell us about your work →</a>
+        </div>
+      </div>
+
+      <p style="text-align: center; margin-top: clamp(48px, 6vh, 88px); font-size: var(--type-small); color: var(--ip-ink-dim);">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara — opposite Matapihi ki te Ao Nui (Wellington Library)</p>
+    </div>
+  </section>
+
+  <!-- FAQ · AEO-led. Mirrors FAQPage JSON-LD above exactly. -->
+  <section class="chapter" aria-labelledby="ch-faq-title">
+    <div class="shapes" aria-hidden="true">
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-69.svg'); --s:clamp(160px,20vw,280px); left:-4%; top:18%; --r:10deg;" data-drift="0.18" data-rot="10deg"></span>
+      <span class="shape" style="--shape:url('../shared/svg/shapes/shape-33.svg'); --s:clamp(140px,18vw,240px); left:88%; top:74%; --r:-12deg;" data-drift="-0.20" data-rot="-12deg"></span>
+    </div>
+    <div class="chapter__inner">
+      <p class="chapter__marker">FAQ</p>
+      <h2 id="ch-faq-title" class="display display--mid" data-reveal-words>Before you book.</h2>
+
+      <div class="faq" data-js="faq-accordion" style="margin-top: clamp(40px, 5vh, 72px); max-width: var(--container-narrow, 880px);">
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">Which two/fiftyseven room fits a 6-person meeting?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              <p>The <a href="../meetings/meeting-room/">Meeting Room</a> — a sound-isolated six-person room with a full-wall whiteboard, screen, wireless screen-share, fast wifi and tea/coffee on the table. Booked by the hour or the day: <strong>$70/hr or $290/day</strong>. Best for confidential discussions, focused video calls, and one-on-ones that need privacy.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">Which two/fiftyseven room fits a 12-person workshop?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              <p>Two options. <a href="../meetings/silver-linings/">Silver Linings</a> is a twelve-person boardroom with natural light and high-quality video conferencing — <strong>$120/hr, $360/evening, $590/day</strong> — best when the room itself needs to take the meeting seriously. <a href="../meetings/studios-whataitai-ngake/">Studios Whātaitai + Ngake</a> are slightly more relaxed sixteen-person studios at <strong>$90/hr, $290/evening, $490/day</strong> per studio — book one studio or both as two separate rooms.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">Can I book a meeting room at two/fiftyseven for an evening event?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              <p>Yes. The <a href="../meetings/event-space/">Event Space</a> is built for evening hire · 150 people, full AV, optional bar service, Victoria Street entry that runs into the evening opposite Matapihi ki te Ao Nui. DIY rental from <strong>$280/hr or $1,190/day</strong>. Silver Linings and the studios also book by the evening for smaller after-hours functions: Silver Linings at $360/evening (4-hour block), studios at $290/evening per studio.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">How much do meeting rooms at two/fiftyseven cost?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              <p>All prices. Charities, NGOs and indigenous-led organisations book at up to <strong>50% off</strong> under the Impact Discount.</p>
+              <table class="price-table" aria-label="Room pricing across all five room types">
+                <thead>
+                  <tr>
+                    <th scope="col">Room</th>
+                    <th scope="col">Capacity</th>
+                    <th scope="col">Per hour</th>
+                    <th scope="col">Per evening</th>
+                    <th scope="col">Per day</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="room">Meeting Rooms (×4)</td>
+                    <td>Up to 6</td>
+                    <td>$60</td>
+                    <td class="dash">—</td>
+                    <td>$250</td>
+                  </tr>
+                  <tr>
+                    <td class="room">Studios Whātaitai + Ngake</td>
+                    <td>2 × 16</td>
+                    <td>$90<small> /studio</small></td>
+                    <td>$290<small> /studio</small></td>
+                    <td>$490<small> /studio</small></td>
+                  </tr>
+                  <tr>
+                    <td class="room">Silver Linings</td>
+                    <td>Up to 12</td>
+                    <td>$120</td>
+                    <td>$360</td>
+                    <td>$590</td>
+                  </tr>
+                  <tr>
+                    <td class="room">Workshop Space</td>
+                    <td>Up to 40</td>
+                    <td>$180</td>
+                    <td>$440</td>
+                    <td>$690</td>
+                  </tr>
+                  <tr>
+                    <td class="room">Event Space</td>
+                    <td>Up to 150</td>
+                    <td>$240</td>
+                    <td>$590</td>
+                    <td>$990</td>
+                  </tr>
+</tbody>
+              </table>
+              <p style="font-size: var(--type-small); opacity: 0.7;">Evening = 4-hour block. AV staff support available at $75/hr where wanted.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">Is two/fiftyseven accessible?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              <p>Yes. Step-free entry from both Willis Street and Victoria Street, lift access to Level 2 from both, accessible bathrooms, non-gendered facilities, a shower on site. The whole space is on one level, with wide pathways between rooms. We can pre-arrange seating, hearing-loop equipment and a quiet breakout room — flag anything we should set up at booking.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">Can I bring catering to a meeting room booking, or does two/fiftyseven provide it?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              <p>Both. We work with three local catering partners — Karaka Cafe (Māori kai), Blue Carrot (plant-led platters) and Food Envy (full-service hot meals and canapés) — at no markup, no minimum, ordered through us. Or you can BYO. For evening events the bar is run by our team, or you can BYO that too.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">How does the Impact Discount apply to meeting bookings at two/fiftyseven?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              <p>Charities, NGOs, indigenous-led organisations, community groups and social enterprises doing for-purpose work in Aotearoa book any meeting room at up to 50% off — same room, same access, different invoice. The discount is offered automatically once we've confirmed eligibility; no separate application form. It applies to room hire only, not workspace memberships. Every hour booked here funds about $1 of subsidised space for another for-purpose org.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item" data-open="false">
+          <button class="faq-item__question" type="button" aria-expanded="false">How do I book a meeting room at two/fiftyseven?<span class="faq-item__icon" aria-hidden="true">+</span></button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              <p>Email <a href="mailto:kiaora@twofiftyseven.co">kiaora@twofiftyseven.co</a> with the day, the room you have in mind (or what you're running and we'll suggest one), rough shape, number of people and any catering needs. We send a written quote within a working day and hold the room while you decide. Same-day bookings answered within an hour during business hours (08:00–18:00 weekdays). Members book through the 257 app on their meeting-room credits.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer" data-theme="dark">
+    <div class="container">
+      <div class="site-footer__top">
+        <nav class="site-footer__nav" aria-label="Footer">
+          <div class="site-footer__col site-footer__col--find">
+            <h4>Find us</h4>
+            <address class="site-footer__address">Level 2, 57 Willis Street + 70 Victoria Street, Te Whanganui-a-Tara</address>
+            <p class="site-footer__note">Central lift access from both the Willis Street and Victoria Street entrances. The Victoria Street entrance is opposite Matapihi ki te Ao Nui.</p>
+            <a class="site-footer__maplink" href="https://www.google.com/maps/search/?api=1&amp;query=57+Willis+Street+Te+Whanganui-a-Tara">View on map</a>
+          </div>
+          <div class="site-footer__col">
+            <h4>Workspace</h4>
+            <ul>
+              <li><a href="../workspace/base/index.html">Base</a></li>
+              <li><a href="../workspace/hub/index.html">Hub</a></li>
+              <li><a href="../workspace/desk/index.html">Desk</a></li>
+              <li><a href="../pricing/index.html">Pricing</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col">
+            <h4>Meet &amp; Host</h4>
+            <ul>
+              <li><a href="../meetings/index.html">Meetings</a></li>
+              <li><a href="../meetings/workshops/index.html">Workshops</a></li>
+              <li><a href="../meetings/away-days/index.html">Away days</a></li>
+              <li><a href="../events/index.html">Events</a></li>
+              <li><a href="../events/functions/index.html">Functions</a></li>
+            </ul>
+          </div>
+          <div class="site-footer__col site-footer__col--about">
+            <h4>About</h4>
+            <ul>
+              <li><a href="../our-story/index.html">Our story</a></li>
+              <li><a href="../impact/index.html">Impact</a></li>
+              <li><a href="../kaupapa/index.html">Kaupapa</a></li>
+              <li><a href="../organisations/index.html">Organisations</a></li>
+              <li><a href="../whatson/index.html">What's on</a></li>
+              <li><a href="../kōrero/index.html">Kōrero</a></li>
+              <li><a href="../people/index.html">People</a></li>
+              <li><a href="../press-kit/index.html">Press kit</a></li>
+        <li class="has-dropdown">
+          <a href="../calculator/index.html" aria-haspopup="true">Calculators</a>
+          <div class="nav-dropdown" role="menu">
+            <ul>
+              <li><a href="../calculator/office-costs/index.html" role="menuitem">Office costs</a></li>
+              <li><a href="../calculator/meeting-costs/index.html" role="menuitem">Meetings</a></li>
+              <li><a href="../calculator/hours-to-impact/index.html" role="menuitem">Giving</a></li>
+              <li><a href="../calculator/office-carbon/index.html" role="menuitem">Carbon</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="../contact/index.html">Contact</a></li>
+            </ul>
+          </div>
+        </nav>
+
+        <form class="site-footer__panui" method="post" action="#" aria-label="Pānui signup">
+          <h4>Pānui</h4>
+          <p>Occasional notes from inside two/fiftyseven · what's on, what's changed, what we're thinking about.</p>
+          <div class="site-footer__panui-row">
+            <label class="visually-hidden" for="panui-email">Email address</label>
+            <input type="email" id="panui-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+            <button type="submit" class="btn btn--primary btn--small">Sign up</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="site-footer__beliefs" aria-label="What we believe">
+        <ul class="site-footer__beliefs-track">
+          <li>diversity is resilience</li>
+          <li>radical equality is good for all</li>
+          <li>complete decolonisation is a necessary future</li>
+          <li>climate justice is a human and environmental imperative</li>
+          <li aria-hidden="true">diversity is resilience</li>
+          <li aria-hidden="true">radical equality is good for all</li>
+          <li aria-hidden="true">complete decolonisation is a necessary future</li>
+          <li aria-hidden="true">climate justice is a human and environmental imperative</li>
+        </ul>
+      </div>
+
+      <div class="site-footer__wordmark" data-js="footer-reveal" role="img" aria-label="two/fiftyseven"></div>
+
+      <div class="site-footer__bottom">
+        <span>&copy; 2026 two/fiftyseven Limited</span>
+        <span>Aotearoa / New Zealand</span>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var wm = document.querySelector('[data-js="footer-reveal"]');
+        if (!wm) return;
+        if (!('IntersectionObserver' in window)) { wm.classList.add('is-revealed'); return; }
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (e) {
+            if (e.isIntersecting) { e.target.classList.add('is-revealed'); io.unobserve(e.target); }
+          });
+        }, { threshold: 0.25 });
+        io.observe(wm);
+      })();
+    </script>
+  </footer>
+
+<!-- Site header scroll indicator -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const header = document.querySelector('[data-js="site-header"]');
+    if (header) {
+      window.addEventListener('scroll', function() {
+        header.classList.toggle('is-scrolled', window.scrollY > 0);
+      });
+    }
+  });
+</script>
+
+</body>
+</html>

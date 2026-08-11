@@ -92,8 +92,15 @@
 		outline-offset: 3px;
 	}
 
-	&:hover  { filter: brightness(1.2); }
-	&:active { filter: brightness(0.94); }
+	&:hover:not(:disabled)  { filter: brightness(1.2); }
+	&:active:not(:disabled) { filter: brightness(0.94); }
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+		filter: none;
+		pointer-events: none;
+	}
 }
 
 // ── .btn (custom usage) ───────────────────────────────────────

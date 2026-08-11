@@ -1,0 +1,1263 @@
+/* ============================================================================
+   IMPACT — showpiece redesign.
+   A grey-green field (sampled from the Half-Earth Socialism cover), lime as the
+   punch colour, scattered silhouette shapes as the connective thread, copy that
+   leads as display typography, everything revealed on scroll.
+   Scoped to body.page-impact so it never leaks into the rest of the site.
+   ============================================================================ */
+
+.page-impact {
+  /* --- palette: cover-sampled grey-green + lime punch + near-black ink --- */
+  --ip-ground:   #b0bca6;   /* the grey-green field — the constant ground */
+  --ip-ground-2: #a3b098;   /* a half-step deeper, for quiet layering */
+  --ip-lime:     #e5ffa9;   /* pale brand lime — sitewide ground for drift SVGs + accents */
+  --ip-ink:      #14200b;   /* near-black — display type + body */
+  --ip-paper:    #dde3d4;   /* pale grey-green — card / panel fill */
+  --ip-ink-dim:  rgba(20, 32, 11, 0.62);
+
+  /* mono labels run a touch larger here — the 12px default reads too small
+     against this page's display scale */
+  --type-mono-small: clamp(0.8125rem, 0.18vw + 0.78rem, 0.9rem);
+
+  background: var(--ip-ground);
+  color: var(--ip-ink);
+}
+
+/* The one earned inversion — a single deep-forest chapter */
+.page-impact .ip-chapter--dark {
+  background: var(--ip-ink);
+  color: var(--ip-ground);
+}
+.page-impact .ip-chapter--dark .ip-display,
+.page-impact .ip-chapter--dark .ip-stat__figure,
+.page-impact .ip-chapter--dark .ip-marker,
+.page-impact .ip-chapter--dark .ip-marker::before { color: var(--ip-ground); }
+.page-impact .ip-chapter--dark .ip-marker::before { background: var(--ip-ground); }
+
+/* Or — the LIME flip. Used for the at-scale punchline: bright, optimistic,
+   the "dream state" of $5B / year, ink figures on a lime field. */
+.page-impact .ip-chapter--lime {
+  background: var(--ip-lime);
+  color: var(--ip-ink);
+}
+.page-impact .ip-chapter--lime .ip-shape { background: var(--ip-ink); }
+.page-impact .ip-chapter--lime .ip-scale__figure,
+.page-impact .ip-chapter--lime .ip-compare__mult { color: var(--ip-ink); }
+.page-impact .ip-chapter--lime .ip-compare__item { border-top-color: rgba(20, 32, 11, 0.32); }
+.page-impact .ip-chapter--lime .ip-compare__label { color: var(--ip-ink); opacity: 0.78; }
+.page-impact .ip-chapter--lime .ip-scale__caption,
+.page-impact .ip-chapter--lime .ip-statement,
+.page-impact .ip-chapter--lime .ip-quote__text { color: var(--ip-ink); }
+.page-impact .ip-chapter--lime .ip-quote__attribution { color: rgba(20, 32, 11, 0.7); }
+.page-impact .ip-chapter--lime .ip-quote__text .ip-pop {
+  background: var(--ip-ink); color: var(--ip-lime);
+  padding: 0.04em 0.14em;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+
+/* ----------------------------------------------------------------------------
+   FIXED CHROME — scroll-progress rail + reduce-motion toggle
+   ---------------------------------------------------------------------------- */
+.ip-progress {
+  position: fixed; top: 0; right: 0; bottom: 0; width: 3px;
+  z-index: 60; background: rgba(20, 32, 11, 0.14);
+}
+.ip-progress__bar {
+  position: absolute; top: 0; left: 0; right: 0; height: 0;
+  background: var(--ip-ink);
+  will-change: height;
+}
+.ip-motion {
+  position: fixed; left: 18px; bottom: 18px; z-index: 60;
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink); background: var(--ip-ground);
+  border: 1.5px solid var(--ip-ink); border-radius: var(--radius-pill);
+  padding: 8px 14px; cursor: pointer;
+  transition: background var(--motion-fast) var(--ease-out), color var(--motion-fast) var(--ease-out);
+}
+.ip-motion:hover { background: var(--ip-ink); color: var(--ip-ground); }
+
+/* ----------------------------------------------------------------------------
+   CHAPTER — a full-bleed section in the field, generous, one idea per screen
+   ---------------------------------------------------------------------------- */
+.ip-chapter {
+  position: relative;
+  padding-block: clamp(72px, 11vw, 168px);
+  overflow: hidden;
+}
+.ip-chapter__inner {
+  position: relative; z-index: 2;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+.ip-chapter--open { padding-top: clamp(56px, 8vw, 120px); }
+/* "fit" modifier — for chapters that should read as one viewport: tighter
+   block padding so the heading + crucial element fit without scrolling. */
+.ip-chapter--fit { padding-block: clamp(32px, 4.5vw, 70px); }
+.ip-chapter--fit .ip-chapter__inner { display: flex; flex-direction: column; gap: 0; }
+.ip-chapter--fit .ip-display + .ip-lead { margin-top: var(--space-300); }
+.ip-chapter--fit .ip-lead { font-size: clamp(1.05rem, 0.9vw + 0.85rem, 1.5rem); }
+.ip-chapter--fit .ip-display { font-size: clamp(2.4rem, 6vw + 0.4rem, 6rem); }
+.ip-chapter--fit .ip-display--mid { font-size: clamp(2rem, 4vw + 0.5rem, 4.2rem); }
+.ip-chapter--fit .ip-scale { margin-top: clamp(24px, 4vh, 56px); }
+.ip-chapter--fit .ip-scale__figure { font-size: clamp(4rem, 11vw, 9.5rem); }
+.ip-chapter--fit .ip-compare { margin-top: clamp(28px, 5vh, 72px); }
+.ip-chapter--fit .ip-quote { margin-top: clamp(36px, 6vh, 92px); }
+.ip-chapter--fit .ip-actions { margin-top: clamp(20px, 3vh, 48px); }
+.ip-chapter--fit .ip-calc-card { padding: clamp(16px, 2.2vw, 28px) clamp(20px, 2.8vw, 36px); }
+.ip-chapter--fit .ip-calc-card__num { font-size: clamp(2rem, 3.8vw, 3.6rem); }
+.ip-chapter--fit .ip-quote__text { font-size: clamp(1.4rem, 2.2vw + 0.4rem, 2.7rem); }
+.ip-chapter--fit .ip-statement { margin-top: clamp(28px, 4vh, 64px); }
+
+/* Chapter marker — the visible thread, a small mono label with a rule */
+.ip-marker {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink);
+  display: inline-flex; align-items: center; gap: var(--space-250);
+  margin: 0 0 var(--space-500);
+}
+/* Dash device on the marker prefix removed (whole-site rule, 2026-05-17). */
+.ip-marker::before { content: none; }
+/* a tiny lime brand-shape sits in place of the em-dash between number + name */
+.ip-marker__shape {
+  display: inline-block; flex: none;
+  width: 1em; height: 1em;
+  background: var(--ip-ink);
+  -webkit-mask: var(--shape) no-repeat center / contain;
+          mask: var(--shape) no-repeat center / contain;
+  vertical-align: middle;
+}
+.ip-chapter--lime .ip-marker__shape { background: var(--ip-ink); }
+.ip-chapter--dark .ip-marker__shape { background: var(--ip-ground); }
+
+/* ----------------------------------------------------------------------------
+   SHAPE SCATTER — the connective tissue. Silhouette SVGs masked to lime,
+   positioned per instance, drifting on scroll (see impact.js [data-drift]).
+   ---------------------------------------------------------------------------- */
+.ip-shapes {
+  position: absolute; inset: 0; z-index: 1;
+  pointer-events: none; overflow: hidden;
+}
+.ip-shape {
+  position: absolute; display: block;
+  width: var(--s, 120px); aspect-ratio: 1 / 1;
+  background: var(--ip-lime);
+  -webkit-mask: var(--shape) no-repeat center / contain;
+          mask: var(--shape) no-repeat center / contain;
+  will-change: transform;
+  transform: rotate(var(--r, 0deg));
+}
+.ip-shape--ink { background: var(--ip-ink); }
+.ip-shape--deep { background: var(--ip-ground-2); }
+.ip-chapter--dark .ip-shape { background: var(--ip-lime); }
+.ip-chapter--dark .ip-shape--ink { background: var(--ip-ground); }
+
+/* ----------------------------------------------------------------------------
+   DISPLAY TYPOGRAPHY — the copy leads. Big, spare, declarative.
+   ---------------------------------------------------------------------------- */
+.ip-display {
+  font-family: var(--font-display);
+  font-weight: var(--weight-medium);
+  font-size: clamp(3rem, 8.5vw + 0.5rem, 8.5rem);
+  line-height: 0.98;
+  letter-spacing: var(--kerning-display);
+  color: var(--ip-ink);
+  margin: 0;
+  text-wrap: balance;
+}
+.ip-display--mid { font-size: clamp(2.5rem, 5.5vw + 0.5rem, 5.5rem); }
+.ip-display em,
+.page-impact .ip-pop {
+  font-style: normal;
+  color: var(--ip-ink);
+  background: var(--ip-lime);
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: 0.04em 0.14em;
+}
+.ip-lead {
+  font-size: clamp(1.2rem, 1.4vw + 0.85rem, 1.75rem);
+  line-height: var(--leading-snug);
+  max-width: 34ch;
+  margin: var(--space-600) 0 0;
+  color: var(--ip-ink);
+}
+.ip-eyebrow {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim); margin: 0 0 var(--space-300);
+}
+
+/* ----------------------------------------------------------------------------
+   STATS — a vertical narrative sequence. Each statement is its own scroll
+   moment: a lead-in line, a huge bold count-up number, a follow line —
+   all popping up in cascade as the statement enters view.
+   ---------------------------------------------------------------------------- */
+.ip-stats {
+  display: flex; flex-direction: column;
+  gap: clamp(96px, 17vh, 260px);
+  margin-top: clamp(112px, 16vh, 240px);
+}
+.ip-stat__lead {
+  font-size: clamp(1.5rem, 2vw + 1rem, 2.75rem);
+  line-height: var(--leading-snug);
+  color: var(--ip-ink-dim);
+  margin: 0;
+}
+.ip-stat__figure {
+  display: block; margin: var(--space-400) 0 var(--space-300);
+  font-family: var(--font-display); font-weight: var(--weight-bold);
+  font-size: clamp(3.75rem, 13vw, 14rem);
+  line-height: 0.84; letter-spacing: var(--kerning-display);
+  color: var(--ip-ink); font-variant-numeric: tabular-nums;
+  text-wrap: balance;
+}
+.ip-stat__label {
+  font-size: clamp(1.5rem, 2vw + 1rem, 2.75rem);
+  line-height: var(--leading-snug);
+  color: var(--ip-ink);
+  margin: 0;
+}
+
+/* ----------------------------------------------------------------------------
+   REVEAL — one-shot, scroll-triggered (see impact.js [data-reveal])
+   ---------------------------------------------------------------------------- */
+[data-reveal] {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 760ms var(--ease-out), transform 760ms var(--ease-out);
+}
+[data-reveal].is-inview { opacity: 1; transform: none; }
+[data-reveal][data-reveal-delay="1"] { transition-delay: 90ms; }
+[data-reveal][data-reveal-delay="2"] { transition-delay: 180ms; }
+[data-reveal][data-reveal-delay="3"] { transition-delay: 270ms; }
+[data-reveal][data-reveal-delay="4"] { transition-delay: 360ms; }
+
+/* Motion off — manual toggle or prefers-reduced-motion: everything just IS */
+.page-impact.motion-off [data-reveal] { opacity: 1; transform: none; transition: none; }
+.page-impact.motion-off .ip-shape { transform: rotate(var(--r, 0deg)) !important; }
+@media (prefers-reduced-motion: reduce) {
+  .page-impact [data-reveal] { opacity: 1; transform: none; transition: none; }
+}
+
+/* ----------------------------------------------------------------------------
+   WORD REVEAL — a display line that assembles itself, word by word.
+   JS splits the text node into .ip-word spans with staggered delays.
+   ---------------------------------------------------------------------------- */
+[data-reveal-words] .ip-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.42em) rotate(2deg);
+  transition: opacity 560ms var(--ease-out), transform 560ms var(--ease-out);
+}
+[data-reveal-words].is-inview .ip-word { opacity: 1; transform: none; }
+.page-impact.motion-off [data-reveal-words] .ip-word {
+  opacity: 1; transform: none; transition: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-impact [data-reveal-words] .ip-word { opacity: 1; transform: none; transition: none; }
+}
+
+/* ----------------------------------------------------------------------------
+   CHAPTER 2 — THE MECHANISM
+   Same price, two destinations — a vertical rail the dollar slides down on
+   scroll, then the path it takes here versus anywhere else, a display-scale
+   quote, the proof equation.
+   ---------------------------------------------------------------------------- */
+/* ----------------------------------------------------------------------------
+   THE CYCLE — chapter 2's mechanism, redesigned. A circular diagram with
+   labels at compass points and lime tokens orbiting the ring. The redistri-
+   bution made visible as a continuous loop, not a fork.
+   ---------------------------------------------------------------------------- */
+/* the two paths — two simple line diagrams, equal columns */
+.ip-paths {
+  margin-top: clamp(48px, 7vh, 110px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(48px, 7vw, 120px);
+  align-items: center;
+  max-width: min(92%, 1100px);
+  margin-left: auto; margin-right: auto;
+}
+@media (max-width: 720px) {
+  .ip-paths { grid-template-columns: 1fr; gap: clamp(60px, 10vw, 100px); max-width: 100%; }
+}
+
+/* shared frame for both sides */
+.ip-void, .ip-bloom {
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(20px, 3vw, 40px);
+}
+.ip-void__label, .ip-bloom__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim); margin: 0;
+}
+.ip-void__end {
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  font-size: clamp(1.05rem, 0.7vw + 0.85rem, 1.5rem);
+  line-height: 1.15; color: var(--ip-ink-dim);
+  margin: 0; text-align: center;
+}
+.ip-bloom__end {
+  font-family: var(--font-body); font-weight: var(--weight-bold);
+  font-size: clamp(1.3rem, 1.3vw + 0.85rem, 2.2rem);
+  line-height: 1.1; letter-spacing: -0.015em;
+  color: var(--ip-ink); margin: 0; text-align: center;
+  max-width: 22ch; text-wrap: balance;
+}
+
+/* VOID — a lime token falls into a dark triangular hole. Vanishing. */
+.ip-void__visual {
+  position: relative;
+  width: 100%; max-width: 240px;
+  aspect-ratio: 3 / 4;
+}
+.ip-void__token {
+  position: absolute;
+  left: 50%; top: 0;
+  width: 46%; aspect-ratio: 1 / 1;
+  transform: translate(-50%, 0);
+  background: var(--ip-lime);
+  -webkit-mask: var(--shape) no-repeat center / contain;
+          mask: var(--shape) no-repeat center / contain;
+  transition: transform 1500ms var(--ease-out), opacity 1500ms var(--ease-out);
+  transition-delay: 250ms;
+  opacity: 1;
+}
+.ip-void[data-reveal].is-inview .ip-void__token {
+  transform: translate(-50%, 130%);
+  opacity: 0;
+}
+.ip-void__hole {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 62%;
+  background: var(--ip-ink);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+
+/* BLOOM — a lime core, with rays radiating out as a constellation of impact */
+.ip-bloom__visual {
+  position: relative;
+  width: 100%; max-width: 540px;
+  aspect-ratio: 1 / 1;
+}
+.ip-bloom__core {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 17%; aspect-ratio: 1 / 1;
+  transform: translate(-50%, -50%);
+  background: var(--ip-lime);
+  -webkit-mask: var(--shape) no-repeat center / contain;
+          mask: var(--shape) no-repeat center / contain;
+}
+.ip-bloom__ray {
+  position: absolute;
+  width: 14%; aspect-ratio: 1 / 1;
+  background: var(--ip-lime);
+  -webkit-mask: var(--shape) no-repeat center / contain;
+          mask: var(--shape) no-repeat center / contain;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 850ms var(--ease-out);
+}
+.ip-bloom[data-reveal].is-inview .ip-bloom__ray {
+  transform: translate(-50%, -50%) scale(1);
+}
+/* 8 rays at compass positions, ~38% from centre */
+.ip-bloom__ray--n   { left: 50%;  top: 12%; transition-delay: 220ms; }
+.ip-bloom__ray--ne  { left: 77%;  top: 23%; transition-delay: 300ms; }
+.ip-bloom__ray--e   { left: 88%;  top: 50%; transition-delay: 380ms; }
+.ip-bloom__ray--se  { left: 77%;  top: 77%; transition-delay: 460ms; }
+.ip-bloom__ray--s   { left: 50%;  top: 88%; transition-delay: 540ms; }
+.ip-bloom__ray--sw  { left: 23%;  top: 77%; transition-delay: 620ms; }
+.ip-bloom__ray--w   { left: 12%;  top: 50%; transition-delay: 700ms; }
+.ip-bloom__ray--nw  { left: 23%;  top: 23%; transition-delay: 780ms; }
+
+/* motion-off / reduced motion — show the end state, no transitions */
+.page-impact.motion-off .ip-void__token {
+  transition: none; transform: translate(-50%, 130%); opacity: 0;
+}
+.page-impact.motion-off .ip-bloom__ray {
+  transition: none; transform: translate(-50%, -50%) scale(1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .page-impact .ip-void__token { transition: none; }
+  .page-impact .ip-bloom__ray { transition: none; transform: translate(-50%, -50%) scale(1); }
+}
+/* the vanish path — a fading drip into ether, no destination */
+.ip-vanish {
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--space-300);
+  padding: clamp(20px, 3vw, 40px) 0;
+}
+.ip-vanish__label, .ip-vanish__end {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim); margin: 0;
+}
+.ip-vanish__end { opacity: 0.4; }
+.ip-vanish__drip {
+  display: flex; flex-direction: column; align-items: center;
+  gap: var(--space-300);
+  padding: var(--space-200) 0;
+}
+.ip-vanish__token {
+  width: clamp(54px, 6.5vw, 100px); aspect-ratio: 1 / 1;
+  background: var(--ip-lime);
+  -webkit-mask: var(--shape) no-repeat center / contain;
+          mask: var(--shape) no-repeat center / contain;
+}
+.ip-vanish__token--mid { opacity: 0.5; width: clamp(40px, 5vw, 76px); }
+.ip-vanish__token--end { opacity: 0.18; width: clamp(28px, 3.5vw, 54px); }
+
+.ip-cycle {
+  position: relative;
+  width: 100%; max-width: 600px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+/* a quiet leak — the cycle isn't 100% closed; some leaves for operations */
+.ip-cycle__leak { stroke: var(--ip-ink); stroke-width: 0.45; stroke-dasharray: 1.2 1.2; fill: none; opacity: 0.35; }
+.ip-cycle__leak-arrow { fill: var(--ip-ink); opacity: 0.35; }
+.ip-cycle__svg {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  overflow: visible;
+}
+/* the ring — ink-dashed, drawn in over scroll-in */
+.ip-cycle__ring {
+  fill: none;
+  stroke: var(--ip-ink);
+  stroke-width: 0.45;
+  stroke-dasharray: 1.2 1.6;
+  stroke-linecap: round;
+  opacity: 0.55;
+}
+.ip-cycle__arrow { fill: var(--ip-ink); opacity: 0.65; }
+.ip-cycle__hub {
+  fill: none; stroke: var(--ip-ink);
+  stroke-width: 0.3; opacity: 0.18;
+}
+/* orbiting tokens — 3 wrappers rotating, each with a lime shape on the ring */
+.ip-cycle__orbit {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  animation: ip-cycle-spin 28s linear infinite;
+  will-change: transform;
+}
+.ip-cycle__orbit--2 { animation-delay: -9.33s; }
+.ip-cycle__orbit--3 { animation-delay: -18.66s; }
+.ip-cycle__token {
+  position: absolute;
+  left: 50%; top: 13%;
+  width: clamp(44px, 5.6vw, 88px); aspect-ratio: 1 / 1;
+  background: var(--ip-lime);
+  -webkit-mask: var(--shape) no-repeat center / contain;
+          mask: var(--shape) no-repeat center / contain;
+  transform: translate(-50%, -50%);
+}
+@keyframes ip-cycle-spin { to { transform: rotate(360deg); } }
+.page-impact.motion-off .ip-cycle__orbit { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .page-impact .ip-cycle__orbit { animation: none; }
+}
+/* labels at the compass points — the four stops of the cycle */
+.ip-cycle__label {
+  position: absolute; margin: 0;
+  display: flex; flex-direction: column; gap: 4px;
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  font-size: clamp(0.98rem, 0.55vw + 0.85rem, 1.3rem);
+  line-height: 1.18; letter-spacing: -0.012em;
+  color: var(--ip-ink);
+}
+.ip-cycle__label-num {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim); font-weight: normal;
+}
+.ip-cycle__label--n {
+  top: -4px; left: 50%; transform: translateX(-50%);
+  text-align: center; max-width: 18ch;
+}
+.ip-cycle__label--e {
+  top: 50%; right: -8px; transform: translateY(-50%);
+  text-align: left; max-width: 15ch;
+}
+.ip-cycle__label--s {
+  bottom: -4px; left: 50%; transform: translateX(-50%);
+  text-align: center; max-width: 22ch;
+}
+.ip-cycle__label--w {
+  top: 50%; left: -8px; transform: translateY(-50%);
+  text-align: right; max-width: 17ch;
+}
+.ip-cycle__center {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim); margin: 0;
+}
+.ip-cycle__center strong {
+  display: block; margin-top: 6px;
+  font-family: var(--font-body); font-weight: var(--weight-bold);
+  font-size: clamp(1.4rem, 1.4vw + 0.9rem, 2.4rem);
+  letter-spacing: -0.02em; color: var(--ip-ink);
+  text-transform: none;
+}
+@media (max-width: 720px) {
+  .ip-cycle { max-width: 92%; }
+  .ip-cycle__label { font-size: clamp(0.88rem, 0.4vw + 0.8rem, 1rem); }
+  .ip-cycle__label--n { top: -10px; }
+  .ip-cycle__label--s { bottom: -10px; }
+  .ip-cycle__label--e { right: 0; max-width: 12ch; }
+  .ip-cycle__label--w { left: 0; max-width: 13ch; }
+}
+
+/* keep the old .ip-fork wrapper class harmless (still used elsewhere?) */
+.ip-fork {
+  position: relative;
+  margin-top: clamp(64px, 9vh, 150px);
+}
+.ip-fork__paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(16px, 3vw, 48px);
+  align-items: start;
+}
+.ip-fork__col { display: flex; flex-direction: column; align-items: stretch; }
+.ip-fork__path {
+  border-radius: var(--radius-lg);
+  padding: clamp(28px, 3.4vw, 56px);
+  display: flex; flex-direction: column; gap: var(--space-300);
+}
+.ip-fork__path--out { background: var(--ip-paper); }
+.ip-fork__path--in  { background: var(--ip-ink); }
+.ip-fork__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim);
+}
+.ip-fork__path--in .ip-fork__label { color: var(--ip-lime); }
+/* big black grotesk — the loud statement, set in the body face not display */
+.ip-fork__text {
+  font-family: var(--font-body); font-weight: var(--weight-black);
+  font-size: clamp(1.5rem, 1.7vw + 1rem, 2.6rem);
+  line-height: 1.04; letter-spacing: -0.02em;
+  margin: 0;
+}
+.ip-fork__path--out .ip-fork__text { color: var(--ip-ink-dim); }
+.ip-fork__path--in  .ip-fork__text { color: var(--ip-ground); }
+
+/* the connector — a rail with a sliding lime token + an arrowhead down */
+.ip-fork__down {
+  position: relative;
+  width: 3px;
+  height: clamp(76px, 10vh, 140px);
+  margin: clamp(10px, 1.6vw, 22px) auto;
+  background: rgba(20, 32, 11, 0.18);
+  border-radius: 2px;
+}
+.ip-fork__down::after {
+  content: ""; position: absolute; left: 50%; bottom: -3px;
+  width: 0; height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 11px solid rgba(20, 32, 11, 0.34);
+  transform: translateX(-50%);
+}
+.ip-fork__token {
+  position: absolute; left: 50%; top: 0;
+  width: clamp(44px, 6vw, 100px); aspect-ratio: 1 / 1;
+  background: var(--ip-lime);
+  -webkit-mask: var(--shape) no-repeat center / contain;
+          mask: var(--shape) no-repeat center / contain;
+  transform: translate(-50%, -50%);
+  will-change: top;
+}
+/* destinations — a bare question mark, versus the named outcome */
+.ip-fork__dest--q {
+  display: flex; align-items: center; justify-content: center;
+  padding: clamp(20px, 3vw, 44px) 0;
+}
+.ip-fork__q {
+  font-family: var(--font-body); font-weight: var(--weight-black);
+  font-size: clamp(3.5rem, 7vw, 7rem);
+  line-height: 1; color: var(--ip-ink-dim);
+}
+.ip-fork__dest--eco {
+  background: var(--ip-ink);
+  border-radius: var(--radius-lg);
+  padding: clamp(24px, 3vw, 46px);
+}
+.ip-fork__eco {
+  font-family: var(--font-body); font-weight: var(--weight-medium);
+  font-size: clamp(1.05rem, 0.6vw + 0.9rem, 1.45rem);
+  line-height: 1.32; margin: 0; color: var(--ip-ground);
+}
+.ip-fork__eco strong { font-weight: var(--weight-black); color: var(--ip-lime); }
+@media (max-width: 720px) {
+  .ip-fork__paths { grid-template-columns: 1fr; }
+}
+
+/* The quote — display-scale, set wide, a lime mark on the live phrase */
+.ip-quote { margin: clamp(96px, 14vh, 200px) 0 0; max-width: min(56rem, 100%); }
+.ip-quote__text {
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  font-size: clamp(1.9rem, 3.2vw + 0.5rem, 3.9rem);
+  line-height: 1.08; letter-spacing: -0.015em;
+  margin: 0;
+}
+.ip-quote__text .ip-pop {
+  font-style: normal; color: var(--ip-ink);
+  background: var(--ip-lime);
+  box-decoration-break: clone; -webkit-box-decoration-break: clone;
+  padding: 0.04em 0.14em;
+}
+.ip-quote__attribution {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim);
+  margin: var(--space-500) 0 0;
+}
+
+/* The equation — the chapter's punchline, a lime rounded card */
+.ip-equation {
+  margin: clamp(96px, 14vh, 200px) 0 0;
+  background: var(--ip-lime);
+  border-radius: var(--radius-2xl);
+  padding: clamp(40px, 6vw, 104px);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: clamp(20px, 3.5vw, 56px);
+}
+.ip-equation__cell { text-align: center; }
+.ip-equation__eyebrow {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink); opacity: 0.66;
+  margin: 0 0 var(--space-300);
+}
+.ip-equation__figure {
+  font-family: var(--font-display); font-weight: var(--weight-bold);
+  font-size: clamp(2.5rem, 6.5vw, 6rem);
+  line-height: 0.88; letter-spacing: var(--kerning-display);
+  color: var(--ip-ink); font-variant-numeric: tabular-nums;
+}
+.ip-equation__operator {
+  font-family: var(--font-display); font-weight: var(--weight-medium);
+  font-size: clamp(2rem, 4vw, 3.75rem);
+  color: var(--ip-ink); line-height: 1;
+}
+@media (max-width: 720px) {
+  .ip-equation { grid-template-columns: 1fr; }
+  .ip-equation__operator { transform: rotate(90deg); }
+}
+.ip-equation__note {
+  margin: var(--space-300) 0 0;
+  text-align: center;
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim);
+}
+.ip-equation__star {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--type-mono-small);
+  font-weight: normal;
+  color: var(--ip-ink-dim);
+  vertical-align: top;
+  margin-left: 2px;
+  line-height: 1;
+}
+
+/* Two simple line diagrams — money exits, or money loops */
+.ip-flow {
+  display: flex; flex-direction: column; align-items: center;
+  gap: clamp(24px, 4vw, 48px);
+}
+.ip-flow__label {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim); margin: 0;
+}
+.ip-flow__svg {
+  width: 100%; max-width: 360px;
+  height: auto;
+}
+.ip-flow__line, .ip-flow__ring {
+  fill: none;
+  stroke: var(--ip-ink);
+  stroke-width: 2.5;
+  stroke-dasharray: 5 5;
+  stroke-linecap: round;
+}
+.ip-flow__arrow { fill: var(--ip-ink); }
+.ip-flow__dot { fill: var(--ip-lime); }
+.ip-flow__end {
+  font-family: var(--font-body); font-weight: var(--weight-bold);
+  font-size: clamp(1.15rem, 1.1vw + 0.85rem, 1.95rem);
+  line-height: 1.15; letter-spacing: -0.015em;
+  text-align: center;
+  margin: 0; max-width: 22ch; text-wrap: balance;
+}
+.ip-flow--out .ip-flow__end {
+  color: var(--ip-ink-dim); font-weight: var(--weight-semibold);
+}
+.ip-flow--loop .ip-flow__end { color: var(--ip-ink); }
+
+/* Prose set in the field — narrow measure, quiet, follows the loud moments */
+.ip-text {
+  font-size: clamp(1.05rem, 0.6vw + 0.95rem, 1.35rem);
+  line-height: var(--leading-normal);
+  max-width: 56ch;
+  margin: clamp(48px, 7vh, 110px) 0 0;
+  color: var(--ip-ink);
+}
+.ip-text p { margin: 0 0 0.9em; }
+.ip-text p:last-child { margin-bottom: 0; }
+.ip-text strong { font-weight: var(--weight-bold); }
+.ip-text a {
+  color: var(--ip-ink); text-decoration: underline; text-underline-offset: 3px;
+  text-decoration-thickness: 1.5px;
+}
+.ip-text a:hover { color: var(--ip-ink); text-decoration-thickness: 2.5px; }
+.ip-text--end { font-size: clamp(1.3rem, 1vw + 1rem, 2rem); max-width: 30ch; }
+
+/* ============================================================================
+   CHAPTERS 3–10 — the rest of the page, rolled into the showpiece field.
+   Everything stays in the grey-green; rounded cards where the content is
+   card-like; one earned dark inversion at the $5B "at scale" moment.
+   ============================================================================ */
+
+/* shared field link — mono, underlined, arrow nudges on hover */
+.ip-link {
+  display: inline-flex; align-items: center; gap: var(--space-150);
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink); text-decoration: none;
+  border-bottom: 2px solid var(--ip-ink); padding-bottom: 3px;
+  transition: gap var(--motion-fast) var(--ease-out);
+}
+.ip-link::after { content: "\2192"; }
+.ip-link:hover { gap: var(--space-300); }
+.ip-chapter--dark .ip-link { color: var(--ip-ground); border-color: var(--ip-ground); }
+.ip-actions {
+  display: flex; flex-wrap: wrap; gap: clamp(16px, 2.6vw, 36px);
+  margin-top: clamp(40px, 6vh, 96px);
+}
+
+/* --- CHAPTER 3 — the calculator, restyled into the field --------------- */
+.page-impact .h2i {
+  margin-top: clamp(56px, 8vh, 130px);
+  gap: clamp(16px, 3vw, 44px);
+}
+.page-impact .h2i__inputs {
+  background: var(--ip-paper);
+  border-radius: var(--radius-lg);
+  padding: clamp(28px, 3.4vw, 52px);
+  gap: clamp(20px, 2.6vw, 32px);
+}
+.page-impact .h2i__field-row label { color: var(--ip-ink-dim); }
+.page-impact .h2i__value {
+  font-family: var(--font-display); font-weight: var(--weight-medium);
+  font-size: clamp(1.1rem, 0.6vw + 0.9rem, 1.5rem); color: var(--ip-ink);
+}
+.page-impact .h2i__field input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  height: 4px; border-radius: 2px;
+  background: rgba(20, 32, 11, 0.22); accent-color: var(--ip-ink);
+}
+.page-impact .h2i__field input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--ip-lime); border: 3px solid var(--ip-ink); cursor: pointer;
+}
+.page-impact .h2i__field input[type="range"]::-moz-range-thumb {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--ip-lime); border: 3px solid var(--ip-ink); cursor: pointer;
+}
+.page-impact .h2i__output {
+  background: var(--ip-ink);
+  border-radius: var(--radius-lg);
+  padding: clamp(28px, 3.4vw, 52px);
+}
+.page-impact .h2i__output-label { color: var(--ip-lime); }
+.page-impact .h2i__output-figure {
+  font-family: var(--font-display); font-weight: var(--weight-bold);
+  font-size: clamp(3rem, 8vw, 6.5rem); line-height: 0.9;
+  color: var(--ip-ground);
+}
+.page-impact .h2i__output-hours { color: var(--ip-ground); opacity: 0.72; }
+.page-impact .h2i__output-line { color: var(--ip-ground); }
+.page-impact .h2i__output a { color: var(--ip-lime); }
+
+/* --- CHAPTER 4 — recipients: wide single-line lime rows ---------------- */
+.ip-recipients {
+  margin-top: clamp(32px, 5vh, 64px);
+  display: flex; flex-direction: column;
+  gap: clamp(6px, 0.8vw, 12px);
+}
+.ip-recipient {
+  background: var(--ip-lime);
+  border-radius: var(--radius-lg);
+  padding: clamp(12px, 1.4vw, 20px) clamp(20px, 2.4vw, 36px);
+  display: flex; align-items: baseline;
+  gap: clamp(16px, 2vw, 32px);
+}
+.ip-recipient__type {
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  font-size: clamp(1rem, 0.5vw + 0.85rem, 1.25rem);
+  line-height: 1.2; letter-spacing: -0.015em;
+  color: var(--ip-ink);
+  flex: none;
+}
+.ip-recipient__body {
+  font-size: clamp(0.9rem, 0.3vw + 0.82rem, 1.05rem);
+  line-height: 1.3;
+  color: rgba(20, 32, 11, 0.7); margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 820px) {
+  .ip-recipient { flex-direction: column; gap: var(--space-50); align-items: start; }
+  .ip-recipient__body { white-space: normal; overflow: visible; }
+}
+/* the open-door promise — a quiet aside, not the focus */
+.ip-aside {
+  margin-top: var(--space-500);
+  max-width: 58ch;
+  font-size: clamp(0.95rem, 0.3vw + 0.88rem, 1.1rem);
+  line-height: var(--leading-snug);
+  color: var(--ip-ink-dim);
+}
+.ip-aside strong { color: var(--ip-ink); font-weight: var(--weight-semibold); }
+
+/* logos as a horizontal rolling marquee — all lime via CSS mask */
+.ip-logos {
+  margin-top: clamp(32px, 5vh, 70px);
+  overflow: hidden;
+  -webkit-mask: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+          mask: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent);
+}
+.ip-logos__track {
+  display: flex; align-items: center;
+  list-style: none; margin: 0; padding: 0;
+  width: max-content;
+  gap: clamp(48px, 6vw, 110px);
+  animation: ip-logos-roll 70s linear infinite;
+  will-change: transform;
+}
+.ip-logos__track li {
+  flex: none;
+  height: clamp(38px, 4.5vw, 62px);
+  width: clamp(140px, 14vw, 200px);
+  background: var(--ip-lime);
+  -webkit-mask: var(--logo) no-repeat center / contain;
+          mask: var(--logo) no-repeat center / contain;
+}
+@keyframes ip-logos-roll {
+  to { transform: translateX(-50%); }
+}
+.ip-logos:hover .ip-logos__track { animation-play-state: paused; }
+.page-impact.motion-off .ip-logos__track { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .page-impact .ip-logos__track { animation: none; }
+}
+
+/* recipient cards pop up on scroll — bigger translation, snappier ease,
+   more pronounced stagger so they cascade one after the other */
+.ip-recipient[data-reveal] {
+  opacity: 0;
+  transform: translateY(64px) scale(0.95);
+  transition: opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+              transform 800ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.ip-recipient[data-reveal].is-inview {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+.ip-recipient[data-reveal][data-reveal-delay="1"] { transition-delay: 140ms; }
+.ip-recipient[data-reveal][data-reveal-delay="2"] { transition-delay: 280ms; }
+.ip-recipient[data-reveal][data-reveal-delay="3"] { transition-delay: 420ms; }
+/* Photos — simplest possible. Three slightly-different-sized wrappers in a
+   grid, each photo at natural aspect ratio (height: auto). No parallax. */
+.ip-photos {
+  margin-top: clamp(48px, 7vh, 90px);
+  margin-bottom: clamp(48px, 7vh, 90px);
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(14px, 1.8vw, 24px);
+  align-items: start;
+  max-width: min(90%, 1180px);
+}
+.ip-photos__item {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--ip-ground-2);
+}
+.ip-photos__item picture { display: block; }
+.ip-photos__item img {
+  display: block;
+  width: 100%; height: auto;
+}
+/* slightly uneven sizes via different column spans + offsets */
+.ip-photos__item:nth-child(1) { grid-column: 1 / 6;  }
+.ip-photos__item:nth-child(2) { grid-column: 6 / 9;  margin-top: clamp(40px, 6vw, 80px); }
+.ip-photos__item:nth-child(3) { grid-column: 9 / 13; margin-top: clamp(14px, 2vw, 32px); }
+@media (max-width: 720px) {
+  .ip-photos { grid-template-columns: 1fr; max-width: 100%; }
+  .ip-photos__item:nth-child(n) { grid-column: 1; margin-top: 0; }
+}
+/* photos fade up like everything else — clip-wipe left big empty space pre-scroll */
+.ip-photos__item[data-reveal] {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 760ms var(--ease-out), transform 760ms var(--ease-out);
+}
+.ip-photos__item[data-reveal].is-inview { opacity: 1; transform: none; }
+
+/* the recipient orgs, in their own words — LIME stage. The social proof
+   is the loudest moment in the chapter. */
+.ip-voices {
+  margin-top: clamp(48px, 7vh, 110px);
+  background: var(--ip-lime);
+  border-radius: var(--radius-2xl);
+  padding: clamp(40px, 5vw, 84px);
+}
+.ip-voice__org-logo {
+  height: clamp(34px, 4.5vw, 64px);
+  filter: brightness(0); opacity: 0.85;
+  display: block;
+  margin-bottom: var(--space-200);
+}
+.ip-voices__eyebrow {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim);
+  margin: 0 0 clamp(28px, 4vw, 56px);
+}
+.ip-voices__stage {
+  display: grid;
+}
+.ip-voice {
+  grid-area: 1 / 1;
+  opacity: 0; pointer-events: none;
+  transition: opacity 900ms var(--ease-out);
+  display: flex; flex-direction: column; gap: clamp(24px, 3vw, 44px);
+  margin: 0;
+}
+.ip-voice.is-active { opacity: 1; pointer-events: auto; }
+.ip-voice__text {
+  font-family: var(--font-body); font-weight: var(--weight-bold);
+  font-size: clamp(1.9rem, 3vw + 0.7rem, 4.2rem);
+  line-height: 1.1; letter-spacing: -0.022em;
+  color: var(--ip-ink); margin: 0; max-width: 25ch;
+  text-wrap: balance;
+}
+.ip-voice__who {
+  font-family: var(--font-mono); font-size: clamp(0.85rem, 0.25vw + 0.78rem, 0.98rem);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim); margin: 0;
+}
+.ip-voices__dots {
+  display: flex; gap: var(--space-200);
+  margin-top: clamp(32px, 4.5vw, 60px);
+}
+.ip-voices__dot {
+  width: 11px; height: 11px; border-radius: 50%;
+  padding: 0; border: none; cursor: pointer;
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--ip-ink);
+  transition: background var(--motion-fast) var(--ease-out);
+}
+.ip-voices__dot.is-active { background: var(--ip-ink); }
+/* motion-off / reduced-motion — show every voice as a static stacked list */
+.page-impact.motion-off .ip-voices__stage {
+  display: flex; flex-direction: column; gap: clamp(40px, 6vh, 80px);
+}
+.page-impact.motion-off .ip-voice { opacity: 1; pointer-events: auto; transition: none; }
+.page-impact.motion-off .ip-voices__dots { display: none; }
+@media (prefers-reduced-motion: reduce) {
+  .page-impact .ip-voices__stage {
+    display: flex; flex-direction: column; gap: clamp(40px, 6vh, 80px);
+  }
+  .page-impact .ip-voice { opacity: 1; pointer-events: auto; transition: none; }
+  .page-impact .ip-voices__dots { display: none; }
+}
+
+/* a big in-field statement — display face, not an h2, used between chapters */
+.ip-statement {
+  font-family: var(--font-body); font-weight: var(--weight-bold);
+  font-size: clamp(1.8rem, 3vw + 0.6rem, 4rem);
+  line-height: 1.08; letter-spacing: -0.02em;
+  color: var(--ip-ink); margin: clamp(56px, 8vh, 130px) 0 0;
+  max-width: 26ch; text-wrap: balance;
+}
+.ip-statement--tight { margin-top: var(--space-400); }
+.ip-chapter--dark .ip-statement { color: var(--ip-ground); }
+/* a quiet source credit */
+.ip-source {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  margin: var(--space-400) 0 0; color: var(--ip-ink-dim);
+}
+.ip-source a { color: var(--ip-ink); text-decoration: underline; text-underline-offset: 3px; }
+.ip-chapter--dark .ip-source a { color: var(--ip-ground); }
+
+/* --- CHAPTER 5 — the bigger picture: an animated usage comparison ------ */
+.ip-usage {
+  margin-top: clamp(56px, 8vh, 130px);
+  display: flex; flex-direction: column; gap: clamp(20px, 3vw, 42px);
+  max-width: 54rem;
+}
+.ip-usage__row { display: flex; flex-direction: column; gap: var(--space-200); }
+.ip-usage__label {
+  display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-300);
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim);
+}
+.ip-usage__multiple {
+  font-family: var(--font-display); font-weight: var(--weight-bold);
+  font-size: clamp(1.4rem, 1.4vw + 0.9rem, 2.4rem);
+  color: var(--ip-ink); letter-spacing: var(--kerning-display);
+}
+.ip-usage__track {
+  height: clamp(30px, 4vw, 60px);
+  background: rgba(20, 32, 11, 0.1);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.ip-usage__bar {
+  height: 100%; width: 0;
+  border-radius: var(--radius-pill);
+  transition: width 1200ms var(--ease-out) 220ms;
+}
+.ip-usage__bar--them { background: var(--ip-ground-2); }
+.ip-usage__bar--us   { background: var(--ip-lime); }
+.ip-usage[data-reveal].is-inview .ip-usage__bar { width: var(--w); }
+.page-impact.motion-off .ip-usage__bar { width: var(--w); transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  .page-impact .ip-usage__bar { width: var(--w); transition: none; }
+}
+
+/* --- CHAPTER 6 — at scale: the earned dark inversion ------------------- */
+/* extra dark-chapter overrides for the elements used past chapter 1 */
+.page-impact .ip-chapter--dark .ip-lead,
+.page-impact .ip-chapter--dark .ip-text,
+.page-impact .ip-chapter--dark .ip-statement { color: var(--ip-ground); }
+.page-impact .ip-chapter--dark .ip-text strong { color: var(--ip-ground); }
+.page-impact .ip-chapter--dark .ip-eyebrow { color: rgba(176, 188, 166, 0.6); }
+.page-impact .ip-chapter--dark .ip-quote__attribution { color: rgba(176, 188, 166, 0.7); }
+
+.ip-scale { margin-top: clamp(40px, 6vh, 100px); }
+.ip-scale__figure {
+  font-family: var(--font-display); font-weight: var(--weight-bold);
+  font-size: clamp(5rem, 14vw, 13rem);
+  line-height: 0.84; letter-spacing: -0.04em;
+  color: var(--ip-lime); font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.ip-scale__caption {
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  font-size: clamp(1.5rem, 1.6vw + 0.9rem, 2.6rem);
+  line-height: 1.14; letter-spacing: -0.015em;
+  color: var(--ip-ground); margin: var(--space-300) 0 0; max-width: 26ch;
+}
+/* the three comparison facts — staggered, rule-topped */
+.ip-compare {
+  margin-top: clamp(56px, 8vh, 120px);
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(18px, 3vw, 52px);
+}
+@media (max-width: 720px) { .ip-compare { grid-template-columns: 1fr; gap: clamp(28px, 5vw, 48px); } }
+.ip-compare__item {
+  display: flex; flex-direction: column; gap: var(--space-200);
+  padding-top: var(--space-300);
+  border-top: 2px solid rgba(176, 188, 166, 0.32);
+}
+.ip-compare__mult {
+  font-family: var(--font-display); font-weight: var(--weight-bold);
+  font-size: clamp(2.4rem, 3vw + 1rem, 4.5rem);
+  line-height: 0.95; letter-spacing: var(--kerning-display);
+  color: var(--ip-lime);
+}
+.ip-compare__label {
+  font-size: clamp(1rem, 0.4vw + 0.9rem, 1.2rem);
+  line-height: var(--leading-snug); color: var(--ip-ground);
+}
+
+/* --- CHAPTER 7 — the wider impact: redistribution is one thread -------- */
+.ip-impact-grid {
+  margin-top: clamp(56px, 8vh, 130px);
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 2.2vw, 26px);
+}
+@media (max-width: 880px) { .ip-impact-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .ip-impact-grid { grid-template-columns: 1fr; } }
+.ip-impact-item {
+  position: relative; isolation: isolate;
+  background: var(--ip-lime);
+  border-radius: var(--radius-lg);
+  padding: clamp(28px, 3.2vw, 48px);
+  display: flex; flex-direction: column; gap: var(--space-200);
+  overflow: visible;
+}
+/* a lime silhouette shape sticks out from behind each card, varied per slot —
+   lime against the grey-green field so the cards stay readable */
+.ip-impact-item::before {
+  content: ""; position: absolute;
+  width: 58%; aspect-ratio: 1 / 1;
+  background: var(--ip-lime);
+  -webkit-mask: var(--card-shape) no-repeat center / contain;
+          mask: var(--card-shape) no-repeat center / contain;
+  z-index: -1; pointer-events: none;
+}
+.ip-impact-item:nth-child(1)::before { top: -32%; right: -16%; transform: rotate(-8deg); }
+.ip-impact-item:nth-child(2)::before { bottom: -30%; left: -14%; transform: rotate(12deg); }
+.ip-impact-item:nth-child(3)::before { top: -28%; left: -20%; transform: rotate(-14deg); }
+.ip-impact-item:nth-child(4)::before { bottom: -28%; right: -12%; transform: rotate(10deg); }
+.ip-impact-item:nth-child(5)::before { top: -30%; right: -10%; transform: rotate(-6deg); }
+.ip-impact-item:nth-child(6)::before { bottom: -32%; left: -16%; transform: rotate(16deg); }
+.ip-impact-item__figure {
+  font-family: var(--font-display); font-weight: var(--weight-bold);
+  font-size: clamp(2.6rem, 3vw + 1rem, 4.4rem);
+  line-height: 0.9; letter-spacing: var(--kerning-display);
+  color: var(--ip-ink); font-variant-numeric: tabular-nums;
+}
+.ip-impact-item__label {
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  font-size: clamp(1.3rem, 1vw + 0.95rem, 1.95rem);
+  line-height: 1.08; letter-spacing: -0.015em;
+  color: var(--ip-ink);
+}
+.ip-impact-item__body {
+  font-size: clamp(0.98rem, 0.3vw + 0.9rem, 1.12rem);
+  line-height: var(--leading-snug); color: rgba(20, 32, 11, 0.78);
+  margin: var(--space-100) 0 0; margin-top: auto; padding-top: var(--space-200);
+}
+
+/* --- CHAPTER 8 — methodology + the two calculators -------------------- */
+/* Lime cards, stacked, compact — the whole chapter should fit one viewport. */
+.ip-calcs {
+  margin-top: clamp(32px, 5vh, 70px);
+  display: flex; flex-direction: column;
+  gap: clamp(14px, 1.8vw, 22px);
+}
+.ip-calc-card {
+  background: var(--ip-lime);
+  border-radius: var(--radius-lg);
+  padding: clamp(22px, 2.8vw, 36px) clamp(26px, 3.2vw, 44px);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: clamp(20px, 2.8vw, 40px);
+  align-items: center;
+}
+@media (max-width: 700px) {
+  .ip-calc-card { grid-template-columns: 1fr; gap: var(--space-300); padding: clamp(20px, 5vw, 32px); }
+}
+.ip-calc-card__num {
+  font-family: var(--font-display); font-weight: var(--weight-bold);
+  font-size: clamp(2.4rem, 4.5vw, 4.4rem);
+  line-height: 0.92; letter-spacing: -0.035em;
+  color: var(--ip-ink); font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+.ip-calc-card__main { display: flex; flex-direction: column; gap: var(--space-250); }
+.ip-calc-card__eyebrow {
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  color: var(--ip-ink-dim);
+}
+.ip-calc-card__main { gap: var(--space-200); }
+.ip-calc-card__title {
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  font-size: clamp(1.15rem, 0.6vw + 0.9rem, 1.55rem);
+  line-height: 1.12; letter-spacing: -0.015em;
+  color: var(--ip-ink); margin: 0;
+}
+.ip-calc-card__body {
+  font-size: clamp(0.95rem, 0.3vw + 0.85rem, 1.08rem);
+  line-height: var(--leading-snug); color: rgba(20, 32, 11, 0.78);
+  margin: 0; max-width: 54ch;
+}
+.ip-calc-card__eyebrow { color: rgba(20, 32, 11, 0.7); }
+.ip-calc-card .ip-link {
+  align-self: flex-start; margin-top: var(--space-150);
+  font-size: clamp(0.82rem, 0.25vw + 0.78rem, 0.95rem);
+  padding-bottom: 4px; gap: var(--space-200);
+  color: var(--ip-ink); border-color: var(--ip-ink);
+}
+.ip-calc-card .ip-link::after { font-size: 1.3em; }
+
+/* --- CHAPTER 9 — FAQ restyled into the field -------------------------- */
+.page-impact .faq {
+  margin: clamp(48px, 7vh, 110px) 0 0;
+  max-width: 64rem;
+}
+.page-impact .faq-item { border-bottom: 2px solid rgba(20, 32, 11, 0.16); }
+.page-impact .faq-item:first-child { border-top: 2px solid rgba(20, 32, 11, 0.16); }
+.page-impact .faq-item__question {
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  font-size: clamp(1.15rem, 0.9vw + 0.9rem, 1.65rem);
+  line-height: 1.18; letter-spacing: -0.015em;
+  color: var(--ip-ink);
+  padding: clamp(22px, 2.8vw, 38px) 0;
+}
+.page-impact .faq-item__icon { color: var(--ip-ink); font-size: 1.5rem; }
+.page-impact .faq-item__answer-inner > * {
+  color: var(--ip-ink-dim);
+  font-size: clamp(1rem, 0.4vw + 0.9rem, 1.2rem);
+  line-height: var(--leading-normal);
+  max-width: 62ch;
+  padding-bottom: clamp(22px, 2.8vw, 38px);
+}
+
+/* --- CHAPTER 10 — get involved: the close ----------------------------- */
+.ip-chapter--close { padding-bottom: clamp(110px, 16vw, 240px); }
+.ip-ways {
+  margin-top: clamp(56px, 8vh, 130px);
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 2.4vw, 28px);
+}
+@media (max-width: 820px) { .ip-ways { grid-template-columns: 1fr; } }
+.ip-way {
+  background: var(--ip-paper);
+  border-radius: var(--radius-lg);
+  padding: clamp(28px, 3.4vw, 52px);
+  display: flex; flex-direction: column; gap: var(--space-300);
+}
+.ip-way--feature { background: var(--ip-lime); }
+.ip-way__title {
+  font-family: var(--font-body); font-weight: var(--weight-semibold);
+  font-size: clamp(1.4rem, 1.2vw + 0.95rem, 2.1rem);
+  line-height: 1.08; letter-spacing: -0.015em;
+  color: var(--ip-ink); margin: 0;
+}
+.ip-way__body {
+  font-size: clamp(1rem, 0.4vw + 0.9rem, 1.18rem);
+  line-height: var(--leading-snug); color: var(--ip-ink-dim);
+  margin: 0; flex: 1;
+}
+.ip-way--feature .ip-way__body { color: var(--ip-ink); }
+.ip-btn {
+  align-self: flex-start;
+  display: inline-flex; align-items: center; gap: var(--space-150);
+  font-family: var(--font-mono); font-size: var(--type-mono-small);
+  text-transform: uppercase; letter-spacing: var(--kerning-caps);
+  background: var(--ip-ink); color: var(--ip-ground);
+  border-radius: var(--radius-pill);
+  padding: 13px 24px; text-decoration: none;
+  transition: transform var(--motion-fast) var(--ease-out);
+}
+.ip-btn::after { content: "\2192"; }
+.ip-btn:hover { transform: translateY(-2px); }
+.ip-btn--ghost {
+  background: transparent; color: var(--ip-ink);
+  box-shadow: inset 0 0 0 2px var(--ip-ink);
+}

@@ -1,0 +1,887 @@
+@use '../02-tokens/breakpoints' as bp;
+
+// ============================================================
+// 257 Shared Calculator Styling System
+// ============================================================
+// Provides .calc__* base classes used by all calculator blocks.
+// Each calc adds its own _<calc>.scss for specifics, scoped
+// under its block identity class (e.g. .hours-to-impact).
+//
+// Uses only theme semantic tokens — recolours automatically
+// per data-color-space.
+// ============================================================
+
+// ── Reveal mixin (Locomotive Scroll) ──────────────────────────
+@mixin reveal {
+	opacity: 0;
+	transform: translateY(1.5rem);
+	transition: opacity 0.4s ease-out, transform 0.8s ease-out;
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+// ── Intro ─────────────────────────────────────────────────────
+.calc__intro {
+	--stack-gap: var(--space-m-l);
+	max-inline-size: var(--layout-wide-size);
+	margin-inline: auto;
+	padding-block-end: var(--space-l-xl);
+	@include reveal;
+}
+
+.calc__eyebrow {
+	color: var(--color-content-secondary);
+}
+
+.calc__heading {
+	max-width: 20ch;
+}
+
+.calc__tagline {
+	color: var(--color-content-secondary);
+	max-width: 60ch;
+}
+
+// ── Body — 50/50 grid (inputs left, results right) ──────────
+.calc__body {
+	display: grid;
+	grid-template-columns: 5fr 3.5fr;
+	gap: var(--space-m);
+	// Stretch children so the result card matches the inputs card height —
+	// the populated/empty states then jump less. Proved by C1 (workspace pricing).
+	align-items: stretch;
+
+	@media (max-width: #{bp.$bp-lg}) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// ── Inputs column — card ──────────────────────────────────────
+.calc__inputs {
+	--stack-gap: var(--space-m-l);
+	padding: var(--space-m);
+	border-radius: var(--corner-radius-card);
+	background-color: var(--color-surface-secondary);
+	@include reveal;
+}
+
+// ── Fields grid (two inputs side-by-side) ─────────────────────
+.calc__fields-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--space-xs);
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// ── Field wrapper ────────────────────────────────────────────
+.calc__field {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+.calc__field-label {
+	color: var(--color-content-secondary);
+}
+
+// ── Member roster (per-member rows) ──────────────────────────
+.calc__roster {
+	display: grid;
+	gap: var(--space-s);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.calc__roster-row {
+	display: grid;
+	grid-template-columns: minmax(80px, 8em) 1fr;
+	gap: var(--space-xs);
+	align-items: center;
+
+	@media (max-width: #{bp.$bp-sm}) {
+		grid-template-columns: 1fr;
+		align-items: start;
+	}
+}
+
+.calc__roster-label {
+	color: var(--color-content-secondary);
+}
+
+// ── Select (custom chevron dropdown) ─────────────────────────
+.calc__select {
+	appearance: none;
+	-webkit-appearance: none;
+	inline-size: 100%;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-s);
+	padding-inline-end: var(--space-l);
+	border: var(--border-tertiary);
+	border-radius: var(--corner-radius-s);
+	background-color: var(--color-content-inverse);
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23666' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right var(--space-xs) center;
+	background-size: 12px;
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	font-size: var(--text-m-size);
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+// ── Checkbox (custom swatch) ─────────────────────────────────
+.calc__check {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+	inline-size: unset;
+	cursor: pointer;
+
+	input {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+
+	.calc__check-box {
+		flex-shrink: 0;
+		margin-block-start: 2px;
+		inline-size: var(--space-s);
+		block-size: var(--space-s);
+		border-radius: 999px;
+		border: 2px solid var(--color-content-primary);
+		background-color: transparent;
+		transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+	}
+
+	input:checked + .calc__check-box {
+		background-color: var(--color-btn-primary-bg);
+		border-color: var(--color-btn-primary-bg);
+	}
+
+	input:focus-visible + .calc__check-box {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.calc__check-label {
+	color: var(--color-content-secondary);
+}
+
+// ── Stepper (− / output / +) ─────────────────────────────────
+.calc__stepper {
+	display: flex;
+	align-items: center;
+	gap: var(--space-xs);
+
+	button {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		inline-size: var(--space-l);
+		block-size: var(--space-l);
+		border-radius: var(--corner-radius-xs);
+		border: 1px solid var(--color-border-tertiary);
+		background-color: var(--color-content-inverse);
+		color: var(--color-content-primary);
+		font-family: var(--font-body-family);
+		font-size: var(--text-l-size);
+		line-height: 1;
+		cursor: pointer;
+		transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+
+		&:hover:not(:disabled) {
+			background-color: color-mix(in srgb, var(--color-content-inverse) 90%, var(--color-content-primary));
+		}
+
+		&:disabled {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
+	}
+
+	output {
+		font-family: var(--font-body-family);
+		font-size: var(--text-3xl-size);
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+		min-inline-size: 3ch;
+		text-align: center;
+		color: var(--color-content-primary);
+	}
+}
+
+// ── Slider row (stepper buttons + range input with a round knob) ──
+// Two columns: the interactive controls and the big value readout.
+.calc__slider-row {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: var(--space-s);
+	align-items: center;
+}
+
+.calc__slider-controls {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	gap: var(--space-s);
+	align-items: center;
+	min-inline-size: 0;
+}
+
+// Below md the range input is hidden — stepper buttons + number only.
+@media (max-width: #{bp.$bp-md}) {
+	.calc__slider-controls {
+		grid-template-columns: auto auto;
+	}
+
+	.calc__slider {
+		display: none;
+	}
+}
+
+.calc__stepper-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: var(--space-l);
+	block-size: var(--space-l);
+	flex-shrink: 0;
+	border-radius: var(--corner-radius-xs);
+	border: 1px solid var(--color-border-tertiary);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	font-size: var(--text-l-size);
+	line-height: 1;
+	cursor: pointer;
+	transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+
+	&:hover:not(:disabled) {
+		background-color: color-mix(in srgb, var(--color-content-inverse) 90%, var(--color-content-primary));
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.calc__slider {
+	--pct: 0%;
+	inline-size: 100%;
+	min-inline-size: 0;
+	block-size: var(--space-l);
+	display: flex;
+	align-items: center;
+
+	// The native input paints the track via --pct; the knob is a round thumb.
+
+	input[type="range"] {
+		-webkit-appearance: none;
+		appearance: none;
+		inline-size: 100%;
+		block-size: 8px;
+		border-radius: 999px;
+		background-color: var(--color-border-tertiary);
+		background-image: linear-gradient(var(--color-btn-primary-bg), var(--color-btn-primary-bg));
+		background-repeat: no-repeat;
+		background-size: var(--pct) 100%;
+		cursor: pointer;
+	}
+
+	input[type="range"]:focus {
+		outline: none;
+	}
+
+	input[type="range"]::-webkit-slider-thumb {
+		-webkit-appearance: none;
+		appearance: none;
+		inline-size: var(--space-l);
+		block-size: var(--space-l);
+		border-radius: 50%;
+		border: 2px solid var(--color-content-inverse);
+		background-color: var(--color-content-primary);
+		cursor: grab;
+		box-shadow: 0 2px 6px color-mix(in srgb, var(--color-content-primary) 30%, transparent);
+		transition: transform 0.15s ease;
+
+		&:hover {
+			transform: scale(1.1);
+		}
+
+		&:active {
+			cursor: grabbing;
+			transform: scale(1.05);
+		}
+	}
+
+	input[type="range"]::-moz-range-thumb {
+		inline-size: var(--space-l);
+		block-size: var(--space-l);
+		border-radius: 50%;
+		border: 2px solid var(--color-content-inverse);
+		background-color: var(--color-content-primary);
+		cursor: grab;
+		box-shadow: 0 2px 6px color-mix(in srgb, var(--color-content-primary) 30%, transparent);
+		transition: transform 0.15s ease;
+
+		&:hover {
+			transform: scale(1.1);
+		}
+
+		&:active {
+			cursor: grabbing;
+			transform: scale(1.05);
+		}
+	}
+
+	// Focus ring around the knob (the input itself has none).
+	input[type="range"]:focus-visible::-webkit-slider-thumb {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 3px;
+	}
+
+	input[type="range"]:focus-visible::-moz-range-thumb {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 3px;
+	}
+}
+
+.calc__slider-value {
+	font-family: var(--font-display-family);
+	font-weight: var(--font-display-weight);
+	font-size: var(--text-5xl-size);
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+	// Reserve width for two digits (both calcs cap at 15 / 30) so the controls
+	// don't shift when the value crosses from single to double digits.
+	min-inline-size: 2ch;
+	text-align: right;
+	color: var(--color-content-primary);
+	white-space: nowrap;
+}
+
+// ── Radio group (segmented buttons) ───────────────────────────
+.calc__radio-group {
+	--cluster-gap-columns: var(--space-xs);
+}
+
+.calc__radio-label {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: var(--space-l);
+	block-size: var(--space-l);
+	border-radius: var(--corner-radius-xs);
+	border: 1px solid var(--color-border-tertiary);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-secondary);
+	font-family: var(--font-body-family);
+	font-size: var(--text-m-size);
+	font-weight: 600;
+	cursor: pointer;
+	transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+
+	&[aria-checked="true"] {
+		background-color: var(--color-btn-primary-bg);
+		border-color: var(--color-btn-primary-bg);
+		color: var(--color-btn-primary-text);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+// ── Number input ─────────────────────────────────────────────
+.calc__input {
+	inline-size: 100%;
+	// max-inline-size: 8rem;
+	padding-block: var(--space-xs);
+	padding-inline: var(--space-s);
+	border-radius: var(--corner-radius-xs);
+	border: 1px solid var(--color-border-tertiary);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	font-size: var(--text-l-size);
+	font-variant-numeric: tabular-nums;
+
+	&:focus {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+// ── Microcopy ────────────────────────────────────────────────
+.calc__microcopy {
+	color: var(--color-content-secondary);
+	opacity: 0.75;
+}
+
+// ── Result panel (right column) ──────────────────────────────
+.calc__result {
+	--stack-gap: var(--space-s);
+	display: flex;
+	flex-direction: column;
+}
+
+.calc__result-grid {
+	display: flex;
+	flex-grow: 1;
+	flex-direction: column;
+	gap: var(--space-l);
+	padding: var(--space-m);
+	border-radius: var(--corner-radius-card);
+	background-color: var(--color-surface-inverse-primary);
+	color: var(--color-content-inverse);
+}
+
+// Empty state — centered in the stretched dark card.
+.calc__result-empty {
+	margin: 0;
+	color: color-mix(in srgb, var(--color-content-inverse) 72%, transparent);
+	text-align: center;
+	padding-block: var(--space-m);
+
+	&:not([hidden]) {
+		display: grid;
+		place-content: center;
+		flex: 1;
+	}
+}
+
+.calc__result-col {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+.calc__result-label {
+	opacity: 0.7;
+}
+
+.calc__result-figure {
+	font-variant-numeric: tabular-nums;
+}
+
+.calc__result-unit {
+	opacity: 0.75;
+}
+
+// ── Breakdown trigger ────────────────────────────────────────
+.calc__breakdown-trigger {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-xs);
+	padding-block: var(--space-xs);
+	padding-inline: var(--space-m);
+	border-radius: var(--corner-radius-2xl);
+	border: 1px solid var(--color-border-tertiary);
+	background-color: var(--color-surface-secondary);
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	font-size: var(--text-m-size);
+	cursor: pointer;
+	transition: background-color var(--transition-speed) ease;
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--color-surface-secondary) 90%, var(--color-content-primary));
+	}
+}
+
+.calc__breakdown-caret {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+
+	&::after {
+		content: '';
+		display: block;
+		width: 8px;
+		height: 8px;
+		border-right: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		transform: rotate(45deg) translate(-2px, -2px);
+		transition: transform 0.2s ease;
+	}
+
+	// Rotate to point up when the breakdown is open
+	[aria-expanded="true"] &::after {
+		transform: rotate(-135deg) translate(-2px, -2px);
+	}
+}
+
+// ── Breakdown disclosure ─────────────────────────────────────
+.calc__breakdown {
+	margin-block-start: var(--space-l-xl);
+	grid-column: -1 / 1;
+	scroll-margin-top: calc(var(--space-3xl-6xl) + var(--space-2xs));
+}
+
+.calc__breakdown:not([open]) .calc__breakdown-summary {
+	display: none;
+}
+
+.calc__breakdown-summary {
+	list-style: none;
+	cursor: default;
+	color: var(--color-content-secondary);
+
+	&::-webkit-details-marker {
+		display: none;
+	}
+}
+
+.calc__breakdown-body {
+	max-inline-size: var(--layout-wide-size);
+	margin-inline: auto;
+	padding: var(--space-l-xl) 0;
+}
+
+.calc__breakdown-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--space-l-xl);
+
+	@media (max-width: #{bp.$bp-lg}) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.calc__breakdown-col {
+	--stack-gap: var(--space-m);
+}
+
+.calc__breakdown-heading {
+	color: var(--color-content-primary);
+}
+
+.calc__breakdown-prose {
+	color: var(--color-content-secondary);
+	max-width: 60ch;
+}
+
+// ── Stat rows ────────────────────────────────────────────────
+.calc__stat {
+	display: grid;
+	grid-template-columns: 1fr auto 1fr;
+	gap: var(--space-m);
+	align-items: self-end;
+	padding-block: var(--space-xs);
+	border-bottom: 1px solid var(--color-border-tertiary);
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+		gap: var(--space-2xs);
+		text-align: left;
+	}
+}
+
+.calc__stat-label {
+	color: var(--color-content-secondary);
+}
+
+.calc__stat-value {
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	text-align: center;
+	color: var(--color-content-primary);
+
+	@media (max-width: 600px) {
+		text-align: left;
+	}
+}
+
+.calc__stat-unit {
+	color: var(--color-content-secondary);
+	opacity: 0.7;
+}
+
+// ── Comparison rows (label/value list, e.g. cost breakdown) ──
+.calc__compare {
+	display: flex;
+	flex-direction: column;
+}
+
+.calc__compare-row {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: var(--space-m);
+	padding-block: var(--space-2xs);
+	border-bottom: 1px solid var(--color-border-tertiary);
+	align-items: baseline;
+}
+
+.calc__compare-row:last-child {
+	border-bottom: 0;
+}
+
+.calc__compare-row--total {
+	padding-block-start: var(--space-xs);
+	border-block-start: 2px solid var(--color-content-primary);
+}
+
+.calc__compare-row--total .calc__compare-row-value {
+	font-weight: 600;
+}
+
+.calc__compare-row-label {
+	display: flex;
+	align-items: center;
+	gap: var(--space-2xs);
+}
+
+.calc__compare-row-value {
+	font-family: var(--font-monospace-family);
+	font-variant-numeric: tabular-nums;
+}
+
+// ── Source tooltips (small "i" with a popup) ─────────────────
+.calc-source {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: var(--space-2xs);
+}
+
+.calc-source__trigger {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 18px;
+	block-size: 18px;
+	border-radius: 50%;
+	border: 1px solid var(--color-border-tertiary);
+	background-color: transparent;
+	color: var(--color-content-secondary);
+	font-family: var(--font-monospace-family);
+	font-size: 11px;
+	cursor: pointer;
+	flex-shrink: 0;
+	transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+
+	&:hover,
+	&:focus-visible {
+		background-color: var(--color-content-primary);
+		color: var(--color-content-inverse);
+		border-color: var(--color-content-primary);
+	}
+}
+
+.calc-source__pop {
+	position: absolute;
+	bottom: calc(100% + 8px);
+	left: 0;
+	z-index: 10;
+	inline-size: max-content;
+	max-inline-size: min(280px, calc(100vw - 2 * var(--space-m)));
+
+	@media (max-width: #{bp.$bp-md}) {
+		left: auto;
+		right: 0;
+	}
+	padding: var(--space-2xs) var(--space-s);
+	background-color: var(--color-content-primary);
+	color: var(--color-content-inverse);
+	border-radius: var(--corner-radius-xs);
+	font-size: var(--text-xs-size);
+	line-height: 1.5;
+	box-shadow: 0 4px 24px color-mix(in srgb, var(--color-content-primary) 25%, transparent);
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(4px);
+	transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease;
+
+	a {
+		color: var(--color-content-inverse);
+		text-decoration: underline;
+		word-break: break-word;
+	}
+}
+
+.calc-source[data-open="true"] .calc-source__pop,
+.calc-source:hover .calc-source__pop,
+.calc-source:focus-within .calc-source__pop {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(0);
+}
+
+.calc-source__pop-label {
+	display: block;
+	font-family: var(--font-monospace-family);
+	font-size: 11px;
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+	margin-block-end: var(--space-2xs);
+	opacity: 0.75;
+}
+
+// ── Share row (email + copy link) ───────────────────────────
+.calc__share {
+	--stack-gap: var(--space-m);
+	max-inline-size: var(--layout-wide-size);
+	margin-inline: auto;
+
+	// Sits inside the .calc__body grid root (so the shared JS can find it via
+	// querySelector on the data-js root) — span the full grid, not a column.
+	grid-column: 1 / -1;
+}
+
+.calc__share-eyebrow {
+	color: var(--color-content-secondary);
+}
+
+.calc__share-title {
+	max-width: 22ch;
+}
+
+.calc__share-row {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--space-m);
+
+	@media (max-width: #{bp.$bp-lg}) {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: #{bp.$bp-sm}) {
+	// Full-width actions on small screens: the Send and Copy link buttons
+	// stretch across the card instead of hugging their content.
+	.calc__share-form .btn,
+	.calc__share-card > .btn {
+		inline-size: 100%;
+		justify-content: center;
+	}
+}
+
+.calc__share-card {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: var(--space-m);
+	border-radius: var(--corner-radius-card);
+	background-color: var(--color-surface-secondary);
+}
+
+.calc__share-card-title {
+	color: var(--color-content-primary);
+}
+
+.calc__share-card-body {
+	color: var(--color-content-secondary);
+	max-width: 42ch;
+}
+
+.calc__share-form {
+	display: flex;
+	gap: var(--space-xs);
+	flex-wrap: wrap;
+	margin-block-start: auto;
+	width: 100%;
+}
+
+.calc__share-form .calc__share-input {
+	flex: 1 1 14rem;
+	min-inline-size: 12rem;
+	inline-size: auto;
+	field-sizing: fixed;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-s);
+	border-radius: var(--corner-radius-xs);
+	border: 1px solid var(--color-border-tertiary);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	font-size: var(--text-m-size);
+
+	&:focus {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.calc__share-honeypot {
+	// visually hidden — see markup: class="calc__share-honeypot visually-hidden"
+	// (the utility is preferred over a duplicate @extend here because utilities
+	// load after components and @extend cannot cross those module scopes).
+}
+
+.calc__share-consent {
+	// Live inside the .cluster form — take the full row so the checkbox drops
+	// beneath the Send button instead of sitting inline with it.
+	flex: 1 1 100%;
+	color: var(--color-content-secondary);
+	display: flex;
+	justify-content: flex-end;
+}
+
+.calc__share-check {
+	align-items: center !important;
+	cursor: pointer;
+
+	a {
+		color: var(--color-content-primary);
+		text-decoration: underline;
+		text-underline-offset: 2px;
+	}
+}
+
+.calc__share-status {
+	display: flex;
+	flex-grow: 1;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	min-block-size: 1lh;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-m);
+	border-radius: var(--corner-radius-xs);
+	font-family: var(--font-monospace-family);
+	text-align: center;
+	color: var(--color-content-inverse);
+	background-color: var(--color-surface-inverse-primary);
+	opacity: 0.85;
+
+	// Empty state: keep the box invisible until we have something to say.
+	&:empty {
+		background-color: transparent;
+	}
+
+	&[data-calc-share-status="error"] {
+		color: var(--color-content-inverse);
+		background-color: var(--color-surface-inverse-secondary);
+		opacity: 1;
+	}
+
+	&[data-calc-share-status="success"] {
+		color: var(--color-content-inverse);
+		background-color: var(--color-surface-inverse-primary);
+		opacity: 1;
+	}
+}
