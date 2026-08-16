@@ -674,8 +674,10 @@ function initCalc( root ) {
 	const rerender = bindEvents( root, state, prices, annualDiscount );
 	rerender();
 
-	// Share row (email + copy link) — shared handler module.
-	initCalcShare( root, {
+	// Share row (email + copy link) — shared handler module. The share section
+	// lives OUTSIDE the calc body grid (see the sticky aside restructure), so
+	// look it up from the wrapper parent rather than the data-js root.
+	initCalcShare( root.parentElement, {
 		slug: 'workspace-pricing',
 		getState: () => ( {
 			team:       state.team,

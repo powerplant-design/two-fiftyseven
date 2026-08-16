@@ -65,7 +65,9 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 			<p style="opacity:0.5;text-align:center;padding:1rem;">Add a heading in the block settings →</p>
 		<?php endif; ?>
 
-		<div class="calc__body" data-js="calc-office-costs">
+		<div data-js="calc-office-costs">
+
+			<div class="calc__body">
 
 			<div class="calc__inputs | stack" data-scroll data-scroll-repeat>
 				<div class="calc__field">
@@ -98,11 +100,13 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 						</span>
 					</span>
 					<ul class="calc__roster" data-calc-roster></ul>
-					<label class="calc__check" data-calc-annual-wrap hidden>
-						<input type="checkbox" data-calc-annual aria-label="Pay annually and save on Dedicated Memberships">
-						<span class="calc__check-box" aria-hidden="true"></span>
-						<span class="calc__check-label | text-m">Pay annually and save <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% on Dedicated Memberships</span>
-					</label>
+					<div class="workspace-pricing__annual-card" data-calc-annual-wrap hidden>
+						<label class="workspace-pricing__annual-head | calc__check">
+							<input type="checkbox" data-calc-annual aria-label="Pay annually and save on Dedicated Memberships">
+							<span class="calc__check-box" aria-hidden="true"></span>
+							<span class="workspace-pricing__annual-title | text-m">Pay annually and save <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% on Dedicated Memberships</span>
+						</label>
+					</div>
 				</div>
 
 				<div class="calc__field">
@@ -121,7 +125,7 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 				</div>
 			</div>
 
-			<aside class="calc__result | stack" aria-label="Live result">
+			<aside class="calc__result | stack calc__result--sticky" aria-label="Live result">
 				<div class="calc__result-grid" role="status" aria-live="polite">
 					<div data-result-headline>
 						<div class="calc__result-grid-headline">
@@ -142,7 +146,7 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 						<!-- <h3 class="calc__result-label | text-l">Once a year, to house this team</h3> -->
 						<div class="workspace-pricing__chart-row">
 							<div class="workspace-pricing__chart-headline">
-								<span class="workspace-pricing__chart-label">Private Wellington office</span>
+								<span class="workspace-pricing__chart-label">Private office</span>
 								<span class="workspace-pricing__chart-value" data-result-private>$0</span>
 							</div>
 							<div class="workspace-pricing__bar-wrap">
@@ -198,6 +202,8 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 					<span class="calc__breakdown-caret" aria-hidden="true"></span>
 				</button>
 			</aside>
+
+		</div>
 
 			<details class="calc__breakdown" id="workspace-pricing-methodology">
 				<summary aria-hidden="true" class="calc__breakdown-summary | text-monospace text-s">Breakdown</summary>
@@ -284,7 +290,7 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 						<p class="calc__share-consent | text-s">
 							<label class="calc__share-check">
 								<input type="checkbox" name="consent" checked data-calc-share-consent>
-								By submitting I agree to the <a href="/contact-policy/">Contact policy</a>
+								<span class="calc__share-consent-text">By submitting, I agree to two/fiftyseven contacting me to follow up about these numbers — see the <a href="/contact-policy/">Contact Policy</a></span>
 							</label>
 						</p>
 					</form>

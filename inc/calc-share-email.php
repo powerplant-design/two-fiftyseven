@@ -95,6 +95,9 @@ function two57_calc_share_email_handle( WP_REST_Request $request ): WP_REST_Resp
 		case 'workspace-pricing':
 			$figures = two57_calc_figures_workspace_pricing( $state );
 			break;
+		case 'meet-pricing':
+			$figures = two57_calc_figures_meet_pricing( $state );
+			break;
 		default:
 			$figures = new WP_Error( 'unsupported_calc', 'Unsupported calculator.' );
 	}
@@ -170,6 +173,8 @@ function two57_calc_sanitize_state( string $calc, array $state ) {
 				'annual'     => ! empty( $state['annual'] ),
 				'members'    => two57_calc_sanitize_members( $state['members'] ?? [] ),
 			];
+		case 'meet-pricing':
+			return two57_calc_sanitize_meet_pricing( $state );
 	}
 
 	return new WP_Error( 'unsupported_calc', 'Unsupported calculator.' );
@@ -198,6 +203,82 @@ function two57_calc_sanitize_members( array $members ): array {
 		}
 	}
 	return $sanitized;
+}
+
+
+/**
+ * C2 — meet-pricing state sanitisation. Normalises + bound-checks the
+ * quote state the JS engine sends on email-submit. Each addon flag coerces
+ * to bool; people is clamped 1-200 (engine scale); per-day date/time fields
+ * are validated as ISO date + HH:MM time strings. Anything out of bounds
+ * is clamped (matches the engine's Math.max/Math.min behaviour).
+ *
+ * @param array $state raw { people, room?, duration?, days[], addons{} }
+ * @return array sanitized state shape — never WP_Error (meets the contract).
+ */
+function two57_calc_sanitize_meet_pricing( array $state ): array {
+	$rooms_allowed    = [ 'meeting-room', 'silver-linings', 'studio', 'workshop', 'event', 'entire' ];
+	$durations_allowed = [ 'hour', 'day', 'evening' ];
+
+	$people = two57_calc_int( $state['people'] ?? 6, 1, 200 );
+
+	$room = is_string( $state['room'] ?? null ) ? sanitize_key( $state['room'] ) : '';
+	if ( ! in_array( $room, $rooms_allowed, true ) ) {
+		$room = '';
+	}
+
+	$duration = is_string( $state['duration'] ?? null ) ? sanitize_key( $state['duration'] ) : '';
+	if ( ! in_array( $duration, $durations_allowed, true ) ) {
+		$duration = '';
+	}
+
+	// Per-day: validate date (YYYY-MM-DD), start/end (HH:MM). Cap days at 14 (a
+	// fortnight — the engine doesn't enforce a max but sending a 100-line
+	// quote summary in an email is meaningless).
+	$raw_days = is_array( $state['days'] ?? null ) ? $state['days'] : [];
+	if ( ! $raw_days ) {
+		$raw_days = [ [ 'date' => gmdate( 'Y-m-d' ), 'start' => '09:00', 'end' => '17:00' ] ];
+	}
+	$days = [];
+	foreach ( $raw_days as $day ) {
+		if ( ! is_array( $day ) ) {
+			continue;
+		}
+		$date = sanitize_text_field( (string) ( $day['date'] ?? '' ) );
+		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $date ) ) {
+			$date = gmdate( 'Y-m-d' );
+		}
+		$start = sanitize_text_field( (string) ( $day['start'] ?? '09:00' ) );
+		$end   = sanitize_text_field( (string) ( $day['end'] ?? '17:00' ) );
+		if ( ! preg_match( '/^\d{1,2}:\d{2}$/', $start ) ) $start = '09:00';
+		if ( ! preg_match( '/^\d{1,2}:\d{2}$/', $end ) )   $end   = '17:00';
+		$days[] = [ 'date' => $date, 'start' => $start, 'end' => $end ];
+		if ( count( $days ) >= 14 ) break; // a fortnight max
+	}
+	if ( ! $days ) {
+		$days = [ [ 'date' => gmdate( 'Y-m-d' ), 'start' => '09:00', 'end' => '17:00' ] ];
+	}
+
+	// Addon state — coerce each to a strict bool, clamp the numeric knobs.
+	$raw_addons = is_array( $state['addons'] ?? null ) ? $state['addons'] : [];
+	$addons = [
+		'tea'             => ! empty( $raw_addons['tea'] ),
+		'teaType'         => isset( $raw_addons['teaType'] ) ? two57_calc_float( $raw_addons['teaType'], 0, 100 ) : 5,
+		'catering'        => ! empty( $raw_addons['catering'] ),
+		'cateringPerHead' => isset( $raw_addons['cateringPerHead'] ) ? two57_calc_float( $raw_addons['cateringPerHead'], 0, 200 ) : 25,
+		'projector'        => ! empty( $raw_addons['projector'] ),
+		'sound'           => ! empty( $raw_addons['sound'] ),
+		'impact'          => ! empty( $raw_addons['impact'] ) || ! empty( $state['impact'] ),
+	];
+
+	return [
+		'people'   => $people,
+		'room'     => $room,
+		'duration' => $duration,
+		'days'     => $days,
+		'addons'   => $addons,
+		'impact'   => $addons['impact'],
+	];
 }
 
 
@@ -352,6 +433,208 @@ function two57_calc_figures_workspace_pricing( array $state ) {
 
 
 /**
+ * C2 — meet-pricing recompute. Reads rooms + addons + impact levers from the
+ * ACF SSOT, never from the client. Mirrors the JS engine's compute() math —
+ * changes here must be mirrored in assets/js/modules/meet-pricing.js and
+ * vice-versa.
+ *
+ * @param array $state sanitized { people, room, duration, days[], addons{}, impact }
+ * @return array|WP_Error
+ */
+function two57_calc_figures_meet_pricing( array $state ) {
+	if ( ! function_exists( 'get_field' ) ) {
+		return new WP_Error( 'acf_missing', 'Calculator data store unavailable.' );
+	}
+
+	$people   = (int) $state['people'];
+	$room     = $state['room'];
+	$duration = $state['duration'];
+	$days     = $state['days'];
+	$addons   = $state['addons'];
+
+	$empty = [
+		'calc'           => 'meet-pricing',
+		'empty'          => true,
+		'people'         => $people,
+		'room'           => '',
+		'roomName'       => '',
+		'duration'       => '',
+		'numDays'        => count( $days ),
+		'totalHours'     => 0,
+		'items'          => [],
+		'total'          => 0,
+		'discountAmt'    => 0,
+		'impactDonation' => 0,
+	];
+
+	if ( ! $room || ! $duration || ! $days ) {
+		return $empty;
+	}
+
+	// Lookup rates from ACF SSOT. Room slug → field key map matches the
+	// functions.php wp_head injector.
+	$room_keys = [
+		'meeting-room'   => 'room_meeting',
+		'silver-linings' => 'room_silver_linings',
+		'studio'         => 'room_studio',
+		'workshop'       => 'room_workshop',
+		'event'          => 'room_event',
+		'entire'         => 'room_entire',
+	];
+	$room_key = $room_keys[ $room ] ?? '';
+
+	// Slug → display name (mirrors the labels the wp_head injector emits,
+	// kept self-contained here so the composer doesn't depend on the JS global).
+	$room_names = [
+		'meeting'        => 'Meeting Room',
+		'silver-linings' => 'Silver Linings',
+		'studio'         => 'Studio',
+		'workshop'       => 'Workshop Space',
+		'event'          => 'Event Space',
+		'entire'         => 'Entire Space',
+	];
+	$room_name = $room_names[ $room ] ?? $room;
+
+	$rates = [ 'day' => 0, 'hour' => 0, 'evening' => 0 ];
+	$cap   = 0;
+	if ( $room_key ) {
+		$rates['day']     = (float) get_field( $room_key . '_day', 'option' );
+		$rates['hour']    = (float) get_field( $room_key . '_hour', 'option' );
+		$rates['evening'] = (float) get_field( $room_key . '_evening', 'option' );
+		$cap              = (int) get_field( $room_key . '_capacity', 'option' );
+	}
+	// People capped to the selected room's capacity (engine lets you size
+	// up only; the email summary should never quote an over-capacity room).
+	if ( $cap > 0 && $people > $cap ) {
+		$people = $cap;
+	}
+
+	// Compute actual hours per day (duration='hour' path uses these).
+	$parse_time = static function ( string $t ): float {
+		$parts = explode( ':', $t );
+		if ( count( $parts ) < 2 ) {
+			return 0;
+		}
+		return (float) $parts[0] + (float) $parts[1] / 60;
+	};
+	$hours_for_day = static function ( array $d ) use ( $parse_time ): float {
+		$start = $parse_time( $d['start'] ?? '09:00' );
+		$end   = $parse_time( $d['end'] ?? '17:00' );
+		return max( 0, $end - $start );
+	};
+
+	$num_days   = count( $days );
+	$total_hrs  = array_reduce( $days, static function ( float $acc, array $d ) use ( $hours_for_day ): float {
+		return $acc + $hours_for_day( $d );
+	}, 0 );
+
+	// Room cost + label.
+	$room_cost   = 0;
+	$room_label  = '';
+	if ( 'hour' === $duration ) {
+		$room_cost  = $rates['hour'] * $total_hrs;
+		$room_label = $room_name . ' · ' . ( $num_days > 1 ? $num_days . ' days × ' : '' ) . round( $total_hrs, 2 ) . 'hrs × $' . number_format( $rates['hour'] ) . '/hr';
+	} elseif ( 'day' === $duration ) {
+		$room_cost  = $rates['day'] * $num_days;
+		$room_label = $room_name . ' · ' . $num_days . ' day' . ( $num_days > 1 ? 's' : '' ) . ' × $' . number_format( $rates['day'] );
+	} elseif ( 'evening' === $duration ) {
+		$room_cost  = $rates['evening'] * $num_days;
+		$room_label = $room_name . ' · ' . $num_days . ' evening' . ( $num_days > 1 ? 's' : '' ) . ' × $' . number_format( $rates['evening'] );
+	}
+
+	$items[] = [ 'label' => $room_label, 'value' => $room_cost ];
+
+	// Tea + coffee — per-head × people × days.
+	if ( ! empty( $addons['tea'] ) ) {
+		$tea_type = (float) ( $addons['teaType'] ?? 5 );
+		$tea_cost = $tea_type * $people * $num_days;
+		$tea_desc = $tea_type >= 10 ? 'bottomless' : 'single serve';
+		$tea_label = 'Tea + coffee · ' . $tea_desc . ' × ' . $people . 'pp' . ( $num_days > 1 ? ' × ' . $num_days . ' days' : '' );
+		$items[] = [ 'label' => $tea_label, 'value' => $tea_cost ];
+	}
+
+	// Catering — per-head × people + organising fee, × days.
+	if ( ! empty( $addons['catering'] ) ) {
+		$organising_fee = (float) get_field( 'catering_organising_fee', 'option' );
+		if ( $organising_fee <= 0 ) {
+			$organising_fee = 100;
+		}
+		$per_head = (float) ( $addons['cateringPerHead'] ?? 25 );
+		$catering_cost = ( $per_head * $people + $organising_fee ) * $num_days;
+		$catering_label = 'Catering · ' . $people . 'pp × $' . number_format( $per_head ) . ' + $' . number_format( $organising_fee ) . ' organising' . ( $num_days > 1 ? ' × ' . $num_days . ' days' : '' );
+		$items[] = [ 'label' => $catering_label, 'value' => $catering_cost ];
+	}
+
+	// Projector + sound — flat $50 each × days.
+	$projector_flat = 0;
+	$sound_flat     = 0;
+	if ( ! empty( $addons['projector'] ) ) {
+		$projector_flat = (float) get_field( 'av_projector_flat', 'option' );
+		if ( $projector_flat <= 0 ) $projector_flat = 50;
+		$items[] = [ 'label' => 'Projector' . ( $num_days > 1 ? ' × ' . $num_days . ' days' : '' ), 'value' => $projector_flat * $num_days ];
+	}
+	if ( ! empty( $addons['sound'] ) ) {
+		$sound_flat = (float) get_field( 'av_sound_flat', 'option' );
+		if ( $sound_flat <= 0 ) $sound_flat = 50;
+		$items[] = [ 'label' => 'Sound system' . ( $num_days > 1 ? ' × ' . $num_days . ' days' : '' ), 'value' => $sound_flat * $num_days ];
+	}
+
+	$total = array_reduce( $items, static function ( float $acc, array $it ): float {
+		return $acc + $it['value'];
+	}, 0 );
+
+	$discount_amt  = 0;
+	$discount_pct  = (float) get_field( 'impact_discount_pct', 'option' );
+	if ( $discount_pct <= 0 ) {
+		$discount_pct = 50;
+	}
+	$discount_frac = $discount_pct / 100;
+
+	if ( ! empty( $addons['impact'] ) ) {
+		$discount_amt = $room_cost * $discount_frac;
+		$total      -= $discount_amt;
+		$items[]    = [
+			'label'    => 'Impact Discount · ' . number_format( $discount_pct, 0 ) . '% off room',
+			'value'    => -$discount_amt,
+			'discount' => true,
+		];
+	}
+
+	// Impact donation (giving $ funded by this booking): hours × people × rate.
+	// Day + evening blocks are valued at 8/4 hours (engine + cited methodology);
+	// hourly bookings use actual duration.
+	$impact_hrs = $total_hrs;
+	if ( 'day' === $duration ) {
+		$impact_hrs = $num_days * 8;
+	} elseif ( 'evening' === $duration ) {
+		$impact_hrs = $num_days * 4;
+	}
+	$giving_rate       = (float) get_field( 'giving_rate_per_person_hour', 'option' );
+	if ( $giving_rate <= 0 ) {
+		$giving_rate = 1;
+	}
+	$impact_donation = round( $impact_hrs * $people * $giving_rate );
+
+	return [
+		'calc'           => 'meet-pricing',
+		'empty'          => false,
+		'people'         => $people,
+		'room'           => $room,
+		'roomName'       => $room_name,
+		'duration'       => $duration,
+		'numDays'        => $num_days,
+		'totalHours'     => $total_hrs,
+		'items'          => $items,
+		'total'          => $total,
+		'discountAmt'    => $discount_amt,
+		'discountPct'    => $discount_pct,
+		'impactDonation' => $impact_donation,
+		'cap'            => $cap,
+	];
+}
+
+
+/**
  * Compose the plain + HTML email for a calc's figures.
  *
  * @param string $calc
@@ -367,6 +650,8 @@ function two57_calc_compose_email( string $calc, array $figures, array $state, s
 			return two57_calc_compose_hours_to_impact( $figures, $state, $page, $to );
 		case 'workspace-pricing':
 			return two57_calc_compose_workspace_pricing( $figures, $state, $page, $to );
+		case 'meet-pricing':
+			return two57_calc_compose_meet_pricing( $figures, $state, $page, $to );
 	}
 
 	return [];
@@ -463,7 +748,7 @@ function two57_calc_compose_workspace_pricing( array $figures, array $state, str
 	foreach ( $figures['oursLines'] as $line ) {
 		$tier_label = static function ( string $slug ): string {
 			if ( 'dedicated' === $slug ) {
-				return 'Dedicated 7 days/week';
+				return 'Dedicated Desk';
 			}
 			return 'Flexi ' . str_replace( 'flexi-', '', $slug ) . ' day' . ( 'flexi-1' === $slug ? '' : 's' ) . '/week';
 		};
@@ -531,6 +816,141 @@ function two57_calc_compose_workspace_pricing( array $figures, array $state, str
 		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;">two/fiftyseven, Wellington.<br>',
 			'<a href="' . esc_url( home_url( '/contact-policy/' ) ) . '" style="color:#6b7280;">Contact policy</a>',
 		'</p>',
+	] );
+
+	return [ 'subject' => $subject, 'summary' => $summary, 'plain' => $plain, 'html' => $html ];
+}
+
+
+/**
+ * C2 — meet-pricing email copy.
+ *
+ * @param array  $figures Re-rendered by two57_calc_figures_meet_pricing().
+ * @param array  $state   Sanitized by two57_calc_sanitize_meet_pricing().
+ * @param string $page    Pathname the calc sits on.
+ * @param string $to      Recipient email.
+ * @return array { subject, summary, plain, html }
+ */
+function two57_calc_compose_meet_pricing( array $figures, array $state, string $page, string $to ): array {
+	$money = static function ( float $n ): string {
+		return '$' . number_format( round( $n ) );
+	};
+
+	$empty_email = $figures['empty'] ?? false;
+	$room        = $figures['roomName'] ?? '';
+	$people      = $figures['people'] ?? 0;
+	$duration    = $figures['duration'] ?? '';
+	$num_days    = $figures['numDays'] ?? 0;
+
+	// Subject + 1-line summary depend on whether the calc has a big-enough state.
+	if ( $empty_email || ! $room || ! $duration ) {
+		$summary = 'two/fiftyseven meeting quote — pick a room and a duration and we\'ll show your itemised price.';
+		$subject = 'Your two/fiftyseven meeting quote';
+
+		$link = home_url( $page );
+
+		$plain = implode( "\n\n", [
+			$summary,
+			'Open the calculator and rebuild your quote: ' . $link,
+			'',
+			'—',
+			'two/fiftyseven, Wellington · https://twofiftyseven.co/',
+			'Contact policy: ' . home_url( '/contact-policy/' ),
+		] );
+
+		$html = implode( '', [
+			'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2937;">' . esc_html( $summary ) . '</p>',
+			'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;"><a href="' . esc_url( $link ) . '" style="color:#2563eb;font-weight:600;">Open your quote →</a></p>',
+			'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;">two/fiftyseven, Wellington.<br><a href="' . esc_url( home_url( '/contact-policy/' ) ) . '" style="color:#6b7280;">Contact policy</a></p>',
+		] );
+
+		return [ 'subject' => $subject, 'summary' => $summary, 'plain' => $plain, 'html' => $html ];
+	}
+
+	$duration_word = [ 'hour' => 'an hourly', 'day' => 'a full-day', 'evening' => 'an evening' ][ $duration ] ?? 'a';
+
+	$summary = sprintf(
+		'%s at two/fiftyseven — %s × %d day%s for %d people — totals %s (excl. GST).',
+		$room,
+		$duration_word,
+		$num_days,
+		$num_days > 1 ? 's' : '',
+		$people,
+		$money( (float) $figures['total'] )
+	);
+
+	// Rebuild the share link params (mirror meet-pricing.js writeURL).
+	$link_params = [
+		'people' => $people,
+		'room'   => $state['room'],
+		'dur'    => $state['duration'],
+	];
+	$days_enc = [];
+	foreach ( $state['days'] as $day ) {
+		$days_enc[] = $day['date'] . '|' . $day['start'] . '-' . $day['end'];
+	}
+	if ( $days_enc ) {
+		$link_params['days'] = implode( ',', $days_enc );
+	}
+	$addon_tokens = [];
+	if ( ! empty( $state['addons']['tea'] ) ) {
+		$addon_tokens[] = (float) ( $state['addons']['teaType'] ?? 5 ) >= 10 ? 'tea-bottomless' : 'tea-single';
+	}
+	if ( ! empty( $state['addons']['projector'] ) ) {
+		$addon_tokens[] = 'projector';
+	}
+	if ( ! empty( $state['addons']['sound'] ) ) {
+		$addon_tokens[] = 'sound';
+	}
+	if ( ! empty( $state['addons']['catering'] ) ) {
+		$addon_tokens[] = 'catering-' . (string) ( $state['addons']['cateringPerHead'] ?? 25 );
+	}
+	if ( $addon_tokens ) {
+		$link_params['addons'] = implode( ',', $addon_tokens );
+	}
+	if ( ! empty( $state['addons']['impact'] ) || ! empty( $state['impact'] ) ) {
+		$link_params['impact'] = '1';
+	}
+
+	$link = add_query_arg( $link_params, home_url( $page ) );
+
+	$subject = 'Your two/fiftyseven meeting quote';
+
+	$lines_plain = [];
+	$lines_html  = [];
+	foreach ( $figures['items'] as $item ) {
+		$value = $item['value'];
+		$sign  = $value < 0 ? '-' : '';
+		$lines_plain[] = $item['label'] . ': ' . $sign . $money( abs( (float) $value ) );
+		$lines_html[]  = sprintf(
+			'%s — <strong style="color:#111827;">%s%s</strong>',
+			esc_html( $item['label'] ),
+			$sign,
+			esc_html( $money( abs( (float) $value ) ) )
+		);
+	}
+
+	$plain = implode( "\n\n", [
+		$summary . ' — ' . $money( (float) $figures['total'] ) . ' excl. GST.',
+		'Itemised quote:',
+		implode( "\n", $lines_plain ),
+		'',
+		'Your booking also funds ' . $money( (float) $figures['impactDonation'] ) . ' of subsidised space for charities + community orgs.',
+		'',
+		'Open or share this quote: ' . $link,
+		'',
+		'—',
+		'two/fiftyseven, Wellington · https://twofiftyseven.co/',
+		'Contact policy: ' . home_url( '/contact-policy/' ),
+	] );
+
+	$html = implode( '', [
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2937;">' . esc_html( $summary ) . '</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:24px;line-height:1.2;color:#111827;font-weight:600;">' . esc_html( $money( (float) $figures['total'] ) ) . ' <span style="font-size:14px;font-weight:400;color:#6b7280;">excl. GST</span></p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#374151;">Itemised quote:<br>' . implode( '<br>', $lines_html ) . '</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#374151;">Your booking also funds <strong style="color:#111827;">' . esc_html( $money( (float) $figures['impactDonation'] ) ) . '</strong> of subsidised space for charities + community orgs.</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;"><a href="' . esc_url( $link ) . '" style="color:#2563eb;font-weight:600;">Open and share your quote →</a></p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;">two/fiftyseven, Wellington.<br><a href="' . esc_url( home_url( '/contact-policy/' ) ) . '" style="color:#6b7280;">Contact policy</a></p>',
 	] );
 
 	return [ 'subject' => $subject, 'summary' => $summary, 'plain' => $plain, 'html' => $html ];

@@ -59,6 +59,18 @@
 	}
 }
 
+// On phones, let the calc card use the full viewport width instead of the
+// global inline padding — more room for the tiles/sliders when the grid
+// stacks to one column. Scoped to the calc blocks only; global padding is
+// left intact everywhere else.
+@media (max-width: #{bp.$bp-md}) {
+	.meet-pricing .wrapper,
+	.workspace-pricing .wrapper,
+	.hours-to-impact .wrapper {
+		--wrapper-padding-inline: 0;
+	}
+}
+
 // ── Inputs column — card ──────────────────────────────────────
 .calc__inputs {
 	--stack-gap: var(--space-m-l);
@@ -241,17 +253,6 @@
 	min-inline-size: 0;
 }
 
-// Below md the range input is hidden — stepper buttons + number only.
-@media (max-width: #{bp.$bp-md}) {
-	.calc__slider-controls {
-		grid-template-columns: auto auto;
-	}
-
-	.calc__slider {
-		display: none;
-	}
-}
-
 .calc__stepper-btn {
 	display: flex;
 	align-items: center;
@@ -281,6 +282,18 @@
 	&:focus-visible {
 		outline: 2px solid var(--color-border-primary);
 		outline-offset: 2px;
+	}
+}
+
+// Below md the +/- stepper buttons are hidden — the range input + number only.
+// Lives after the base button rule so source order wins at equal specificity.
+@media (max-width: #{bp.$bp-md}) {
+	.calc__stepper-btn {
+		display: none;
+	}
+
+	.calc__slider-controls {
+		grid-template-columns: 1fr;
 	}
 }
 
@@ -377,6 +390,7 @@
 	text-align: right;
 	color: var(--color-content-primary);
 	white-space: nowrap;
+	text-align: center;
 }
 
 // ── Radio group (segmented buttons) ───────────────────────────
@@ -438,6 +452,177 @@
 	opacity: 0.75;
 }
 
+// ── Repeatable row container + add/remove ────────────────────
+// Used by C2 day-rows, future C3 custom rows, C4 custom rows.
+// .calc__repeat    — the list container holding repeatable rows
+// .calc__add-btn   — the "+ Add X" trigger beneath the rows
+.calc__repeat {
+	display: grid;
+	gap: var(--space-2xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.calc__add-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-2xs);
+	inline-size: auto;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-s);
+	border: 1px dashed var(--color-border-tertiary);
+	border-radius: var(--corner-radius-m);
+	background-color: transparent;
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	font-size: var(--text-m-size);
+	font-weight: 600;
+	cursor: pointer;
+	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+
+	&:hover {
+		border-color: var(--color-border-primary);
+		background-color: color-mix(in srgb, var(--color-surface-secondary) 60%, transparent);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+
+	&:disabled {
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+}
+
+// ── Day row (date + start + end + hours + remove) ───────────
+// Repeating date/time shell used by C2 day-rows, future C4 AM/PM widget.
+// Layout: tight "Day N" label column gives the inputs row the bulk of the
+// width; the inputs container lays its 5 children out on a single grid row
+// (date + start + → + end + hours) so they always sit on one line. Mobile
+// fallback switches the inputs back to flex-wrap when the screen can't fit
+// them — better than horizontal overflow.
+.calc__day-row {
+	display: grid;
+	grid-template-columns: min-content 1fr auto;
+	gap: var(--space-2xs);
+	align-items: center;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-xs);
+	border-radius: var(--corner-radius-m);
+	background-color: color-mix(in srgb, var(--color-content-inverse) 70%, transparent);
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr auto;
+		row-gap: var(--space-2xs);
+	}
+}
+
+.calc__day-row-label {
+	color: var(--color-content-secondary);
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-xs-size);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+	white-space: nowrap;
+
+	@media (max-width: 600px) {
+		grid-column: 1;
+	}
+}
+
+.calc__day-row-inputs {
+	display: grid;
+	// date | start | → | end | hours — all on one row, each sized to its
+	// content. minmax(0, …) lets an input shrink under its native min-content
+	// (date/time pickers) before any sibling column, so they always fit
+	// inside the 1fr slot the parent row gives them.
+	grid-template-columns: minmax(0, auto) minmax(0, auto) min-content minmax(0, auto) auto;
+	align-items: center;
+	gap: var(--space-3xs);
+	min-inline-size: 0;
+
+	@media (max-width: 600px) {
+		grid-column: 1 / -1;
+	}
+
+	// On screens narrow enough that the 5-column row would overflow, drop
+	// back to flex-wrap so the dash + times flow onto a second row instead
+	// of triggering horizontal scroll on the card.
+	@media (max-width: 540px) {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-3xs);
+	}
+}
+
+.calc__day-row-inputs input {
+	// Reuse the .calc__input look but compact: small padding, narrow width,
+	// so the date + two time pickers fit on one row at phone widths.
+	min-inline-size: 0;
+	inline-size: 100%;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-2xs);
+	border-radius: var(--corner-radius-xs);
+	border: 1px solid var(--color-border-tertiary);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-primary);
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-s-size);
+	font-variant-numeric: tabular-nums;
+
+	&:focus {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 1px;
+	}
+}
+
+.calc__day-row-hours {
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-xs-size);
+	color: var(--color-content-secondary);
+	white-space: nowrap;
+	// Monospace + fixed character width so the label doesn't reflow as the
+	// hour count changes (8 → 13 → 24). 4ch reserves room for "nhrs".
+	min-inline-size: 4ch;
+}
+
+.calc__day-row-remove {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: var(--space-l);
+	block-size: var(--space-l);
+	flex-shrink: 0;
+	border-radius: 50%;
+	border: 1px solid var(--color-border-tertiary);
+	background-color: transparent;
+	color: var(--color-content-secondary);
+	font-size: var(--text-l-size);
+	line-height: 1;
+	cursor: pointer;
+	transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+
+	&:hover:not(:disabled) {
+		background-color: var(--color-content-primary);
+		color: var(--color-content-inverse);
+		border-color: var(--color-content-primary);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+
+	&:disabled {
+		visibility: hidden;
+	}
+}
+
 // ── Result panel (right column) ──────────────────────────────
 .calc__result {
 	--stack-gap: var(--space-s);
@@ -445,11 +630,35 @@
 	flex-direction: column;
 }
 
+// Sticky variant — opt-in per calculator by adding .calc__result--sticky to
+// the <aside>. Pins the quote column below the fixed site header while the
+// (taller) inputs column scrolls. Requires the aside to be content-sized —
+// not stretched to the row height — so it has travel room within its grid
+// area; align-self: start does that. Desktop/two-column only; when the grid
+// stacks to a single column the aside has no room to travel so sticky is
+// dropped for clarity.
+.calc__result--sticky {
+	align-self: start;
+	position: sticky;
+	top: calc(var(--site-header-height, 4rem) + var(--space-m));
+	// If the quote content outgrows the viewport, let the column scroll
+	// internally instead of clipping the footer end.
+	max-block-size: calc(100svh - var(--site-header-height, 4rem));
+	overflow: auto;
+
+	@media (max-width: #{bp.$bp-lg}) {
+		align-self: stretch;
+		position: static;
+		max-block-size: none;
+		overflow: visible;
+	}
+}
+
 .calc__result-grid {
 	display: flex;
 	flex-grow: 1;
 	flex-direction: column;
-	gap: var(--space-l);
+	gap: var(--space-xs);
 	padding: var(--space-m);
 	border-radius: var(--corner-radius-card);
 	background-color: var(--color-surface-inverse-primary);
@@ -632,7 +841,7 @@
 	grid-template-columns: 1fr auto;
 	gap: var(--space-m);
 	padding-block: var(--space-2xs);
-	border-bottom: 1px solid var(--color-border-tertiary);
+	border-bottom: 1px solid var(--color-border-secondary);
 	align-items: baseline;
 }
 

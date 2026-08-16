@@ -14,6 +14,12 @@
 	padding-block: var(--space-xl-3xl);
 }
 
+// The share row lives outside the .calc__body grid (so the sticky result
+// column releases before it), so the grid gap no longer spaces it.
+.workspace-pricing .calc__share {
+	margin-block-start: var(--space-m);
+}
+
 // ── Result headline ─────────────────────────────────────────
 // .calc__result-grid is a flex column with gap: space-l, so the two big
 // numbers stack with that same spacing (matching the shared base behaviour).
@@ -36,11 +42,38 @@
 	--cluster-gap-rows: var(--space-2xs);
 }
 
-// ── Annual prepay toggle (layout only — the swatch is .calc__check) ──
-.workspace-pricing .calc__check {
-	justify-content: flex-end;
-	align-items: center;
+// ── Annual prepay card (apply the same card layout as the Meet-pricing
+//    add-on tiles: bordered card, checkbox swatch top-right, glow on check) ──
+.workspace-pricing__annual-card {
+	position: relative;
 	margin-block-start: var(--space-xs);
+	padding: var(--space-s);
+	border: 1px solid var(--color-border-tertiary);
+	border-radius: var(--corner-radius-m);
+	background-color: color-mix(in srgb, var(--color-content-inverse) 70%, transparent);
+	cursor: pointer;
+	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+
+	&:has(input:checked) {
+		border-color: var(--color-border-primary);
+		background-color: var(--color-content-inverse);
+	}
+
+	// Swatch moves to the top-right corner of the card (see Meet-pricing add-ons).
+	.calc__check-box {
+		position: absolute;
+		top: var(--space-s);
+		right: var(--space-s);
+		margin-block-start: 0;
+	}
+}
+
+.workspace-pricing__annual-head {
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-2xs);
+	padding-inline-end: calc(var(--space-l) + var(--space-xs));
+	margin: 0;
 }
 
 // ── Comparison chart (proposal panel) ───────────────────────
@@ -110,6 +143,7 @@
 	font-variant-numeric: tabular-nums;
 	font-size: var(--text-m-size);
 	color: var(--color-content-inverse);
+	text-align: right;
 }
 
 .workspace-pricing__chart-row--ours .workspace-pricing__chart-value {
@@ -122,7 +156,7 @@
 	gap: var(--space-2xs);
 	margin-block-start: var(--space-xs);
 	padding-block-start: var(--space-xs);
-	border-block-start: 1px solid color-mix(in srgb, var(--color-content-inverse) 22%, transparent);
+	border-block-start: 1px solid var(--color-border-secondary);
 }
 
 // Same headline pattern as the bars above — text left, value right.
@@ -141,6 +175,7 @@
 	font-variant-numeric: tabular-nums;
 	font-size: var(--text-m-size);
 	color: var(--color-content-inverse);
+	text-align: right;
 
 	strong {
 		color: var(--color-content-inverse);

@@ -19,6 +19,7 @@ import { initGallerySlider } from './modules/gallery-slider.js';
 import { initInjectPrices }  from './modules/inject-prices.js';
 import { initHoursToImpact } from './modules/hours-to-impact.js';
 import { initWorkspacePricing } from './modules/workspace-pricing.js';
+import { initMeetPricing } from './modules/meet-pricing.js';
 import { initNavDrawer }     from './modules/nav-drawer.js';
 import { initNavMobile }     from './modules/nav-mobile.js';
 
@@ -38,6 +39,7 @@ initGallerySlider();
 initInjectPrices();
 initHoursToImpact();
 initWorkspacePricing();
+initMeetPricing();
 initTestimonials();
 initCaseStudies();
 initNavDrawer();

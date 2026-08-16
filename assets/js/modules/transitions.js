@@ -31,6 +31,7 @@ import { initGallerySlider, destroyGallerySlider } from './gallery-slider.js';
 import { initInjectPrices }  from './inject-prices.js';
 import { initHoursToImpact } from './hours-to-impact.js';
 import { initWorkspacePricing } from './workspace-pricing.js';
+import { initMeetPricing } from './meet-pricing.js';
 
 function resetScrollRevealState() {
 	document.querySelectorAll( '[data-scroll].is-inview' ).forEach( ( el ) => {
@@ -74,6 +75,8 @@ export function initTransitions() {
 				initCaseStudies();
 				initInjectPrices();
 				initHoursToImpact();
+				initWorkspacePricing();
+				initMeetPricing();
 				} );
 			} );
 		}
@@ -163,6 +166,7 @@ export function initTransitions() {
 		initInjectPrices();
 		initHoursToImpact();
 		initWorkspacePricing();
+		initMeetPricing();
 		syncHeader();
 
 		// Safety net: if animation:in:end never fires (e.g. transitionend

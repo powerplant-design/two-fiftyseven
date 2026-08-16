@@ -220,7 +220,7 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 						<p class="calc__share-consent | text-s">
 							<label class="calc__share-check">
 								<input type="checkbox" name="consent" checked data-calc-share-consent>
-								By submitting I agree to the <a href="/contact-policy/">Contact policy</a>
+								<span class="calc__share-consent-text">By submitting, I agree to two/fiftyseven contacting me to follow up about these numbers — see the <a href="/contact-policy/">Contact Policy</a></span>
 							</label>
 						</p>
 					</form>

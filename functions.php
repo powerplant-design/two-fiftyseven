@@ -621,6 +621,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'meet-pricing',
+		'title'           => __( '257 Calc Meet Pricing', 'two-fiftyseven' ),
+		'description'     => __( 'Meeting + event room quote tool: pick a room, duration, dates and add-ons, see an itemised total live. Optional Host variant restricts to the large rooms only.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/meet-pricing/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'meeting', 'pricing', 'room', 'event', 'quote', 'book' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 
@@ -1050,7 +1065,7 @@ add_action( 'wp_head', function (): void {
 	// — Memberships + day passes → prices object —
 	$prices = [
 		'dedicated' => [
-			'name'      => 'Dedicated 7 days/week',
+			'name'      => 'Dedicated Desk',
 			'shortName' => 'Dedicated',
 			'price'     => (int) get_field( 'membership_dedicated_monthly', 'option' ),
 			'unit'      => 'monthly',
@@ -1151,7 +1166,7 @@ add_action( 'wp_head', function (): void {
 			'evening'   => (int) get_field( 'room_event_evening', 'option' ),
 		],
 		'entire'         => [
-			'name'      => 'Entire two/fiftyseven',
+			'name'      => 'Entire Space',
 			'capacity'  => (int) get_field( 'room_entire_capacity', 'option' ),
 			'day'       => (int) get_field( 'room_entire_day', 'option' ),
 			'hour'      => (int) get_field( 'room_entire_hour', 'option' ),
