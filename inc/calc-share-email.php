@@ -217,7 +217,7 @@ function two57_calc_sanitize_members( array $members ): array {
  * @return array sanitized state shape — never WP_Error (meets the contract).
  */
 function two57_calc_sanitize_meet_pricing( array $state ): array {
-	$rooms_allowed    = [ 'meeting-room', 'silver-linings', 'studio', 'workshop', 'event', 'entire' ];
+	$rooms_allowed    = array_keys( two57_meet_rooms() );
 	$durations_allowed = [ 'hour', 'day', 'evening' ];
 
 	$people = two57_calc_int( $state['people'] ?? 6, 1, 200 );
@@ -471,29 +471,11 @@ function two57_calc_figures_meet_pricing( array $state ) {
 		return $empty;
 	}
 
-	// Lookup rates from ACF SSOT. Room slug → field key map matches the
-	// functions.php wp_head injector.
-	$room_keys = [
-		'meeting-room'   => 'room_meeting',
-		'silver-linings' => 'room_silver_linings',
-		'studio'         => 'room_studio',
-		'workshop'       => 'room_workshop',
-		'event'          => 'room_event',
-		'entire'         => 'room_entire',
-	];
-	$room_key = $room_keys[ $room ] ?? '';
-
-	// Slug → display name (mirrors the labels the wp_head injector emits,
-	// kept self-contained here so the composer doesn't depend on the JS global).
-	$room_names = [
-		'meeting'        => 'Meeting Room',
-		'silver-linings' => 'Silver Linings',
-		'studio'         => 'Studio',
-		'workshop'       => 'Workshop Space',
-		'event'          => 'Event Space',
-		'entire'         => 'Entire Space',
-	];
-	$room_name = $room_names[ $room ] ?? $room;
+	// Lookup rates from ACF SSOT. Room slug → field key map is shared via
+	// two57_meet_rooms() (same source as the wp_head injector + block.php).
+	$room_info = two57_meet_rooms()[ $room ] ?? null;
+	$room_key  = $room_info ? 'room_' . $room_info['key'] : '';
+	$room_name = $room_info['name'] ?? $room;
 
 	$rates = [ 'day' => 0, 'hour' => 0, 'evening' => 0 ];
 	$cap   = 0;

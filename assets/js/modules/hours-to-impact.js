@@ -18,6 +18,7 @@
  */
 
 import { initCalcShare } from './calc-share.js';
+import { bindRovingRadio, fmt$, fmtN } from './calc-utils.js';
 
 // --- Methodology constants (cited, stay in code) ---
 const M = {
@@ -31,18 +32,6 @@ const M = {
 };
 
 // --- Formatters ---
-function fmt$( n ) {
-	return new Intl.NumberFormat( 'en-NZ', {
-		style: 'currency',
-		currency: 'NZD',
-		maximumFractionDigits: 0,
-	} ).format( Math.round( n ) );
-}
-
-function fmtN( n ) {
-	return new Intl.NumberFormat( 'en-NZ' ).format( Math.round( n ) );
-}
-
 function fmtHrs( n ) {
 	return fmtN( n ) + ' hrs';
 }
@@ -177,27 +166,7 @@ function bindEvents( root, state, givingRate ) {
 
 		// Arrow keys + Enter/Space — attached via capture on each
 		// button so Locomotive Scroll can't intercept the arrows.
-		const navKeys = [ 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown' ];
-		dayRadios.forEach( ( radio, idx ) => {
-			radio.addEventListener( 'keydown', ( e ) => {
-				if ( navKeys.includes( e.key ) ) {
-					e.preventDefault();
-					e.stopPropagation();
-					let nextIdx;
-					if ( e.key === 'ArrowLeft' || e.key === 'ArrowUp' ) {
-						nextIdx = idx <= 0 ? dayRadios.length - 1 : idx - 1;
-					} else {
-						nextIdx = idx >= dayRadios.length - 1 ? 0 : idx + 1;
-					}
-					dayRadios[ nextIdx ].focus();
-					selectDay( dayRadios[ nextIdx ] );
-				} else if ( e.key === 'Enter' || e.key === ' ' ) {
-					e.preventDefault();
-					e.stopPropagation();
-					selectDay( radio );
-				}
-			}, { capture: true } );
-		} );
+		bindRovingRadio( dayRadios, selectDay );
 	}
 
 	// Call once on init to set initial tabindex

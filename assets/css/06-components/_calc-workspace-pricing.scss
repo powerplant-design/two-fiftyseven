@@ -42,38 +42,10 @@
 	--cluster-gap-rows: var(--space-2xs);
 }
 
-// ── Annual prepay card (apply the same card layout as the Meet-pricing
-//    add-on tiles: bordered card, checkbox swatch top-right, glow on check) ──
+// ── Annual prepay card (shares the .calc__option-card recipe with the
+//    Meet-pricing add-on tiles; only the top margin is its own) ──
 .workspace-pricing__annual-card {
-	position: relative;
 	margin-block-start: var(--space-xs);
-	padding: var(--space-s);
-	border: 1px solid var(--color-border-tertiary);
-	border-radius: var(--corner-radius-m);
-	background-color: color-mix(in srgb, var(--color-content-inverse) 70%, transparent);
-	cursor: pointer;
-	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
-
-	&:has(input:checked) {
-		border-color: var(--color-border-primary);
-		background-color: var(--color-content-inverse);
-	}
-
-	// Swatch moves to the top-right corner of the card (see Meet-pricing add-ons).
-	.calc__check-box {
-		position: absolute;
-		top: var(--space-s);
-		right: var(--space-s);
-		margin-block-start: 0;
-	}
-}
-
-.workspace-pricing__annual-head {
-	flex-direction: column;
-	align-items: flex-start;
-	gap: var(--space-2xs);
-	padding-inline-end: calc(var(--space-l) + var(--space-xs));
-	margin: 0;
 }
 
 // ── Comparison chart (proposal panel) ───────────────────────

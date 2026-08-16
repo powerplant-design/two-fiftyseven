@@ -637,7 +637,7 @@ assets/css/06-components/
 
 ## Status
 
-Last updated: 2026-08-11 (all work on `feature/calculators` branch)
+Last updated: 2026-08-17 (work on `feature/calculators-continued` branch)
 
 - [x] **F1** — ACF Options SSOT ✅ committed (`2ee8788`)
 - [x] **F2** — `window.twofiftyseven` injector ✅ committed (`2ee8788`)
@@ -649,7 +649,8 @@ Last updated: 2026-08-11 (all work on `feature/calculators` branch)
 - [x] **Base-SCSS refactor** — shared primitives promoted to `_calc-base.scss` (see "Shared-SCSS refactor" below), ready for C2
 - [x] **Shared team-size slider system** ✅ committed (`699d816`) — `.calc__slider*` primitives in `_calc-base.scss` (range input + stepper buttons + big readout); ported to C1 and C6. Mobile hides the slider (buttons + number only). See "Slider system" below.
 - [x] **C1/C6 UX polish** ✅ committed (`699d816`) — commitment field reordered below memberships + relabelled "Private office lease term"; Dedicated annual-save breakdown row hidden unless annual is ticked **and** ≥1 Dedicated member; new memberships default to **Dedicated** tier (`M.DEFAULT_TIER`); `calc-source` tooltips capped to viewport + anchored right of the trigger below `bp-md` (fixes the mobile horizontal-overflow bug the slider work surfaced)
-- [x] **C2** — Meet pricing (+ Host variant) ✅ built + staged on `feature/calculators-continued` (see "C2 — Meet pricing implementation — built" below)
+- [x] **C2** — Meet pricing (+ Host variant) ✅ built + committed (`1d36abb`) on `feature/calculators-continued` (see "C2 — Meet pricing implementation — built" below)
+- [x] **DRY refactor** ✅ staged on `feature/calculators-continued` (see the "DRY refactor" note under C2 below) — shared `.calc__option-card`/`__head`, shared `calc-utils.js` (`fmt$`/`fmtN`/`bindRovingRadio`), single `two57_meet_rooms()` PHP helper
 - [ ] **C5** — Office carbon
 - [ ] **C4** — Meeting costs
 - [ ] **C3** — Office costs v2
@@ -863,12 +864,12 @@ New memberships now default to **Dedicated** (was Flexi 1 day/week): `M.DEFAULT_
 | `.calc__repeat` + `.calc__add-btn` (add/remove row) | new | C2 `.day-row`, C3 `.oc-custom-rows`, C4 `.custom-rows` | ✅ done with C2 |
 | `.calc__day-row` (repeating date/time shell) | new | C2 native date/time, C4 AM/PM inset widget | ✅ done with C2 |
 | `.calc__result--sticky` (pinned quote aside) | new — opt-in per calc; `align-self: start` + `position: sticky` below the fixed header, dropped ≤`bp-lg` when the grid stacks | C1 workspace aside, C2 meet aside | ✅ done with C2 (see "Sticky result column" note) |
-| `.calc__add-on card` (bordered option card, top-right swatch, `:has(input:checked)` glow) | new — C2 `.meet-pricing__addon`/`__impact`, C1 `.workspace-pricing__annual-card` share the same recipe | C2 addons + impact toggle, C1 annual card | ⏳ **not yet promoted to base** — still duplicated per-calc; candidate for `.calc__option-card`/`.calc__option-head` on the next calc that needs an option card |
-| `.calc__contact` (inline email/contact form) | new | C2 full `.qf` form, C3/4/5 `.calc-contact-inline` | ⏳ with C2 |
+| `.calc__add-on card` (bordered option card, top-right swatch, `:has(input:checked)` glow) | new — C2 `.meet-pricing__addon`/`__impact`, C1 `.workspace-pricing__annual-card` share the same recipe | C2 addons + impact toggle, C1 annual card | ✅ done — `.calc__option-card`/`.calc__option-head` promoted to `_calc-base.scss`; C2 addons + impact card + C1 annual card use them (per-calc sheets keep only their unique rules) |
+| `.calc__contact` (inline email/contact form) | new | C2 full `.qf` form, C3/4/5 `.calc-contact-inline` | ⏳ parked — not built with C2; C2 shipped the §6 `.calc__share-*` row instead |
 
 **Stay per-calc (genuinely unique):** C2 room-tile selector states (`recommended`/`disabled`), C2 `pricing-tiers` multi-rate table, C3 scenarios/compare dialog, chart bars, feature/inclusion card grids.
 
-**C2 build order (after the refactor commit):** ✅ **all built + staged** on `feature/calculators-continued` (see "C2 — Meet pricing implementation — built" below).
+**C2 build order (after the refactor commit):** ✅ **all built + committed** (`1d36abb`) on `feature/calculators-continued` (see "C2 — Meet pricing implementation — built" below).
 
 1. **`inc/calc-share-email.php`** — `two57_calc_sanitize_state()` `'meet-pricing'` case (people, room, duration, days `[{date,start,end}]`, addons, catering per-head, impact discount), `two57_calc_figures_meet_pricing()` (rooms + addons + impact discount + giving from ACF SSOT; recompute authoritative), `two57_calc_compose_meet_pricing()` (itemised quote, room, dates, impact-funding line)
 2. **`acf-json/group_two57_block_meet_pricing.json`** — `colour_space` select + `room_set` select (`all` default / `host` = Workshop/Event/Entire only)
@@ -882,7 +883,7 @@ New memberships now default to **Dedicated** (was Flexi 1 day/week): `M.DEFAULT_
 
 **Verification:** `npm run build`; test quote end-to-end (room swap, day add/remove, addon reveal, impact toggle); email send → `TWO57_CALC_EMAIL_LOG`/Mailhog with `calc_source = meet-pricing`; copy-link round-trips `people/room/duration/days/addons/impact`; Host variant filters tiles via `room_set`.
 
-### C2 — Meet pricing implementation — built (staged on `feature/calculators-continued`)
+### C2 — Meet pricing implementation — built (committed `1d36abb` on `feature/calculators-continued`)
 
 All 7 build-order items above are implemented and staged. Additional notes from the build + review:
 
@@ -891,15 +892,15 @@ All 7 build-order items above are implemented and staged. Additional notes from 
   - **Rule going forward:** calcs whose result aside is sticky (`calc__result--sticky`) → `initCalcShare(root.parentElement, …)`; calcs with the share inside the root → `initCalcShare(root, …)`. This is the $6.1 gotcha that bit twice already.
 - **Sticky result column** — `.calc__result--sticky` (base) pins the quote aside below the fixed header on ≥`bp-lg`; base `_calc-base.scss` `--site-header-height` fallback is 4rem. Dropped ≤`bp-lg` (no travel room in the single-column stack). C1 + C2 opt in.
 - **Impact Discount is a card now, not a toggle.** The old `impact-toggle` in the aside was replaced by a Step 6 `.meet-pricing__addon` card (`data-calc-addon="impact"`), reusing the addon checkbox loop — no separate `[data-calc-impact-checkbox]` binding.
-- **Annual prepay in C1 became a card** (`.workspace-pricing__annual-card`) using the same addon-card recipe as C2 — see the ⏳ `.calc__option-card` promotion row in the shared-primitives table.
+- **Annual prepay in C1 became a card** (`.workspace-pricing__annual-card`) using the same addon-card recipe as C2 — now both share `.calc__option-card` (see that row in the shared-primitives table).
 - **Copy/rename updates (staged, ask-then-committed):** "Entire two/fiftyseven" → **"Entire Space"** (`functions.php` injector, `block.php` room set, email composer); "Private Wellington office" → **"Private office"**; "Dedicated 7 days/week" → **"Dedicated Desk"** (labels in `functions.php` + email composer; prices stay ACF-driven). Consent copy now spans the policy link inline: *"By submitting, I agree to two/fiftyseven contacting me to follow up about these numbers — see the Contact Policy"* (all three blocks, wrapped in `.calc__share-consent-text`).
-- **Meet people slider cap:** scale runs 1–60 then 70–200 by 10 (`PEOPLE_SCALE`, slider max = index 73). Base `.calc__slider-value` now reserves **3ch** (was 2ch, stale comment "calcs cap at 15/30") so the readout doesn't shift at 99→100.
+- **Meet people slider cap:** scale runs 1–60 then 70–200 by 10 (`PEOPLE_SCALE`, slider max = index 73). Base `.calc__slider-value` keeps **2ch** (the C1 15 / C6 30 readouts); meet overrides to 3ch via `.meet-pricing .calc__slider-value { min-inline-size: 3ch }` (base's 2ch would shift at 99→100).
 - **Swup re-init:** `initMeetPricing()` added to `main.js` + both `transitions.js` call sites (page:view + bfcache pageshow). The bfcache branch also gained `initWorkspacePricing()` (it was missing there pre-restructure — a latent gap surfaced in review).
-- **DRY candidates parked (deferred, not built):**
-  - `.meet-pricing__addon` / `__impact` / `.workspace-pricing__annual-card` → promote to `.calc__option-card` (+`__head`) in base. Duplicated recipe today (bordered card, top-right `.calc__check-box` swatch, `:has(input:checked)` glow).
-  - WAI-ARIA radio-roving key nav duplicated in all three engines (C6 days, C1 commitment, C2 room + duration) — candidate shared helper on the next radio group.
-  - Stepper/slider `paint/update` + money formatters (`fmt$` differs across engines) — candidate shared `calc-format.js`/slider binding.
-  - Room slug→rates/labels map now exists in 3 places (`functions.php` injector, `block.php` `$rooms_all`, `inc/calc-share-email.php`) — candidate single `two57_meet_rooms()` helper.
+- **DRY refactor (2026-08-17, staged on `feature/calculators-continued`)** — all but one of the parked candidates shipped:
+  - `.calc__option-card` / `.calc__option-head` promoted to `_calc-base.scss`; C2 addons + impact toggle + C1 annual card converted (markup in both `block.php`s; per-calc sheets keep only their unique rules — annual top margin, addon text-input caret).
+  - Shared `assets/js/modules/calc-utils.js` — `fmt$` / `fmtN` (single Intl formatter; C2's `'$'+toLocaleString` variant retired for parity) + `bindRovingRadio(radios, onSelect)` (same capture-phase arrows + Enter/Space semantics each engine had). All three engines import it; the four duplicated roving blocks and `fmt$` copies are gone. `fmtHrs` intentionally stays per-engine (C6 `N hrs` vs C2 half-hour rounding, no space).
+  - Single `two57_meet_rooms()` (functions.php) — slug → `name` + ACF `key`; consumed by `block.php` `$rooms_all`, the wp_head rooms injector, and `inc/calc-share-email.php` (figures + `$rooms_allowed`). Injector labels normalised to the block.php capitals ("Meeting Room" etc.).
+  - **Still parked:** stepper/slider `paint/update` binding — each engine's slider has genuinely different scale/readout contracts; hold until a real second consumer forces a shared one.
 
 ### Code-review notes (2026-08-10)
 
@@ -910,5 +911,6 @@ All 7 build-order items above are implemented and staged. Additional notes from 
 
 - Fixed **C1 workspace-pricing share regression**: the sticky restructure moved `[data-calc-share]` out of the `[data-js="calc-office-costs"]` root, so `initCalcShare(root, …)` silently no-oped; now `root.parentElement` (matches C2).
 - Restored the `initInjectPrices()` indentation accident in `transitions.js`; added `initWorkspacePricing()` to the bfcache pageshow branch.
-- Both fixes are **unstaged** working-tree edits on top of the staged diff (stage them with `git add assets/js/modules/workspace-pricing.js assets/js/modules/transitions.js` before commit).
+- Both fixes folded into the C2 commit (`1d36abb`).
+- **DRY refactor review (2026-08-17, staged on `feature/calculators-continued`):** option-card/rooms/JS-helper dedupe re-verified — `bindRovingRadio` preserves each engine's exact keydown semantics (capture phase, guard-on-disabled via the engine's `onSelect`), `fmt$` output matches the retired meet `'$'+toLocaleString` (en-NZ identical formatting), `.calc__option-card` carries the `position: relative` the swatch anchored to, and `two57_meet_rooms()` returns the same slugs/keys in the same order. Build + `php -l` clean; only `assets/dist/.vite/manifest.json` + hashed CSS/JS change in dist.
 - Docs (`docs/`) not staged — reference-only, as before.

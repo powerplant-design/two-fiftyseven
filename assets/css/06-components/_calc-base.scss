@@ -193,6 +193,47 @@
 	color: var(--color-content-secondary);
 }
 
+// ── Option card (bordered card with a checkbox swatch top-right) ──
+// Shared by the Meet-pricing add-on tiles and the Workspace annual prepay
+// card: bordered card, glow on check, swatch out of flow in the corner.
+// Pair with .calc__option-head (the <label class="calc__check"> inside).
+.calc__option-card {
+	position: relative; // anchor for the absolutely positioned swatch
+	padding: var(--space-s);
+	border: 1px solid var(--color-border-tertiary);
+	border-radius: var(--corner-radius-m);
+	background-color: color-mix(in srgb, var(--color-content-inverse) 70%, transparent);
+	cursor: pointer; // whole card is the click target
+	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+
+	&:has(input:checked) {
+		border-color: var(--color-border-primary);
+		background-color: var(--color-content-inverse);
+	}
+
+	// Swatch moves to the top-right corner of the card. The shared .calc__check
+	// styles the swatch visual (size, border, fill-on-checked); this override
+	// only takes it out of flow so the title + price can fill the card width.
+	.calc__check-box {
+		position: absolute;
+		top: var(--space-s);
+		right: var(--space-s);
+		margin-block-start: 0;
+	}
+}
+
+// The head is the <label> — still clickable, still wraps the hidden input +
+// swatch. With the swatch out of flow, it lays out title above price as a
+// simple column. Padding-end reserves room so the title doesn't run under
+// the swatch on narrow cards.
+.calc__option-head {
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-2xs);
+	padding-inline-end: calc(var(--space-l) + var(--space-xs));
+	margin: 0;
+}
+
 // ── Stepper (− / output / +) ─────────────────────────────────
 .calc__stepper {
 	display: flex;

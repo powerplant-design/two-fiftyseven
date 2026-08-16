@@ -45,16 +45,10 @@ $paid_forward_display = function_exists( 'get_field' ) ? get_field( 'paid_forwar
 
 // Room slug → ACF key stub. Cap is rendered into the tile label; rates are
 // read from window.twofiftyseven.rooms by the engine (no duplication in DOM).
-// The slugs here match the keys the functions.php wp_head injector emits on
-// window.twofiftyseven.rooms (so ssot.rooms[slug] is always populated).
-$rooms_all = [
-	'meeting-room'   => [ 'name' => 'Meeting Room',          'key' => 'meeting' ],
-	'silver-linings' => [ 'name' => 'Silver Linings',         'key' => 'silver_linings' ],
-	'studio'         => [ 'name' => 'Studio',                'key' => 'studio' ],
-	'workshop'       => [ 'name' => 'Workshop Space',         'key' => 'workshop' ],
-	'event'          => [ 'name' => 'Event Space',           'key' => 'event' ],
-	'entire'         => [ 'name' => 'Entire Space',  'key' => 'entire' ],
-];
+// Shared slug/name/key SSOT is two57_meet_rooms() (functions.php) — the slugs
+// match the keys the wp_head injector emits on window.twofiftyseven.rooms (so
+// ssot.rooms[slug] is always populated).
+$rooms_all = two57_meet_rooms();
 $rooms_host = [
 	'workshop' => $rooms_all['workshop'],
 	'event'    => $rooms_all['event'],
@@ -177,8 +171,8 @@ $room_cap = static function ( string $key ) {
 					<span class="calc__field-label | text-monospace text-s">Extras</span>
 					<ul class="meet-pricing__addon-list">
 
-						<li class="meet-pricing__addon" data-calc-addon="tea">
-							<label class="meet-pricing__addon-head | calc__check">
+						<li class="meet-pricing__addon calc__option-card" data-calc-addon="tea">
+							<label class="calc__option-head | calc__check">
 								<input type="checkbox" data-calc-addon-checkbox>
 								<span class="calc__check-box" aria-hidden="true"></span>
 								<span class="meet-pricing__addon-title">Tea + coffee</span>
@@ -193,8 +187,8 @@ $room_cap = static function ( string $key ) {
 							</div>
 						</li>
 
-						<li class="meet-pricing__addon" data-calc-addon="projector">
-							<label class="meet-pricing__addon-head | calc__check">
+						<li class="meet-pricing__addon calc__option-card" data-calc-addon="projector">
+							<label class="calc__option-head | calc__check">
 								<input type="checkbox" data-calc-addon-checkbox>
 								<span class="calc__check-box" aria-hidden="true"></span>
 								<span class="meet-pricing__addon-title">Projector</span>
@@ -203,8 +197,8 @@ $room_cap = static function ( string $key ) {
 							<p class="meet-pricing__addon-body | text-s">Screen, projector and dongles brought into your room.</p>
 						</li>
 
-						<li class="meet-pricing__addon" data-calc-addon="sound">
-							<label class="meet-pricing__addon-head | calc__check">
+						<li class="meet-pricing__addon calc__option-card" data-calc-addon="sound">
+							<label class="calc__option-head | calc__check">
 								<input type="checkbox" data-calc-addon-checkbox>
 								<span class="calc__check-box" aria-hidden="true"></span>
 								<span class="meet-pricing__addon-title">Sound system</span>
@@ -213,8 +207,8 @@ $room_cap = static function ( string $key ) {
 							<p class="meet-pricing__addon-body | text-s">PA, mics, mixer for your session.</p>
 						</li>
 
-						<li class="meet-pricing__addon" data-calc-addon="catering">
-							<label class="meet-pricing__addon-head | calc__check">
+						<li class="meet-pricing__addon calc__option-card" data-calc-addon="catering">
+							<label class="calc__option-head | calc__check">
 								<input type="checkbox" data-calc-addon-checkbox>
 								<span class="calc__check-box" aria-hidden="true"></span>
 								<span class="meet-pricing__addon-title">Catering organised by us</span>
@@ -239,8 +233,8 @@ $room_cap = static function ( string $key ) {
 				<!-- ── Step 6 · Impact Discount (applicant-side) ─────── -->
 				<div class="calc__field">
 					<span class="calc__field-label | text-monospace text-s">Impact discount</span>
-					<div class="meet-pricing__addon" data-calc-addon="impact">
-						<label class="meet-pricing__addon-head | calc__check">
+					<div class="meet-pricing__addon calc__option-card" data-calc-addon="impact">
+						<label class="calc__option-head | calc__check">
 							<input type="checkbox" data-calc-addon-checkbox>
 							<span class="calc__check-box" aria-hidden="true"></span>
 							<span class="meet-pricing__addon-title">Apply Impact Discount · <?php echo esc_html( number_format( $discount_pct, 0 ) ); ?>% off room rate</span>

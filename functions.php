@@ -341,6 +341,21 @@ require_once get_template_directory() . '/inc/mcp-event-helper.php';
 
 // Calculators — shared "email this calculation" REST endpoint + MailPoet
 // lead capture (reusable across every calculator block's share row).
+//
+// Meet-pricing room slugs → display name + ACF key stub. Single source of
+// truth shared by the block.php tile renderer, the wp_head rooms injector
+// below, and the email composer (inc/calc-share-email.php).
+function two57_meet_rooms(): array {
+	return [
+		'meeting-room'   => [ 'name' => 'Meeting Room',   'key' => 'meeting' ],
+		'silver-linings' => [ 'name' => 'Silver Linings', 'key' => 'silver_linings' ],
+		'studio'         => [ 'name' => 'Studio',         'key' => 'studio' ],
+		'workshop'       => [ 'name' => 'Workshop Space', 'key' => 'workshop' ],
+		'event'          => [ 'name' => 'Event Space',    'key' => 'event' ],
+		'entire'         => [ 'name' => 'Entire Space',   'key' => 'entire' ],
+	];
+}
+
 require_once get_template_directory() . '/inc/calc-share-email.php';
 
 
@@ -1128,51 +1143,17 @@ add_action( 'wp_head', function (): void {
 
 	$annual_discount_pct = (float) get_field( 'annual_prepay_discount_pct', 'option' );
 
-	// — Rooms → rooms object —
-	$rooms = [
-		'meeting-room'   => [
-			'name'      => 'Meeting room',
-			'capacity'  => (int) get_field( 'room_meeting_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_meeting_day', 'option' ),
-			'hour'      => (int) get_field( 'room_meeting_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_meeting_evening', 'option' ),
-		],
-		'silver-linings' => [
-			'name'      => 'Silver Linings',
-			'capacity'  => (int) get_field( 'room_silver_linings_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_silver_linings_day', 'option' ),
-			'hour'      => (int) get_field( 'room_silver_linings_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_silver_linings_evening', 'option' ),
-		],
-		'studio'         => [
-			'name'      => 'Studio',
-			'capacity'  => (int) get_field( 'room_studio_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_studio_day', 'option' ),
-			'hour'      => (int) get_field( 'room_studio_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_studio_evening', 'option' ),
-		],
-		'workshop'       => [
-			'name'      => 'Workshop space',
-			'capacity'  => (int) get_field( 'room_workshop_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_workshop_day', 'option' ),
-			'hour'      => (int) get_field( 'room_workshop_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_workshop_evening', 'option' ),
-		],
-		'event'          => [
-			'name'      => 'Event space',
-			'capacity'  => (int) get_field( 'room_event_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_event_day', 'option' ),
-			'hour'      => (int) get_field( 'room_event_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_event_evening', 'option' ),
-		],
-		'entire'         => [
-			'name'      => 'Entire Space',
-			'capacity'  => (int) get_field( 'room_entire_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_entire_day', 'option' ),
-			'hour'      => (int) get_field( 'room_entire_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_entire_evening', 'option' ),
-		],
-	];
+	// — Rooms → rooms object (slugs + names from two57_meet_rooms()) —
+	$rooms = [];
+	foreach ( two57_meet_rooms() as $slug => $room_info ) {
+		$rooms[ $slug ] = [
+			'name'      => $room_info['name'],
+			'capacity'  => (int) get_field( 'room_' . $room_info['key'] . '_capacity', 'option' ),
+			'day'       => (int) get_field( 'room_' . $room_info['key'] . '_day', 'option' ),
+			'hour'      => (int) get_field( 'room_' . $room_info['key'] . '_hour', 'option' ),
+			'evening'   => (int) get_field( 'room_' . $room_info['key'] . '_evening', 'option' ),
+		];
+	}
 
 	// — Add-ons + catering → addons object —
 	$addons = [

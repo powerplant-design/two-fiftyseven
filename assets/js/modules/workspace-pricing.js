@@ -23,6 +23,7 @@
  */
 
 import { initCalcShare } from './calc-share.js';
+import { bindRovingRadio, fmt$, fmtN } from './calc-utils.js';
 
 // --- Cited methodology + benchmarks (stay in code) ---
 const M = {
@@ -95,18 +96,6 @@ const TIER_LABELS = {
 };
 
 // --- Formatters ---
-function fmt$( n ) {
-	return new Intl.NumberFormat( 'en-NZ', {
-		style: 'currency',
-		currency: 'NZD',
-		maximumFractionDigits: 0,
-	} ).format( Math.round( n ) );
-}
-
-function fmtN( n ) {
-	return new Intl.NumberFormat( 'en-NZ' ).format( Math.round( n ) );
-}
-
 function round100( n ) {
 	return Math.round( n / 100 ) * 100;
 }
@@ -568,27 +557,7 @@ function bindEvents( root, state, prices, annualDiscount ) {
 		commitRadios.forEach( ( radio ) => {
 			radio.addEventListener( 'click', () => selectCommit( radio ) );
 		} );
-		const navKeys = [ 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown' ];
-		commitRadios.forEach( ( radio, idx ) => {
-			radio.addEventListener( 'keydown', ( e ) => {
-				if ( navKeys.includes( e.key ) ) {
-					e.preventDefault();
-					e.stopPropagation();
-					let nextIdx;
-					if ( e.key === 'ArrowLeft' || e.key === 'ArrowUp' ) {
-						nextIdx = idx <= 0 ? commitRadios.length - 1 : idx - 1;
-					} else {
-						nextIdx = idx >= commitRadios.length - 1 ? 0 : idx + 1;
-					}
-					commitRadios[ nextIdx ].focus();
-					selectCommit( commitRadios[ nextIdx ] );
-				} else if ( e.key === 'Enter' || e.key === ' ' ) {
-					e.preventDefault();
-					e.stopPropagation();
-					selectCommit( radio );
-				}
-			}, { capture: true } );
-		} );
+		bindRovingRadio( commitRadios, selectCommit );
 	}
 
 	// Annual checkbox

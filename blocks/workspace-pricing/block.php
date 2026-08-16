@@ -100,8 +100,8 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 						</span>
 					</span>
 					<ul class="calc__roster" data-calc-roster></ul>
-					<div class="workspace-pricing__annual-card" data-calc-annual-wrap hidden>
-						<label class="workspace-pricing__annual-head | calc__check">
+					<div class="workspace-pricing__annual-card calc__option-card" data-calc-annual-wrap hidden>
+						<label class="calc__option-head | calc__check">
 							<input type="checkbox" data-calc-annual aria-label="Pay annually and save on Dedicated Memberships">
 							<span class="calc__check-box" aria-hidden="true"></span>
 							<span class="workspace-pricing__annual-title | text-m">Pay annually and save <?php echo esc_html( number_format( $annual_pct, 0 ) ); ?>% on Dedicated Memberships</span>

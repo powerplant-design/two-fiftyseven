@@ -37,6 +37,7 @@
  */
 
 import { initCalcShare } from './calc-share.js';
+import { bindRovingRadio, fmt$ } from './calc-utils.js';
 
 // --- Methodology constants (cited, stay in code) ---
 const M = {
@@ -75,10 +76,6 @@ function peopleIndexOf( n ) {
 }
 
 // --- Formatters ---
-function fmt$( n ) {
-	return '$' + Math.round( n ).toLocaleString( 'en-NZ' );
-}
-
 function fmtHrs( n ) {
 	const v = Math.round( n * 2 ) / 2;
 	return ( String( v ).replace( /\.0$/, '' ) ) + 'hrs';
@@ -614,28 +611,9 @@ function bindEvents( root, state, ssot ) {
 		} );
 	} );
 
-	const navKeys = [ 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown' ];
-	roomTiles.forEach( ( tile, idx ) => {
-		tile.addEventListener( 'keydown', ( e ) => {
-			if ( navKeys.includes( e.key ) ) {
-				e.preventDefault();
-				e.stopPropagation();
-				let nextIdx;
-				if ( e.key === 'ArrowLeft' || e.key === 'ArrowUp' ) {
-					nextIdx = idx <= 0 ? roomTiles.length - 1 : idx - 1;
-				} else {
-					nextIdx = idx >= roomTiles.length - 1 ? 0 : idx + 1;
-				}
-				roomTiles[ nextIdx ].focus();
-				selectRoom( root, state, ssot, roomTiles[ nextIdx ] );
-				rerender();
-			} else if ( e.key === 'Enter' || e.key === ' ' ) {
-				e.preventDefault();
-				e.stopPropagation();
-				selectRoom( root, state, ssot, tile );
-				rerender();
-			}
-		}, { capture: true } );
+	bindRovingRadio( roomTiles, ( tile ) => {
+		selectRoom( root, state, ssot, tile );
+		rerender();
 	} );
 
 	// ── Duration radios (WAI-ARIA pattern) ────────────────────
@@ -654,27 +632,9 @@ function bindEvents( root, state, ssot ) {
 			rerender();
 		} );
 	} );
-	durPills.forEach( ( pill, idx ) => {
-		pill.addEventListener( 'keydown', ( e ) => {
-			if ( navKeys.includes( e.key ) ) {
-				e.preventDefault();
-				e.stopPropagation();
-				let nextIdx;
-				if ( e.key === 'ArrowLeft' || e.key === 'ArrowUp' ) {
-					nextIdx = idx <= 0 ? durPills.length - 1 : idx - 1;
-				} else {
-					nextIdx = idx >= durPills.length - 1 ? 0 : idx + 1;
-				}
-				durPills[ nextIdx ].focus();
-				selectDuration( durPills[ nextIdx ] );
-				rerender();
-			} else if ( e.key === 'Enter' || e.key === ' ' ) {
-				e.preventDefault();
-				e.stopPropagation();
-				selectDuration( pill );
-				rerender();
-			}
-		}, { capture: true } );
+	bindRovingRadio( durPills, ( pill ) => {
+		selectDuration( pill );
+		rerender();
 	} );
 
 	// ── Add-day button ───────────────────────────────────────
