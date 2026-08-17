@@ -1,3 +1,4 @@
+@use 'calc-base';
 @use '../02-tokens/breakpoints' as bp;
 
 // ============================================================
@@ -189,22 +190,12 @@
 }
 
 .meet-pricing__addon-extra input[type="number"] {
+	@include calc-base.calc-input( 1px );
 	inline-size: auto;
 	min-inline-size: 5rem;
 	padding-block: var(--space-2xs);
 	padding-inline: var(--space-2xs);
-	border-radius: var(--corner-radius-xs);
-	border: 1px solid var(--color-border-tertiary);
-	background-color: var(--color-content-inverse);
-	color: var(--color-content-primary);
-	font-family: var(--font-body-family);
 	font-size: var(--text-s-size);
-	font-variant-numeric: tabular-nums;
-
-	&:focus {
-		outline: 2px solid var(--color-border-primary);
-		outline-offset: 1px;
-	}
 }
 
 // ── Sticky quote panel extras ────────────────────────────────────

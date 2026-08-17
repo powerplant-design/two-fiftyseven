@@ -23,6 +23,74 @@
 	}
 }
 
+// ── Input recipe (bordered .calc__input-looking field) ────────
+// Shared by .calc__input, the compact .calc__day-row-inputs fields, the
+// share-row email input, and the meet-pricing per-head number box. Pass a
+// custom $focus-offset where the compact variant uses a tighter ring.
+@mixin calc-input( $focus-offset: 2px ) {
+	border: 1px solid var(--color-border-tertiary);
+	border-radius: var(--corner-radius-xs);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	font-variant-numeric: tabular-nums;
+
+	&:focus {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: $focus-offset;
+	}
+}
+
+// ── Small square/round icon button ─────────────────────────────
+// Shared by the −/+ steppers, the day-row remove ×, and the "i" source
+// triggers: a bordered square/round, flex-centred glyph, focus + disabled
+// treatment. Filled by default (steppers); pass $fill: false for the
+// transparent triggers whose hover inverts to the primary fill.
+@mixin calc-icon-btn( $radius: var(--corner-radius-xs), $fill: true ) {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	inline-size: var(--space-l);
+	block-size: var(--space-l);
+	border-radius: $radius;
+	border: 1px solid var(--color-border-tertiary);
+	font-family: var(--font-body-family);
+	line-height: 1;
+	cursor: pointer;
+	transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+
+	@if $fill {
+		background-color: var(--color-content-inverse);
+		color: var(--color-content-primary);
+	} @else {
+		background-color: transparent;
+		color: var(--color-content-secondary);
+	}
+
+	&:hover:not(:disabled) {
+		@if $fill {
+			background-color: color-mix(in srgb, var(--color-content-inverse) 90%, var(--color-content-primary));
+		} @else {
+			background-color: var(--color-content-primary);
+			color: var(--color-content-inverse);
+			border-color: var(--color-content-primary);
+		}
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+
+	@if $fill {
+		&:disabled {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
+	}
+}
+
 // ── Intro ─────────────────────────────────────────────────────
 .calc__intro {
 	--stack-gap: var(--space-m-l);
@@ -235,49 +303,6 @@
 	margin: 0;
 }
 
-// ── Stepper (− / output / +) ─────────────────────────────────
-.calc__stepper {
-	display: flex;
-	align-items: center;
-	gap: var(--space-xs);
-
-	button {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		inline-size: var(--space-l);
-		block-size: var(--space-l);
-		border-radius: var(--corner-radius-xs);
-		border: 1px solid var(--color-border-tertiary);
-		background-color: var(--color-content-inverse);
-		color: var(--color-content-primary);
-		font-family: var(--font-body-family);
-		font-size: var(--text-l-size);
-		line-height: 1;
-		cursor: pointer;
-		transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
-
-		&:hover:not(:disabled) {
-			background-color: color-mix(in srgb, var(--color-content-inverse) 90%, var(--color-content-primary));
-		}
-
-		&:disabled {
-			opacity: 0.4;
-			cursor: not-allowed;
-		}
-	}
-
-	output {
-		font-family: var(--font-body-family);
-		font-size: var(--text-3xl-size);
-		font-weight: 600;
-		font-variant-numeric: tabular-nums;
-		min-inline-size: 3ch;
-		text-align: center;
-		color: var(--color-content-primary);
-	}
-}
-
 // ── Slider row (stepper buttons + range input with a round knob) ──
 // Two columns: the interactive controls and the big value readout.
 .calc__slider-row {
@@ -296,35 +321,8 @@
 }
 
 .calc__stepper-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	inline-size: var(--space-l);
-	block-size: var(--space-l);
-	flex-shrink: 0;
-	border-radius: var(--corner-radius-xs);
-	border: 1px solid var(--color-border-tertiary);
-	background-color: var(--color-content-inverse);
-	color: var(--color-content-primary);
-	font-family: var(--font-body-family);
+	@include calc-icon-btn;
 	font-size: var(--text-l-size);
-	line-height: 1;
-	cursor: pointer;
-	transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
-
-	&:hover:not(:disabled) {
-		background-color: color-mix(in srgb, var(--color-content-inverse) 90%, var(--color-content-primary));
-	}
-
-	&:disabled {
-		opacity: 0.4;
-		cursor: not-allowed;
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-border-primary);
-		outline-offset: 2px;
-	}
 }
 
 // Below md the +/- stepper buttons are hidden — the range input + number only.
@@ -426,10 +424,10 @@
 	font-size: var(--text-5xl-size);
 	line-height: 1;
 	font-variant-numeric: tabular-nums;
-	// Reserve width for two digits (both calcs cap at 15 / 30) so the controls
-	// don't shift when the value crosses from single to double digits.
+	// Reserve width for two digits so single/double-digit readouts don't shift
+	// the controls when they cross 9 → 10; meet's 3-digit people readout
+	// overrides to 3ch (.meet-pricing .calc__slider-value).
 	min-inline-size: 2ch;
-	text-align: right;
 	color: var(--color-content-primary);
 	white-space: nowrap;
 	text-align: center;
@@ -483,22 +481,11 @@
 
 // ── Number input ─────────────────────────────────────────────
 .calc__input {
+	@include calc-input;
 	inline-size: 100%;
-	// max-inline-size: 8rem;
 	padding-block: var(--space-xs);
 	padding-inline: var(--space-s);
-	border-radius: var(--corner-radius-xs);
-	border: 1px solid var(--color-border-tertiary);
-	background-color: var(--color-content-inverse);
-	color: var(--color-content-primary);
-	font-family: var(--font-body-family);
 	font-size: var(--text-l-size);
-	font-variant-numeric: tabular-nums;
-
-	&:focus {
-		outline: 2px solid var(--color-border-primary);
-		outline-offset: 2px;
-	}
 }
 
 // ── Microcopy ────────────────────────────────────────────────
@@ -618,22 +605,13 @@
 .calc__day-row-inputs input {
 	// Reuse the .calc__input look but compact: small padding, narrow width,
 	// so the date + two time pickers fit on one row at phone widths.
+	@include calc-input( 1px );
 	min-inline-size: 0;
 	inline-size: 100%;
 	padding-block: var(--space-2xs);
 	padding-inline: var(--space-2xs);
-	border-radius: var(--corner-radius-xs);
-	border: 1px solid var(--color-border-tertiary);
-	background-color: var(--color-content-inverse);
-	color: var(--color-content-primary);
 	font-family: var(--font-monospace-family);
 	font-size: var(--text-s-size);
-	font-variant-numeric: tabular-nums;
-
-	&:focus {
-		outline: 2px solid var(--color-border-primary);
-		outline-offset: 1px;
-	}
 }
 
 .calc__day-row-hours {
@@ -647,31 +625,8 @@
 }
 
 .calc__day-row-remove {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	inline-size: var(--space-l);
-	block-size: var(--space-l);
-	flex-shrink: 0;
-	border-radius: 50%;
-	border: 1px solid var(--color-border-tertiary);
-	background-color: transparent;
-	color: var(--color-content-secondary);
+	@include calc-icon-btn( 50%, false );
 	font-size: var(--text-l-size);
-	line-height: 1;
-	cursor: pointer;
-	transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease;
-
-	&:hover:not(:disabled) {
-		background-color: var(--color-content-primary);
-		color: var(--color-content-inverse);
-		border-color: var(--color-content-primary);
-	}
-
-	&:focus-visible {
-		outline: 2px solid var(--color-border-primary);
-		outline-offset: 2px;
-	}
 
 	&:disabled {
 		visibility: hidden;
@@ -738,6 +693,13 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-2xs);
+}
+
+// Accent result column — opt-in per calculator (C1 annual total, C6 subsidised
+// figure, C5 net-after-offset). Single shared name; the accent treatment
+// (colour/weight) lands here the moment a calc needs it.
+.calc__result-col--accent {
+	// extends .calc__result-col
 }
 
 .calc__result-label {
@@ -933,22 +895,14 @@
 }
 
 .calc-source__trigger {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
+	@include calc-icon-btn( 50%, false );
 	inline-size: 18px;
 	block-size: 18px;
-	border-radius: 50%;
-	border: 1px solid var(--color-border-tertiary);
-	background-color: transparent;
-	color: var(--color-content-secondary);
 	font-family: var(--font-monospace-family);
 	font-size: 11px;
-	cursor: pointer;
-	flex-shrink: 0;
-	transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
 
-	&:hover,
+	// Keyboard focus fills the button (matching the hover treatment) while the
+	// share --focus-visible ring stays as the mixin provides it.
 	&:focus-visible {
 		background-color: var(--color-content-primary);
 		color: var(--color-content-inverse);
@@ -1071,23 +1025,14 @@
 }
 
 .calc__share-form .calc__share-input {
+	@include calc-input;
 	flex: 1 1 14rem;
 	min-inline-size: 12rem;
 	inline-size: auto;
 	field-sizing: fixed;
 	padding-block: var(--space-2xs);
 	padding-inline: var(--space-s);
-	border-radius: var(--corner-radius-xs);
-	border: 1px solid var(--color-border-tertiary);
-	background-color: var(--color-content-inverse);
-	color: var(--color-content-primary);
-	font-family: var(--font-body-family);
 	font-size: var(--text-m-size);
-
-	&:focus {
-		outline: 2px solid var(--color-border-primary);
-		outline-offset: 2px;
-	}
 }
 
 .calc__share-honeypot {

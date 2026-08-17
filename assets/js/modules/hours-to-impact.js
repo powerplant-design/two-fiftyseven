@@ -18,7 +18,7 @@
  */
 
 import { initCalcShare } from './calc-share.js';
-import { bindRovingRadio, fmt$, fmtN } from './calc-utils.js';
+import { bindRovingRadio, bindStepper, restrictStepperInputs, bindBreakdownTrigger, fmt$, fmtN } from './calc-utils.js';
 
 // --- Methodology constants (cited, stay in code) ---
 const M = {
@@ -103,32 +103,22 @@ function bindEvents( root, state, givingRate ) {
 		writeURL( state );
 	}
 
-	const teamDec = root.querySelector( '[data-calc-team-dec]' );
-	const teamInc = root.querySelector( '[data-calc-team-inc]' );
-	const teamRange = root.querySelector( '[data-calc-team-range]' );
-	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
-	const teamOut = root.querySelector( '[data-calc-team-out]' );
-
-	function paintSlider( n ) {
-		if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.MAX_TEAM > 0 ? ( n / M.MAX_TEAM ) * 100 : 0 }%` );
-		if ( teamOut ) teamOut.value = n;
-	}
-
-	function updateTeam( n ) {
-		state.team = Math.max( 0, Math.min( M.MAX_TEAM, n ) );
-		if ( teamRange ) teamRange.value = state.team;
-		if ( teamDec ) teamDec.disabled = state.team <= 0;
-		if ( teamInc ) teamInc.disabled = state.team >= M.MAX_TEAM;
-		paintSlider( state.team );
-		rerender();
-	}
-
-	if ( teamRange ) {
-		teamRange.addEventListener( 'input', () => updateTeam( parseInt( teamRange.value, 10 ) ) );
-		paintSlider( state.team );
-	}
-	if ( teamDec ) teamDec.addEventListener( 'click', () => updateTeam( state.team - 1 ) );
-	if ( teamInc ) teamInc.addEventListener( 'click', () => updateTeam( state.team + 1 ) );
+	// Team stepper — shared wiring (range + −/+ + readout).
+	const stepper = bindStepper( root, {
+		rangeSel: '[data-calc-team-range]',
+		sliderSel: '[data-calc-team-slider]',
+		outSel: '[data-calc-team-out]',
+		decSel: '[data-calc-team-dec]',
+		incSel: '[data-calc-team-inc]',
+		max: M.MAX_TEAM,
+		valueFor: ( i ) => i,
+		current: () => state.team,
+		onUpdate: ( n ) => {
+			state.team = n;
+			rerender();
+		},
+	} );
+	stepper.paintCurrent();
 
 	// ── Radio group keyboard nav (WAI-ARIA pattern) ──────────
 	// Buttons with role="radio". Tab into the group (checked or
@@ -192,36 +182,10 @@ function bindEvents( root, state, givingRate ) {
 	// Restrict the bounded number inputs (weeks/hours) to stepper-only:
 	// typed digits never enter, so values can't exceed min/max. Only the
 	// up/down steppers (native keyboard arrows + spinner buttons) move them.
-	// Capture phase + stopPropagation so Locomotive Scroll can't hijack arrows.
-	const stepperOnly = [ 'ArrowUp', 'ArrowDown', 'Tab', 'Enter' ];
-	root.querySelectorAll( '[data-calc-weeks], [data-calc-hours]' ).forEach( ( input ) => {
-		input.addEventListener( 'keydown', ( e ) => {
-			if ( e.key === 'ArrowUp' || e.key === 'ArrowDown' ) {
-				e.stopPropagation();
-				return;
-			}
-			if ( ! stepperOnly.includes( e.key ) ) {
-				e.preventDefault();
-			}
-		}, { capture: true } );
-	} );
+	restrictStepperInputs( root.querySelectorAll( '[data-calc-weeks], [data-calc-hours]' ) );
 
 	// Breakdown trigger proxies into the full-width <details>
-	const breakdownTrigger = root.querySelector( '[data-breakdown-trigger]' );
-	const breakdownDetails = document.getElementById( 'methodology' );
-	if ( breakdownTrigger && breakdownDetails ) {
-		breakdownTrigger.addEventListener( 'click', () => {
-			const wasOpen = breakdownDetails.open;
-			breakdownDetails.open = ! wasOpen;
-			breakdownTrigger.setAttribute( 'aria-expanded', String( ! wasOpen ) );
-			if ( ! wasOpen ) {
-				breakdownDetails.scrollIntoView( { behavior: 'smooth', block: 'start' } );
-			}
-		} );
-		breakdownDetails.addEventListener( 'toggle', () => {
-			breakdownTrigger.setAttribute( 'aria-expanded', String( breakdownDetails.open ) );
-		} );
-	}
+	bindBreakdownTrigger( root, 'methodology' );
 
 	return rerender;
 }
@@ -234,17 +198,6 @@ function initCalc( root ) {
 	const givingRate = ( tfs.impact && tfs.impact.givingRatePerPersonHour ) || 1;
 
 	const state = readURL();
-
-	const teamRange = root.querySelector( '[data-calc-team-range]' );
-	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
-	if ( teamRange ) teamRange.value = state.team;
-	const teamOut = root.querySelector( '[data-calc-team-out]' );
-	if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.MAX_TEAM > 0 ? ( state.team / M.MAX_TEAM ) * 100 : 0 }%` );
-	if ( teamOut ) teamOut.value = state.team;
-	const teamDec = root.querySelector( '[data-calc-team-dec]' );
-	const teamInc = root.querySelector( '[data-calc-team-inc]' );
-	if ( teamDec ) teamDec.disabled = state.team <= 0;
-	if ( teamInc ) teamInc.disabled = state.team >= M.MAX_TEAM;
 
 	if ( state.daysPerWeek > 0 ) {
 		root.querySelectorAll( '[data-calc-days-group] [data-calc-days]' ).forEach( ( btn ) => {

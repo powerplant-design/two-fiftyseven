@@ -604,7 +604,8 @@ assets/css/06-components/
 | `.calc__inputs` | Inputs card (`--color-surface-secondary` bg, scroll-revealed) | All |
 | `.calc__fields-grid` | 2-col grid for paired inputs (stacks ≤600px) | C6, C5, others |
 | `.calc__field` / `__field-label` | Field wrapper + label | All |
-| `.calc__stepper` (+ `button` / `output`) | −/output/+ stepper | C1, C3, C4, C5, C6 |
+| `.calc__slider-row` / `__slider-controls` / `__slider-value` | −/output/+ stepper row (value readout) | All |
+| `.calc__stepper-btn` | The − / + buttons (shared `.calc-icon-btn` recipe) | All |
 | `.calc__radio-group` / `__radio-label` | Segmented radio buttons (`<button role="radio">`) | C1, C3, C4, C5, C6 |
 | `.calc__radio-group--days` | Grid variant of `.calc__radio-group` — 5 equal columns (one per day), labels stretch to fill (`inline-size: auto`) | C5, C6 |
 | `.calc__input` | Number/text input (stepper-only keyboard guard) | All |
@@ -776,7 +777,7 @@ Behaviour added during build:
 | v1 engine / pricing page | Block port |
 |---|---|
 | root `[data-js="calc-office-costs"]` (`pricing/index.html:674`) | block identity class `workspace-pricing`, keeps `[data-js="calc-office-costs"]` |
-| Team stepper `[data-calc-team-*]` (0–15) | `.calc__stepper` |
+| Team stepper `[data-calc-team-*]` (0–15) | `.calc__slider-row` / `.calc__stepper-btn` / `.calc__slider-value` |
 | Commitment radios `[data-calc-commitment]` (1/3/5) | `.calc__radio-group` `<button role="radio">` (§7 pattern) |
 | Annual discount `[data-calc-annual]` checkbox | `.annual-check` label (hidden unless a Dedicated member is on the roster — `[data-calc-annual-wrap]`) |
 | Member roster `<select>` `[data-calc-member]` (dedicated/flexi-5..1) | per-calc `.calc__roster-row`/`.calc__roster-select`; rebuilt on team change; stacks label-above-select ≤640px |
@@ -932,3 +933,69 @@ All 7 build-order items above are implemented and staged. Additional notes from 
 - Both fixes folded into the C2 commit (`1d36abb`).
 - **DRY refactor review (2026-08-17, staged on `feature/calculators-continued`):** option-card/rooms/JS-helper dedupe re-verified — `bindRovingRadio` preserves each engine's exact keydown semantics (capture phase, guard-on-disabled via the engine's `onSelect`), `fmt$` output matches the retired meet `'$'+toLocaleString` (en-NZ identical formatting), `.calc__option-card` carries the `position: relative` the swatch anchored to, and `two57_meet_rooms()` returns the same slugs/keys in the same order. Build + `php -l` clean; only `assets/dist/.vite/manifest.json` + hashed CSS/JS change in dist.
 - Docs (`docs/`) not staged — reference-only, as before.
+
+## 12. Refactor phase — shared styling + engine dedupe review
+
+Reviewed 2026-08-17 across all four shipped calcs (C1 workspace-pricing, C2 meet-pricing, C5 office-carbon, C6 hours-to-impact). Scope: shared `.calc__*` styling that can be DRY'd and engine/template duplication worth a shared helper. Ordered by value/risk; each item notes what changes and where.
+
+### CSS — `_calc-base.scss` + per-calc sheets
+
+1. **Delete dead `.calc__stepper` block** (`_calc-base.scss:239-279`). Vestigial from an older design — all four block templates use `.calc__stepper-btn` + `.calc__slider-value`; nothing references `.calc__stepper` or its nested `button`/`output` selectors. ~40 lines of duplicate button/output styles. **Follow-up:** sync the two stale catalogue rows (this doc lines `§11` `.calc__stepper` row + the C1 plan stepper row).
+
+2. **Extract a `@mixin calc-input()`** — the bordered-input recipe is repeated 4×:
+   - `.calc__input` (`_calc-base.scss:485-502`)
+   - `.calc__day-row-inputs input` (`_calc-base.scss:618-637`) — narrower padding + monospace
+   - `.calc__share-input` (`_calc-base.scss:1073-1091`) — `flex` sizing on top
+   - `.meet-pricing__addon-extra input[type="number"]` (`_calc-meet-pricing.scss:191-208`)
+   Common: `border-tertiary`/`radius-xs`/`content-inverse` bg/`content-primary` color/`tabular-nums` + `:focus` outline. **As built:** `@mixin calc-input( $focus-offset: 2px )` — padding/font stay in the per-rule declarations, since the four inputs diverge there (the day-row fields swap to monospace + `1px` ring, the share input adds `flex` sizing + `field-sizing`).
+
+3. **Extract a `@mixin calc-icon-btn($radius, $fill)`** — small square/round icon-button recipe repeated 3× (default fill = stepper look; `$fill: false` = transparent + hover-invert):
+   - `.calc__stepper-btn` (`_calc-base.scss:298-328`) — `radius-xs`, filled bg + hover tint
+   - `.calc__day-row-remove` (`_calc-base.scss:649-679`) — `50%`, transparent → filled on hover
+   - `.calc-source__trigger` (`_calc-base.scss:935-957`) — `50%`, `18px` fixed
+   Common: flex-center, `--space-l` sizing, `border-tertiary`, colour transitions, `:hover`/`:focus-visible` treatment.
+
+4. **Consolidate accent-column naming** — three names, one concept:
+   - `workspace-pricing__result-col--accent` (`_calc-workspace-pricing.scss:158`) — empty placeholder
+   - `hours-to-impact__result-col--accent` (`_calc-hours-to-impact.scss:14`) — empty placeholder
+   - `calc__result-col--save` (`office-carbon` block.php:130) — **used in markup, never defined in CSS**
+   Collapse to a single shared `.calc__result-col--accent` in `_calc-base.scss`; update the three templates. (Currently inert — all three just piggyback `.calc__result-col` — but the missing definition for `.calc__result-col--save` is a real gap if anyone later styles it.)
+
+5. **Tiny cleanup: `.calc__slider-value`** (`_calc-base.scss:423-436`) — declares `text-align: right` then immediately `text-align: center` (last wins). Drop the dead `right` declaration.
+
+**Not refactoring:** the per-block `padding-block: var(--space-xl-3xl)` shell rule is the theme-wide `.block` convention (also in `_faq`, `_testimonial`, `_cta-section`, etc.) — already consistent, keep as-is.
+
+### PHP — block templates (`blocks/*/block.php`)
+
+6. **DRY the `.calc__share` section (~40 lines × 4).** The email form, honeypot, consent, status output and copy-link card are byte-identical across all four calcs; only the h2 (`save your quote, send it on` vs `save your number, share it, send it on`) and the two card body copies differ. Extract a single renderer — `two57_calc_share()` helper (in `functions.php`, echoing the shared section) or a `get_template_part('partials/calc-share')` — with per-calc copy passed as args.
+
+7. **DRY the intro block (~20 lines × 4).** The `calc__intro` eyebrow/heading/tagline block (including the `$is_preview` fallback) is verbatim in all four templates. Same partial/helper treatment.
+
+### JS — shared helpers into `assets/js/modules/calc-utils.js`
+
+8. **`bindStepper()` — team/people stepper wiring.** `paintSlider()` (sets `--pct` + outgoing value + dec/inc disabled) and `updateTeam()` (clamp to max, sync range, disable buttons, repaint) are near-identical in C1, C5, C6, plus C2's people variant (which adds the scale-index contract). Parked in the 2026-08-17 refactor review ("no real second consumer forces a shared one") — C5 is now that fifth consumer; revisit. Signature sketch: `bindStepper(root, { rangeSel, sliderSel, outSel, decSel, incSel, max, valueFor, current, onUpdate })` — selectors passed as strings so each engine keeps its own `[data-calc-team-*]` / `[data-calc-people-*]` naming; `valueFor` (index → shown value) + `current` (→ index) express meet's stepped-scale contract.
+
+9. **Dedupe small handlers:**
+   - **Stepper-only number input** — the `stepperOnly` capture-phase keydown guard on `[data-calc-weeks], [data-calc-hours]` is duplicated in C5 + C6 → helper.
+   - **Breakdown trigger → `<details>` proxy** (toggle `open`, sync `aria-expanded`, smooth-scroll into view) is duplicated ×4 → helper taking the details id.
+   - **`bindSourceTooltips`** (`.calc-source__trigger` open/close + click-away) duplicated in C1 + C5 → helper.
+
+### Execution order
+
+Recommended sequence: **CSS 1, 4, 5** (pure deletions/naming, zero visual change) → **CSS 2, 3** (mixins) → **PHP 6, 7** (highest-value dedupe) → **JS 8, 9** (larger, independent — can land as a follow-up pass). Verify with `npm run build` + `php -l` after each batch; dist assets change only in the rebuilt manifest/hashes.
+
+### Status
+
+All items implemented (2026-08-17), in the recommended order:
+
+- **CSS 1 (`.calc__stepper` deleted)** — dead block removed from `_calc-base.scss`; catalogue rows here (§11 + C1 plan) synced to `.calc__stepper-btn` / `.calc__slider-row`.
+- **CSS 4 (accent column consolidated)** — single shared `.calc__result-col--accent` in base; the three per-calc names (`workspace-pricing__result-col--accent`, `hours-to-impact__result-col--accent`, and the never-defined `calc__result-col--save`) retired, three templates updated.
+- **CSS 5** — dead `text-align: right` removed from `.calc__slider-value`; stale "both calcs cap at 15/30" comment corrected.
+- **CSS 2 (`@mixin calc-input`)** — extracted in base; applies to `.calc__input`, `.calc__day-row-inputs input` (1px ring), `.calc__share-input`, `.meet-pricing__addon-extra input[type="number"]` (via `@use 'calc-base'`).
+- **CSS 3 (`@mixin calc-icon-btn($radius, $fill)`)** — extracted in base; applies to `.calc__stepper-btn` (filled), `.calc__day-row-remove` (transparent, 50%), `.calc-source__trigger` (transparent, 50%, keeps its fill-on-focus override). Note: the trigger previously had **no** focus ring (fill-on-hover only) — the mixin's `:focus-visible` outline (2px, `border-primary`) is a deliberate a11y addition, kept alongside the trigger's fill-on-focus override.
+- **PHP 6 (`two57_calc_share()` in functions.php)** — share row rendered once; per-calc copy passed as an array (meet overrides; workspace/hours/carbon use the defaults). All four `block.php`s call it.
+- **PHP 7 (`two57_calc_intro()` in functions.php)** — eyebrow/heading/tagline intro (+ `$is_preview` fallback) rendered once; all four templates call it.
+- **JS 8 (`bindStepper()` in calc-utils.js)** — wired in all four engines (team steppers value-based; meet people stepper index-based over `PEOPLE_SCALE`); engines keep only their state mutation in `onUpdate` (workspace roster sync). Replaces the "still parked" stepper note above — the four consumers now justify the shared helper.
+- **JS 9** — `restrictStepperInputs()` (C5 + C6), `bindBreakdownTrigger()` (C1, C5, C6), `bindSourceTooltips()` (C1 + C5) extracted into calc-utils.js; local copies removed.
+
+Verified: `npm run build` clean (only pre-existing swiper `@import` deprecation warnings, unchanged rules in dist — dead `.calc__stepper` gone, mixin-expanded `.calc__stepper-btn` / `.calc-source__trigger` present, all stepper/breakdown/tooltip selectors in the JS bundle) + `php -l` clean on `functions.php` and all four `block.php`s.

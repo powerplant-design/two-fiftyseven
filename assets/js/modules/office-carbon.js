@@ -28,7 +28,7 @@
  */
 
 import { initCalcShare } from './calc-share.js';
-import { bindRovingRadio } from './calc-utils.js';
+import { bindRovingRadio, bindStepper, restrictStepperInputs, bindBreakdownTrigger, bindSourceTooltips } from './calc-utils.js';
 
 // --- Methodology constants (verified, stay in code) ---
 const M = {
@@ -260,22 +260,6 @@ function renderResults( scope, state, computed ) {
 	scope.querySelectorAll( '[data-calc-export-weeks]' ).forEach( ( el ) => el.textContent = state.weeksPerYear );
 }
 
-// --- Tooltip click handler ---
-function bindSourceTooltips( scope ) {
-	scope.addEventListener( 'click', ( e ) => {
-		const trigger = e.target.closest( '.calc-source__trigger' );
-		if ( trigger ) {
-			const wrap = trigger.closest( '.calc-source' );
-			const isOpen = wrap.dataset.open === 'true';
-			scope.querySelectorAll( '.calc-source[data-open="true"]' ).forEach( ( el ) => el.dataset.open = 'false' );
-			wrap.dataset.open = isOpen ? 'false' : 'true';
-			e.stopPropagation();
-		} else {
-			scope.querySelectorAll( '.calc-source[data-open="true"]' ).forEach( ( el ) => el.dataset.open = 'false' );
-		}
-	} );
-}
-
 // --- Event binding ---
 function bindEvents( scope, root, state ) {
 	function rerender() {
@@ -284,33 +268,22 @@ function bindEvents( scope, root, state ) {
 		writeURL( state );
 	}
 
-	// Team stepper · min 0 so the calc starts empty.
-	const teamDec = root.querySelector( '[data-calc-team-dec]' );
-	const teamInc = root.querySelector( '[data-calc-team-inc]' );
-	const teamRange = root.querySelector( '[data-calc-team-range]' );
-	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
-	const teamOut = root.querySelector( '[data-calc-team-out]' );
-
-	function paintSlider( n ) {
-		if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.MAX_TEAM > 0 ? ( n / M.MAX_TEAM ) * 100 : 0 }%` );
-		if ( teamOut ) teamOut.value = n;
-	}
-
-	function updateTeam( n ) {
-		state.team = Math.max( 0, Math.min( M.MAX_TEAM, n ) );
-		if ( teamRange ) teamRange.value = state.team;
-		if ( teamDec ) teamDec.disabled = state.team <= 0;
-		if ( teamInc ) teamInc.disabled = state.team >= M.MAX_TEAM;
-		paintSlider( state.team );
-		rerender();
-	}
-
-	if ( teamRange ) {
-		teamRange.addEventListener( 'input', () => updateTeam( parseInt( teamRange.value, 10 ) ) );
-		paintSlider( state.team );
-	}
-	if ( teamDec ) teamDec.addEventListener( 'click', () => updateTeam( state.team - 1 ) );
-	if ( teamInc ) teamInc.addEventListener( 'click', () => updateTeam( state.team + 1 ) );
+	// Team stepper · min 0 so the calc starts empty — shared wiring.
+	const stepper = bindStepper( root, {
+		rangeSel: '[data-calc-team-range]',
+		sliderSel: '[data-calc-team-slider]',
+		outSel: '[data-calc-team-out]',
+		decSel: '[data-calc-team-dec]',
+		incSel: '[data-calc-team-inc]',
+		max: M.MAX_TEAM,
+		valueFor: ( i ) => i,
+		current: () => state.team,
+		onUpdate: ( n ) => {
+			state.team = n;
+			rerender();
+		},
+	} );
+	stepper.paintCurrent();
 
 	// ── Days radius (WAI-ARIA roving radio) ──────────────
 	const dayRadios = Array.from( root.querySelectorAll( '[data-calc-days-group] [data-calc-days]' ) );
@@ -362,35 +335,10 @@ function bindEvents( scope, root, state ) {
 		}
 	} );
 
-	const stepperOnly = [ 'ArrowUp', 'ArrowDown', 'Tab', 'Enter' ];
-	root.querySelectorAll( '[data-calc-weeks], [data-calc-hours]' ).forEach( ( input ) => {
-		input.addEventListener( 'keydown', ( e ) => {
-			if ( e.key === 'ArrowUp' || e.key === 'ArrowDown' ) {
-				e.stopPropagation();
-				return;
-			}
-			if ( ! stepperOnly.includes( e.key ) ) {
-				e.preventDefault();
-			}
-		}, { capture: true } );
-	} );
+	restrictStepperInputs( root.querySelectorAll( '[data-calc-weeks], [data-calc-hours]' ) );
 
 	// Breakdown trigger proxies into the full-width <details>
-	const breakdownTrigger = root.querySelector( '[data-breakdown-trigger]' );
-	const breakdownDetails = document.getElementById( 'methodology' );
-	if ( breakdownTrigger && breakdownDetails ) {
-		breakdownTrigger.addEventListener( 'click', () => {
-			const wasOpen = breakdownDetails.open;
-			breakdownDetails.open = ! wasOpen;
-			breakdownTrigger.setAttribute( 'aria-expanded', String( ! wasOpen ) );
-			if ( ! wasOpen ) {
-				breakdownDetails.scrollIntoView( { behavior: 'smooth', block: 'start' } );
-			}
-		} );
-		breakdownDetails.addEventListener( 'toggle', () => {
-			breakdownTrigger.setAttribute( 'aria-expanded', String( breakdownDetails.open ) );
-		} );
-	}
+	bindBreakdownTrigger( root, 'methodology' );
 
 	// "Copy citation block" — plain clipboard copy of the export panel text.
 	const copyBtn = scope.querySelector( '[data-calc-copy-citation]' );
@@ -416,17 +364,6 @@ function initCalc( root ) {
 	const state = readURL();
 
 	// Sync initial UI from state (defaults pre-filled on cold load).
-	const teamRange = root.querySelector( '[data-calc-team-range]' );
-	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
-	if ( teamRange ) teamRange.value = state.team;
-	if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.MAX_TEAM > 0 ? ( state.team / M.MAX_TEAM ) * 100 : 0 }%` );
-	const teamOut = root.querySelector( '[data-calc-team-out]' );
-	if ( teamOut ) teamOut.value = state.team;
-	const teamDec = root.querySelector( '[data-calc-team-dec]' );
-	const teamInc = root.querySelector( '[data-calc-team-inc]' );
-	if ( teamDec ) teamDec.disabled = state.team <= 0;
-	if ( teamInc ) teamInc.disabled = state.team >= M.MAX_TEAM;
-
 	root.querySelectorAll( '[data-calc-days-group] [data-calc-days]' ).forEach( ( btn ) => {
 		btn.setAttribute( 'aria-checked', parseInt( btn.getAttribute( 'data-calc-days' ), 10 ) === state.daysPerWeek ? 'true' : 'false' );
 	} );

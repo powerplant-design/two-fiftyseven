@@ -37,7 +37,7 @@
  */
 
 import { initCalcShare } from './calc-share.js';
-import { bindRovingRadio, fmt$ } from './calc-utils.js';
+import { bindRovingRadio, bindStepper, fmt$ } from './calc-utils.js';
 
 // --- Methodology constants (cited, stay in code) ---
 const M = {
@@ -555,36 +555,22 @@ function renderDaysList( root, state ) {
 // --- Event binding ---
 function bindEvents( root, state, ssot ) {
 	// ── People slider (range + −/+ steppers + readout) ────────
-	const peopleRange = root.querySelector( '[data-calc-people-range]' );
-	const peopleSlider = root.querySelector( '[data-calc-people-slider]' );
-	const peopleOut = root.querySelector( '[data-calc-people-out]' );
-	const peopleDec = root.querySelector( '[data-calc-people-dec]' );
-	const peopleInc = root.querySelector( '[data-calc-people-inc]' );
-
-	function paintPeople( idx ) {
-		if ( peopleSlider ) peopleSlider.style.setProperty( '--pct', ( idx / MAX_IDX ) * 100 + '%' );
-		if ( peopleOut ) {
-			peopleOut.value = String( PEOPLE_SCALE[ idx ] );
-		}
-		if ( peopleDec ) peopleDec.disabled = idx <= 0;
-		if ( peopleInc ) peopleInc.disabled = idx >= MAX_IDX;
-	}
-
-	function updatePeopleFromIdx( idx ) {
-		const clamped = Math.max( 0, Math.min( MAX_IDX, idx ) );
-		state.people = PEOPLE_SCALE[ clamped ];
-		if ( peopleRange ) peopleRange.value = String( clamped );
-		paintPeople( clamped );
-		rerender();
-	}
-
-	if ( peopleRange ) {
-		peopleRange.addEventListener( 'input', () => {
-			updatePeopleFromIdx( parseInt( peopleRange.value, 10 ) );
-		} );
-	}
-	if ( peopleDec ) peopleDec.addEventListener( 'click', () => updatePeopleFromIdx( peopleIndexOf( state.people ) - 1 ) );
-	if ( peopleInc ) peopleInc.addEventListener( 'click', () => updatePeopleFromIdx( peopleIndexOf( state.people ) + 1 ) );
+	// Index-based over the stepped PEOPLE_SCALE (1–60 then 70–200 by 10).
+	const stepper = bindStepper( root, {
+		rangeSel: '[data-calc-people-range]',
+		sliderSel: '[data-calc-people-slider]',
+		outSel: '[data-calc-people-out]',
+		decSel: '[data-calc-people-dec]',
+		incSel: '[data-calc-people-inc]',
+		max: MAX_IDX,
+		valueFor: ( i ) => PEOPLE_SCALE[ i ],
+		current: () => peopleIndexOf( state.people ),
+		onUpdate: ( idx ) => {
+			state.people = PEOPLE_SCALE[ idx ];
+			rerender();
+		},
+	} );
+	stepper.paintCurrent();
 
 	// ── Room tile radios (WAI-ARIA pattern, see plan §7) ──────
 	const roomTiles = Array.from( root.querySelectorAll( '[data-calc-room-group] [data-calc-room]' ) );
@@ -791,19 +777,6 @@ function initCalc( root ) {
 	if ( ! ssot.rooms || Object.keys( ssot.rooms ).length === 0 ) return;
 
 	const state = readURL( ssot );
-
-	// Hydrate the people slider to match state.people.
-	const peopleRange = root.querySelector( '[data-calc-people-range]' );
-	const peopleSlider = root.querySelector( '[data-calc-people-slider]' );
-	const peopleOut = root.querySelector( '[data-calc-people-out]' );
-	const idx = peopleIndexOf( state.people );
-	if ( peopleRange ) peopleRange.value = String( idx );
-	if ( peopleSlider ) peopleSlider.style.setProperty( '--pct', ( idx / MAX_IDX ) * 100 + '%' );
-	if ( peopleOut ) peopleOut.value = String( state.people );
-	const peopleDec = root.querySelector( '[data-calc-people-dec]' );
-	const peopleInc = root.querySelector( '[data-calc-people-inc]' );
-	if ( peopleDec ) peopleDec.disabled = idx <= 0;
-	if ( peopleInc ) peopleInc.disabled = idx >= MAX_IDX;
 
 	// Mark room availability + auto-pick the recommended room if none selected.
 	// Calls the top-level selectRoom() so state.room, state.roomName, and the

@@ -72,25 +72,7 @@ $room_cap = static function ( string $key ) {
 
 	<div class="wrapper">
 
-		<?php if ( $eyebrow || $heading || $tagline ) : ?>
-			<div class="calc__intro | stack" data-scroll data-scroll-repeat>
-				<?php if ( $eyebrow ) : ?>
-					<p class="calc__eyebrow | text-monospace text-s">
-						<?php echo esc_html( $eyebrow ); ?>
-					</p>
-				<?php endif; ?>
-				<?php if ( $heading ) : ?>
-					<h1 class="calc__heading | text-3xl text-wrap-balance"><?php echo esc_html( $heading ); ?></h1>
-				<?php endif; ?>
-				<?php if ( $tagline ) : ?>
-					<p class="calc__tagline | text-l text-wrap-balance">
-						<?php echo nl2br( esc_html( $tagline ) ); ?>
-					</p>
-				<?php endif; ?>
-			</div>
-		<?php elseif ( $is_preview ) : ?>
-			<p style="opacity:0.5;text-align:center;padding:1rem;">Add a heading in the block settings →</p>
-		<?php endif; ?>
+		<?php two57_calc_intro( (string) $eyebrow, (string) $heading, (string) $tagline, (bool) $is_preview ); ?>
 
 		<div class="calc__body" data-js="calc-meet-pricing">
 
@@ -278,52 +260,12 @@ $room_cap = static function ( string $key ) {
 
 		</div>
 
-			<div class="calc__share | stack" data-calc-share>
-				<p class="calc__share-eyebrow | text-monospace text-s">Take this with you</p>
-				<h2 class="calc__share-title | text-3xl text-wrap-balance">save your quote, send it on</h2>
-
-				<div class="calc__share-row">
-
-					<!-- Email card -->
-					<div class="calc__share-card | stack">
-						<h3 class="calc__share-card-title | text-l font-bold">Email me this quote</h3>
-						<p class="calc__share-card-body">All your selections + itemised price in your inbox, ready to forward to whoever's signing off the booking.</p>
-						<form class="calc__share-form | cluster" data-calc-share-email novalidate>
-							<input
-								class="calc__share-input"
-								type="email" name="email"
-								placeholder="you@example.com"
-								autocomplete="email"
-								data-calc-share-email-input
-								aria-label="Your email"
-								required
-							>
-							<input
-								class="calc__share-honeypot visually-hidden"
-								type="text" name="website" tabindex="-1" autocomplete="off"
-								aria-hidden="true"
-								data-calc-share-honeypot
-							>
-							<button class="btn" data-type="primary" type="submit" data-calc-share-submit>Send →</button>
-							<p class="calc__share-consent | text-s">
-								<label class="calc__share-check">
-									<input type="checkbox" name="consent" checked data-calc-share-consent>
-									<span class="calc__share-consent-text">By submitting, I agree to two/fiftyseven contacting me to follow up about these numbers — see the <a href="/contact-policy/">Contact Policy</a></span>
-								</label>
-							</p>
-						</form>
-						<p class="calc__share-status | text-xs text-monospace" data-calc-share-status role="status" aria-live="polite"></p>
-					</div>
-
-					<!-- Copy link card -->
-					<div class="calc__share-card | stack">
-						<h3 class="calc__share-card-title | text-l font-bold">Share the numbers</h3>
-						<p class="calc__share-card-body">Same selections, same price — your team clicks and sees the exact same quote you just built.</p>
-						<button class="btn" data-type="secondary" type="button" data-calc-share-copy>Copy link →</button>
-					</div>
-
-				</div>
-			</div>
+			<?php two57_calc_share( [
+				'title'      => 'save your quote, send it on',
+				'email_title' => 'Email me this quote',
+				'email_body'  => 'All your selections + itemised price in your inbox, ready to forward to whoever\'s signing off the booking.',
+				'copy_body'   => 'Same selections, same price — your team clicks and sees the exact same quote you just built.',
+			] ); ?>
 
 		</div>
 
