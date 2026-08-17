@@ -1,0 +1,164 @@
+@use 'calc-base';
+@use '../02-tokens/breakpoints' as bp;
+
+// ============================================================
+// 257 Meeting Costs Calculator — block-specific overrides
+// ============================================================
+// Shared calculator styling lives in _calc-base.scss (.calc__*).
+// This file holds only the meeting-costs-specific shell, the 2-col
+// extras check grid, facilitation/setup radio cards, the custom-expense
+// rows, the price hints, and the result chart overrides.
+// ============================================================
+
+.meeting-costs {
+	padding-block: var(--space-xl-3xl);
+}
+
+// On phones, give the calc card the full viewport width (same as the
+// other calcul accounts) instead of the global inline padding.
+@media (max-width: #{bp.$bp-md}) {
+	.meeting-costs .wrapper {
+		--wrapper-padding-inline: 0;
+	}
+}
+
+// Group-size slider readout runs 0–200 — 3 digits, so reserve 3ch to
+// stop the readout nudging the controls when crossing 99 → 100.
+.meeting-costs .calc__slider-value {
+	min-inline-size: 3ch;
+}
+
+// ── Option cards (catering / AV / materials) ────────────────
+// The shared .calc__option-card recipe (border, corner swatch, glow on
+// check) laid out two-across so the three option groups read like the
+// meet-pricing add-on tiles.
+.meeting-costs__card-list {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--space-xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	@media (max-width: #{bp.$bp-sm}) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.meeting-costs__card-title {
+	font-weight: 700;
+	color: var(--color-content-primary);
+}
+
+.meeting-costs__card-body {
+	color: var(--color-content-secondary);
+}
+
+// ── Facilitation + setup radio cards ───────────────────────
+// Single-select equivalents of the option cards: same bordered, rounded,
+// fill-on-select recipe, but with roving-radio semantics (aria-checked
+// drives the pressed state instead of :has(input:checked)).
+.meeting-costs__radio-cards {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--space-xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	@media (max-width: #{bp.$bp-sm}) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.meeting-costs__radio-card {
+	position: relative; // anchor for the selection circle
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-2xs);
+	inline-size: auto;
+	padding: var(--space-xs);
+	border: 1px solid var(--color-border-tertiary);
+	border-radius: var(--corner-radius-m);
+	background-color: color-mix(in srgb, var(--color-content-inverse) 70%, transparent);
+	color: var(--color-content-primary);
+	text-align: initial;
+	cursor: pointer;
+	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+
+	// Selection circle — matches the option-card swatch so every card shows
+	// a round indicator that fills when that option is active.
+	.meeting-costs__radio-indicator {
+		position: absolute;
+		top: var(--space-s);
+		right: var(--space-s);
+		inline-size: var(--space-s);
+		block-size: var(--space-s);
+		border-radius: 999px;
+		border: 2px solid var(--color-content-primary);
+		background-color: transparent;
+		transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+	}
+
+	&[aria-checked="true"] .meeting-costs__radio-indicator {
+		background-color: var(--color-btn-primary-bg);
+		border-color: var(--color-btn-primary-bg);
+	}
+
+	&[aria-checked="true"] {
+		border-color: var(--color-border-primary);
+		background-color: var(--color-content-inverse);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+// ── Impact discount option-card body ────────────────────────
+.meeting-costs__addon-body {
+	margin: var(--space-2xs) 0 0;
+	color: var(--color-content-secondary);
+}
+
+// Reserve a line for the derived-duration label so it doesn't reflow when
+// it flips between empty and populated.
+.meeting-costs__duration-label {
+	min-block-size: 1lh;
+}
+
+// ── Custom expense rows (label + value + remove) ────────────
+.meeting-costs__custom-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 7em auto;
+	gap: var(--space-2xs);
+	align-items: center;
+
+	@media (max-width: 600px) {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+}
+
+// The row reuses the base .calc__input look but at a smaller size and with
+// zero min-width so the label + value fields shrink to fit the inputs
+// column instead of overflowing it horizontally.
+.meeting-costs__custom-row .calc__input {
+	min-inline-size: 0;
+	font-size: var(--text-m-size);
+}
+
+// ── Option price hints (monospace, before selection) ───────
+// Painted under the card titles and inside the radio cards; monospace so
+// amounts line up against the breakdown figures.
+.meeting-costs__price-hint {
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-s-size);
+	white-space: nowrap;
+	color: var(--color-content-secondary);
+}
+
+.meeting-costs__custom-value {
+	font-variant-numeric: tabular-nums;
+}

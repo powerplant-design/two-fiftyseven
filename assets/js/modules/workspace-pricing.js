@@ -458,16 +458,16 @@ function renderResults( root, state, computed, prices, annualDiscount ) {
 		el.textContent = fmt$( computed.givingDollars );
 	} );
 
-	root.querySelectorAll( '.workspace-pricing__bar--private' ).forEach( ( bar ) => {
+	root.querySelectorAll( '.calc__chart-bar--ref' ).forEach( ( bar ) => {
 		bar.style.setProperty( '--bar-pct', cmp.pctPrivate + '%' );
 	} );
-	root.querySelectorAll( '.workspace-pricing__bar--coworking-low' ).forEach( ( bar ) => {
+	root.querySelectorAll( '.calc__chart-bar--low' ).forEach( ( bar ) => {
 		bar.style.setProperty( '--bar-pct', cmp.pctCwLow + '%' );
 	} );
-	root.querySelectorAll( '.workspace-pricing__bar--coworking-high' ).forEach( ( bar ) => {
+	root.querySelectorAll( '.calc__chart-bar--high' ).forEach( ( bar ) => {
 		bar.style.setProperty( '--bar-pct', cmp.pctCwHigh + '%' );
 	} );
-	root.querySelectorAll( '.workspace-pricing__bar--ours' ).forEach( ( bar ) => {
+	root.querySelectorAll( '.calc__chart-bar--ours' ).forEach( ( bar ) => {
 		bar.style.setProperty( '--bar-pct', cmp.pctOurs + '%' );
 	} );
 

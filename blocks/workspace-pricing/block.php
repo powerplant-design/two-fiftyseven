@@ -124,46 +124,46 @@ $mem_ded = function_exists( 'get_field' ) ? (int) get_field( 'membership_dedicat
 						</div>
 					</div>
 
-					<div class="workspace-pricing__chart | stack" data-result-compare>
+					<div class="calc__chart | stack" data-result-compare>
 						<!-- <h3 class="calc__result-label | text-l">Once a year, to house this team</h3> -->
-						<div class="workspace-pricing__chart-row">
-							<div class="workspace-pricing__chart-headline">
-								<span class="workspace-pricing__chart-label">Private office</span>
-								<span class="workspace-pricing__chart-value" data-result-private>$0</span>
+						<div class="calc__chart-row">
+							<div class="calc__chart-headline">
+								<span class="calc__chart-label">Private office</span>
+								<span class="calc__chart-value" data-result-private>$0</span>
 							</div>
-							<div class="workspace-pricing__bar-wrap">
-								<div class="workspace-pricing__bar workspace-pricing__bar--private" style="--bar-pct: 100%"></div>
+							<div class="calc__chart-bar-wrap">
+								<div class="calc__chart-bar calc__chart-bar--ref" style="--bar-pct: 100%"></div>
 							</div>
 						</div>
-						<div class="workspace-pricing__chart-row">
-							<div class="workspace-pricing__chart-headline">
-								<span class="workspace-pricing__chart-label">Other coworking</span>
-								<span class="workspace-pricing__chart-value">
+						<div class="calc__chart-row">
+							<div class="calc__chart-headline">
+								<span class="calc__chart-label">Other coworking</span>
+								<span class="calc__chart-value">
 									<span data-result-other-coworking-low>$0</span>&ndash;<span data-result-other-coworking-high>$0</span>
 								</span>
 							</div>
-							<div class="workspace-pricing__bar-wrap">
-								<div class="workspace-pricing__bar workspace-pricing__bar--coworking-low" style="--bar-pct: 0%"></div>
-								<div class="workspace-pricing__bar workspace-pricing__bar--coworking-high" style="--bar-pct: 0%"></div>
+							<div class="calc__chart-bar-wrap">
+								<div class="calc__chart-bar calc__chart-bar--low" style="--bar-pct: 0%"></div>
+								<div class="calc__chart-bar calc__chart-bar--high" style="--bar-pct: 0%"></div>
 							</div>
 						</div>
-						<div class="workspace-pricing__chart-row workspace-pricing__chart-row--ours">
-							<div class="workspace-pricing__chart-headline">
-								<span class="workspace-pricing__chart-label">two/fiftyseven</span>
-								<span class="workspace-pricing__chart-value" data-result-ours-annual>$0</span>
+						<div class="calc__chart-row calc__chart-row--ours">
+							<div class="calc__chart-headline">
+								<span class="calc__chart-label">two/fiftyseven</span>
+								<span class="calc__chart-value" data-result-ours-annual>$0</span>
 							</div>
-							<div class="workspace-pricing__bar-wrap">
-								<div class="workspace-pricing__bar workspace-pricing__bar--ours" style="--bar-pct: 0%"></div>
+							<div class="calc__chart-bar-wrap">
+								<div class="calc__chart-bar calc__chart-bar--ours" style="--bar-pct: 0%"></div>
 							</div>
 						</div>
-						<div class="workspace-pricing__chart-savings">
-							<div class="workspace-pricing__chart-headline">
-								<span class="workspace-pricing__chart-saving">Save vs a private office</span>
-								<span class="workspace-pricing__chart-saving-value" data-result-save-private>$0</span>
+						<div class="calc__chart-savings">
+							<div class="calc__chart-headline">
+								<span class="calc__chart-saving">Save vs a private office</span>
+								<span class="calc__chart-saving-value" data-result-save-private>$0</span>
 							</div>
-							<div class="workspace-pricing__chart-headline">
-								<span class="workspace-pricing__chart-saving">Save vs other coworking</span>
-								<span class="workspace-pricing__chart-saving-value">
+							<div class="calc__chart-headline">
+								<span class="calc__chart-saving">Save vs other coworking</span>
+								<span class="calc__chart-saving-value">
 									<span data-result-save-coworking-low>$0</span>&ndash;<span data-result-save-coworking-high>$0</span>
 								</span>
 							</div>

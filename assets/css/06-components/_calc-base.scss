@@ -268,7 +268,10 @@
 // Pair with .calc__option-head (the <label class="calc__check"> inside).
 .calc__option-card {
 	position: relative; // anchor for the absolutely positioned swatch
-	padding: var(--space-s);
+	padding: var(--space-xs);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
 	border: 1px solid var(--color-border-tertiary);
 	border-radius: var(--corner-radius-m);
 	background-color: color-mix(in srgb, var(--color-content-inverse) 70%, transparent);
@@ -668,7 +671,7 @@
 	display: flex;
 	flex-grow: 1;
 	flex-direction: column;
-	gap: var(--space-xs);
+	gap: var(--space-s);
 	padding: var(--space-m);
 	border-radius: var(--corner-radius-card);
 	background-color: var(--color-surface-inverse-primary);
@@ -712,6 +715,128 @@
 
 .calc__result-unit {
 	opacity: 0.75;
+}
+
+// Two large figures at the top of the result card, stacked with a generous
+// gap (workspace-pricing headlined proposal + annual; meeting-costs venue
+// compare + at two/fiftyseven).
+.calc__result-grid-headline {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-l);
+}
+
+// ── Comparison chart (bar rows) ──────────────────────────────
+// Shared horizontal bar-chart rows that compare the customer total against
+// benchmark figures: each row is a label + value headline over a track with
+// one or two translucent bars sized via --bar-pct. Lives inside the dark
+// .calc__result-grid card, so all colours use the inverse (light-on-dark)
+// tokens resolved by the block's colour space.
+.calc__chart {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+}
+
+.calc__chart-row {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+// Label pushed left, value pushed right, on the same line.
+.calc__chart-headline {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--space-s);
+}
+
+.calc__chart-label {
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-xs-size);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+	opacity: 0.78;
+}
+
+.calc__chart-bar-wrap {
+	position: relative;
+	block-size: 8px;
+	background-color: color-mix(in srgb, var(--color-content-inverse) 16%, transparent);
+	border-radius: 4px;
+	overflow: hidden;
+}
+
+.calc__chart-bar {
+	position: absolute;
+	inset-block: 0;
+	left: 0;
+	inline-size: var(--bar-pct, 0%);
+	border-radius: 4px;
+	transition: inline-size 200ms ease-out;
+}
+
+// Reference figure (the 100% anchor) — strongest of the translucent fills.
+.calc__chart-bar--ref {
+	background-color: color-mix(in srgb, var(--color-content-inverse) 52%, transparent);
+}
+
+// Two-bar band (low + high of a range) — the low sits under the high.
+.calc__chart-bar--low {
+	background-color: color-mix(in srgb, var(--color-content-inverse) 38%, transparent);
+}
+
+.calc__chart-bar--high {
+	background-color: color-mix(in srgb, var(--color-content-inverse) 25%, transparent);
+}
+
+// The customer's own number — solid so it stands out against the bands.
+.calc__chart-bar--ours {
+	background-color: var(--color-content-inverse);
+}
+
+.calc__chart-value {
+	font-family: var(--font-monospace-family);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--text-s-size);
+	color: var(--color-content-inverse);
+	text-align: right;
+}
+
+.calc__chart-row--ours .calc__chart-value {
+	font-weight: 600;
+}
+
+.calc__chart-savings {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	margin-block-start: var(--space-xs);
+	padding-block-start: var(--space-xs);
+	border-block-start: 1px solid var(--color-border-secondary);
+}
+
+.calc__chart-savings .calc__chart-headline {
+	align-items: baseline;
+}
+
+.calc__chart-saving {
+	margin: 0;
+	color: color-mix(in srgb, var(--color-content-inverse) 72%, transparent);
+	font-size: var(--text-s-size);
+}
+
+.calc__chart-saving-value {
+	font-family: var(--font-monospace-family);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--text-m-size);
+	color: var(--color-content-inverse);
+	text-align: right;
+
+	strong {
+		color: var(--color-content-inverse);
+	}
 }
 
 // ── Breakdown trigger ────────────────────────────────────────

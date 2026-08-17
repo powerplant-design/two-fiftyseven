@@ -103,11 +103,12 @@ function handleEmail( root, { slug, getState } ) {
 
 	// Standard gating pattern: the submit button stays disabled until the form
 	// is fillable — consent ticked and an email address entered.
+	const sync = () => {
+		if ( ! submit ) return;
+		const emailReady = ! ! ( emailInput && emailInput.value.trim() );
+		submit.disabled = ! ( emailReady && ( ! consent || consent.checked ) );
+	};
 	if ( submit ) {
-		const sync = () => {
-			const emailReady = ! ! ( emailInput && emailInput.value.trim() );
-			submit.disabled = ! ( emailReady && ( ! consent || consent.checked ) );
-		};
 		if ( consent ) consent.addEventListener( 'change', sync );
 		if ( emailInput ) emailInput.addEventListener( 'input', sync );
 		sync();

@@ -751,6 +751,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'meeting-costs',
+		'title'           => __( '257 Calc Meeting Costs', 'two-fiftyseven' ),
+		'description'     => __( 'Meeting cost comparison calculator: running an event at an industry-standard Wellington venue vs at two/fiftyseven. Group size, times, catering, AV, facilitation, materials.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/meeting-costs/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'meeting', 'costs', 'venue', 'event', 'workshop', 'comparison' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 
