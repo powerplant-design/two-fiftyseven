@@ -98,6 +98,9 @@ function two57_calc_share_email_handle( WP_REST_Request $request ): WP_REST_Resp
 		case 'meet-pricing':
 			$figures = two57_calc_figures_meet_pricing( $state );
 			break;
+		case 'office-carbon':
+			$figures = two57_calc_figures_office_carbon( $state );
+			break;
 		default:
 			$figures = new WP_Error( 'unsupported_calc', 'Unsupported calculator.' );
 	}
@@ -175,6 +178,15 @@ function two57_calc_sanitize_state( string $calc, array $state ) {
 			];
 		case 'meet-pricing':
 			return two57_calc_sanitize_meet_pricing( $state );
+		case 'office-carbon':
+			// Zero-start (mirrors the engine): a 0-team email is valid but
+			// figures read "0 t". Bounds mirror the engine's Max/Max clamp.
+			return [
+				'team'         => two57_calc_int( $state['team'] ?? 0, 0, 30 ),
+				'daysPerWeek'  => two57_calc_int( $state['days'] ?? $state['daysPerWeek'] ?? 0, 0, 5 ),
+				'weeksPerYear' => two57_calc_int( $state['weeks'] ?? $state['weeksPerYear'] ?? 0, 0, 52 ),
+				'hoursPerDay'  => two57_calc_float( $state['hours'] ?? $state['hoursPerDay'] ?? 0, 0, 24 ),
+			];
 	}
 
 	return new WP_Error( 'unsupported_calc', 'Unsupported calculator.' );
@@ -337,6 +349,73 @@ function two57_calc_figures_hours_to_impact( array $state ) {
 		'hoursPerPerson'  => $hours_pp_yr,
 		'givingPerPerson' => $giving_pp,
 		'givingRate'      => $giving_rate,
+	];
+}
+
+
+/**
+ * C5 — office-carbon recompute. Methodology values are LOCKED per the calc
+ * redesign brief (Tadpole ACE 2025 emission factors); they are not
+ * admin-editable, so they stay in code and never come from the client.
+ *
+ * Mirrors the office-carbon.js engine's compute() + formatters.
+ *
+ * @param array $state sanitized { team, daysPerWeek, weeksPerYear, hoursPerDay }
+ * @return array
+ */
+function two57_calc_figures_office_carbon( array $state ): array {
+	$grid_kgco2e_per_kwh  = 0.1011; // Tadpole ACE 2025
+	$line_loss_kgco2e_kwh = 0.0077; // Tadpole ACE 2025
+	$power_w_per_sqm      = 50;     // BRANZ commercial office benchmark
+	$sqm_per_person       = 10;     // GPG + BCO standard
+	$office_days_yr       = 230;    // standard NZ working year
+	$waste_kg_per_day     = 0.5;    // Wellington office mid
+	$waste_kgco2e_per_kg  = 0.584;  // landfill w/ gas recovery, Tadpole ACE 2025
+	$commute_kgco2e_day   = 0.3;    // Wellington 15km RT mixed EV/ICE mid
+	$building_footprint   = 6.5;    // 257 in-office annual measured (tCO₂e)
+	$building_capacity    = 80;     // approx daily occupancy
+	$offset_ratio_public  = 2.0;    // 200% — the locked user-facing figure
+
+	$person_day_257 = ( $building_footprint * 1000 ) / ( $building_capacity * $office_days_yr );
+
+	$team = (int) $state['team'];
+	$d    = (int) $state['daysPerWeek'];
+	$w    = (int) $state['weeksPerYear'];
+	$hpd  = (float) $state['hoursPerDay'];
+
+	$sqm = $team * $sqm_per_person;
+	$person_days = $team * $d * $w;
+	$person_hours = $person_days * $hpd;
+
+	$private_power_kg  = ( ( $power_w_per_sqm * $hpd * $w * $d * $sqm ) / 1000 ) * ( $grid_kgco2e_per_kwh + $line_loss_kgco2e_kwh );
+	$private_waste_kg  = $person_days * $waste_kg_per_day * $waste_kgco2e_per_kg;
+	$private_commute_kg = $person_days * $commute_kgco2e_day;
+	$private_total_kg  = $private_power_kg + $private_waste_kg + $private_commute_kg;
+
+	$ours_total_kg    = $person_days * $person_day_257;
+	$ours_offset_kg   = $ours_total_kg * ( 1 - $offset_ratio_public ); // signed, negative
+	$ours_positive_kg = abs( $ours_offset_kg );
+	$saved_kg         = $private_total_kg - $ours_total_kg;
+	$net_avoided_kg   = $private_total_kg - $ours_offset_kg;
+
+	return [
+		'calc'          => 'office-carbon',
+		'team'          => $team,
+		'daysPerWeek'   => $d,
+		'weeksPerYear'  => $w,
+		'hoursPerDay'   => $hpd,
+		'sqm'           => $sqm,
+		'personDays'    => $person_days,
+		'personHours'   => $person_hours,
+		'privatePower'  => $private_power_kg,
+		'privateWaste'  => $private_waste_kg,
+		'privateCommute'=> $private_commute_kg,
+		'privateTotal'  => $private_total_kg,
+		'oursTotal'     => $ours_total_kg,
+		'oursOffset'    => $ours_offset_kg,
+		'oursPositive'  => $ours_positive_kg,
+		'savedVsPrivate'=> $saved_kg,
+		'netAvoided'    => $net_avoided_kg,
 	];
 }
 
@@ -629,14 +708,62 @@ function two57_calc_figures_meet_pricing( array $state ) {
 function two57_calc_compose_email( string $calc, array $figures, array $state, string $page, string $to ): array {
 	switch ( $calc ) {
 		case 'hours-to-impact':
-			return two57_calc_compose_hours_to_impact( $figures, $state, $page, $to );
+			$compose = two57_calc_compose_hours_to_impact( $figures, $state, $page, $to );
+			break;
 		case 'workspace-pricing':
-			return two57_calc_compose_workspace_pricing( $figures, $state, $page, $to );
+			$compose = two57_calc_compose_workspace_pricing( $figures, $state, $page, $to );
+			break;
 		case 'meet-pricing':
-			return two57_calc_compose_meet_pricing( $figures, $state, $page, $to );
+			$compose = two57_calc_compose_meet_pricing( $figures, $state, $page, $to );
+			break;
+		case 'office-carbon':
+			$compose = two57_calc_compose_office_carbon( $figures, $state, $page, $to );
+			break;
+		default:
+			return [];
 	}
 
-	return [];
+	return two57_calc_email_letter_open( $compose );
+}
+
+
+/**
+ * Shared letter wrapper — a te reo greeting + sign-off applied to every
+ * calculator email, inserted around the body and just before the address /
+ * contact-policy imprint. Applied centrally here so all current + future
+ * calcs get it without per-calc copy.
+ *
+ * @param array $compose { subject, summary, plain, html }
+ * @return array
+ */
+function two57_calc_email_letter_open( array $compose ): array {
+	$greeting = 'Kia ora.' . "\n\n" . 'Ka pai for running your numbers at two/fiftyseven!';
+	$signoff  = 'One of our friendly kaitiaki will be in touch to follow up if you need further assistance.' . "\n" . 'Ngā mihi nui.';
+
+	// --- Plain text: greeting on top, sign-off just before the '—' imprint.
+	$plain  = $greeting . "\n\n" . $compose['plain'];
+	$marker = "\n\n—\n";
+	$pos    = strpos( $plain, $marker );
+	if ( false !== $pos ) {
+		$plain = substr( $plain, 0, $pos ) . "\n\n" . $signoff . substr( $plain, $pos );
+	} else {
+		$plain .= "\n\n" . $signoff;
+	}
+
+	// --- HTML: greeting paragraph on top, sign-off before the footer imprint.
+	$style      = 'font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2937;';
+	$greet_html = '<p style="' . $style . '">Kia ora.<br>Ka pai for running your numbers at two/fiftyseven!</p>';
+	$sign_html  = '<p style="' . $style . '">' . str_replace( "\n", '<br>', $signoff ) . '</p>';
+
+	$html = $greet_html . $compose['html'];
+	$foot = strrpos( $html, '<p style' );
+	if ( false !== $foot ) {
+		$html = substr( $html, 0, $foot ) . $sign_html . substr( $html, $foot );
+	}
+
+	$compose['plain'] = $plain;
+	$compose['html']  = $html;
+	return $compose;
 }
 
 
@@ -697,6 +824,80 @@ function two57_calc_compose_hours_to_impact( array $figures, array $state, strin
 		'</p>',
 		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;">two/fiftyseven, Wellington.<br>',
 			'<a href="' . esc_url( home_url( '/contact-policy/' ) ) . '" style="color:#6b7280;">Contact policy</a>',
+		'</p>',
+	] );
+
+	return [ 'subject' => $subject, 'summary' => $summary, 'plain' => $plain, 'html' => $html ];
+}
+
+
+/**
+ * C5 — office-carbon email copy. Mirrors the engine's fmtKg rounding: kg
+ * below 10,000, one-decimal tonnes at/above it, and '0 t' on a zero total.
+ */
+function two57_calc_compose_office_carbon( array $figures, array $state, string $page, string $to ): array {
+	$kg = static function ( float $n ): string {
+		$rounded = round( $n );
+		if ( $rounded === 0.0 ) return '0 t';
+		if ( abs( $rounded ) >= 10000 ) {
+			return number_format( $rounded / 1000, 1 ) . ' tCO₂e';
+		}
+		return number_format( $rounded ) . ' kgCO₂e';
+	};
+	$kg_signed = static function ( float $n ) use ( $kg ): string {
+		return ( $n < 0 ? '−' : '' ) . $kg( abs( $n ) );
+	};
+
+	$summary = sprintf(
+		'For a team of %d, %d days a week, %d weeks a year at %s hours a day: running your own office is about %s a year; at two/fiftyseven the measured share is %s and, with the 200%% verified offset, your net position is carbon-positive at %s.',
+		$figures['team'],
+		$figures['daysPerWeek'],
+		$figures['weeksPerYear'],
+		$figures['hoursPerDay'],
+		$kg( $figures['privateTotal'] ),
+		$kg( $figures['oursTotal'] ),
+		$kg( $figures['oursPositive'] )
+	);
+
+	$link = home_url( $page );
+	$link = add_query_arg( [
+		'team'  => $figures['team'],
+		'days'  => $figures['daysPerWeek'],
+		'weeks' => $figures['weeksPerYear'],
+		'hours' => $figures['hoursPerDay'],
+	], $link );
+
+	$subject = 'Your two/fiftyseven carbon calculation';
+
+	$plain = implode( "\n\n", [
+		$summary,
+		'Your inputs: ' . $figures['team'] . ' people · ' . $figures['daysPerWeek'] . ' days/wk · ' . $figures['weeksPerYear'] . ' weeks/yr at ' . $figures['hoursPerDay'] . ' h/day',
+		'Private NZ office baseline (operational): ' . $kg( $figures['privateTotal'] ),
+		'Measured at two/fiftyseven (Tadpole ACE 2025): ' . $kg( $figures['oursTotal'] ),
+		'Net position after 200% offset: ' . $kg_signed( $figures['oursOffset'] ),
+		'That is ' . $kg( $figures['savedVsPrivate'] ) . ' ahead of a private office, with ' . $kg( $figures['netAvoided'] ) . ' of expected emissions avoided or offset in total.',
+		'Methodology: Tadpole ACE 2025 emission factors; Ekos NZUs + Ecotricity Toitū climate positive electricity at 125% (≈200% combined). Biodiversity credits are a separate stream, never aggregated.',
+		'',
+		'Save or forward this calculation: ' . $link,
+		'',
+		'—',
+		'two/fiftyseven, Wellington · https://twofiftyseven.co/',
+		'Contact policy: ' . home_url( '/contact-policy/' ),
+	] );
+
+	$html = implode( '', [
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2937;">' . esc_html( $summary ) . '</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2937;">',
+			'<strong style="color:#111827;">' . esc_html( $kg( $figures['privateTotal'] ) ) . '</strong> — running your own office, per year<br>',
+			'<strong style="color:#111827;">' . esc_html( $kg( $figures['oursTotal'] ) ) . '</strong> — measured at two/fiftyseven<br>',
+			'<strong style="color:#111827;">' . esc_html( $kg_signed( $figures['oursOffset'] ) ) . '</strong> — carbon-positive for your share, after the 200% offset',
+		'</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;">',
+			'<a href="' . esc_url( $link ) . '" style="color:#2563eb;font-weight:600;">Open and share your calculation →</a>',
+		'</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;">',
+			'Tadpole ACE 2025 methodology · Ekos NZUs + Ecotricity 125%. Biodiversity credits via Sanctuary Mountain Maungatautari are separate and never aggregated.<br>',
+			'two/fiftyseven, Wellington · <a href="' . esc_url( home_url( '/contact-policy/' ) ) . '" style="color:#6b7280;">Contact policy</a>',
 		'</p>',
 	] );
 

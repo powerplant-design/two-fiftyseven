@@ -189,7 +189,7 @@ Every calculator block creates these files (following existing theme conventions
 | `calc-office-costs.js` (v1) | **Writes** `window.twofiftyseven.prices` | Reads from ACF-injected object (stop writing) |
 | `calc-meeting-costs.js` | **Writes** `meetingPrices`, `meetingAV`, `deriveDuration` | Reads rooms/add-ons from ACF, stops writing prices |
 | `calc-office-costs-v2.js` | Uses own `window.occv2` namespace | Reads prices from `window.twofiftyseven`, keeps `occv2` for compute functions |
-| `calc-office-carbon.js` | Self-contained | Stays mostly self-contained (cited constants in code); reads `givingRate` from `window.twofiftyseven.impact` |
+| `calc-office-carbon.js` | Self-contained | Stays fully self-contained (all cited constants in code); reads nothing from `window.twofiftyseven` |
 | `calc-hours-to-impact.js` | Self-contained | Reads `givingRatePerPersonHour` from `window.twofiftyseven.impact` |
 | `inject-prices.js` | Reads `window.twofiftyseven.prices` | Unchanged (already reads from the global) |
 | `quote-preview.js` | Reads room rates from HTML `data-*` attrs | Reads from `window.twofiftyseven.rooms` (reconciles the duplicate source) |
@@ -606,6 +606,7 @@ assets/css/06-components/
 | `.calc__field` / `__field-label` | Field wrapper + label | All |
 | `.calc__stepper` (+ `button` / `output`) | −/output/+ stepper | C1, C3, C4, C5, C6 |
 | `.calc__radio-group` / `__radio-label` | Segmented radio buttons (`<button role="radio">`) | C1, C3, C4, C5, C6 |
+| `.calc__radio-group--days` | Grid variant of `.calc__radio-group` — 5 equal columns (one per day), labels stretch to fill (`inline-size: auto`) | C5, C6 |
 | `.calc__input` | Number/text input (stepper-only keyboard guard) | All |
 | `.calc__microcopy` | Small helper text under inputs | C5, C6 |
 | `.calc__result` / `__result-grid` / `__result-col` / `__result-label` / `__result-figure` / `__result-unit` | Result panel (dark `--color-surface-inverse-primary` bg) | All |
@@ -614,7 +615,7 @@ assets/css/06-components/
 | `.calc__stat` / `__stat-label` / `__stat-value` / `__stat-unit` | Label/value/unit stat row | C1, C6 (extensible) |
 | `.calc__share` / `__share-eyebrow` / `__share-title` / `__share-row` | Share section (email + copy cards) | All with a share row |
 | `.calc__share-card` / `__share-card-title` / `__share-card-body` | Share card | All with a share row |
-| `.calc__share-form` / `__share-input` / `__share-btn` | Email form row | All with a share row |
+| `.calc__share-form` / `__share-input` | Email form row (buttons use the theme `.btn` system — no `.calc__share-btn` class) | All with a share row |
 | `.calc__share-honeypot` | Visually hidden honeypot (uses `visually-hidden` utility in markup) | All with a share row |
 | `.calc__share-consent` / `__share-check` | Consent checkbox + label + policy link | All with a share row |
 | `.calc__share-status` | Status output (`data-calc-share-status` error/success) | All with a share row |
@@ -651,7 +652,7 @@ Last updated: 2026-08-17 (work on `feature/calculators-continued` branch)
 - [x] **C1/C6 UX polish** ✅ committed (`699d816`) — commitment field reordered below memberships + relabelled "Private office lease term"; Dedicated annual-save breakdown row hidden unless annual is ticked **and** ≥1 Dedicated member; new memberships default to **Dedicated** tier (`M.DEFAULT_TIER`); `calc-source` tooltips capped to viewport + anchored right of the trigger below `bp-md` (fixes the mobile horizontal-overflow bug the slider work surfaced)
 - [x] **C2** — Meet pricing (+ Host variant) ✅ built + committed (`1d36abb`) on `feature/calculators-continued` (see "C2 — Meet pricing implementation — built" below)
 - [x] **DRY refactor** ✅ staged on `feature/calculators-continued` (see the "DRY refactor" note under C2 below) — shared `.calc__option-card`/`__head`, shared `calc-utils.js` (`fmt$`/`fmtN`/`bindRovingRadio`), single `two57_meet_rooms()` PHP helper
-- [ ] **C5** — Office carbon
+- [x] **C5** — Office carbon ✅ built on `feature/calculators-continued` (see "C5 — Office carbon implementation" below; pending commit)
 - [ ] **C4** — Meeting costs
 - [ ] **C3** — Office costs v2
 - [ ] **T1** — Quick quote teaser
@@ -659,12 +660,29 @@ Last updated: 2026-08-17 (work on `feature/calculators-continued` branch)
 
 > **Next action (2026-08-11):** merge `feature/calculators` → `main` and deploy so C1 + C6 (slider system, tooltip fix, default tier) can be tested on the live site. After deploy, verify on live: slider drag/stepper/readout on both calcs, roster defaulting to Dedicated, annual-prepay row visibility, and tooltip behaviour on mobile (no horizontal overflow).
 
+### C5 — Office carbon (built 2026-08-17)
+
+Port of the standalone `/calculator/office-carbon/` source using only the shared `.calc__*` catalogue (no new CSS classes except `.calc-source__note` for engine-rendered breakdown source notes). Locked constants (Tadpole ACE 2025) and the 200% public offset claim stay in code, mirroring the source engine's `compute()`. Biodiversity credits (Sanctuary Mountain) kept as a separate stream, never aggregated.
+
+UX matches C6 (hours-to-impact): team size is the shared `.calc__slider-row` (range input + stepper buttons + big readout, **max 30**), days/week a roving-radio segment on the shared `.calc__radio-group--days` grid (5 equal columns, labels stretch to fill — shared with C6, `2026-08-17`), weeks/hours number inputs. Cold load pre-fills NZ defaults like C6: **team 1 · 5 days · 46 weeks · 8 hours/day** (URL params always win). The sticky-aside net figure (and the email's HTML headline) render **signed** (−kgCO₂e, `kgHtmlSigned`) to make the net-negative position explicit.
+
+**Files:**
+- `blocks/office-carbon/block.php` — intro (ACF eyebrow/heading/tagline + colour_space), inputs card (team slider row, days roving-radio grid, weeks/hours number inputs), sticky 3-stat result aside (`calc__result--sticky`, signed net figure), full-width breakdown `<details>` with comparison rows + `.calc-source` tooltips and the ESG **citation block** (`data-calc-citation-block` + `[data-calc-copy-citation]`, heading now `<h2 class="calc__breakdown-heading | text-xl">Numbers formatted for direct quotation</h2>`) nested at the end of the breakdown body, then the §6 share row (share section OUTSIDE the root → `initCalcShare(root.parentElement, …)` like C1/C2 sticky layouts)
+- `assets/js/modules/office-carbon.js` — port reusing `bindRovingRadio` from `calc-utils.js`; exports `initOfficeCarbon()`; wired into `main.js` + both `transitions.js` branches (Swup page:view + bfcache)
+- `acf-json/group_two57_block_office_carbon.json` + `acf/office-carbon` registration in `functions.php`
+- `assets/css/06-components/_calc-office-carbon.scss` — overrides only: `.calc-source__note` for engine-rendered source notes; `.calc__kg-unit` renders the kgCO₂e/tCO₂e unit in breakdown row values two steps down the type scale + baseline-aligned (`.office-carbon` row values only); `.office-carbon .wrapper` added to the mobile padding scoping in `_calc-base.scss`
+- `inc/calc-share-email.php` — `office-carbon` cases: `two57_calc_sanitize_state()` (zero-start, bounds mirror the engine), `two57_calc_figures_office_carbon()` (constants in code, no ACF), compose dispatch + `two57_calc_compose_office_carbon()` (signed net figure in the summary + HTML headline; half-hour `hoursPerDay` no longer truncated in the summary). All calc emails wrapped by the shared letter intro/sign-off (see "C6 share row" note below)
+- `office-carbon` page created (ID 1078) matching the single-ACF-block page pattern
+
+**Verified:** `npm run build` clean; `php -l` clean; page renders 200; end-to-end share email tested against Mailhog (correct 1,418 kg / 488 kg / −488 kg figures for a 6-person team, copy-link deep link `?team=6&days=5&weeks=46&hours=8` round-trips through `readURL()`).
+
 ### C6 share row + email/copy link (built on C6, not C1)
 
 The §6 share/email system was built on C6 (hours-to-impact) instead of the originally suggested C1 — C6 is already live with the full `.calc__*` system, and the backend infrastructure is fully generic, so C1–C5 now just add markup + a one-line `initCalcShare()` call + their per-calc `$calc` backend cases (sanitize/figures/compose). Decision recorded per §6.10's flexibility.
 
 **Implemented:**
 - `inc/calc-share-email.php` — REST endpoint `POST /wp-json/two57/v1/calc-share-email` (honeypot → `is_email` → consent gate → per-calc state sanitise/clamp → server-side recompute from ACF → email compose → send → MailPoet lead capture, all in one file, loaded from `functions.php`)
+- **Email letter wrapper** — `two57_calc_email_letter_open()` (applied centrally in the compose dispatcher so every current + future calc gets it): te reo greeting *"Kia ora. / Ka pai for running your numbers at two/fiftyseven!"* up top and sign-off *"One of our friendly kaitiaki will be in touch… Ngā mihi nui."* just before the address/contact-policy imprint, in both plain + HTML (`2026-08-17`)
 - Lead capture on shared **"Calculator leads"** MailPoet list + `calc_source` custom field, both auto-created on first send
 - Send via MailPoet `MailerFactory` with `wp_mail()` fallback; QA log hook `TWO57_CALC_EMAIL_LOG` (defined → email body written to `error_log` instead of sent)
 - Per-IP rate limit 3/10min via transient

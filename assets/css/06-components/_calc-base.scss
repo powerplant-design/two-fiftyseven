@@ -66,7 +66,8 @@
 @media (max-width: #{bp.$bp-md}) {
 	.meet-pricing .wrapper,
 	.workspace-pricing .wrapper,
-	.hours-to-impact .wrapper {
+	.hours-to-impact .wrapper,
+	.office-carbon .wrapper {
 		--wrapper-padding-inline: 0;
 	}
 }
@@ -464,6 +465,19 @@
 	&:focus-visible {
 		outline: 2px solid var(--color-border-primary);
 		outline-offset: 2px;
+	}
+}
+
+// Grid variant — the 5-day radio groups (office-carbon + hours-to-impact):
+// one column per day, labels stretch to fill their column instead of the
+// fixed square size.
+.calc__radio-group--days {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	gap: var(--space-xs);
+
+	.calc__radio-label {
+		inline-size: auto;
 	}
 }
 

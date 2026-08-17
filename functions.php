@@ -651,6 +651,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'office-carbon',
+		'title'           => __( '257 Calc Office Carbon', 'two-fiftyseven' ),
+		'description'     => __( 'Carbon position calculator: private central-Wellington office vs two/fiftyseven for a team, with a 200% verified offset. Tadpole ACE 2025 methodology. For ESG / sustainability / procurement leads.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/office-carbon/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'carbon', 'offset', 'esg', 'climate', 'office' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 
