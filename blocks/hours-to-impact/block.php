@@ -80,7 +80,7 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 				</div>
 
 				<div class="calc__field">
-					<span class="calc__field-label | text-monospace text-s">Days per week in office</span>
+					<span class="calc__field-label | text-monospace text-s">Days p/week in office</span>
 					<div class="calc__radio-group calc__radio-group--days" role="radiogroup" aria-label="Days per week in office" data-calc-days-group>
 						<button type="button" role="radio" class="calc__radio-label" data-calc-days="1" aria-checked="false">1</button>
 						<button type="button" role="radio" class="calc__radio-label" data-calc-days="2" aria-checked="false">2</button>

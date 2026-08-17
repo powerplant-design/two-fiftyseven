@@ -98,7 +98,7 @@ $room_cap = static function ( string $key ) {
 
 				<!-- ── Step 1 · People ───────────────────────────────── -->
 				<div class="calc__field">
-					<span class="calc__field-label | text-monospace text-s">How many people?</span>
+					<span class="calc__field-label | text-monospace text-s">How many people</span>
 					<div class="calc__slider-row">
 						<div class="calc__slider-controls">
 							<button type="button" class="calc__stepper-btn" data-calc-people-dec aria-label="Decrease people">&minus;</button>
@@ -114,7 +114,7 @@ $room_cap = static function ( string $key ) {
 
 				<!-- ── Step 2 · Room ─────────────────────────────────── -->
 				<div class="calc__field">
-					<span class="calc__field-label | text-monospace text-s">Which room?</span>
+					<span class="calc__field-label | text-monospace text-s">Which space</span>
 					<p class="meet-pricing__room-rec | text-s" data-calc-room-rec hidden>
 						Recommended for <strong data-calc-rec-people>6</strong> people:
 						<strong data-calc-rec-room>Meeting Room</strong>. You can size up if you want more space.
@@ -139,7 +139,7 @@ $room_cap = static function ( string $key ) {
 
 				<!-- ── Step 3 · Duration ─────────────────────────────── -->
 				<div class="calc__field">
-					<span class="calc__field-label | text-monospace text-s">How long?</span>
+					<span class="calc__field-label | text-monospace text-s">How long</span>
 					<div class="meet-pricing__duration-grid" role="radiogroup" aria-label="Duration" data-calc-duration-group>
 						<button type="button" role="radio" class="meet-pricing__duration-option" data-calc-duration="hour" aria-checked="false">
 							<span class="meet-pricing__duration-name">By the hour</span>
@@ -158,7 +158,7 @@ $room_cap = static function ( string $key ) {
 
 				<!-- ── Step 4 · Days (repeatable) ───────────────────── -->
 				<div class="calc__field">
-					<span class="calc__field-label | text-monospace text-s">When?</span>
+					<span class="calc__field-label | text-monospace text-s">When</span>
 					<ul class="calc__repeat" data-calc-days-list></ul>
 					<button type="button" class="calc__add-btn" data-calc-add-day>
 						<span aria-hidden="true">+</span> Add day

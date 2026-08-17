@@ -69,7 +69,7 @@ if ( ! in_array( $colour_space, $allowed, true ) ) {
 							<button type="button" class="calc__stepper-btn" data-calc-team-dec aria-label="Decrease team size">&minus;</button>
 							<div class="calc__slider" data-calc-team-slider>
 <input type="range" class="calc__slider-input" data-calc-team-range
-								min="0" max="30" step="1" value="0" aria-label="Team size">
+								min="0" max="15" step="1" value="0" aria-label="Team size">
 							</div>
 							<button type="button" class="calc__stepper-btn" data-calc-team-inc aria-label="Increase team size">&plus;</button>
 						</div>
@@ -78,7 +78,7 @@ if ( ! in_array( $colour_space, $allowed, true ) ) {
 				</div>
 
 				<div class="calc__field">
-					<span class="calc__field-label | text-monospace text-s">Days per week in office</span>
+					<span class="calc__field-label | text-monospace text-s">Days p/week in office</span>
 					<div class="calc__radio-group calc__radio-group--days" role="radiogroup" aria-label="Days per week in office" data-calc-days-group>
 						<button type="button" role="radio" class="calc__radio-label" data-calc-days="1" aria-checked="false">1</button>
 						<button type="button" role="radio" class="calc__radio-label" data-calc-days="2" aria-checked="false">2</button>

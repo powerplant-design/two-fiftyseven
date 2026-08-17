@@ -182,7 +182,7 @@ function two57_calc_sanitize_state( string $calc, array $state ) {
 			// Zero-start (mirrors the engine): a 0-team email is valid but
 			// figures read "0 t". Bounds mirror the engine's Max/Max clamp.
 			return [
-				'team'         => two57_calc_int( $state['team'] ?? 0, 0, 30 ),
+				'team'         => two57_calc_int( $state['team'] ?? 0, 0, 15 ),
 				'daysPerWeek'  => two57_calc_int( $state['days'] ?? $state['daysPerWeek'] ?? 0, 0, 5 ),
 				'weeksPerYear' => two57_calc_int( $state['weeks'] ?? $state['weeksPerYear'] ?? 0, 0, 52 ),
 				'hoursPerDay'  => two57_calc_float( $state['hours'] ?? $state['hoursPerDay'] ?? 0, 0, 24 ),

@@ -63,7 +63,7 @@ const M = {
 	DAYS_PER_WEEK: 5,
 
 	// Input bounds
-	MAX_TEAM: 30,
+	MAX_TEAM: 15,
 	MAX_DAYS: 5,
 	MAX_HOURS: 24,
 	MAX_WEEKS: 52,
