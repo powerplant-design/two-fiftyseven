@@ -106,6 +106,9 @@ function two57_calc_share_email_handle( WP_REST_Request $request ): WP_REST_Resp
 		case 'meeting-costs':
 			$figures = two57_calc_figures_meeting_costs( $state );
 			break;
+		case 'office-costs':
+			$figures = two57_calc_figures_office_costs( $state );
+			break;
 		default:
 			$figures = new WP_Error( 'unsupported_calc', 'Unsupported calculator.' );
 	}
@@ -194,6 +197,8 @@ function two57_calc_sanitize_state( string $calc, array $state ) {
 				'weeksPerYear' => two57_calc_int( $state['weeks'] ?? $state['weeksPerYear'] ?? 0, 0, 52 ),
 				'hoursPerDay'  => two57_calc_float( $state['hours'] ?? $state['hoursPerDay'] ?? 0, 0, 24 ),
 			];
+		case 'office-costs':
+			return two57_calc_sanitize_office_costs( $state );
 	}
 
 	return new WP_Error( 'unsupported_calc', 'Unsupported calculator.' );
@@ -402,6 +407,95 @@ function two57_calc_sanitize_meeting_costs( array $state ): array {
 		'setup'     => $setup,
 		'custom'    => $custom,
 		'impact'    => ! empty( $state['impact'] ),
+	];
+}
+
+
+/**
+ * C3 — office-costs state sanitisation. Normalises + bound-checks the office
+ * budget state the JS engine sends on email-submit. Team clamps 0-15
+ * (zero-start mirrors the engine's empty card); per-member days are a list
+ * of 1-5 integers capped at the team size; grade + precinct whitelist to the
+ * engine's modifier sets; every cost input clamps to its block's min/max
+ * (falling back to the cited default when absent). Custom lines get a
+ * sanitized label + a positive clamped value; rows with an empty label or
+ * zero value are dropped (mirrors the engine's readState filter).
+ *
+ * @param array $state raw { team, days[], grade, precinct, sqmPerPerson, rentPerSqmPerYr, ..., bookingSoftware, customLines[] }
+ * @return array sanitized state shape — never WP_Error (meets the contract)
+ */
+function two57_calc_sanitize_office_costs( array $state ): array {
+	$grades_allowed   = [ 'A-grade', 'B-grade fitted', 'B-grade unfitted', 'C-grade' ];
+	$precincts_allowed = [ 'CBD core', 'CBD fringe', 'Te Aro', 'Thorndon', 'Lambton', 'Kelburn', 'Mt Vic' ];
+
+	$team = two57_calc_int( $state['team'] ?? 0, 0, 15 );
+
+	// Per-member days/week — list of 1-5, capped at the team count (the
+	// engine pads a short list with the 5-day default, so a long one wins).
+	$days = [];
+	foreach ( (array) ( $state['days'] ?? [] ) as $day ) {
+		$days[] = two57_calc_int( $day, 1, 5 );
+		if ( count( $days ) >= max( 1, $team ) ) break;
+	}
+	if ( ! $days ) {
+		$days = array_fill( 0, max( 1, $team ), 5 );
+	}
+
+	$grade = is_string( $state['grade'] ?? null ) ? sanitize_text_field( (string) $state['grade'] ) : '';
+	if ( ! in_array( $grade, $grades_allowed, true ) ) {
+		$grade = 'B-grade fitted';
+	}
+
+	$precinct = is_string( $state['precinct'] ?? null ) ? trim( (string) $state['precinct'] ) : '';
+	if ( ! in_array( $precinct, $precincts_allowed, true ) ) {
+		$precinct = 'CBD core';
+	}
+
+	// Custom lines — sanitize label (max 60 chars), clamp value to a
+	// positive float. Rows with an empty label or zero value are dropped.
+	$custom = [];
+	foreach ( (array) ( $state['customLines'] ?? $state['custom'] ?? [] ) as $line ) {
+		if ( ! is_array( $line ) || count( $custom ) >= 10 ) {
+			continue;
+		}
+		$label = sanitize_text_field( (string) ( $line['label'] ?? '' ) );
+		if ( mb_strlen( $label ) > 60 ) {
+			$label = mb_substr( $label, 0, 60 );
+		}
+		$value = isset( $line['value'] ) ? two57_calc_float( $line['value'], 0, 1000000 ) : 0;
+		if ( '' === $label || $value <= 0 ) {
+			continue;
+		}
+		$custom[] = [ 'label' => $label, 'value' => $value ];
+	}
+
+	return [
+		'team'                   => $team,
+		'days'                   => $days,
+		'grade'                  => $grade,
+		'precinct'               => $precinct,
+		'sqmPerPerson'           => two57_calc_float( $state['sqmPerPerson'] ?? 9, 6, 15 ),
+		'rentPerSqmPerYr'        => two57_calc_float( $state['rentPerSqmPerYr'] ?? 310, 120, 570 ),
+		'outgoingsPctOfRent'     => two57_calc_float( $state['outgoingsPctOfRent'] ?? 0.27, 0.2, 0.35 ),
+		'internetPerMo'          => two57_calc_float( $state['internetPerMo'] ?? 200, 99, 400 ),
+		'powerWattsPerSqm'       => two57_calc_float( $state['powerWattsPerSqm'] ?? 50, 40, 70 ),
+		'powerHoursPerYear'      => two57_calc_float( $state['powerHoursPerYear'] ?? 1840, 1500, 2400 ),
+		'powerPricePerKwh'       => two57_calc_float( $state['powerPricePerKwh'] ?? 0.30, 0.22, 0.42 ),
+		'cleaningHoursPerSqmYr'  => two57_calc_float( $state['cleaningHoursPerSqmYr'] ?? 1.2, 1.0, 1.5 ),
+		'cleaningPerHour'        => two57_calc_float( $state['cleaningPerHour'] ?? 45, 38, 55 ),
+		'kbPerPersonPerYr'       => two57_calc_float( $state['kbPerPersonPerYr'] ?? 300, 200, 450 ),
+		'insurancePerPersonPerYr'=> two57_calc_float( $state['insurancePerPersonPerYr'] ?? 200, 150, 400 ),
+		'firstAidPerPersonPerYr' => two57_calc_float( $state['firstAidPerPersonPerYr'] ?? 28, 15, 50 ),
+		'fireWardenPerPersonPerYr'=> two57_calc_float( $state['fireWardenPerPersonPerYr'] ?? 18, 10, 35 ),
+		'furniturePerPerson'     => two57_calc_float( $state['furniturePerPerson'] ?? 2000, 1200, 3500 ),
+		'furnitureAmortYrs'      => two57_calc_float( $state['furnitureAmortYrs'] ?? 5, 3, 10 ),
+		'adminPctOfHours'        => two57_calc_float( $state['adminPctOfHours'] ?? 0.06, 0.04, 0.10 ),
+		'adminLoadedHourly'      => two57_calc_float( $state['adminLoadedHourly'] ?? 70, 55, 90 ),
+		'leaseLegalsOneOff'      => two57_calc_float( $state['leaseLegalsOneOff'] ?? 3500, 2000, 6000 ),
+		'leaseTermYears'         => two57_calc_float( $state['leaseTermYears'] ?? 3, 1, 10 ),
+		'bookingSoftware'        => ! empty( $state['bookingSoftware'] ),
+		'bookingSoftwareCost'    => two57_calc_float( $state['bookingSoftwareCost'] ?? 8, 5, 15 ),
+		'customLines'            => $custom,
 	];
 }
 
@@ -1209,6 +1303,179 @@ function two57_calc_figures_meeting_costs( array $state ) {
 
 
 /**
+ * C3 — office-costs recompute. Mirrors the office-costs.js engine's compute()
+ * + savings-band math; methodology constants (grade/precinct modifiers,
+ * cited defaults) stay in code, membership prices come from the ACF SSOT,
+ * never the client. Changes here must be mirrored in
+ * assets/js/modules/office-costs.js and vice-versa.
+ *
+ * @param array $state sanitized { team, days[], grade, precinct, sqmPerPerson, …, bookingSoftware, customLines[] }
+ * @return array|WP_Error
+ */
+function two57_calc_figures_office_costs( array $state ) {
+	if ( ! function_exists( 'get_field' ) ) {
+		return new WP_Error( 'acf_missing', 'Calculator data store unavailable.' );
+	}
+
+	// --- Modifier tables + methodology defaults (cited, stay in code) ---
+	$grade_mod = [
+		'A-grade'           => 1.35,
+		'B-grade fitted'    => 1.00,
+		'B-grade unfitted'  => 0.78,
+		'C-grade'           => 0.62,
+	];
+	$precinct_mod = [
+		'CBD core'    => 1.15,
+		'CBD fringe'  => 1.00,
+		'Te Aro'      => 0.92,
+		'Thorndon'    => 1.05,
+		'Lambton'     => 1.20,
+		'Kelburn'     => 0.85,
+		'Mt Vic'      => 0.95,
+	];
+	$weeks_per_yr = 46;
+
+	// Membership prices from the SSOT (same slugs workspace-pricing uses).
+	$price = static function ( string $slug ): float {
+		$p = (float) get_field( 'membership_' . $slug . '_monthly', 'option' );
+		return $p > 0 ? $p : 0;
+	};
+	$flexi     = [ 1 => $price( 'flexi_1' ), 2 => $price( 'flexi_2' ), 3 => $price( 'flexi_3' ), 4 => $price( 'flexi_4' ), 5 => $price( 'flexi_5' ) ];
+	$dedicated = $price( 'dedicated' );
+
+	$team = (int) $state['team'];
+
+	if ( $team <= 0 ) {
+		return [
+			'calc'           => 'office-costs',
+			'empty'          => true,
+			'team'           => 0,
+			'annualTotal'    => 0,
+			'monthlyTotal'   => 0,
+			'perPersonMonth' => 0,
+			'perPersonDay'   => 0,
+			'perSqmYr'       => 0,
+			'sqmTotal'       => 0,
+			'lines'          => [],
+			'categories'     => [],
+			'valueAdd'       => [ 'livingWage' => 0, 'carbon' => 0, 'climatePower' => 0, 'giving' => 0, 'mhfr' => 0, 'total' => 0 ],
+			'saving'         => [ 'low' => 0, 'high' => 0, 'active' => false ],
+		];
+	}
+
+	$days      = array_values( $state['days'] );
+	$avg_days  = array_sum( $days ) / count( $days );
+	$sqm_pp    = (float) $state['sqmPerPerson'];
+	$rent_sqm  = (float) $state['rentPerSqmPerYr'];
+	$opex_pct  = (float) $state['outgoingsPctOfRent'];
+	$sqm_total = $team * $sqm_pp;
+
+	$gm = $grade_mod[ $state['grade'] ] ?? 1.0;
+	$pm = $precinct_mod[ $state['precinct'] ] ?? 1.0;
+
+	$rent      = $sqm_total * $rent_sqm * $gm * $pm;
+	$outgoings = $rent * $opex_pct;
+	$furniture = (float) $state['furnitureAmortYrs'] > 0 ? ( $team * (float) $state['furniturePerPerson'] ) / (float) $state['furnitureAmortYrs'] : 0;
+	$internet  = (float) $state['internetPerMo'] * 12;
+	$power     = ( $sqm_total * (float) $state['powerWattsPerSqm'] * (float) $state['powerHoursPerYear'] * (float) $state['powerPricePerKwh'] ) / 1000;
+	$cleaning  = $sqm_total * (float) $state['cleaningHoursPerSqmYr'] * (float) $state['cleaningPerHour'];
+	$kb        = $team * (float) $state['kbPerPersonPerYr'];
+	$insurance = $team * (float) $state['insurancePerPersonPerYr'];
+	$first_aid = $team * (float) $state['firstAidPerPersonPerYr'];
+	$fire      = $team * (float) $state['fireWardenPerPersonPerYr'];
+	$admin     = $team * (float) $state['powerHoursPerYear'] * (float) $state['adminPctOfHours'] * (float) $state['adminLoadedHourly'];
+	$legals    = (float) $state['leaseTermYears'] > 0 ? (float) $state['leaseLegalsOneOff'] / (float) $state['leaseTermYears'] : 0;
+
+	$booking_active = ! empty( $state['bookingSoftware'] ) || $team >= 10;
+	$booking        = $booking_active ? $team * (float) $state['bookingSoftwareCost'] * 12 : 0;
+
+	$custom_sum = 0;
+	foreach ( $state['customLines'] as $cl ) {
+		$custom_sum += (float) $cl['value'];
+	}
+
+	$annual_total = $rent + $outgoings + $furniture + $internet + $power + $cleaning
+		+ $kb + $insurance + $first_aid + $fire + $admin + $legals + $booking + $custom_sum;
+
+	$working_days = $avg_days * $weeks_per_yr;
+	$per_pp_day   = $working_days > 0 ? $annual_total / $team / $working_days : 0;
+
+	// --- Line list (label + value + cited note) ---
+	$lines = [
+		[ 'label' => 'Rent', 'value' => $rent, 'note' => '$' . round( $rent_sqm ) . '/m²/yr × ' . $sqm_pp . ' m²/pp × ' . $team . ' people × ' . number_format( $gm, 2 ) . ' (' . $state['grade'] . ') × ' . number_format( $pm, 2 ) . ' (' . $state['precinct'] . ')' ],
+		[ 'label' => 'Outgoings', 'value' => $outgoings, 'note' => round( $opex_pct * 100 ) . '% of rent' ],
+		[ 'label' => 'Furniture (amortised)', 'value' => $furniture, 'note' => '$' . round( (float) $state['furniturePerPerson'] ) . '/pp × ' . $team . ' ÷ ' . (float) $state['furnitureAmortYrs'] . ' yrs' ],
+		[ 'label' => 'Internet', 'value' => $internet, 'note' => '$' . round( (float) $state['internetPerMo'] ) . '/mo business fibre × 12' ],
+		[ 'label' => 'Power', 'value' => $power, 'note' => (float) $state['powerWattsPerSqm'] . ' W/m² × ' . $sqm_total . ' m² × ' . (float) $state['powerHoursPerYear'] . ' hrs × $' . number_format( (float) $state['powerPricePerKwh'], 2 ) . '/kWh' ],
+		[ 'label' => 'Cleaning', 'value' => $cleaning, 'note' => (float) $state['cleaningHoursPerSqmYr'] . ' hr/m²/yr × $' . round( (float) $state['cleaningPerHour'] ) . '/hr × ' . $sqm_total . ' m²' ],
+		[ 'label' => 'Kitchen + bathroom', 'value' => $kb, 'note' => '$' . round( (float) $state['kbPerPersonPerYr'] ) . '/pp/yr consumables' ],
+		[ 'label' => 'Insurance', 'value' => $insurance, 'note' => '$' . round( (float) $state['insurancePerPersonPerYr'] ) . '/pp/yr combined' ],
+		[ 'label' => 'First aid training', 'value' => $first_aid, 'note' => '$' . round( (float) $state['firstAidPerPersonPerYr'] ) . '/pp/yr (H&S Act 2015 compliance)' ],
+		[ 'label' => 'Fire warden training', 'value' => $fire, 'note' => '$' . round( (float) $state['fireWardenPerPersonPerYr'] ) . '/pp/yr (FENZ requirement)' ],
+		[ 'label' => 'Admin time', 'value' => $admin, 'note' => round( (float) $state['adminPctOfHours'] * 100 ) . '% of team hours × $' . round( (float) $state['adminLoadedHourly'] ) . '/hr loaded' ],
+		[ 'label' => 'Lease legals (amortised)', 'value' => $legals, 'note' => '$' . number_format( round( (float) $state['leaseLegalsOneOff'] ) ) . ' one-off ÷ ' . (float) $state['leaseTermYears'] . ' yr term' ],
+	];
+	if ( $booking_active ) {
+		$lines[] = [ 'label' => 'Booking software', 'value' => $booking, 'note' => '$' . (float) $state['bookingSoftwareCost'] . '/pp/mo × ' . $team . ' × 12 (auto-on at team ≥ 10)' ];
+	}
+	foreach ( $state['customLines'] as $cl ) {
+		$lines[] = [ 'label' => $cl['label'], 'value' => (float) $cl['value'], 'note' => 'Custom line you added' ];
+	}
+
+	$categories = [
+		'rent-opex'              => $rent + $outgoings,
+		'utilities'              => $internet + $power,
+		'cleaning-kb'            => $cleaning + $kb,
+		'compliance-insurance'   => $insurance + $first_aid + $fire,
+		'furniture-admin-legals' => $furniture + $admin + $legals,
+		'addons-custom'          => $booking + $custom_sum,
+	];
+
+	// Value-add quantification (Job 11).
+	$value_add = [
+		'livingWage'   => 7.92 * $sqm_total,
+		'carbon'       => 1.25 * $team,
+		'climatePower' => $power * 0.05,
+		'giving'       => $team * (float) $state['powerHoursPerYear'],
+		'mhfr'         => ( 445 * ceil( $team / 12 ) ) / 2.5,
+	];
+	$value_add['total'] = array_sum( $value_add );
+
+	// Savings band — per-member days → Flexi tier, 5 days = Dedicated high.
+	$saving_low  = 0;
+	$saving_high = 0;
+	foreach ( $days as $d ) {
+		$d = two57_calc_int( $d, 1, 5 );
+		$saving_low  += $flexi[ $d ] ?? 0;
+		$saving_high += ( 5 === $d ) ? $dedicated : ( $flexi[ $d ] ?? 0 );
+	}
+	$saving_low  *= 12;
+	$saving_high *= 12;
+	$save_floor = $annual_total - $saving_high;
+	$save_ceil  = $annual_total - $saving_low;
+	$saving_active = $annual_total > 0 && $save_floor > 0;
+
+	return [
+		'calc'           => 'office-costs',
+		'empty'          => false,
+		'team'           => $team,
+		'grade'          => $state['grade'],
+		'precinct'       => $state['precinct'],
+		'annualTotal'    => (int) round( $annual_total ),
+		'monthlyTotal'   => (int) round( $annual_total / 12 ),
+		'perPersonMonth' => (int) round( $annual_total / $team / 12 ),
+		'perPersonDay'   => (int) round( $per_pp_day ),
+		'perSqmYr'       => (int) round( $sqm_total > 0 ? $annual_total / $sqm_total : 0 ),
+		'sqmTotal'       => (int) round( $sqm_total ),
+		'lines'          => $lines,
+		'categories'     => $categories,
+		'valueAdd'       => array_map( 'round', $value_add ),
+		'saving'         => [ 'low' => $save_ceil, 'high' => $save_floor, 'active' => $saving_active ],
+	];
+}
+
+
+/**
  * Compose the plain + HTML email for a calc's figures.
  *
  * @param string $calc
@@ -1234,6 +1501,9 @@ function two57_calc_compose_email( string $calc, array $figures, array $state, s
 			break;
 		case 'meeting-costs':
 			$compose = two57_calc_compose_meeting_costs( $figures, $state, $page, $to );
+			break;
+		case 'office-costs':
+			$compose = two57_calc_compose_office_costs( $figures, $state, $page, $to );
 			break;
 		default:
 			return [];
@@ -1850,6 +2120,246 @@ function two57_calc_compose_meeting_costs( array $figures, array $state, string 
 		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;"><a href="' . esc_url( $link ) . '" style="color:#2563eb;font-weight:600;">Open and share your comparison →</a></p>',
 		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;">two/fiftyseven, Wellington.<br><a href="' . esc_url( home_url( '/contact-policy/' ) ) . '" style="color:#6b7280;">Contact policy</a></p>',
 	] );
+
+	return [ 'subject' => $subject, 'summary' => $summary, 'plain' => $plain, 'html' => $html ];
+}
+
+
+/**
+ * C3 — office-costs email copy.
+ *
+ * @param array  $figures Re-rendered by two57_calc_figures_office_costs().
+ * @param array  $state   Sanitized by two57_calc_sanitize_office_costs().
+ * @param string $page    Pathname the calc sits on.
+ * @param string $to      Recipient email.
+ * @return array { subject, summary, plain, html }
+ */
+function two57_calc_compose_office_costs( array $figures, array $state, string $page, string $to ): array {
+	$money = static function ( float $n ): string {
+		return '$' . number_format( round( $n ) );
+	};
+
+	$empty_email = $figures['empty'] ?? false;
+	if ( $empty_email || $figures['team'] <= 0 ) {
+		$summary = 'Pick a team size and configure your office line-by-line and two/fiftyseven will show you the annual budget — and what your same team costs here.';
+		$subject = 'Your two/fiftyseven office cost budget';
+
+		$link = home_url( $page );
+
+		$plain = implode( "\n\n", [
+			$summary,
+			'Open the calculator and build your budget: ' . $link,
+			'',
+			'—',
+			'two/fiftyseven, Wellington · https://twofiftyseven.co/',
+			'Contact policy: ' . home_url( '/contact-policy/' ),
+		] );
+
+		$html = implode( '', [
+			'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2937;">' . esc_html( $summary ) . '</p>',
+			'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;"><a href="' . esc_url( $link ) . '" style="color:#2563eb;font-weight:600;">Open your budget →</a></p>',
+			'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;">two/fiftyseven, Wellington.<br><a href="' . esc_url( home_url( '/contact-policy/' ) ) . '" style="color:#6b7280;">Contact policy</a></p>',
+		] );
+
+		return [ 'subject' => $subject, 'summary' => $summary, 'plain' => $plain, 'html' => $html ];
+	}
+
+	$team      = $figures['team'];
+	$grade     = $figures['grade'];
+	$precinct  = $figures['precinct'];
+	$annual    = $figures['annualTotal'];
+	$per_month = $figures['monthlyTotal'];
+	$per_pp    = $figures['perPersonMonth'];
+	$per_day   = $figures['perPersonDay'];
+	$per_sqm   = $figures['perSqmYr'];
+	$save_low  = $figures['saving']['low'];
+	$save_high = $figures['saving']['high'];
+	$saving_active = $figures['saving']['active'];
+	$save_band = $saving_active ? ( $save_low === $save_high ? $money( $save_low ) : $money( $save_low ) . ' – ' . $money( $save_high ) ) : '';
+
+	$summary = sprintf(
+		'Your %d-person team in a %s %s office runs %s a year (%s/mo, %s/pp/day).',
+		$team,
+		$grade,
+		$precinct,
+		$money( $annual ),
+		$money( $per_month ),
+		$money( $per_day )
+	);
+	if ( $saving_active ) {
+		$summary .= ' ' . sprintf( 'The same team at two/fiftyseven saves %s a year.', $save_band );
+	}
+
+	// Rebuild the share link params (mirror office-costs.js writeURL compact keys).
+	$link_params = [ 'team' => $team ];
+	$days_enc = [];
+	foreach ( array_slice( $state['days'], 0, $team ) as $d ) {
+		$days_enc[] = (int) $d;
+	}
+	if ( $days_enc ) {
+		$link_params['days'] = implode( ',', $days_enc );
+	}
+	if ( 'B-grade fitted' !== $state['grade'] ) {
+		$link_params['grade'] = $state['grade'];
+	}
+	if ( 'CBD core' !== $state['precinct'] ) {
+		$link_params['pre'] = $state['precinct'];
+	}
+	if ( ! empty( $state['bookingSoftware'] ) ) {
+		$link_params['bt'] = '1';
+	}
+
+	// Remaining URL-fields that differ from the block defaults.
+	$url_fields = [
+		'sqmPerPerson'        => 'sqm',
+		'rentPerSqmPerYr'     => 'rent',
+		'outgoingsPctOfRent'  => 'opex',
+		'internetPerMo'       => 'net',
+		'powerWattsPerSqm'    => 'pw',
+		'powerHoursPerYear'   => 'phr',
+		'powerPricePerKwh'    => 'pkw',
+		'cleaningHoursPerSqmYr' => 'chrs',
+		'cleaningPerHour'     => 'crt',
+		'kbPerPersonPerYr'    => 'kb',
+		'insurancePerPersonPerYr' => 'ins',
+		'firstAidPerPersonPerYr'  => 'fa',
+		'fireWardenPerPersonPerYr'=> 'fw',
+		'adminPctOfHours'     => 'adp',
+		'adminLoadedHourly'   => 'adr',
+		'leaseLegalsOneOff'   => 'leg',
+		'leaseTermYears'      => 'lty',
+		'furniturePerPerson'  => 'fpp',
+		'furnitureAmortYrs'   => 'fy',
+		'bookingSoftwareCost' => 'bc',
+	];
+	$defaults = [
+		'sqmPerPerson'        => 9,
+		'rentPerSqmPerYr'     => 310,
+		'outgoingsPctOfRent'  => 0.27,
+		'internetPerMo'       => 200,
+		'powerWattsPerSqm'    => 50,
+		'powerHoursPerYear'   => 1840,
+		'powerPricePerKwh'    => 0.30,
+		'cleaningHoursPerSqmYr' => 1.2,
+		'cleaningPerHour'     => 45,
+		'kbPerPersonPerYr'    => 300,
+		'insurancePerPersonPerYr' => 200,
+		'firstAidPerPersonPerYr'  => 28,
+		'fireWardenPerPersonPerYr'=> 18,
+		'adminPctOfHours'     => 0.06,
+		'adminLoadedHourly'   => 70,
+		'leaseLegalsOneOff'   => 3500,
+		'leaseTermYears'      => 3,
+		'furniturePerPerson'  => 2000,
+		'furnitureAmortYrs'   => 5,
+		'bookingSoftwareCost' => 8,
+	];
+	foreach ( $url_fields as $state_key => $token ) {
+		if ( ! isset( $state[ $state_key ] ) ) continue;
+		if ( abs( (float) $state[ $state_key ] - $defaults[ $state_key ] ) < 0.0001 ) continue;
+		$link_params[ $token ] = $state[ $state_key ];
+	}
+	// Custom lines — the engine's c{i}l / c{i}v compact URL keys.
+	$i = 0;
+	foreach ( $state['customLines'] as $cl ) {
+		$link_params[ 'c' . $i . 'l' ] = $cl['label'];
+		$link_params[ 'c' . $i . 'v' ] = $cl['value'];
+		$i++;
+	}
+
+	$link = add_query_arg( $link_params, home_url( $page ) );
+
+	$subject = 'Your two/fiftyseven office cost budget';
+
+	// --- Line rendering ---
+	$lines_plain = [];
+	$lines_html  = [];
+	foreach ( $figures['lines'] as $line ) {
+		$lines_plain[] = $line['label'] . ' (' . $line['note'] . '): ' . $money( (float) $line['value'] );
+		$lines_html[]  = sprintf(
+			'%s — <strong style="color:#111827;">%s</strong><br><span style="color:#6b7280;">%s</span>',
+			esc_html( $line['label'] ),
+			esc_html( $money( (float) $line['value'] ) ),
+			esc_html( $line['note'] )
+		);
+	}
+
+	// --- Category share (mirror the engine's category labels) ---
+	$cat_labels = [
+		'rent-opex'              => 'Rent + outgoings',
+		'utilities'              => 'Utilities',
+		'cleaning-kb'            => 'Cleaning + consumables',
+		'compliance-insurance'   => 'Compliance + insurance',
+		'furniture-admin-legals' => 'Furniture + admin + legals',
+		'addons-custom'          => 'Add-ons + custom',
+	];
+	$cat_plain = [];
+	$cat_html  = [];
+	foreach ( $cat_labels as $key => $label ) {
+		$value = $figures['categories'][ $key ] ?? 0;
+		$pct   = $annual > 0 ? round( ( $value / $annual ) * 100 ) : 0;
+		$cat_plain[] = $label . ': ' . $money( (float) $value ) . ' (' . $pct . '%)';
+		$cat_html[]  = $label . ' — <strong style="color:#111827;">' . esc_html( $money( (float) $value ) ) . '</strong> <span style="color:#6b7280;">(' . $pct . '% of total)</span>';
+	}
+
+	// --- Value-add quantification (Job 11) ---
+	$va_plain = [];
+	$va_html  = [];
+	foreach ( $figures['valueAdd'] as $key => $value ) {
+		if ( 'total' === $key ) continue;
+		$label = [
+			'livingWage'   => 'Living-wage cleaners',
+			'carbon'       => 'Verified carbon offset',
+			'climatePower' => 'Climate-positive power',
+			'giving'       => 'Giving contribution',
+			'mhfr'         => 'MHFR-trained team',
+		][ $key ];
+		$va_plain[] = $label . ': ' . $money( (float) $value );
+		$va_html[]  = $label . ' — <strong style="color:#111827;">' . esc_html( $money( (float) $value ) ) . '</strong>';
+	}
+
+	$plain = implode( "\n\n", [
+		$summary,
+		$team . ' people · ' . $grade . ' · ' . $precinct,
+		'',
+		'Budget:',
+		implode( "\n", $lines_plain ),
+		'Annual total: ' . $money( $annual ),
+		'',
+		'How it splits by category:',
+		implode( "\n", $cat_plain ),
+		'',
+		'Per month: ' . $money( $per_month ) . ' · per person/mo: ' . $money( $per_pp ) . ' · per person/day: ' . $money( $per_day ) . ' · per m²/yr: ' . $money( $per_sqm ),
+	] );
+	if ( $saving_active ) {
+		$plain .= "\n\n" . 'The same team at two/fiftyseven saves: ' . $save_band;
+	}
+	$plain .= implode( "\n\n", [
+		'',
+		'What your office quietly funds:',
+		implode( "\n", $va_plain ),
+		'Equivalent procured-separately value: ' . $money( (float) $figures['valueAdd']['total'] ),
+		'',
+		'Open or share this budget: ' . $link,
+		'',
+		'—',
+		'two/fiftyseven, Wellington · https://twofiftyseven.co/',
+		'Contact policy: ' . home_url( '/contact-policy/' ),
+	] );
+
+	$html = implode( '', [
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#1f2937;">' . esc_html( $summary ) . '</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:24px;line-height:1.2;color:#111827;font-weight:600;">' . esc_html( $money( $annual ) ) . ' <span style="font-size:14px;font-weight:400;color:#6b7280;">a year · your office</span></p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#374151;">' . esc_html( $team . ' people · ' . $grade . ' · ' . $precinct ) . '<br>' . esc_html( 'Per month: ' . $money( $per_month ) . ' · per person/mo: ' . $money( $per_pp ) . ' · per person/day: ' . $money( $per_day ) . ' · per m²/yr: ' . $money( $per_sqm ) ) . '</p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#374151;">Budget:<br>' . implode( '<br>', $lines_html ) . '<br><strong style="color:#111827;">Annual total · ' . esc_html( $money( $annual ) ) . '</strong></p>',
+		'<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#374151;">How it splits by category:<br>' . implode( '<br>', $cat_html ) . '</p>',
+	] );
+	if ( $saving_active ) {
+		$html .= '<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;color:#111827;font-weight:600;">The same team at two/fiftyseven saves: ' . esc_html( $save_band ) . ' a year</p>';
+	}
+	$html .= '<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.6;color:#374151;">What your office quietly funds:<br>' . implode( '<br>', $va_html ) . '<br><strong style="color:#111827;">Equivalent procured-separately value · ' . esc_html( $money( (float) $figures['valueAdd']['total'] ) ) . '</strong></p>';
+	$html .= '<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.6;"><a href="' . esc_url( $link ) . '" style="color:#2563eb;font-weight:600;">Open and share your budget →</a></p>';
+	$html .= '<p style="font-family:\'Helvetica Neue\',Helvetica,Arial,sans-serif;font-size:12px;line-height:1.5;color:#6b7280;">two/fiftyseven, Wellington.<br><a href="' . esc_url( home_url( '/contact-policy/' ) ) . '" style="color:#6b7280;">Contact policy</a></p>';
 
 	return [ 'subject' => $subject, 'summary' => $summary, 'plain' => $plain, 'html' => $html ];
 }

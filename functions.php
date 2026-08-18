@@ -766,6 +766,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'office-costs',
+		'title'           => __( '257 Calc Office Costs', 'two-fiftyseven' ),
+		'description'     => __( 'Wellington office cost calculator: configure rent, outgoings, utilities, cleaning, compliance, furniture, admin, legals and custom lines for a team, compared against two/fiftyseven memberships. 3-slot scenario saving.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/office-costs/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'office', 'costs', 'rent', 'scenario', 'comparison', 'expenses' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 

@@ -100,7 +100,7 @@ This makes every calculator multi-purpose — admin picks the colour space per p
 - Working-pattern assumptions (8h/day, 46 weeks, 230 days)
 - MHFR costs ($445, ratio 1:12, cert 2.5yr)
 - Admin loaded hourly ($70)
-- Office costs v2 methodology constants (rent/sqm, outgoings %, furniture, cleaning, etc.)
+- Office costs methodology constants (rent/sqm, outgoings %, furniture, cleaning, etc.)
 
 ### Exposing the store to JS
 
@@ -188,7 +188,7 @@ Every calculator block creates these files (following existing theme conventions
 |---|---|---|
 | `calc-office-costs.js` (v1) | **Writes** `window.twofiftyseven.prices` | Reads from ACF-injected object (stop writing) |
 | `calc-meeting-costs.js` | **Writes** `meetingPrices`, `meetingAV`, `deriveDuration` | Reads rooms/add-ons from ACF, stops writing prices |
-| `calc-office-costs-v2.js` | Uses own `window.occv2` namespace | Reads prices from `window.twofiftyseven`, keeps `occv2` for compute functions |
+| `calc-office-costs-v2.js` | Uses own `window.occv2` namespace | Reads prices from `window.twofiftyseven`; **drops `occv2` entirely** — one module, scenario API module-local (see C3 plan) |
 | `calc-office-carbon.js` | Self-contained | Stays fully self-contained (all cited constants in code); reads nothing from `window.twofiftyseven` |
 | `calc-hours-to-impact.js` | Self-contained | Reads `givingRatePerPersonHour` from `window.twofiftyseven.impact` |
 | `inject-prices.js` | Reads `window.twofiftyseven.prices` | Unchanged (already reads from the global) |
@@ -426,7 +426,7 @@ Suggested order (simplest → most complex):
 3. **C2 — Meet pricing** — proves colour swap (same block, different `colour_space` + `room_set`). Reuses the §6 backend.
 4. **C5 — Office carbon** — medium, emission factors stay in code
 5. **C4 — Meeting costs** — high complexity, industry bands comparison
-6. **C3 — Office costs v2** — highest complexity, 7 config cards, scenario slots
+6. **C3 — Office costs** — highest complexity, 7 config cards, scenario slots
 
 ### Phase 3 — Teaser + stats
 
@@ -655,7 +655,7 @@ Last updated: 2026-08-18 (work on `feature/calculators-continued` branch)
 - [x] **DRY refactor** ✅ staged on `feature/calculators-continued` (see the "DRY refactor" note under C2 below) — shared `.calc__option-card`/`__head`, shared `calc-utils.js` (`fmt$`/`fmtN`/`bindRovingRadio`), single `two57_meet_rooms()` PHP helper
 - [x] **C5** — Office carbon ✅ built on `feature/calculators-continued` (see "C5 — Office carbon implementation" below; pending commit)
 - [x] **C4** — Meeting costs ✅ built + staged on `feature/calculators-continued` (see "C4 — Meeting costs implementation plan" + "C4 — Implementation state (2026-08-18)" below; pending commit — reverified green `2026-08-18`)
-- [ ] **C3** — Office costs v2
+- [x] **C3** — Office costs ✅ built + staged on `feature/calculators-continued` (see "C3 — Office costs implementation plan" + "C3 — Implementation state (2026-08-18)" below; pending commit)
 - [ ] **T1** — Quick quote teaser
 - [ ] **T2** — Impact stats partial
 
@@ -734,6 +734,77 @@ Refinements landed on the staged build since the plan was written (all green; fi
 - **Full code review passed (2026-08-18):** JS↔PHP field mapping, business-math parity (identical IND bands, defaults, factors), share-link token parity (`impact-discount`, `fac`/`setup` gates, `custom` encoding), selectors/markup contract, empty-state handling all verified consistent. Known non-blockers: server caps days at 14 / custom lines at 10 while the JS "add" is unbounded (meet-pricing parity); public endpoint + non-atomic 3/10min rate limit (pre-existing, all calcs).
 
 **Verify:** `npm run build` + `php -l` clean (done). Open items before merge: full in-browser pass (initial load + Swup reinit, deep-link restore in-browser, real REST POST to Mailhog for the meeting-costs email), then commit to `feature/calculators-continued`.
+
+### C3 — Office costs implementation plan
+
+> **Source (2026-08-18):** `calculator/office-costs/index.html` (2093 lines) + `shared-js/calc-office-costs-v2.js` (606 lines). Configures a Wellington office top-to-bottom — rent (grade + precinct modifiers), outgoings, utilities, cleaning, consumables, compliance/insurance, furniture amortisation, admin overhead, lease legals, booking software, custom lines — and compares the total against two/fiftyseven memberships in a savings band (`.oc-vs257`). Highest-complexity port: 7 config cards, a per-member days roster, 3-slot localStorage scenarios + compare dialog, and the custom-line repeat. The source is split engine → hidden sinks + `occv2:rendered` → page coordinator (repaints result mirror, breakdown rows, scenarios, URL). The port merges the coordinator **and the four standalone inline scripts** (team roster, grade→rent sync, savings band, take-it) into one ES module (C2/C4 one-module pattern), drops the mailto + PDF take-it cards for the shared §6 share row, and reads the savings-band membership prices from the ACF SSOT instead of the source's hardcoded `FLEXI{109..509}/DEDICATED 659`.
+
+**Reuse map — everything C3 lifts from the shared system before anything new is built:**
+
+| C3 element | Reuse | Notes |
+|---|---|---|
+| Section shell + intro | `.calc__body`, `.calc__inputs`, `.calc__field`, `.calc__field-label`, `two57_calc_intro()` | Same 50/50 body + inputs-card skeleton as C2/C4/C5 |
+| Team size 1–15 | `.calc__slider-row` / `-controls` / `-stepper-btn` / `-slider` / `-slider-value` + `bindStepper` | Value-based (`valueFor: i => i`), exactly C1/C5/C6 team steppers; person/people suffix keeps the C4 singular fix |
+| Grade (4 radios) | `.calc__radio-group` + `bindRovingRadio` | C1 commitment-radios precedent |
+| Precinct (7 options) | `.calc__select` | Shared custom-chevron dropdown, `.oc-select` precedent |
+| Number inputs | `.calc__input` — **free-edit, NOT `restrictStepperInputs`** | C3 is the "tune every variable" calc; typing is the point (source uses bare `<input type="number">` + min/max hints, engine doesn't JS-clamp beyond `toNum` defaults) |
+| Custom expense lines | `.calc__repeat` + `.calc__add-btn` + per-calc `.office-costs__custom-row` | C2/C4 custom-rows precedent (label + value + remove row + add); source's `<template>` clone + `data-count` logic ports to the module |
+| Per-member days sliders | per-calc roster **built on the shared `.calc__slider` primitives** (`.calc__slider` wrapper + range + readout) | Team-driven repeat of Member-N 1–5 day sliders (C1 roster pattern); not the team-level `.calc__radio-group--days` |
+| Config card tooltips | `.calc-source` glyph/pop + `bindSourceTooltips` | Plan §12 already mapped C3's `.oc-tip` → `.calc-source` structured-panel variant; each field's tooltip holds default / range / sources |
+| Result aside | `.calc__result` + `.calc__result--sticky` + `.calc__stat` rows | Headline annual + secondary stat rows (monthly / pp-month / pp-day / per-sqm); mirror pairs drop (module renders directly) |
+| Savings band | reads `window.twofiftyseven.prices` (**SSOT**, no hardcoded FLEXI/DEDICATED) | per-member days → Flexi tier, 5 days counts as Dedicated high; saves = office total − 257 band |
+| Breakdown | `.calc__breakdown` `details#methodology` + `.calc__compare` rows (`-row-label`/`-row-note`/`-row-value`/source link) + `bindBreakdownTrigger` | Category grid (6 cats + %) is genuinely new — the source's `[data-occv2-category-slot]` is dead markup; we render it |
+| Citation sources | `.calc-source` tooltips + `bindSourceTooltips` | Breakdown rows keep the source's inline source **anchors** (target=_blank) since each row cites a distinct URL |
+| Share row | `two57_calc_share()` + `initCalcShare(root.parentElement, { slug: 'office-costs', getState })` | Sticky aside ⇒ share **outside** the root (C1/C2/C4 rule). Drop mailto + PDF per §6 |
+
+**New (genuinely per-calc, no `.calc__*` base additions expected):** the 3-slot **scenario system** — save/load/clear via prompt-naming, right-click/long-press clear (`contextmenu`), localStorage-backed, "Save current →" / "Compare all →" buttons and a compare `<dialog>` (`<div class="oc-compare" data-scenario-compare-dialog>`) — plus member-days roster, savings band, category grid, grade→rent display box (visible grade-adjusted rate ↔ hidden base `data-occv2-rent-sqm`) in `_calc-office-costs.scss`. Flag scenarios as the *only* new interaction type; promote to `_calc-base.scss` only if a second calc ever needs save/compare.
+
+**SSOT reads (`window.twofiftyseven`, no new ACF fields):** `prices.dedicated` + `prices.flexi-5..1` for the savings band (source hardcoded 659/109–509). Everything else already injected but **not** used.
+
+**Stays in code** (cited research per §2): `DEFAULTS` (rent 310/sqm, sqm/pp **9**, opex 0.27, furniture 2000/5yr, internet 200, power 50W/sqm × 1840h × $0.30, cleaning 1.2hr × $45, kb 300, insurance 200, firstAid 28, fireWarden 18, admin 0.06 × $70, legals 3500/3yr, booking $8 auto-on ≥10), `GRADE_MODIFIER` + `PRECINCT_MODIFIER`, the 14× `SOURCES` URLs, compute() (value-add Job 11 quantification, MHFR), 46 working weeks. Note: `sqmPerPerson` stays **9** (cited v2 default, user-editable) — documented divergence from C1's 10, reconciled only by comment per §5.
+
+**Engine port (`assets/js/modules/office-costs.js`):** `initOfficeCosts()` on the block root `[data-js="calc-office-costs-v2"]` (legacy engine hook kept, **the only "v2" remnant** — C1 workspace-pricing already owns `[data-js="calc-office-costs"]`, so the two blocks can't share that query hook; block slug + all file/email/copy naming is plain "office costs"); `initCalc()` guard bails if root missing. Merges the engine + coordinator + 4 inline scripts into one module; **`window.occv2` is dropped** — no global, scenarios stay module-local (localStorage `occv2-scenarios` key kept), custom-lines `restoreCustomLines` becomes internal. State read from DOM per tick (C3's inputs are all DOM-carried, no state object distinct from the inputs). URL sync via `readURL`/`writeURL` keeping the source's compact keys: `team/days/pre/sqm/rent/opex/net/pw/phr/pkw/chrs/crt/kb/ins/fa/fw/adp/adr/leg/lty/fpp/fy/bc` + `grade`/`bt` (booking toggle)/`cNl cNv` (custom rows). Reuses `fmt$`/`fmtN`, `bindStepper`, `bindRovingRadio`, `bindBreakdownTrigger`, `bindSourceTooltips`, `initCalcShare`.
+
+**Email backend (`inc/calc-share-email.php`):** `two57_calc_sanitize_office_costs()` (team clamp **0–15** — zero kept so the empty card emails as an empty-state prompt, mirroring the engine's `zeroResult`; days array per-member 1–5 rebuilt/padded to team length; per-number bounds mirror the input min/max; `grade`/`precinct` whitelist to the modifier sets; `bookingSoftware` bool; custom lines sanitize label + clamp positive value), `two57_calc_figures_office_costs()` (mirror compute(); membership prices from ACF via `get_field('membership_{slug}_monthly')` for the savings band — same slugs as workspace-pricing; returns annual/monthly/pp figures + line list + category split + value-add + saving band), `two57_calc_compose_office_costs()` (annual/monthly/pp-month/day + savings-band summary; share-link rebuilt with the engine's compact keys: `team`, comma `days`, `grade`/`pre` only when non-default, `bt` when booking on, non-default cost fields, and custom rows as `c{i}l`/`c{i}v`). Plus the three dispatch switches gain the `office-costs` case.
+
+**Files (per §4 checklist):**
+1. `acf-json/group_two57_block_office_costs.json` — `colour_space` select only (+ intro eyebrow/heading/tagline like the others).
+2. `blocks/office-costs/block.php` — identity class `office-costs`; 7 config cards (`.calc__fields-grid`); team slider + member-days roster; sticky result aside (headline + stat rows + savings band + scenario slots); full-width `details#methodology` breakdown (compare cols + category grid + `.calc-source` citations); `two57_calc_share()` outside the root.
+3. `assets/js/modules/office-costs.js` + `main.js` + `transitions.js` wiring (three call sites).
+4. `assets/css/06-components/_calc-office-costs.scss` — per-calc only: member-days roster, savings band, scenario slots + compare dialog, category grid, custom rows, grade→rent box. Forward in `_index.scss`.
+5. `functions.php` — `acf_register_block_type` `office-costs` (`257 Calc Office Costs`).
+6. `inc/calc-share-email.php` — the three `office-costs` cases.
+
+**Build order:** markup/ACF/registration → engine (merged coordinator + scenarios) + wiring → SCSS → email cases. **Verify:** `npm run build` + `php -l` clean; team/days-roster regen on team change; grade→rent display sync both directions; booking auto-on at team ≥ 10; scenarios save/load/clear/compare (localStorage persists); savings band vs ACF prices; custom-line add/remove; URL round-trip (incl. days + custom); email to Mailhog (`calc_source = office-costs`); zero-start; no-JS fallback.
+
+**Gotchas:** team slider is **min 1 / default 1** in the source (roster + savings band populate immediately) while the engine still returns `zeroResult` for team 0 — keep the source default but guard a URL `team=0` into the empty card (`applyURL` clamps 0 and `readState` treats `team<=0` as empty). The source coordinator reads `[data-occv2-team-display].value` (an `<output>` — `.value` is always undefined) for the mailto body → fix by reading the team number from state, not the DOM. The `[data-occv2-category-slot]` cat grid is dead in the source (queried, never in markup) — the port adds a real grid. The roster rebuild takes an `afterInput` callback (the shared `retick`) instead of the source's synthesized bubbling `input` — every roster row, custom row and URL-applied value ticks through the same `retick`; no event dispatch needed.
+
+### C3 — Implementation state (2026-08-18)
+
+Built on `feature/calculators-continued` on top of the shared `.calc__*` catalogue. All four source pieces merged into **one module** (`assets/js/modules/office-costs.js`, no `window.occv2` global):
+
+- **Engine** — `initOfficeCosts()` on `[data-js="calc-office-costs-v2"]` (the only "v2" remnant; C1 owns the non-v2 hook). Merges the v2 engine + page coordinator + 4 inline scripts (team roster, grade→rent sync, savings band, take-it). Team stepper via `bindStepper` (`rangeSel '[data-oc-team-range]'` … `valueFor: i => i`, `onUpdate: syncTeam`); grade roving radios + `bindGradeRent` (visible grade-adjusted `[data-oc-rent-display]` ↔ hidden base `[data-occv2-rent-sqm]`, both directions); roster rebuild (`rebuildRoster`) of per-member 1–5 day sliders into `[data-oc-days-roster]`; custom rows (`renderCustomList`, add/remove, comma-tolerant value, URL growth via `cNl cNv`); scenario system (`bindScenarios` — 3 localStorage slots, click-save/restore + prompt-naming, right-click clear, "Save current →" / "Compare all →" / "Reset all →", `compare-showModal()` dialog); URL `applyURL`/`writeURL` with the source's compact keys + comma-joined per-member `days` (port fix: source only captured the first member's slider); savings band reads `window.twofiftyseven.prices` SSOT (per-member days → Flexi tier, 5d = Dedicated, band `annual − {hi,lo}`); breakdown `bindBreakdownTrigger(root, 'methodology')` + per-line `.calc-source__note` + source-anchor `.office-costs__row-source` (target=_blank) + real category grid + value-add rows; share `initCalcShare(scope, { slug: 'office-costs', getState })` (full flat state incl. `customLines`).
+- **Markup** — `blocks/office-costs/block.php` (identity `office-costs`, `data-color-space`): 7 group headings (Team / Office / Utilities / Cleaning+consumables / Compliance+insurance / Furniture+admin+legals / Add-ons+custom), team slider row + empty days roster UL, grade radio cards (2-col grid) + precinct select, `.office-costs__input-row` number fields with min/max/step + `.calc-source` tooltips, booking `.calc__option-card` (cost row hidden until toggled), custom-row repeat + add button, sticky `.calc__result--sticky` aside (annual headline + 4 `.calc__stat`s + `.calc__chart-savings` band hidden until positive + empty state), scenario slots + actions, `details#methodology` breakdown (lines + total + category grid + value-add), `two57_calc_share()` **outside** the root, compare `<dialog class="office-costs__compare">`.
+- **ACF** — `acf-json/group_two57_block_office_costs.json` (`oc_eyebrow`/`oc_heading`/`oc_tagline` + `colour_space`, location `acf/office-costs`); `office-costs` registered in `functions.php` after `meeting-costs`. Default intro copy: eyebrow "Wellington office cost calculator", heading "how much does it cost to run an office in Wellington?", tagline "Your tool for true cost accounting on a Wellington office. Estimate the full costs with sourced figures on admin, compliance, lease legals and cleaning. No surprises."
+- **SCSS + email** — `assets/css/06-components/_calc-office-costs.scss` (roster rows, input-row grids + suffixes, grade radio cards 2-col, scenario slots + filled state + compare dialog + backdrop, category grid, custom rows, compare-close button — no mixin dependency on `_calc-base`), forwarded in `_index.scss`; `inc/calc-share-email.php` `office-costs` cases written + `php -l` clean.
+- **Wiring** — `main.js` + `transitions.js` (one import + three call sites: initial, Swup reinit, navigation reinit).
+
+**Refinements landed during the build session (all green; final build `main-BhSdszS-.js` / `main-BT_1KjK2.css`):**
+
+- **Stat aside legibility** — `.calc__stat-label` + `.calc__stat-unit` lifted to `--color-content-inverse` (was `--color-content-secondary` + opacity, illegible on the dark result card); stat rows switched to a 3-column equal-width grid (`1fr 1fr 1fr`) so label / value / unit align consistently across all four rows.
+- **Grade radio cards** — replaced the small square `.calc__radio-label` buttons with full radio cards (`.office-costs__radio-card` — indicator circle + title + body description) in a 2-column grid (1-col < 600px), matching the meeting-costs radio-card pattern.
+- **Input sizing** — `.calc__input` font stepped down one type-scale notch (`--text-l-size` → `--text-m-size`); `max-inline-size: 160px` (140px inside input rows) so suffixes wrap naturally; `.office-costs__input-row` changed from grid to `flex-wrap: wrap` (matches the demo's `oc-var__field-row` layout). Custom-row inputs exempted (`max-inline-size: none`) so they stretch full container width.
+- **Per-input labels** — every input in multi-input sections (Power, Cleaning, Furniture, Admin, Lease legals) given its own field with label + tooltip + suffix, matching the demo's one-field-per-input layout. Bracketed units removed from all field labels (suffix next to the input carries the unit).
+- **Percentage inputs** — outgoings + admin-pct inputs changed from decimal (0.27 / 0.06) to whole-number percent (27 / 6) with `%` suffix; `readState` divides by 100 for calculation; URL params still store the decimal for backwards compatibility; `restoreSaved` detects legacy decimal values (<1) and converts; reset handler restores to the whole-number default.
+- **Team slider suffix** — removed the "person/people" suffix span (redundant with the "Team size" label).
+- **Booking toggle** — whole option card is the click target (not just the label); `click` listener on `[data-oc-booking-card]` with guards for label + input clicks so the cost field stays editable; `change` listener kept as fallback.
+- **Custom rows** — `renderCustomList` now sets `data-occv2-custom-row` on each `<li>` (was missing, causing "Add another" to re-render to a single row); remove × button `disabled` when only one row (hidden via `&:disabled { visibility: hidden }`), matching meeting-costs.
+- **"Reset all →" button** — third scenario action restores every input to its default, clears custom rows, clears all 3 localStorage scenario slots, resets team slider to 0 (via `stepper.paintCurrent()` callback), syncs booking visibility, rebuilds roster, and reticks.
+- **Compare dialog scroll lock** — `getScrollInstance()?.lenisInstance?.stop()` on open, `start()` on close (× button + native Esc `close` event), matching the `nav-mobile.js` pattern.
+- **Result headline** — changed from "Annual total · your office" to "Annual total office costs".
+- **Build hashes:** `npm run build` green; `php -l` clean on `blocks/office-costs/block.php` + `inc/calc-share-email.php` + `functions.php`.
+
+**Verify (residual):** in-browser pass — roster regen on team change; grade→rent sync both directions; booking auto-on at team ≥ 10; booking-cost strip visibility; scenarios save/load/clear/compare/reset in localStorage; savings band vs ACF prices; custom-line add/remove + URL growth; URL round-trip incl. `days` + `cNl cNv` + `bt` + `opex`/`adp` decimal conversion; email to Mailhog (`calc_source = office-costs` — sanitize/figures/compose dispatched); zero-start empty card; no-JS fallback (hidden roster/result + empty state).
 
 ### C6 share row + email/copy link (built on C6, not C1)
 
