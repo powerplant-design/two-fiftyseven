@@ -36,6 +36,7 @@ import { initOfficeCarbon } from './office-carbon.js';
 import { initMeetingCosts } from './meeting-costs.js';
 import { initOfficeCosts } from './office-costs.js';
 import { initCalcWidget } from './calc-widget.js';
+import { initCalcSummary } from './calc-summary.js';
 
 function resetScrollRevealState() {
 	document.querySelectorAll( '[data-scroll].is-inview' ).forEach( ( el ) => {
@@ -85,6 +86,7 @@ export function initTransitions() {
 				initMeetingCosts();
 			initOfficeCosts();
 			initCalcWidget();
+			initCalcSummary();
 				} );
 			} );
 		}
@@ -179,6 +181,7 @@ export function initTransitions() {
 		initMeetingCosts();
 		initOfficeCosts();
 		initCalcWidget();
+		initCalcSummary();
 		syncHeader();
 
 		// Safety net: if animation:in:end never fires (e.g. transitionend

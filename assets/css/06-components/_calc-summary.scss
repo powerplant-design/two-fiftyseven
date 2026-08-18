@@ -1,0 +1,188 @@
+@use '../02-tokens/breakpoints' as bp;
+
+// ============================================================
+// 257 Calc Summary — block-specific styling
+// ============================================================
+// Compact dashboard widget. Shared calculator styling lives in
+// _calc-base.scss (.calc__*). This file holds only the summary
+// specifics: two-col inputs row, the 4-card grid + variants, and
+// the smaller slider readout.
+// ============================================================
+
+.calc-summary {
+	padding-block: var(--space-xl-3xl);
+}
+
+// ── Inputs row — two sliders side by side ────────────────────
+.calc-summary__inputs {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--space-m-l);
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// Slider readout pairs the big number with a small suffix ("3 days").
+.calc-summary__readout {
+	display: flex;
+	align-items: baseline;
+	gap: var(--space-2xs);
+	white-space: nowrap;
+}
+
+.calc-summary .calc__slider-value {
+	font-size: var(--text-3xl-size);
+}
+
+// The calc-summary fields have no +/- steppers — the range input fills the row.
+.calc-summary .calc__slider-controls {
+	grid-template-columns: 1fr;
+}
+
+// ── Result cards — 4-col grid → 2-col → 1-col ───────────────
+.calc-summary__cards {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--space-s);
+	align-items: stretch;
+	margin-block-start: var(--space-s);
+	opacity: 0;
+	transform: translateY(1.5rem);
+	transition: opacity 0.4s ease-out, transform 0.8s ease-out;
+
+	&.is-inview {
+		opacity: 1;
+		transform: translateY(0);
+	}
+
+	@media (max-width: 1100px) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	@media (max-width: 600px) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
+// Whole card is a link — ground tone by default, hover darkens the background
+// slightly (same family, matching the site's .card pattern). No lift, no text
+// colour change.
+.calc-summary__card {
+	background: var(--color-surface-secondary);
+	color: var(--color-content-primary);
+	border-radius: var(--corner-radius-card);
+	padding: var(--space-m);
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-xs);
+	min-height: 240px;
+	text-decoration: none;
+	transition: background-color 220ms ease;
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--color-surface-secondary) 90%, var(--color-content-primary));
+		// Pin the card colour — the global `a:hover` rule (_links.scss) would
+		// otherwise `unset` it and inherit the section's dark text colour.
+		color: var(--color-content-primary);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 4px;
+	}
+}
+
+// Card variants — cost is the dark ink card, saving is the accent
+// highlight (the headline), carbon + giving keep the ground tone.
+// Each hover stays within its own colour family.
+.calc-summary__card--cost {
+	background: var(--color-surface-inverse-primary);
+	color: var(--color-content-inverse);
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--color-surface-inverse-primary) 90%, var(--color-content-inverse));
+		color: var(--color-content-inverse);
+	}
+}
+
+.calc-summary__card--saving {
+	background: var(--color-btn-primary-invert-bg);
+	color: var(--color-btn-primary-invert-text);
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--color-btn-primary-invert-bg) 92%, var(--color-content-primary));
+		color: var(--color-btn-primary-invert-text);
+	}
+
+	@media (max-width: 600px) {
+		order: -1;
+	}
+}
+
+.calc-summary__eyebrow {
+	color: inherit;
+	opacity: 0.7;
+	margin: 0;
+}
+
+.calc-summary__figure {
+	font-family: var(--font-display-family);
+	font-weight: var(--font-display-weight);
+	font-size: var(--text-2xl-size);
+	line-height: 1.05;
+	letter-spacing: -0.02em;
+	color: inherit;
+	font-variant-numeric: tabular-nums;
+}
+
+.calc-summary__figure-unit {
+	font-size: var(--text-m-size);
+	opacity: 0.7;
+	margin-inline-start: 0.08em;
+}
+
+.calc-summary__sub {
+	font-size: var(--text-s-size);
+	line-height: 1.4;
+	color: inherit;
+	opacity: 0.78;
+	margin: 0;
+}
+
+.calc-summary__link {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-s);
+	inline-size: 100%;
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-xs-size);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+	color: inherit;
+	opacity: 0.7;
+	margin-block-start: auto;
+}
+
+// Right-pointing chevron — same recipe as the calc-widget CTA caret
+// (.calc__breakdown-caret rotated to point right).
+.calc-summary__caret {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: 18px;
+	block-size: 18px;
+
+	&::after {
+		content: '';
+		display: block;
+		inline-size: 6px;
+		block-size: 6px;
+		border-right: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		transform: rotate(-45deg) translate(-1px, 1px);
+	}
+}

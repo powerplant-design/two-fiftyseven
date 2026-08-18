@@ -144,7 +144,7 @@ $room_cap = static function ( string $key ) {
 						<label class="calc__option-head | calc__check">
 							<input type="checkbox" data-cw-impact-checkbox>
 							<span class="calc__check-box" aria-hidden="true"></span>
-							<span class="calc-widget__impact-title">Apply Impact Discount · <?php echo esc_html( number_format( $discount_pct, 0 ) ); ?>% off room rate</span>
+							<span class="calc-widget__impact-title">Apply Impact Discount · <?php echo esc_html( number_format( $discount_pct, 0 ) ); ?>% Off</span>
 						</label>
 						<p class="calc-widget__impact-body | text-s">
 							For charity, NGO, B-Corp under $<?php echo esc_html( number_format( $eligibility_ceiling / 1000 ) ); ?>k · carbon-zero under $<?php echo esc_html( number_format( $eligibility_ceiling / 1000 ) ); ?>k · community volunteer · tangata whenua / indigenous-led.

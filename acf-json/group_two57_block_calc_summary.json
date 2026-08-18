@@ -1,0 +1,206 @@
+{
+    "key": "group_two57_block_calc_summary",
+    "title": "257 Calc Summary Block",
+    "fields": [
+        {
+            "key": "field_two57_cs_eyebrow",
+            "label": "Eyebrow",
+            "name": "cs_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional small label above the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "The math",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_cs_heading",
+            "label": "Heading",
+            "name": "cs_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "The H1 heading for the widget.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "costs less than going it alone",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_cs_tagline",
+            "label": "Tagline",
+            "name": "cs_tagline",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Intro paragraph below the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "All inclusions, no surprises. Build your team below and see your number.",
+            "new_lines": "br",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_cs_link_inclusions",
+            "label": "Inclusions page",
+            "name": "link_inclusions",
+            "aria-label": "",
+            "type": "page_link",
+            "instructions": "Destination for the \"At two/fiftyseven\" card — the what's-included page.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [],
+            "post_status": [],
+            "taxonomy": [],
+            "allow_null": 1,
+            "multiple": 0,
+            "return_format": "url",
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_cs_link_office_costs",
+            "label": "Office costs calculator page",
+            "name": "link_office_costs",
+            "aria-label": "",
+            "type": "page_link",
+            "instructions": "Destination for the \"You'd save\" card — the office costs calculator page.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [],
+            "post_status": [],
+            "taxonomy": [],
+            "allow_null": 1,
+            "multiple": 0,
+            "return_format": "url",
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_cs_link_carbon",
+            "label": "Carbon calculator page",
+            "name": "link_carbon",
+            "aria-label": "",
+            "type": "page_link",
+            "instructions": "Destination for the \"Carbon position\" card — the office carbon calculator page.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [],
+            "post_status": [],
+            "taxonomy": [],
+            "allow_null": 1,
+            "multiple": 0,
+            "return_format": "url",
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_cs_link_giving",
+            "label": "Giving calculator page",
+            "name": "link_giving",
+            "aria-label": "",
+            "type": "page_link",
+            "instructions": "Destination for the \"Hours to impact\" card — the giving / hours-to-impact calculator page.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [],
+            "post_status": [],
+            "taxonomy": [],
+            "allow_null": 1,
+            "multiple": 0,
+            "return_format": "url",
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_cs_colour_space",
+            "label": "Colour space",
+            "name": "colour_space",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Controls the colour theme for this block.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "neutral": "Neutral",
+                "forest": "Forest",
+                "purple": "Purple",
+                "maroon": "Maroon"
+            },
+            "default_value": "forest",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/calc-summary"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the heading, the four calculator card links and colour space for the 257 Calc Summary block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1785901000000
+}

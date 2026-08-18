@@ -796,6 +796,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'calc-summary',
+		'title'           => __( '257 Calc Summary', 'two-fiftyseven' ),
+		'description'     => __( 'Dashboard widget: two sliders (team size + avg days/week) feed four linked cards — annual cost at 257, savings vs a private office, net carbon position, hours-to-impact giving. Each card links to its full calculator.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/calc-summary/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'summary', 'dashboard', 'cards', 'workspace', 'cost', 'carbon', 'giving' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 

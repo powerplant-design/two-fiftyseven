@@ -658,6 +658,7 @@ Last updated: 2026-08-18 (T1 calc widget built on `feature/calculators-continued
 - [x] **C3** — Office costs ✅ built + staged on `feature/calculators-continued` (see "C3 — Office costs implementation plan" + "C3 — Implementation state (2026-08-18)" below; pending commit)
 - [x] **T1** — Quick quote teaser ✅ built on `feature/calculators-continued` (see "T1 — Calc Widget implementation" below; pending commit)
 - [ ] **T2** — Impact stats partial
+- [x] **T3** — Calc summary (4-card dashboard) ✅ built on `feature/calculators-continued` (see "T3 — Implementation state (2026-08-18)" below; pending commit)
 
 > **Next action (2026-08-11):** merge `feature/calculators` → `main` and deploy so C1 + C6 (slider system, tooltip fix, default tier) can be tested on the live site. After deploy, verify on live: slider drag/stepper/readout on both calcs, roster defaulting to Dedicated, annual-prepay row visibility, and tooltip behaviour on mobile (no horizontal overflow).
 
@@ -1141,3 +1142,126 @@ Port of the standalone `meetings/index.html` `.quick-quote` teaser (`shared-js/q
 - **Refinements:** impact label uses `.calc__result-label | text-l` (same as "Estimated total"); suffix + context merged into single line ("of subsidised space which has contributed $450,000+ paid forward since 2021") with "of subsidised space" in `<strong>`; talk-link block removed; `pricing_url` ACF field is `page_link` (page picker) not free-text `url`.
 
 **Verify (residual):** in-browser pass — people slider auto-room-switch both directions; hours slider total update; room pill manual selection; impact discount toggle (whole card) + copy swap; CTA deep-link params; host room set renders only large rooms; no-JS fallback (static `$0` total + CTA href to pricing page).
+
+### T3 — Calc Summary implementation plan
+
+> **Source:** the "The math / costs less than going it alone" section on `https://twofiftyseven.pages.dev/workspace/hub/`. A compact dashboard widget: **2 sliders above (team size + avg days/week) → 4 linked cards in a row**. Each card shows a single headline figure (live-updating) and links to a full calculator page for the detail. Designed to sit on workspace product pages (Hub, Base, Desk) as a quick "see your number" teaser that funnels into the detailed calculators.
+
+#### Layout (from demo)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  [Team size slider: 1–15]    [Avg days/week slider: 1–5]    │
+├──────────────┬──────────────┬──────────────┬─────────────────┤
+│ At 257       │ You'd save   │ Carbon pos   │ Hours to impact │
+│ $X/yr        │ $X           │ X t CO₂e/yr  │ $X              │
+│ all-in       │ vs private   │ after 200%   │ of subsidised   │
+│ nothing extra│ office $X/yr │ offset       │ space funded    │
+│ see included→│ see how→     │ see method→  │ see where→      │
+└──────────────┴──────────────┴──────────────┴─────────────────┘
+```
+
+- **4-col grid** desktop → 2-col ≤1100px → 1-col ≤600px (saving card `order: -1` on mobile, matching demo)
+- **Card 1 (dark):** "At two/fiftyseven" — annual membership cost → links to what's included page
+- **Card 2 (lime/accent):** "You'd save" — savings vs private office → links to office-costs calculator
+- **Card 3 (ground):** "Carbon position" — net carbon after 200% offset → links to office-carbon calculator
+- **Card 4 (ground):** "Hours to impact" — $ of subsidised space funded → links to hours-to-impact calculator
+- Each card is an `<a>` (whole card = link), hover lifts subtly
+
+#### ACF fields
+
+| Field | Type | Purpose |
+|---|---|---|
+| `cs_eyebrow` | text | Section eyebrow (default: "The math") |
+| `cs_heading` | text | H2 heading (default: "costs less than going it alone") |
+| `cs_tagline` | textarea | Intro line (default: "All inclusions, no surprises…") |
+| `link_inclusions` | page_link | Card 1 destination — "see what's included" page |
+| `link_office_costs` | page_link | Card 2 destination — office costs calculator page |
+| `link_carbon` | page_link | Card 3 destination — carbon calculator page |
+| `link_giving` | page_link | Card 4 destination — giving/hours-to-impact calculator page |
+| `colour_space` | select | neutral / forest / purple / maroon |
+
+All 4 link fields are `page_link` so admin picks the destination page from a dropdown (same pattern as T1's `pricing_url`).
+
+#### Engine (`assets/js/modules/calc-summary.js`)
+
+Exports `initCalcSummary()` on `[data-js="calc-summary"]`. Reads `window.twofiftyseven.prices` + `.impact` (same SSOT as all other calcs). No URL sync, no share/email — it's a summary dashboard, not a full calculator.
+
+**Inputs:**
+- `[data-cs-team-range|slider|inc|dec|out]` — team size stepper (1–15, `bindStepper`, value-based)
+- `[data-cs-days-range|slider|inc|dec|out]` — avg days/week stepper (1–5, `bindStepper`, value-based)
+
+**Outputs (4 cards, each an `<a>` with a figure + sub + link label):**
+- `[data-cs-257-cost]` — annual at 257
+- `[data-cs-save]` — savings vs private office
+- `[data-cs-save-context]` — "vs running your own… $X/yr"
+- `[data-cs-carbon]` — net carbon position
+- `[data-cs-impact]` — $ of subsidised space funded
+
+**Formulas (simplified from the full calc engines):**
+
+State = `{ team: 1, days: 3 }`. Constants from the existing engines.
+
+| Card | Formula | Source engine |
+|---|---|---|
+| At 257 | `prices['flexi-' + days].price × team × 12` (Flexi-N membership per person × team × 12 months) | workspace-pricing.js |
+| You'd save | `privateAnnual − oursAnnual` where `privateAnnual = team × 14200` (benchmark) and `oursAnnual` = card 1 figure | workspace-pricing.js `computeComparison` |
+| Carbon position | `ours_offset_kg = person_days × PERSON_DAY_257 × (1 − 2.0)` → signed net (negative = good). `person_days = team × days × 46` | office-carbon.js `compute` (simplified — 257 side only, fixed 46 weeks + 8h/day) |
+| Hours to impact | `team × days × 8 × 46 × givingRate` (person-hours × $1/hr) | workspace-pricing.js kaupapa bridge |
+
+The carbon formula uses the same `PERSON_DAY_257` constant and `OFFSET_RATIO_PUBLIC = 2.0` from office-carbon.js. The private-office carbon is NOT shown (this is a summary, not a comparison) — only the 257 net position (which is always net-negative after 200% offset).
+
+#### Markup (`blocks/calc-summary/block.php`)
+
+- Identity: `calc-summary`
+- Uses `two57_calc_intro()` for the heading
+- `.calc__body` but **not** the standard 2-col inputs/result grid — instead a vertical stack: inputs row on top, card grid below
+- Inputs: `.calc__inputs` card containing 2 `.calc__slider-row` steppers side-by-side (2-col grid → 1-col mobile)
+- Cards: `.calc-summary__cards` (4-col grid), each card is `<a class="calc-summary__card calc-summary__card--{variant}">` with eyebrow + figure + sub + link label
+- Card variants: `--cost` (dark/inverse), `--saving` (accent/lime), `--carbon`, `--giving` (both surface ground)
+- The 4 card hrefs are the ACF `page_link` values (rendered server-side, no-JS fallback)
+
+#### SCSS (`assets/css/06-components/_calc-summary.scss`)
+
+- Shell padding + `@use 'calc-base'` for the `calc-input` mixin
+- Inputs row: 2-col grid for the two steppers (1-col mobile)
+- Card grid: `repeat(4, minmax(0,1fr))` → `repeat(2,…)` ≤1100px → 1-col ≤600px
+- Card styling: rounded, `min-height` for visual balance, hover `translateY(-3px)` + shadow, focus-visible outline
+- Card variants via `--variant` modifier (dark, accent, ground) using theme semantic tokens
+- Figure: `font-weight: 700`, `clamp(2rem, 2.2vw + 1rem, 3rem)`, `tabular-nums`
+- Link label: monospace, uppercase, `margin-top: auto` (pinned to card bottom), opacity 0.7 → 1 on hover
+
+#### Files to create/modify
+
+| File | Action |
+|---|---|
+| `blocks/calc-summary/block.php` | **Create** — block markup |
+| `assets/js/modules/calc-summary.js` | **Create** — engine |
+| `assets/css/06-components/_calc-summary.scss` | **Create** — per-calc SCSS |
+| `acf-json/group_two57_block_calc_summary.json` | **Create** — ACF field group |
+| `assets/css/06-components/_index.scss` | **Modify** — `@forward 'calc-summary';` |
+| `assets/js/main.js` | **Modify** — import + init |
+| `assets/js/modules/transitions.js` | **Modify** — import + 2 call sites (bfcache + page:view) |
+| `functions.php` | **Modify** — `acf_register_block_type()` after `calc-widget` |
+| `docs/wp-calculators-plan.md` | **Modify** — mark T3 done, add implementation state |
+
+#### Build checklist
+
+1. Block PHP: 2 slider rows + 4 linked cards (ACF page_link hrefs)
+2. Engine: `bindStepper` × 2, simplified `compute()` for 4 figures, render to card spans
+3. SCSS: card grid + variants + slider row layout
+4. ACF JSON: 7 fields (eyebrow, heading, tagline, 4× page_link, colour_space)
+5. Wire main.js + transitions.js + functions.php + _index.scss
+6. `npm run build` + `php -l` clean
+
+### T3 — Implementation state (2026-08-18)
+
+Built on `feature/calculators-continued` per the plan above. Build + PHP lint green; pending commit. Refined in-session after the first build: stepper +/− buttons and slider suffixes removed (sliders only), all font sizes moved onto the theme type scale, card hover changed to a background-only shift, and link labels switched to monospace + chevron carets.
+
+- **Markup** — `blocks/calc-summary/block.php` (identity `calc-summary`, `data-color-space`, root `data-js="calc-summary"`): intro (`two57_calc_intro`); `.calc__inputs.calc-summary__inputs` 2-col grid holding the team-size + avg-days/week `.calc__slider-row` sliders — bare range inputs, **no +/- steppers** (`.calc__slider-controls` overridden to a single `1fr` column so the track fills the row), readout = `.calc__slider-value` number only (no "person/people · day/days" suffix); `.calc-summary__cards` 4-col grid of whole-card `<a>`s — `--cost` (dark ink) "At two/fiftyseven" → `link_inclusions`, `--saving` (accent) "You'd save" (sub embeds live `[data-cs-private]` office anchor) → `link_office_costs`, `--carbon` "Carbon position" → `link_carbon`, `--giving` "Hours to impact" → `link_giving`. All 4 hrefs are ACF `page_link` fields (admin-picked pages), falling back to the source-calculator paths. Each card's link label is monospace uppercase, flush-left text + right-pointing `.calc-summary__caret` chevron.
+- **Engine** — `assets/js/modules/calc-summary.js` (`initCalcSummary`): two `bindStepper`s (value-based, index+1 so sliders run 1–15 / 1–5, zero-start like every other calc — no `decSel`/`incSel`, `bindStepper` tolerates their absence); `compute()` reads `window.twofiftyseven.prices['flexi-N']` (fallback `9 + N×100`) + `impact.givingRatePerPersonHour`. Formulas — ours annual = `flexi × team × 12`; private annual = `team × 14,200 × (days/5)`; saving = difference; carbon = `team × days × 46 × PERSON_DAY_257 × (1 − 2.0)` kg (negative, rendered as `−N.NN t CO₂e/yr`); giving = `team × days × 46 × 8 × givingRate`. Constants lifted from workspace-pricing.js + office-carbon.js. No URL sync / share — hands off via the card links.
+- **SCSS** — `assets/css/06-components/_calc-summary.scss`: inputs 2-col → 1-col ≤600px; slider readout at `--text-3xl-size`; `.calc__slider-controls` forced to `1fr` (no steppers); card grid `repeat(4)→repeat(2) ≤1100px→1 ≤600px` with saving card `order:-1` on mobile; variants via semantic tokens (`--cost` = `--color-surface-inverse-primary`/`--content-inverse`, `--saving` = `--color-btn-primary-invert-bg`/`-text`, carbon+giving = `--color-surface-secondary`); **all type sizes on the theme scale** — figure `--text-2xl-size`, unit `--text-m-size`, sub `--text-s-size`, link `--text-xs-size`; hover = `color-mix` background shift within the card's own colour family, **no lift/translate, no text-colour change** (each hover pins `color` to defeat the global `a:hover` `unset` from `_links.scss`); `.calc-summary__link` `margin-block-start:auto` pinned to card bottom; caret chevron mirrors `.calc__breakdown-caret` (border-right/bottom 2px `currentColor`, right-pointing rotate); cards grid has its own `is-inview` reveal (mirrors `calc-base.reveal`).
+- **ACF** — `acf-json/group_two57_block_calc_summary.json` (`cs_eyebrow`/`cs_heading`/`cs_tagline` + `link_inclusions`/`link_office_costs`/`link_carbon`/`link_giving` page_link, `return_format: url`, `allow_null` + `colour_space`); location `acf/calc-summary`; registered in `functions.php` after `calc-widget`.
+- **Wiring** — `main.js` (import + init), `transitions.js` (import + bfcache + page:view), `_index.scss` (`@forward 'calc-summary'`).
+
+**Verify (residual):** in-browser pass — both sliders drive their readouts and all four figures recompute on any change (team 1–15, days 1–5); cost/save/carbon/giving figures render correct live values including the nested `__figure-unit` (`/yr`, ` t CO₂e/yr`); saving sub's private-office anchor updates; card hover shifts background within the card's colour family with no lift and no text-colour change (dark `--cost` card especially); focus ring visible on keyboard nav; mobile reflow (inputs 1-col, saving card first, cards 1-col); card links resolve to the admin-picked pages; no-JS fallback (static `$0` figures + server-rendered hrefs, reveal degrades to visible-only-with-JS like the other calc blocks).
