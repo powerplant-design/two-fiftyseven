@@ -639,7 +639,7 @@ assets/css/06-components/
 
 ## Status
 
-Last updated: 2026-08-18 (T1 calc widget built on `feature/calculators-continued`)
+Last updated: 2026-08-18 (T3 calc summary committed; all 8 deliverables except T2 built on `feature/calculators-continued`)
 
 - [x] **F1** — ACF Options SSOT ✅ committed (`2ee8788`)
 - [x] **F2** — `window.twofiftyseven` injector ✅ committed (`2ee8788`)
@@ -652,15 +652,15 @@ Last updated: 2026-08-18 (T1 calc widget built on `feature/calculators-continued
 - [x] **Shared team-size slider system** ✅ committed (`699d816`) — `.calc__slider*` primitives in `_calc-base.scss` (range input + stepper buttons + big readout); ported to C1 and C6. Mobile hides the slider (buttons + number only). See "Slider system" below.
 - [x] **C1/C6 UX polish** ✅ committed (`699d816`) — commitment field reordered below memberships + relabelled "Private office lease term"; Dedicated annual-save breakdown row hidden unless annual is ticked **and** ≥1 Dedicated member; new memberships default to **Dedicated** tier (`M.DEFAULT_TIER`); `calc-source` tooltips capped to viewport + anchored right of the trigger below `bp-md` (fixes the mobile horizontal-overflow bug the slider work surfaced)
 - [x] **C2** — Meet pricing (+ Host variant) ✅ built + committed (`1d36abb`) on `feature/calculators-continued` (see "C2 — Meet pricing implementation — built" below)
-- [x] **DRY refactor** ✅ staged on `feature/calculators-continued` (see the "DRY refactor" note under C2 below) — shared `.calc__option-card`/`__head`, shared `calc-utils.js` (`fmt$`/`fmtN`/`bindRovingRadio`), single `two57_meet_rooms()` PHP helper
-- [x] **C5** — Office carbon ✅ built on `feature/calculators-continued` (see "C5 — Office carbon implementation" below; pending commit)
-- [x] **C4** — Meeting costs ✅ built + staged on `feature/calculators-continued` (see "C4 — Meeting costs implementation plan" + "C4 — Implementation state (2026-08-18)" below; pending commit — reverified green `2026-08-18`)
-- [x] **C3** — Office costs ✅ built + staged on `feature/calculators-continued` (see "C3 — Office costs implementation plan" + "C3 — Implementation state (2026-08-18)" below; pending commit)
-- [x] **T1** — Quick quote teaser ✅ built on `feature/calculators-continued` (see "T1 — Calc Widget implementation" below; pending commit)
-- [ ] **T2** — Impact stats partial
-- [x] **T3** — Calc summary (4-card dashboard) ✅ built on `feature/calculators-continued` (see "T3 — Implementation state (2026-08-18)" below; pending commit)
+- [x] **DRY refactor** ✅ committed (`b6fcde8`) on `feature/calculators-continued` (see the "DRY refactor" note under C2 below) — shared `.calc__option-card`/`__head`, shared `calc-utils.js` (`fmt$`/`fmtN`/`bindRovingRadio`), single `two57_meet_rooms()` PHP helper
+- [x] **C5** — Office carbon ✅ committed (`711a37b`) on `feature/calculators-continued` (see "C5 — Office carbon implementation" below)
+- [x] **C4** — Meeting costs ✅ committed (`0bfa5c2`) on `feature/calculators-continued` (see "C4 — Meeting costs implementation plan" + "C4 — Implementation state (2026-08-18)" below; reverified green `2026-08-18`)
+- [x] **C3** — Office costs ✅ committed (`f6eec81`) on `feature/calculators-continued` (see "C3 — Office costs implementation plan" + "C3 — Implementation state (2026-08-18)" below)
+- [x] **T1** — Quick quote teaser ✅ committed (`54fb0e1`) on `feature/calculators-continued` (see "T1 — Calc Widget implementation" below)
+- [ ] **T2** — Impact stats partial — **deferred to next pass** (2026-08-18). SSOT side already injected (`window.twofiftyseven.stats`, functions.php); the `[data-countup]` partial/block itself is unbuilt. The pre-existing `blocks/impact` "257 Impact" block is ACF-field-driven and does not read the SSOT — it does not cover T2.
+- [x] **T3** — Calc summary (4-card dashboard) ✅ committed (`98577db`) on `feature/calculators-continued` (see "T3 — Implementation state (2026-08-18)" below)
 
-> **Next action (2026-08-11):** merge `feature/calculators` → `main` and deploy so C1 + C6 (slider system, tooltip fix, default tier) can be tested on the live site. After deploy, verify on live: slider drag/stepper/readout on both calcs, roster defaulting to Dedicated, annual-prepay row visibility, and tooltip behaviour on mobile (no horizontal overflow).
+> **Next action (2026-08-18):** deploy `feature/calculators-continued` (C1–C6 + T1 + T3, all 8 deliverables except T2) to staging, one step at a time with verification before proceeding. Deploy checklist: rebase/merge onto the deploy branch → rebuild dist → sync ACF field groups (`group_two57_calculator_data.json` SSOT + all 8 calc block groups) → register blocks → verify each calc live in-browser (engines, SSOT reads, share emails, URL round-trips, colour spaces) → then T2 in a later pass.
 
 ### C5 — Office carbon (built 2026-08-17)
 
