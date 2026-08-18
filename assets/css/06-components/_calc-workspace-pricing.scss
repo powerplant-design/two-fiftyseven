@@ -6,21 +6,19 @@
 
 // Shared calculator styling lives in _calc-base.scss (.calc__*).
 // This file holds only the workspace-pricing specifics: block shell,
-// commitment radio width, tooltip-cluster labels, annual-check layout
-// (.calc__check alignment) and the comparison chart.
+// commitment radio width, tooltip-cluster labels and the annual-check
+// layout (.calc__check alignment). The result headline + comparison chart
+// are the shared .calc__result-grid-headline / .calc__chart* recipes.
 // ============================================================
 
 .workspace-pricing {
 	padding-block: var(--space-xl-3xl);
 }
 
-// ── Result headline ─────────────────────────────────────────
-// .calc__result-grid is a flex column with gap: space-l, so the two big
-// numbers stack with that same spacing (matching the shared base behaviour).
-.calc__result-grid .calc__result-grid-headline {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-l);
+// The share row lives outside the .calc__body grid (so the sticky result
+// column releases before it), so the grid gap no longer spaces it.
+.workspace-pricing .calc__share {
+	margin-block-start: var(--space-m);
 }
 
 // Commitment radio labels are wider than the C6 digit buttons ("1 yr" vs "1")
@@ -36,118 +34,8 @@
 	--cluster-gap-rows: var(--space-2xs);
 }
 
-// ── Annual prepay toggle (layout only — the swatch is .calc__check) ──
-.workspace-pricing .calc__check {
-	justify-content: flex-end;
-	align-items: center;
+// ── Annual prepay card (shares the .calc__option-card recipe with the
+//    Meet-pricing add-on tiles; only the top margin is its own) ──
+.workspace-pricing__annual-card {
 	margin-block-start: var(--space-xs);
-}
-
-// ── Comparison chart (proposal panel) ───────────────────────
-// Lives inside the dark .calc__result-grid card, so all colours use the
-// inverse (light-on-dark) tokens resolved by the block's colour space.
-.workspace-pricing__chart {
-	gap: var(--space-xs);
-}
-
-.workspace-pricing__chart-row {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2xs);
-}
-
-// Label pushed left, value pushed right, on the same line.
-.workspace-pricing__chart-headline {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: var(--space-s);
-}
-
-.workspace-pricing__chart-label {
-	font-family: var(--font-monospace-family);
-	font-size: var(--text-xs-size);
-	text-transform: uppercase;
-	letter-spacing: var(--kerning-caps);
-	opacity: 0.78;
-}
-
-.workspace-pricing__bar-wrap {
-	position: relative;
-	block-size: 8px;
-	background-color: color-mix(in srgb, var(--color-content-inverse) 16%, transparent);
-	border-radius: 4px;
-	overflow: hidden;
-}
-
-.workspace-pricing__bar {
-	position: absolute;
-	inset-block: 0;
-	left: 0;
-	inline-size: var(--bar-pct, 0%);
-	border-radius: 4px;
-	transition: inline-size 200ms ease-out;
-}
-
-.workspace-pricing__bar--private {
-	background-color: color-mix(in srgb, var(--color-content-inverse) 52%, transparent);
-}
-
-.workspace-pricing__bar--coworking-low {
-	background-color: color-mix(in srgb, var(--color-content-inverse) 38%, transparent);
-}
-
-.workspace-pricing__bar--coworking-high {
-	background-color: color-mix(in srgb, var(--color-content-inverse) 25%, transparent);
-}
-
-.workspace-pricing__bar--ours {
-	background-color: var(--color-content-inverse);
-}
-
-.workspace-pricing__chart-value {
-	font-family: var(--font-monospace-family);
-	font-variant-numeric: tabular-nums;
-	font-size: var(--text-m-size);
-	color: var(--color-content-inverse);
-}
-
-.workspace-pricing__chart-row--ours .workspace-pricing__chart-value {
-	font-weight: 600;
-}
-
-.workspace-pricing__chart-savings {
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-2xs);
-	margin-block-start: var(--space-xs);
-	padding-block-start: var(--space-xs);
-	border-block-start: 1px solid color-mix(in srgb, var(--color-content-inverse) 22%, transparent);
-}
-
-// Same headline pattern as the bars above — text left, value right.
-.workspace-pricing__chart-savings .workspace-pricing__chart-headline {
-	align-items: baseline;
-}
-
-.workspace-pricing__chart-saving {
-	margin: 0;
-	color: color-mix(in srgb, var(--color-content-inverse) 72%, transparent);
-	font-size: var(--text-s-size);
-}
-
-.workspace-pricing__chart-saving-value {
-	font-family: var(--font-monospace-family);
-	font-variant-numeric: tabular-nums;
-	font-size: var(--text-m-size);
-	color: var(--color-content-inverse);
-
-	strong {
-		color: var(--color-content-inverse);
-	}
-}
-
-// ── Result accent — highlight the teams' own annual total ───
-.workspace-pricing__result-col--accent {
-	// intentionally extends .calc__result-col; per-calc accent placeholder
 }

@@ -41,25 +41,7 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 
 	<div class="wrapper">
 
-		<?php if ( $eyebrow || $heading || $tagline ) : ?>
-			<div class="calc__intro | stack" data-scroll data-scroll-repeat>
-				<?php if ( $eyebrow ) : ?>
-					<p class="calc__eyebrow | text-monospace text-s">
-						<?php echo esc_html( $eyebrow ); ?>
-					</p>
-				<?php endif; ?>
-				<?php if ( $heading ) : ?>
-					<h1 class="calc__heading | text-3xl text-wrap-balance"><?php echo esc_html( $heading ); ?></h1>
-				<?php endif; ?>
-				<?php if ( $tagline ) : ?>
-					<p class="calc__tagline | text-l text-wrap-balance">
-						<?php echo nl2br( esc_html( $tagline ) ); ?>
-					</p>
-				<?php endif; ?>
-			</div>
-		<?php elseif ( $is_preview ) : ?>
-			<p style="opacity:0.5;text-align:center;padding:1rem;">Add a heading in the block settings →</p>
-		<?php endif; ?>
+		<?php two57_calc_intro( (string) $eyebrow, (string) $heading, (string) $tagline, (bool) $is_preview ); ?>
 
 		<div class="calc__body" data-js="calc-hours-to-impact">
 
@@ -80,8 +62,8 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 				</div>
 
 				<div class="calc__field">
-					<span class="calc__field-label | text-monospace text-s">Days per week in office</span>
-					<div class="calc__radio-group | cluster" role="radiogroup" aria-label="Days per week in office" data-calc-days-group>
+					<span class="calc__field-label | text-monospace text-s">Days p/week in office</span>
+					<div class="calc__radio-group calc__radio-group--days" role="radiogroup" aria-label="Days per week in office" data-calc-days-group>
 						<button type="button" role="radio" class="calc__radio-label" data-calc-days="1" aria-checked="false">1</button>
 						<button type="button" role="radio" class="calc__radio-label" data-calc-days="2" aria-checked="false">2</button>
 						<button type="button" role="radio" class="calc__radio-label" data-calc-days="3" aria-checked="false">3</button>
@@ -124,7 +106,7 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 						<span class="calc__result-figure | text-3xl" data-calc-result-hours>0 hrs</span>
 						<span class="calc__result-unit | text-monospace text-xs">person-hours combined</span>
 					</div>
-					<div class="calc__result-col hours-to-impact__result-col--accent">
+					<div class="calc__result-col calc__result-col--accent">
 						<span class="calc__result-label | text-l">Subsidised space funded</span>
 						<span class="calc__result-figure | text-3xl" data-calc-giving>$0</span>
 						<span class="calc__result-unit | text-monospace text-xs">at $<?php echo esc_html( number_format( $giving_rate, 0 ) ); ?> per person-hour</span>
@@ -190,53 +172,7 @@ $paid_forward = function_exists( 'get_field' ) ? get_field( 'paid_forward_total_
 				</div>
 			</details>
 
-			<div class="calc__share | stack" data-calc-share>
-			<p class="calc__share-eyebrow | text-monospace text-s">Take this with you</p>
-			<h2 class="calc__share-title | text-3xl text-wrap-balance">save your number, share it, send it on</h2>
-
-			<div class="calc__share-row">
-
-				<!-- Email card -->
-				<div class="calc__share-card | stack">
-					<h3 class="calc__share-card-title | text-l font-bold">Email me these numbers</h3>
-					<p class="calc__share-card-body">Get the numbers and a one-line summary in your inbox, ready to forward to your team.</p>
-					<form class="calc__share-form | cluster" data-calc-share-email novalidate>
-						<input
-							class="calc__share-input"
-							type="email" name="email"
-							placeholder="you@example.com"
-							autocomplete="email"
-							data-calc-share-email-input
-							aria-label="Your email"
-							required
-						>
-						<input
-							class="calc__share-honeypot visually-hidden"
-							type="text" name="website" tabindex="-1" autocomplete="off"
-							aria-hidden="true"
-							data-calc-share-honeypot
-						>
-						<button class="btn" data-type="primary" type="submit" data-calc-share-submit>Send →</button>
-						<p class="calc__share-consent | text-s">
-							<label class="calc__share-check">
-								<input type="checkbox" name="consent" checked data-calc-share-consent>
-								By submitting I agree to the <a href="/contact-policy/">Contact policy</a>
-							</label>
-						</p>
-					</form>
-					<p class="calc__share-status | text-xs text-monospace" data-calc-share-status role="status" aria-live="polite"></p>
-				</div>
-
-				<!-- Copy link card -->
-				<div class="calc__share-card | stack">
-					<h3 class="calc__share-card-title | text-l font-bold">Share the numbers</h3>
-					<p class="calc__share-card-body">Same numbers, any browser, your team clicks and sees the exact same numbers.</p>
-					<button class="btn" data-type="secondary" type="button" data-calc-share-copy>Copy link →</button>
-				</div>
-
-			</div>
-		</div>
-
+			<?php two57_calc_share(); ?>
 		</div>
 
 	</div>

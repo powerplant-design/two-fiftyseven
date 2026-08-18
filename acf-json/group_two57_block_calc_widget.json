@@ -1,0 +1,168 @@
+{
+    "key": "group_two57_block_calc_widget",
+    "title": "257 Calc Widget Block",
+    "fields": [
+        {
+            "key": "field_two57_cw_eyebrow",
+            "label": "Eyebrow",
+            "name": "cw_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional small label above the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Estimate",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_cw_heading",
+            "label": "Heading",
+            "name": "cw_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "The H1 heading for the widget.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "get a number for your meeting",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_cw_tagline",
+            "label": "Tagline",
+            "name": "cw_tagline",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Intro paragraph below the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Pick a room, your duration and how many people. We'll show you a starting estimate, then carry it through to the full quote for dates, multi-day and add-ons.",
+            "new_lines": "br",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_cw_room_set",
+            "label": "Room set",
+            "name": "room_set",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Which rooms to show. 'All' shows every room; 'Host' shows only the large rooms (Workshop, Event, Entire).",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "all": "All rooms",
+                "host": "Host (large rooms only)"
+            },
+            "default_value": "all",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_two57_cw_pricing_url",
+            "label": "Full quote page",
+            "name": "pricing_url",
+            "aria-label": "",
+            "type": "page_link",
+            "instructions": "Select the full meet-pricing calculator page. The CTA deep-links here with the widget's state as URL params.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "post_type": [],
+            "post_status": [],
+            "taxonomy": [],
+            "allow_null": 1,
+            "multiple": 0,
+            "return_format": "url",
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_cw_colour_space",
+            "label": "Colour space",
+            "name": "colour_space",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Controls the colour theme for this block.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "neutral": "Neutral",
+                "forest": "Forest",
+                "purple": "Purple",
+                "maroon": "Maroon"
+            },
+            "default_value": "purple",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/calc-widget"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the heading, room set, pricing URL and colour space for the 257 Calc Widget block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1785900000000
+}

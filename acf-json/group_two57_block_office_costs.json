@@ -1,0 +1,118 @@
+{
+    "key": "group_two57_block_office_costs",
+    "title": "257 Office Costs Calculator Block",
+    "fields": [
+        {
+            "key": "field_two57_oc_eyebrow",
+            "label": "Eyebrow",
+            "name": "oc_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional small label above the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Wellington office cost calculator",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_oc_heading",
+            "label": "Heading",
+            "name": "oc_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "The H1 heading for the calculator.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "how much does it cost to run an office in Wellington?",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_oc_tagline",
+            "label": "Tagline",
+            "name": "oc_tagline",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Intro paragraph below the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Your tool for true cost accounting on a Wellington office. Estimate the full costs with sourced figures on admin, compliance, lease legals and cleaning. No surprises.",
+            "new_lines": "br",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_oc_colour_space",
+            "label": "Colour space",
+            "name": "colour_space",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Controls the colour theme for this block.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "neutral": "Neutral",
+                "forest": "Forest",
+                "purple": "Purple",
+                "maroon": "Maroon"
+            },
+            "default_value": "forest",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/office-costs"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the heading and colour space for the 257 Office Costs calculator block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1785813321642
+}

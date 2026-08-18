@@ -100,7 +100,7 @@ This makes every calculator multi-purpose — admin picks the colour space per p
 - Working-pattern assumptions (8h/day, 46 weeks, 230 days)
 - MHFR costs ($445, ratio 1:12, cert 2.5yr)
 - Admin loaded hourly ($70)
-- Office costs v2 methodology constants (rent/sqm, outgoings %, furniture, cleaning, etc.)
+- Office costs methodology constants (rent/sqm, outgoings %, furniture, cleaning, etc.)
 
 ### Exposing the store to JS
 
@@ -188,8 +188,8 @@ Every calculator block creates these files (following existing theme conventions
 |---|---|---|
 | `calc-office-costs.js` (v1) | **Writes** `window.twofiftyseven.prices` | Reads from ACF-injected object (stop writing) |
 | `calc-meeting-costs.js` | **Writes** `meetingPrices`, `meetingAV`, `deriveDuration` | Reads rooms/add-ons from ACF, stops writing prices |
-| `calc-office-costs-v2.js` | Uses own `window.occv2` namespace | Reads prices from `window.twofiftyseven`, keeps `occv2` for compute functions |
-| `calc-office-carbon.js` | Self-contained | Stays mostly self-contained (cited constants in code); reads `givingRate` from `window.twofiftyseven.impact` |
+| `calc-office-costs-v2.js` | Uses own `window.occv2` namespace | Reads prices from `window.twofiftyseven`; **drops `occv2` entirely** — one module, scenario API module-local (see C3 plan) |
+| `calc-office-carbon.js` | Self-contained | Stays fully self-contained (all cited constants in code); reads nothing from `window.twofiftyseven` |
 | `calc-hours-to-impact.js` | Self-contained | Reads `givingRatePerPersonHour` from `window.twofiftyseven.impact` |
 | `inject-prices.js` | Reads `window.twofiftyseven.prices` | Unchanged (already reads from the global) |
 | `quote-preview.js` | Reads room rates from HTML `data-*` attrs | Reads from `window.twofiftyseven.rooms` (reconciles the duplicate source) |
@@ -426,7 +426,7 @@ Suggested order (simplest → most complex):
 3. **C2 — Meet pricing** — proves colour swap (same block, different `colour_space` + `room_set`). Reuses the §6 backend.
 4. **C5 — Office carbon** — medium, emission factors stay in code
 5. **C4 — Meeting costs** — high complexity, industry bands comparison
-6. **C3 — Office costs v2** — highest complexity, 7 config cards, scenario slots
+6. **C3 — Office costs** — highest complexity, 7 config cards, scenario slots
 
 ### Phase 3 — Teaser + stats
 
@@ -604,8 +604,10 @@ assets/css/06-components/
 | `.calc__inputs` | Inputs card (`--color-surface-secondary` bg, scroll-revealed) | All |
 | `.calc__fields-grid` | 2-col grid for paired inputs (stacks ≤600px) | C6, C5, others |
 | `.calc__field` / `__field-label` | Field wrapper + label | All |
-| `.calc__stepper` (+ `button` / `output`) | −/output/+ stepper | C1, C3, C4, C5, C6 |
+| `.calc__slider-row` / `__slider-controls` / `__slider-value` | −/output/+ stepper row (value readout) | All |
+| `.calc__stepper-btn` | The − / + buttons (shared `.calc-icon-btn` recipe) | All |
 | `.calc__radio-group` / `__radio-label` | Segmented radio buttons (`<button role="radio">`) | C1, C3, C4, C5, C6 |
+| `.calc__radio-group--days` | Grid variant of `.calc__radio-group` — 5 equal columns (one per day), labels stretch to fill (`inline-size: auto`) | C5, C6 |
 | `.calc__input` | Number/text input (stepper-only keyboard guard) | All |
 | `.calc__microcopy` | Small helper text under inputs | C5, C6 |
 | `.calc__result` / `__result-grid` / `__result-col` / `__result-label` / `__result-figure` / `__result-unit` | Result panel (dark `--color-surface-inverse-primary` bg) | All |
@@ -614,7 +616,7 @@ assets/css/06-components/
 | `.calc__stat` / `__stat-label` / `__stat-value` / `__stat-unit` | Label/value/unit stat row | C1, C6 (extensible) |
 | `.calc__share` / `__share-eyebrow` / `__share-title` / `__share-row` | Share section (email + copy cards) | All with a share row |
 | `.calc__share-card` / `__share-card-title` / `__share-card-body` | Share card | All with a share row |
-| `.calc__share-form` / `__share-input` / `__share-btn` | Email form row | All with a share row |
+| `.calc__share-form` / `__share-input` | Email form row (buttons use the theme `.btn` system — no `.calc__share-btn` class) | All with a share row |
 | `.calc__share-honeypot` | Visually hidden honeypot (uses `visually-hidden` utility in markup) | All with a share row |
 | `.calc__share-consent` / `__share-check` | Consent checkbox + label + policy link | All with a share row |
 | `.calc__share-status` | Status output (`data-calc-share-status` error/success) | All with a share row |
@@ -637,7 +639,7 @@ assets/css/06-components/
 
 ## Status
 
-Last updated: 2026-08-11 (all work on `feature/calculators` branch)
+Last updated: 2026-08-18 (T3 calc summary committed; all 8 deliverables except T2 built on `feature/calculators-continued`)
 
 - [x] **F1** — ACF Options SSOT ✅ committed (`2ee8788`)
 - [x] **F2** — `window.twofiftyseven` injector ✅ committed (`2ee8788`)
@@ -649,14 +651,161 @@ Last updated: 2026-08-11 (all work on `feature/calculators` branch)
 - [x] **Base-SCSS refactor** — shared primitives promoted to `_calc-base.scss` (see "Shared-SCSS refactor" below), ready for C2
 - [x] **Shared team-size slider system** ✅ committed (`699d816`) — `.calc__slider*` primitives in `_calc-base.scss` (range input + stepper buttons + big readout); ported to C1 and C6. Mobile hides the slider (buttons + number only). See "Slider system" below.
 - [x] **C1/C6 UX polish** ✅ committed (`699d816`) — commitment field reordered below memberships + relabelled "Private office lease term"; Dedicated annual-save breakdown row hidden unless annual is ticked **and** ≥1 Dedicated member; new memberships default to **Dedicated** tier (`M.DEFAULT_TIER`); `calc-source` tooltips capped to viewport + anchored right of the trigger below `bp-md` (fixes the mobile horizontal-overflow bug the slider work surfaced)
-- [ ] **C2** — Meet pricing (+ Host variant) ← **next up** (plan in "C2 — Meet pricing implementation plan" below)
-- [ ] **C5** — Office carbon
-- [ ] **C4** — Meeting costs
-- [ ] **C3** — Office costs v2
-- [ ] **T1** — Quick quote teaser
-- [ ] **T2** — Impact stats partial
+- [x] **C2** — Meet pricing (+ Host variant) ✅ built + committed (`1d36abb`) on `feature/calculators-continued` (see "C2 — Meet pricing implementation — built" below)
+- [x] **DRY refactor** ✅ committed (`b6fcde8`) on `feature/calculators-continued` (see the "DRY refactor" note under C2 below) — shared `.calc__option-card`/`__head`, shared `calc-utils.js` (`fmt$`/`fmtN`/`bindRovingRadio`), single `two57_meet_rooms()` PHP helper
+- [x] **C5** — Office carbon ✅ committed (`711a37b`) on `feature/calculators-continued` (see "C5 — Office carbon implementation" below)
+- [x] **C4** — Meeting costs ✅ committed (`0bfa5c2`) on `feature/calculators-continued` (see "C4 — Meeting costs implementation plan" + "C4 — Implementation state (2026-08-18)" below; reverified green `2026-08-18`)
+- [x] **C3** — Office costs ✅ committed (`f6eec81`) on `feature/calculators-continued` (see "C3 — Office costs implementation plan" + "C3 — Implementation state (2026-08-18)" below)
+- [x] **T1** — Quick quote teaser ✅ committed (`54fb0e1`) on `feature/calculators-continued` (see "T1 — Calc Widget implementation" below)
+- [ ] **T2** — Impact stats partial — **deferred to next pass** (2026-08-18). SSOT side already injected (`window.twofiftyseven.stats`, functions.php); the `[data-countup]` partial/block itself is unbuilt. The pre-existing `blocks/impact` "257 Impact" block is ACF-field-driven and does not read the SSOT — it does not cover T2.
+- [x] **T3** — Calc summary (4-card dashboard) ✅ committed (`98577db`) on `feature/calculators-continued` (see "T3 — Implementation state (2026-08-18)" below)
 
-> **Next action (2026-08-11):** merge `feature/calculators` → `main` and deploy so C1 + C6 (slider system, tooltip fix, default tier) can be tested on the live site. After deploy, verify on live: slider drag/stepper/readout on both calcs, roster defaulting to Dedicated, annual-prepay row visibility, and tooltip behaviour on mobile (no horizontal overflow).
+> **Next action (2026-08-18):** deploy `feature/calculators-continued` (C1–C6 + T1 + T3, all 8 deliverables except T2) to staging, one step at a time with verification before proceeding. Deploy checklist: rebase/merge onto the deploy branch → rebuild dist → sync ACF field groups (`group_two57_calculator_data.json` SSOT + all 8 calc block groups) → register blocks → verify each calc live in-browser (engines, SSOT reads, share emails, URL round-trips, colour spaces) → then T2 in a later pass.
+
+### C5 — Office carbon (built 2026-08-17)
+
+Port of the standalone `/calculator/office-carbon/` source using only the shared `.calc__*` catalogue (no new CSS classes except `.calc-source__note` for engine-rendered breakdown source notes). Locked constants (Tadpole ACE 2025) and the 200% public offset claim stay in code, mirroring the source engine's `compute()`. Biodiversity credits (Sanctuary Mountain) kept as a separate stream, never aggregated.
+
+UX matches C6 (hours-to-impact): team size is the shared `.calc__slider-row` (range input + stepper buttons + big readout, **max 15** — same ceiling as C1 workspace-pricing), days/week a roving-radio segment on the shared `.calc__radio-group--days` grid (5 equal columns, labels stretch to fill — shared with C6, `2026-08-17`), weeks/hours number inputs. Cold load pre-fills NZ defaults like C6: **team 1 · 5 days · 46 weeks · 8 hours/day** (URL params always win). The sticky-aside net figure (and the email's HTML headline) render **signed** (−kgCO₂e, `kgHtmlSigned`) to make the net-negative position explicit.
+
+**Files:**
+- `blocks/office-carbon/block.php` — intro (ACF eyebrow/heading/tagline + colour_space), inputs card (team slider row, days roving-radio grid, weeks/hours number inputs), sticky 3-stat result aside (`calc__result--sticky`, signed net figure), full-width breakdown `<details>` with comparison rows + `.calc-source` tooltips and the ESG **citation block** (`data-calc-citation-block` + `[data-calc-copy-citation]`, heading now `<h2 class="calc__breakdown-heading | text-xl">Numbers formatted for direct quotation</h2>`) nested at the end of the breakdown body, then the §6 share row (share section OUTSIDE the root → `initCalcShare(root.parentElement, …)` like C1/C2 sticky layouts)
+- `assets/js/modules/office-carbon.js` — port reusing `bindRovingRadio` from `calc-utils.js`; exports `initOfficeCarbon()`; wired into `main.js` + both `transitions.js` branches (Swup page:view + bfcache)
+- `acf-json/group_two57_block_office_carbon.json` + `acf/office-carbon` registration in `functions.php`
+- `assets/css/06-components/_calc-office-carbon.scss` — overrides only: `.calc-source__note` for engine-rendered source notes; `.calc__kg-unit` renders the kgCO₂e/tCO₂e unit in breakdown row values two steps down the type scale + baseline-aligned (`.office-carbon` row values only); `.office-carbon .wrapper` added to the mobile padding scoping in `_calc-base.scss`
+- `inc/calc-share-email.php` — `office-carbon` cases: `two57_calc_sanitize_state()` (zero-start, bounds mirror the engine), `two57_calc_figures_office_carbon()` (constants in code, no ACF), compose dispatch + `two57_calc_compose_office_carbon()` (signed net figure in the summary + HTML headline; half-hour `hoursPerDay` no longer truncated in the summary). All calc emails wrapped by the shared letter intro/sign-off (see "C6 share row" note below)
+- `office-carbon` page created (ID 1078) matching the single-ACF-block page pattern
+
+**Verified:** `npm run build` clean; `php -l` clean; page renders 200; end-to-end share email tested against Mailhog (correct 1,418 kg / 488 kg / −488 kg figures for a 6-person team, copy-link deep link `?team=6&days=5&weeks=46&hours=8` round-trips through `readURL()`).
+
+### C4 — Meeting costs implementation plan
+
+> **Source (2026-08-17):** `calculator/meeting-costs/index.html` (1541 lines) + `shared-js/calc-meeting-costs.js` (545 lines). Compares running a meeting/workshop/away-day/event at a Wellington industry-standard venue vs at two/fiftyseven. The source is split engine → hidden sinks + `mc:rendered` → page coordinator (routes sinks to result figures, breakdown rows, share/URL). The port merges the coordinator into the block engine (one module, matching C2), drops the mailto `.calc-contact-inline` + print card for the shared §6 share row, and reads the room/AV/tea/materials/setup numbers from the ACF SSOT instead of `MEETING_PRICES`/`MEETING_AV`.
+
+**Reuse map — everything C4 lifts from the shared system (no new `.calc__*` primitives expected):**
+
+| Source element | Reuse | Notes |
+|---|---|---|
+| Section shell + intro | `.calc__body`, `.calc__inputs`, `.calc__field`, `.calc__field-label`, `two57_calc_intro()` | Same 50/50 body + inputs-card skeleton as C2/C5 |
+| Group size stepper (0–200) | `.calc__slider-row` / `-controls` / `-stepper-btn` / `-slider` / `-slider-value` + `bindStepper` | Value-based (`valueFor: i => i`), like C1/C5/C6 team steppers. Readout keeps base 2ch (values ≤ 200 fit) |
+| Day rows (date + start/end times) | `.calc__repeat` + `.calc__add-btn` + `.calc__day-row` shell (`-label`/`-inputs`/`-hours`/`-remove`) | C4 uses the **same native date + time pickers as C2** in the base 5-col `.calc__day-row-inputs` grid (date \| start \| → \| end \| hours) — no per-calc time widget (see "Implementation state") |
+| Catering / AV / materials checkbox cards | `.calc__option-card`/`.calc__option-head` + `.calc__check` swatch, per-calc `.meeting-costs__card-list` | 2-col card grid (1-col < bp-sm); whole card is the click target; monospace price hint (`meeting-costs__price-hint`) under each title |
+| Facilitation + setup radio cards | `.meeting-costs__radio-cards` of `<button role="radio" class="meeting-costs__radio-card">` + `bindRovingRadio` | 2-col cards with `.meeting-costs__radio-indicator` circle filled on `[aria-checked="true"]`; setup merged to **Standard** (default — pack-down included, no charge) + Complex |
+| Impact discount | `.calc__option-card` + `.calc__option-head` (addon-card recipe) | Same as C2's Step 6 card; reads `impact.discountPct` |
+| Custom expense lines | `.calc__repeat` + `.calc__add-btn` | Per-calc `.meeting-costs__custom-row` (label input + value input + remove); one blank row by default; comma-tolerant value input |
+| Result aside | `.calc__result` + `.calc__result--sticky` + workspace-price-style `.calc__result-grid-headline` + shared `.calc__chart*` bars (promoted to `_calc-base.scss`) | Single headline figure (At two/fiftyseven) + venue-vs-ours bar chart (venue low/high band, ours solid, all stopped short of a `max(venue,ours)×1.25` ceiling for headroom) + Savings row — mirrors workspace-pricing, **not** a 3-col grid |
+| Breakdown | `.calc__breakdown` (details id `methodology`) + `.calc__breakdown-grid` + 2 × `.calc__breakdown-col` | Each col is a `.calc__compare` list (`.calc__compare-row` / `-row-label` / `-row-value` / `-row--total`); `bindBreakdownTrigger(root, 'methodology')` |
+| Citation sources | `.calc-source` tooltips + `bindSourceTooltips(root)` | Source's `.breakdown-row__source` anchors → the shared tooltip glyph/pop (workspace/carbon precedent) |
+| Share row | `two57_calc_share()` + `initCalcShare(root.parentElement, { slug: 'meeting-costs', getState })` | Sticky aside ⇒ share sits **outside** the root (C2/C1 rule). Default "numbers" copy, maybe meeting-worded overrides |
+
+**SSOT reads (`window.twofiftyseven`, no new ACF fields):**
+- `rooms` — rates + `capacity` for `pickSpace()` auto-selection. Source `MEETING_PRICES` is exactly the ACF `rooms` shape; `two57_meet_rooms()` slugs/names win (source "Studios Whātaitai + Ngake" → ACF "Studio", etc.).
+- `addons.av.{projector,sound}.flat` (was `MEETING_AV` $50 flat), `addons.tea.singlePerHead` (was `MEETING_TEA_PER_HEAD` 5).
+- `impact.discountPct` — 50% off the 2/57 total (never the industry band), same as source.
+- **SSOT-improvement over source:** materials post-its/printing ($30/$60) and complex setup ($200) are hardcoded in the source engine → read from ACF `materials_postits_charge` / `materials_printing_charge` / `setup_complex_charge`. Catering passes through at **industry midpoint** (source behaviour) — *not* the ACF `catering_organising_fee` (that's C2's model); keep source behaviour, note the discrepancy in the code comment.
+
+**Stays in code:** the `IND` industry bands (29 constants — cited Wellington/Auckland research per §2) and `pickSpace`/`deriveDuration` methodology.
+
+**Engine port (`assets/js/modules/meeting-costs.js`):** `initMeetingCosts()` on `[data-js="calc-meeting-costs"]`; `initCalc()` guard bails if `ssot.rooms` empty (C2 precedent). State: `size`, `days[{date,start,end}]` (native date + time pickers → 24h `HH:MM`), 11 option booleans + `impact`, `fac`, `setup`, `custom[{label,value}]`. URL sync via `readURL`/`writeURL` (compact scheme: `size`, `days` as comma-joined `YYYY-MM-DD|HH:MM-HH:MM`, `extras` token list incl. `impact-discount`, `fac`, `setup`, `custom` as `encodeURIComponent(label)|value` pairs — dates round-trip from picker through share link). `deriveDuration` stays module-local. Reuses `fmt$`, `bindStepper`, `bindRovingRadio`, `bindBreakdownTrigger`, `bindSourceTooltips`, `initCalcShare`; `fmtBand` kept for breakdown bands, `fmtRate` added for 2dp per-head rates.
+
+**Email backend (`inc/calc-share-email.php`):** `two57_calc_sanitize_meeting_costs()` (size int 0–200, per-day date `YYYY-MM-DD` **carried through** + start/end validated to 24h `HH:MM`, 12 bools, `fac` whitelist + `setup` whitelist `standard`/`complex` (default `standard`), custom lines label + positive value, impact bool), `two57_calc_figures_meeting_costs()` (mirror compute(): rooms from ACF via `two57_meet_rooms()` + `get_field`, IND bands in code, av/tea/materials/setup from ACF; returns industry band, 2/57 total, saving band, space name), `two57_calc_compose_meeting_costs()` (summary: group size + duration + "X against industry band Y", saving band, space name; share-link `days` rebuilt with the carried dates). Plus the three dispatch switches (sanitize/figures/compose) gain the `meeting-costs` case.
+
+**Files (per §4 checklist):**
+1. `acf-json/group_two57_block_meeting_costs.json` — `colour_space` select + `mc_eyebrow`/`mc_heading`/`mc_tagline`. **No `room_set`** (C4 has no room picker — `pickSpace` auto-selects).
+2. `blocks/meeting-costs/block.php` — identity class `meeting-costs`; body grid with: size slider, day-row repeat (date + time pickers), option-card groups (catering/AV/materials + facilitation/setup radio cards + impact card), custom-row repeat; sticky workspace-style result aside (headline + chart + savings) + breakdown trigger; `two57_calc_share()` outside the root; full-width `details#methodology` breakdown with 2 compare cols + `.calc-source` citations.
+3. `assets/js/modules/meeting-costs.js` + `main.js` + `transitions.js` wiring (three call sites).
+4. `assets/css/06-components/_calc-meeting-costs.scss` — per-calc only: `.meeting-costs__card-list` (2-col), `.meeting-costs__radio-cards` + `__radio-indicator`, `.meeting-costs__price-hint`, `.meeting-costs__custom-row`, `.meeting-costs__duration-label`. Forward in `_index.scss`. (Chart styles live in the shared `_calc-base.scss`, promoted out of `_calc-workspace-pricing.scss`.)
+5. `functions.php` — `acf_register_block_type` `meeting-costs` (`257 Calc Meeting Costs`).
+6. `inc/calc-share-email.php` — the three `meeting-costs` cases.
+
+**Build order:** markup/ACF/registration → engine + wiring → SCSS → email cases. **Verify:** `npm run build` + `php -l` clean; band/duration switching; addon toggles + custom rows; impact discount; email to Mailhog (`calc_source = meeting-costs`); copy-link round-trip; zero-start empty state; no-JS fallback.
+
+**Gotchas:** duration derives from populated day rows (2+ populated days → multi-day; start ≥ 17:00 → evening; <3h hourly; <6h half-day; else full-day) — this drives both the `IND` band and the 2/57 room rate (day/evening/hour), keep `deriveDuration` faithful. `pickSpace` auto-selects the space from group size (6/12/36/80/200) — no room tiles in markup; the space name shows in the aside unit + breakdown. The share row + breakdown live OUTSIDE the `[data-js]` root (`.calc__body`); query them from the wrapper (`scope`), the office-carbon pattern.
+
+### C4 — Implementation state (2026-08-18)
+
+Refinements landed on the staged build since the plan was written (all green; final hashes `main-D9XVR_p9.css` → `main-N-znvEJ9.css`, `main-CPe3QqZr.js` → `main-BnhulEqY.js`, then `main-BnBBbwHc.js` after the person/people fix):
+
+- **Time pickers:** replaced the 12h AM/PM text-field + pill pair with the **same native `date` + `time` inputs as C2** in the base 5-col `.calc__day-row-inputs` grid; AM/PM widget SCSS/JS helpers (`to12h`/`to24h`, `meeting-costs__time-*`) removed. URL days schema changed to `YYYY-MM-DD|HH:MM-HH:MM` (both `writeURL` and the PHP compose builder); local-time `todayISO()`/`isoFormat()` prevent UTC date-shift; cleared pickers fall back so links always round-trip.
+- **Cards:** catering/AV/materials via `li.meeting-costs__card.calc__option-card` in a 2-col `.meeting-costs__card-list`; facilitation/setup via `.meeting-costs__radio-cards` of radio buttons with `.meeting-costs__radio-indicator` circles; whole cards clickable; monospace price hints painted once (`meeting-costs__price-hint`) under card titles with sources mirroring `compute()`.
+- **Aside redesign:** workspace-pricing layout — single "At two/fiftyseven" headline (venue big figure removed), `.calc__chart*` bar rows (venue low/high band + solid ours bar, anchored to `max(venue,ours)×1.25` ceiling for headroom), Savings row. Chart styles promoted to shared `_calc-base.scss`; workspace-pricing markup/JS converted 1:1 to the shared classes.
+- **Setup merged** to Standard (default; "Standard setup + pack-down, included") + Complex; JS (+ `readURL`/`writeURL` gates) PHP sanitize whitelist (`standard`/`complex`), compose link gate all updated together.
+- **Email fixes (2026-08-18):** `$band` closure missing `use ($money)` → fatal on non-empty sends; per-day `date` carried JS `getState` → sanitize → compose so the emailed share link reproduces picker dates; `sanitize_email`/`sanitize_key` guarded against non-scalar JSON (clean 400 instead of 500); `calc-share.js` `sync` hoisted out of its block (was `ReferenceError` in the send `finally`).
+- **Email verified live (2026-08-18):** a real 2-day, size-1 booking with catering/tea/facilitation/materials/custom lines sent to Mailhog end-to-end ($8,383 ours vs $6,943–$12,490 venue, savings $0–$4,107). Follow-up singular grammar fix: `1 person` not `1 people` in the summary + industry room note (PHP compose + JS breakdown).
+- **Full code review passed (2026-08-18):** JS↔PHP field mapping, business-math parity (identical IND bands, defaults, factors), share-link token parity (`impact-discount`, `fac`/`setup` gates, `custom` encoding), selectors/markup contract, empty-state handling all verified consistent. Known non-blockers: server caps days at 14 / custom lines at 10 while the JS "add" is unbounded (meet-pricing parity); public endpoint + non-atomic 3/10min rate limit (pre-existing, all calcs).
+
+**Verify:** `npm run build` + `php -l` clean (done). Open items before merge: full in-browser pass (initial load + Swup reinit, deep-link restore in-browser, real REST POST to Mailhog for the meeting-costs email), then commit to `feature/calculators-continued`.
+
+### C3 — Office costs implementation plan
+
+> **Source (2026-08-18):** `calculator/office-costs/index.html` (2093 lines) + `shared-js/calc-office-costs-v2.js` (606 lines). Configures a Wellington office top-to-bottom — rent (grade + precinct modifiers), outgoings, utilities, cleaning, consumables, compliance/insurance, furniture amortisation, admin overhead, lease legals, booking software, custom lines — and compares the total against two/fiftyseven memberships in a savings band (`.oc-vs257`). Highest-complexity port: 7 config cards, a per-member days roster, 3-slot localStorage scenarios + compare dialog, and the custom-line repeat. The source is split engine → hidden sinks + `occv2:rendered` → page coordinator (repaints result mirror, breakdown rows, scenarios, URL). The port merges the coordinator **and the four standalone inline scripts** (team roster, grade→rent sync, savings band, take-it) into one ES module (C2/C4 one-module pattern), drops the mailto + PDF take-it cards for the shared §6 share row, and reads the savings-band membership prices from the ACF SSOT instead of the source's hardcoded `FLEXI{109..509}/DEDICATED 659`.
+
+**Reuse map — everything C3 lifts from the shared system before anything new is built:**
+
+| C3 element | Reuse | Notes |
+|---|---|---|
+| Section shell + intro | `.calc__body`, `.calc__inputs`, `.calc__field`, `.calc__field-label`, `two57_calc_intro()` | Same 50/50 body + inputs-card skeleton as C2/C4/C5 |
+| Team size 1–15 | `.calc__slider-row` / `-controls` / `-stepper-btn` / `-slider` / `-slider-value` + `bindStepper` | Value-based (`valueFor: i => i`), exactly C1/C5/C6 team steppers; person/people suffix keeps the C4 singular fix |
+| Grade (4 radios) | `.calc__radio-group` + `bindRovingRadio` | C1 commitment-radios precedent |
+| Precinct (7 options) | `.calc__select` | Shared custom-chevron dropdown, `.oc-select` precedent |
+| Number inputs | `.calc__input` — **free-edit, NOT `restrictStepperInputs`** | C3 is the "tune every variable" calc; typing is the point (source uses bare `<input type="number">` + min/max hints, engine doesn't JS-clamp beyond `toNum` defaults) |
+| Custom expense lines | `.calc__repeat` + `.calc__add-btn` + per-calc `.office-costs__custom-row` | C2/C4 custom-rows precedent (label + value + remove row + add); source's `<template>` clone + `data-count` logic ports to the module |
+| Per-member days sliders | per-calc roster **built on the shared `.calc__slider` primitives** (`.calc__slider` wrapper + range + readout) | Team-driven repeat of Member-N 1–5 day sliders (C1 roster pattern); not the team-level `.calc__radio-group--days` |
+| Config card tooltips | `.calc-source` glyph/pop + `bindSourceTooltips` | Plan §12 already mapped C3's `.oc-tip` → `.calc-source` structured-panel variant; each field's tooltip holds default / range / sources |
+| Result aside | `.calc__result` + `.calc__result--sticky` + `.calc__stat` rows | Headline annual + secondary stat rows (monthly / pp-month / pp-day / per-sqm); mirror pairs drop (module renders directly) |
+| Savings band | reads `window.twofiftyseven.prices` (**SSOT**, no hardcoded FLEXI/DEDICATED) | per-member days → Flexi tier, 5 days counts as Dedicated high; saves = office total − 257 band |
+| Breakdown | `.calc__breakdown` `details#methodology` + `.calc__compare` rows (`-row-label`/`-row-note`/`-row-value`/source link) + `bindBreakdownTrigger` | Category grid (6 cats + %) is genuinely new — the source's `[data-occv2-category-slot]` is dead markup; we render it |
+| Citation sources | `.calc-source` tooltips + `bindSourceTooltips` | Breakdown rows keep the source's inline source **anchors** (target=_blank) since each row cites a distinct URL |
+| Share row | `two57_calc_share()` + `initCalcShare(root.parentElement, { slug: 'office-costs', getState })` | Sticky aside ⇒ share **outside** the root (C1/C2/C4 rule). Drop mailto + PDF per §6 |
+
+**New (genuinely per-calc, no `.calc__*` base additions expected):** the 3-slot **scenario system** — save/load/clear via prompt-naming, right-click/long-press clear (`contextmenu`), localStorage-backed, "Save current →" / "Compare all →" buttons and a compare `<dialog>` (`<div class="oc-compare" data-scenario-compare-dialog>`) — plus member-days roster, savings band, category grid, grade→rent display box (visible grade-adjusted rate ↔ hidden base `data-occv2-rent-sqm`) in `_calc-office-costs.scss`. Flag scenarios as the *only* new interaction type; promote to `_calc-base.scss` only if a second calc ever needs save/compare.
+
+**SSOT reads (`window.twofiftyseven`, no new ACF fields):** `prices.dedicated` + `prices.flexi-5..1` for the savings band (source hardcoded 659/109–509). Everything else already injected but **not** used.
+
+**Stays in code** (cited research per §2): `DEFAULTS` (rent 310/sqm, sqm/pp **9**, opex 0.27, furniture 2000/5yr, internet 200, power 50W/sqm × 1840h × $0.30, cleaning 1.2hr × $45, kb 300, insurance 200, firstAid 28, fireWarden 18, admin 0.06 × $70, legals 3500/3yr, booking $8 auto-on ≥10), `GRADE_MODIFIER` + `PRECINCT_MODIFIER`, the 14× `SOURCES` URLs, compute() (value-add Job 11 quantification, MHFR), 46 working weeks. Note: `sqmPerPerson` stays **9** (cited v2 default, user-editable) — documented divergence from C1's 10, reconciled only by comment per §5.
+
+**Engine port (`assets/js/modules/office-costs.js`):** `initOfficeCosts()` on the block root `[data-js="calc-office-costs-v2"]` (legacy engine hook kept, **the only "v2" remnant** — C1 workspace-pricing already owns `[data-js="calc-office-costs"]`, so the two blocks can't share that query hook; block slug + all file/email/copy naming is plain "office costs"); `initCalc()` guard bails if root missing. Merges the engine + coordinator + 4 inline scripts into one module; **`window.occv2` is dropped** — no global, scenarios stay module-local (localStorage `occv2-scenarios` key kept), custom-lines `restoreCustomLines` becomes internal. State read from DOM per tick (C3's inputs are all DOM-carried, no state object distinct from the inputs). URL sync via `readURL`/`writeURL` keeping the source's compact keys: `team/days/pre/sqm/rent/opex/net/pw/phr/pkw/chrs/crt/kb/ins/fa/fw/adp/adr/leg/lty/fpp/fy/bc` + `grade`/`bt` (booking toggle)/`cNl cNv` (custom rows). Reuses `fmt$`/`fmtN`, `bindStepper`, `bindRovingRadio`, `bindBreakdownTrigger`, `bindSourceTooltips`, `initCalcShare`.
+
+**Email backend (`inc/calc-share-email.php`):** `two57_calc_sanitize_office_costs()` (team clamp **0–15** — zero kept so the empty card emails as an empty-state prompt, mirroring the engine's `zeroResult`; days array per-member 1–5 rebuilt/padded to team length; per-number bounds mirror the input min/max; `grade`/`precinct` whitelist to the modifier sets; `bookingSoftware` bool; custom lines sanitize label + clamp positive value), `two57_calc_figures_office_costs()` (mirror compute(); membership prices from ACF via `get_field('membership_{slug}_monthly')` for the savings band — same slugs as workspace-pricing; returns annual/monthly/pp figures + line list + category split + value-add + saving band), `two57_calc_compose_office_costs()` (annual/monthly/pp-month/day + savings-band summary; share-link rebuilt with the engine's compact keys: `team`, comma `days`, `grade`/`pre` only when non-default, `bt` when booking on, non-default cost fields, and custom rows as `c{i}l`/`c{i}v`). Plus the three dispatch switches gain the `office-costs` case.
+
+**Files (per §4 checklist):**
+1. `acf-json/group_two57_block_office_costs.json` — `colour_space` select only (+ intro eyebrow/heading/tagline like the others).
+2. `blocks/office-costs/block.php` — identity class `office-costs`; 7 config cards (`.calc__fields-grid`); team slider + member-days roster; sticky result aside (headline + stat rows + savings band + scenario slots); full-width `details#methodology` breakdown (compare cols + category grid + `.calc-source` citations); `two57_calc_share()` outside the root.
+3. `assets/js/modules/office-costs.js` + `main.js` + `transitions.js` wiring (three call sites).
+4. `assets/css/06-components/_calc-office-costs.scss` — per-calc only: member-days roster, savings band, scenario slots + compare dialog, category grid, custom rows, grade→rent box. Forward in `_index.scss`.
+5. `functions.php` — `acf_register_block_type` `office-costs` (`257 Calc Office Costs`).
+6. `inc/calc-share-email.php` — the three `office-costs` cases.
+
+**Build order:** markup/ACF/registration → engine (merged coordinator + scenarios) + wiring → SCSS → email cases. **Verify:** `npm run build` + `php -l` clean; team/days-roster regen on team change; grade→rent display sync both directions; booking auto-on at team ≥ 10; scenarios save/load/clear/compare (localStorage persists); savings band vs ACF prices; custom-line add/remove; URL round-trip (incl. days + custom); email to Mailhog (`calc_source = office-costs`); zero-start; no-JS fallback.
+
+**Gotchas:** team slider is **min 1 / default 1** in the source (roster + savings band populate immediately) while the engine still returns `zeroResult` for team 0 — keep the source default but guard a URL `team=0` into the empty card (`applyURL` clamps 0 and `readState` treats `team<=0` as empty). The source coordinator reads `[data-occv2-team-display].value` (an `<output>` — `.value` is always undefined) for the mailto body → fix by reading the team number from state, not the DOM. The `[data-occv2-category-slot]` cat grid is dead in the source (queried, never in markup) — the port adds a real grid. The roster rebuild takes an `afterInput` callback (the shared `retick`) instead of the source's synthesized bubbling `input` — every roster row, custom row and URL-applied value ticks through the same `retick`; no event dispatch needed.
+
+### C3 — Implementation state (2026-08-18)
+
+Built on `feature/calculators-continued` on top of the shared `.calc__*` catalogue. All four source pieces merged into **one module** (`assets/js/modules/office-costs.js`, no `window.occv2` global):
+
+- **Engine** — `initOfficeCosts()` on `[data-js="calc-office-costs-v2"]` (the only "v2" remnant; C1 owns the non-v2 hook). Merges the v2 engine + page coordinator + 4 inline scripts (team roster, grade→rent sync, savings band, take-it). Team stepper via `bindStepper` (`rangeSel '[data-oc-team-range]'` … `valueFor: i => i`, `onUpdate: syncTeam`); grade roving radios + `bindGradeRent` (visible grade-adjusted `[data-oc-rent-display]` ↔ hidden base `[data-occv2-rent-sqm]`, both directions); roster rebuild (`rebuildRoster`) of per-member 1–5 day sliders into `[data-oc-days-roster]`; custom rows (`renderCustomList`, add/remove, comma-tolerant value, URL growth via `cNl cNv`); scenario system (`bindScenarios` — 3 localStorage slots, click-save/restore + prompt-naming, right-click clear, "Save current →" / "Compare all →" / "Reset all →", `compare-showModal()` dialog); URL `applyURL`/`writeURL` with the source's compact keys + comma-joined per-member `days` (port fix: source only captured the first member's slider); savings band reads `window.twofiftyseven.prices` SSOT (per-member days → Flexi tier, 5d = Dedicated, band `annual − {hi,lo}`); breakdown `bindBreakdownTrigger(root, 'methodology')` + per-line `.calc-source__note` + source-anchor `.office-costs__row-source` (target=_blank) + real category grid + value-add rows; share `initCalcShare(scope, { slug: 'office-costs', getState })` (full flat state incl. `customLines`).
+- **Markup** — `blocks/office-costs/block.php` (identity `office-costs`, `data-color-space`): 7 group headings (Team / Office / Utilities / Cleaning+consumables / Compliance+insurance / Furniture+admin+legals / Add-ons+custom), team slider row + empty days roster UL, grade radio cards (2-col grid) + precinct select, `.office-costs__input-row` number fields with min/max/step + `.calc-source` tooltips, booking `.calc__option-card` (cost row hidden until toggled), custom-row repeat + add button, sticky `.calc__result--sticky` aside (annual headline + 4 `.calc__stat`s + `.calc__chart-savings` band hidden until positive + empty state), scenario slots + actions, `details#methodology` breakdown (lines + total + category grid + value-add), `two57_calc_share()` **outside** the root, compare `<dialog class="office-costs__compare">`.
+- **ACF** — `acf-json/group_two57_block_office_costs.json` (`oc_eyebrow`/`oc_heading`/`oc_tagline` + `colour_space`, location `acf/office-costs`); `office-costs` registered in `functions.php` after `meeting-costs`. Default intro copy: eyebrow "Wellington office cost calculator", heading "how much does it cost to run an office in Wellington?", tagline "Your tool for true cost accounting on a Wellington office. Estimate the full costs with sourced figures on admin, compliance, lease legals and cleaning. No surprises."
+- **SCSS + email** — `assets/css/06-components/_calc-office-costs.scss` (roster rows, input-row grids + suffixes, grade radio cards 2-col, scenario slots + filled state + compare dialog + backdrop, category grid, custom rows, compare-close button — no mixin dependency on `_calc-base`), forwarded in `_index.scss`; `inc/calc-share-email.php` `office-costs` cases written + `php -l` clean.
+- **Wiring** — `main.js` + `transitions.js` (one import + three call sites: initial, Swup reinit, navigation reinit).
+
+**Refinements landed during the build session (all green; final build `main-BhSdszS-.js` / `main-BT_1KjK2.css`):**
+
+- **Stat aside legibility** — `.calc__stat-label` + `.calc__stat-unit` lifted to `--color-content-inverse` (was `--color-content-secondary` + opacity, illegible on the dark result card); stat rows switched to a 3-column equal-width grid (`1fr 1fr 1fr`) so label / value / unit align consistently across all four rows.
+- **Grade radio cards** — replaced the small square `.calc__radio-label` buttons with full radio cards (`.office-costs__radio-card` — indicator circle + title + body description) in a 2-column grid (1-col < 600px), matching the meeting-costs radio-card pattern.
+- **Input sizing** — `.calc__input` font stepped down one type-scale notch (`--text-l-size` → `--text-m-size`); `max-inline-size: 160px` (140px inside input rows) so suffixes wrap naturally; `.office-costs__input-row` changed from grid to `flex-wrap: wrap` (matches the demo's `oc-var__field-row` layout). Custom-row inputs exempted (`max-inline-size: none`) so they stretch full container width.
+- **Per-input labels** — every input in multi-input sections (Power, Cleaning, Furniture, Admin, Lease legals) given its own field with label + tooltip + suffix, matching the demo's one-field-per-input layout. Bracketed units removed from all field labels (suffix next to the input carries the unit).
+- **Percentage inputs** — outgoings + admin-pct inputs changed from decimal (0.27 / 0.06) to whole-number percent (27 / 6) with `%` suffix; `readState` divides by 100 for calculation; URL params still store the decimal for backwards compatibility; `restoreSaved` detects legacy decimal values (<1) and converts; reset handler restores to the whole-number default.
+- **Team slider suffix** — removed the "person/people" suffix span (redundant with the "Team size" label).
+- **Booking toggle** — whole option card is the click target (not just the label); `click` listener on `[data-oc-booking-card]` with guards for label + input clicks so the cost field stays editable; `change` listener kept as fallback.
+- **Custom rows** — `renderCustomList` now sets `data-occv2-custom-row` on each `<li>` (was missing, causing "Add another" to re-render to a single row); remove × button `disabled` when only one row (hidden via `&:disabled { visibility: hidden }`), matching meeting-costs.
+- **"Reset all →" button** — third scenario action restores every input to its default, clears custom rows, clears all 3 localStorage scenario slots, resets team slider to 0 (via `stepper.paintCurrent()` callback), syncs booking visibility, rebuilds roster, and reticks.
+- **Compare dialog scroll lock** — `getScrollInstance()?.lenisInstance?.stop()` on open, `start()` on close (× button + native Esc `close` event), matching the `nav-mobile.js` pattern.
+- **Result headline** — changed from "Annual total · your office" to "Annual total office costs".
+- **Build hashes:** `npm run build` green; `php -l` clean on `blocks/office-costs/block.php` + `inc/calc-share-email.php` + `functions.php`.
+
+**Verify (residual):** in-browser pass — roster regen on team change; grade→rent sync both directions; booking auto-on at team ≥ 10; booking-cost strip visibility; scenarios save/load/clear/compare/reset in localStorage; savings band vs ACF prices; custom-line add/remove + URL growth; URL round-trip incl. `days` + `cNl cNv` + `bt` + `opex`/`adp` decimal conversion; email to Mailhog (`calc_source = office-costs` — sanitize/figures/compose dispatched); zero-start empty card; no-JS fallback (hidden roster/result + empty state).
 
 ### C6 share row + email/copy link (built on C6, not C1)
 
@@ -664,6 +813,7 @@ The §6 share/email system was built on C6 (hours-to-impact) instead of the orig
 
 **Implemented:**
 - `inc/calc-share-email.php` — REST endpoint `POST /wp-json/two57/v1/calc-share-email` (honeypot → `is_email` → consent gate → per-calc state sanitise/clamp → server-side recompute from ACF → email compose → send → MailPoet lead capture, all in one file, loaded from `functions.php`)
+- **Email letter wrapper** — `two57_calc_email_letter_open()` (applied centrally in the compose dispatcher so every current + future calc gets it): te reo greeting *"Kia ora. / Ka pai for running your numbers at two/fiftyseven!"* up top and sign-off *"One of our friendly kaitiaki will be in touch… Ngā mihi nui."* just before the address/contact-policy imprint, in both plain + HTML (`2026-08-17`)
 - Lead capture on shared **"Calculator leads"** MailPoet list + `calc_source` custom field, both auto-created on first send
 - Send via MailPoet `MailerFactory` with `wp_mail()` fallback; QA log hook `TWO57_CALC_EMAIL_LOG` (defined → email body written to `error_log` instead of sent)
 - Per-IP rate limit 3/10min via transient
@@ -757,7 +907,7 @@ Behaviour added during build:
 | v1 engine / pricing page | Block port |
 |---|---|
 | root `[data-js="calc-office-costs"]` (`pricing/index.html:674`) | block identity class `workspace-pricing`, keeps `[data-js="calc-office-costs"]` |
-| Team stepper `[data-calc-team-*]` (0–15) | `.calc__stepper` |
+| Team stepper `[data-calc-team-*]` (0–15) | `.calc__slider-row` / `.calc__stepper-btn` / `.calc__slider-value` |
 | Commitment radios `[data-calc-commitment]` (1/3/5) | `.calc__radio-group` `<button role="radio">` (§7 pattern) |
 | Annual discount `[data-calc-annual]` checkbox | `.annual-check` label (hidden unless a Dedicated member is on the roster — `[data-calc-annual-wrap]`) |
 | Member roster `<select>` `[data-calc-member]` (dedicated/flexi-5..1) | per-calc `.calc__roster-row`/`.calc__roster-select`; rebuilt on team change; stacks label-above-select ≤640px |
@@ -860,13 +1010,15 @@ New memberships now default to **Dedicated** (was Flexi 1 day/week): `M.DEFAULT_
 | `.calc__body` stretch + result fill (stretched card) | C1 override — promoted to base default (`.calc__body` is now `align-items: stretch`, `.calc__result` flex column, `.calc__result-empty` fills) | all calcs (C1 proved the right default) | ✅ done |
 | `.calc__roster` / `-row` / `-label` | C1 roster list — moved to base | C1 roster, C2/C3 member rows | ✅ done |
 | `.calc__slider` (range + value display, reconcile 2 impls) | new | C2 `.people-slider`, C3 `.ux-slider` | ✅ done — built on C1, ported to C6 (see "Slider system" below) |
-| `.calc__repeat` + `.calc__add-btn` (add/remove row) | new | C2 `.day-row`, C3 `.oc-custom-rows`, C4 `.custom-rows` | ⏳ with C2 |
-| `.calc__day-row` (repeating date/time shell) | new | C2 native date/time, C4 AM/PM inset widget | ⏳ with C2 |
-| `.calc__contact` (inline email/contact form) | new | C2 full `.qf` form, C3/4/5 `.calc-contact-inline` | ⏳ with C2 |
+| `.calc__repeat` + `.calc__add-btn` (add/remove row) | new | C2 `.day-row`, C3 `.oc-custom-rows`, C4 `.custom-rows` | ✅ done with C2 |
+| `.calc__day-row` (repeating date/time shell) | new | C2 native date/time, C4 AM/PM inset widget | ✅ done with C2 |
+| `.calc__result--sticky` (pinned quote aside) | new — opt-in per calc; `align-self: start` + `position: sticky` below the fixed header, dropped ≤`bp-lg` when the grid stacks | C1 workspace aside, C2 meet aside | ✅ done with C2 (see "Sticky result column" note) |
+| `.calc__add-on card` (bordered option card, top-right swatch, `:has(input:checked)` glow) | new — C2 `.meet-pricing__addon`/`__impact`, C1 `.workspace-pricing__annual-card` share the same recipe | C2 addons + impact toggle, C1 annual card | ✅ done — `.calc__option-card`/`.calc__option-head` promoted to `_calc-base.scss`; C2 addons + impact card + C1 annual card use them (per-calc sheets keep only their unique rules) |
+| `.calc__contact` (inline email/contact form) | new | C2 full `.qf` form, C3/4/5 `.calc-contact-inline` | ⏳ parked — not built with C2; C2 shipped the §6 `.calc__share-*` row instead |
 
 **Stay per-calc (genuinely unique):** C2 room-tile selector states (`recommended`/`disabled`), C2 `pricing-tiers` multi-rate table, C3 scenarios/compare dialog, chart bars, feature/inclusion card grids.
 
-**C2 build order (after the refactor commit):**
+**C2 build order (after the refactor commit):** ✅ **all built + committed** (`1d36abb`) on `feature/calculators-continued` (see "C2 — Meet pricing implementation — built" below).
 
 1. **`inc/calc-share-email.php`** — `two57_calc_sanitize_state()` `'meet-pricing'` case (people, room, duration, days `[{date,start,end}]`, addons, catering per-head, impact discount), `two57_calc_figures_meet_pricing()` (rooms + addons + impact discount + giving from ACF SSOT; recompute authoritative), `two57_calc_compose_meet_pricing()` (itemised quote, room, dates, impact-funding line)
 2. **`acf-json/group_two57_block_meet_pricing.json`** — `colour_space` select + `room_set` select (`all` default / `host` = Workshop/Event/Entire only)
@@ -874,13 +1026,242 @@ New memberships now default to **Dedicated** (was Flexi 1 day/week): `M.DEFAULT_
 4. **`assets/js/modules/meet-pricing.js`** — engine reading `window.twofiftyseven.rooms`/`addons`/`impact` (all already injected), `initCalcShare(root, { slug: 'meet-pricing', getState })`, URL sync (`people/room/duration/days/addons/impact`)
 5. **`assets/css/06-components/_calc-meet-pricing.scss`** — per-calc only: quote layout (`1.5fr 1fr`), room tiles, quote panel, impact card, pricing tiers; forward in `_index.scss`
 6. **`functions.php`** — `acf_register_block_type` `meet-pricing` (title `257 Calc Meet Pricing`)
-7. **`assets/js/main.js`** + **`transitions.js`** — import + `initMeetPricing()` (three call sites)
+7. **`assets/js/main.js`** + **`transitions.js`** — import + `initMeetPricing()` (three call sites; also see "Sticky result column" note re share placement)
 
 **SSOT:** no new ACF data fields — rooms (6 × cap/day/hour/evening), addons (AV/tea/catering/materials/setup), impact (discount 50%, eligibility $200k, paid-forward $450k) all already exist in `group_two57_calculator_data.json` and inject into `window.twofiftyseven`.
 
 **Verification:** `npm run build`; test quote end-to-end (room swap, day add/remove, addon reveal, impact toggle); email send → `TWO57_CALC_EMAIL_LOG`/Mailhog with `calc_source = meet-pricing`; copy-link round-trips `people/room/duration/days/addons/impact`; Host variant filters tiles via `room_set`.
 
+### C2 — Meet pricing implementation — built (committed `1d36abb` on `feature/calculators-continued`)
+
+All 7 build-order items above are implemented and staged. Additional notes from the build + review:
+
+- **Share row placement deviates from §6.1.** The plan says the share row lives *inside* the calc's `data-js` root. C2 (and C1's later restructure) actually place it **outside** the root, sibling in `.wrapper`, because the sticky result aside must stay inside the body grid while the share row releases below it. Consequences:
+  - The shared `initCalcShare(root, …)` contract ("the share node is inside root") no longer holds for calcs with a sticky aside. C2 calls `initCalcShare(root.parentElement, …)`; C1 was silently broken by its restructure until the review fix (`workspace-pricing.js:678` now passes `root.parentElement`). C6 still nests the share inside its root.
+  - **Rule going forward:** calcs whose result aside is sticky (`calc__result--sticky`) → `initCalcShare(root.parentElement, …)`; calcs with the share inside the root → `initCalcShare(root, …)`. This is the $6.1 gotcha that bit twice already.
+- **Sticky result column** — `.calc__result--sticky` (base) pins the quote aside below the fixed header on ≥`bp-lg`; base `_calc-base.scss` `--site-header-height` fallback is 4rem. Dropped ≤`bp-lg` (no travel room in the single-column stack). C1 + C2 opt in.
+- **Impact Discount is a card now, not a toggle.** The old `impact-toggle` in the aside was replaced by a Step 6 `.meet-pricing__addon` card (`data-calc-addon="impact"`), reusing the addon checkbox loop — no separate `[data-calc-impact-checkbox]` binding.
+- **Annual prepay in C1 became a card** (`.workspace-pricing__annual-card`) using the same addon-card recipe as C2 — now both share `.calc__option-card` (see that row in the shared-primitives table).
+- **Copy/rename updates (staged, ask-then-committed):** "Entire two/fiftyseven" → **"Entire Space"** (`functions.php` injector, `block.php` room set, email composer); "Private Wellington office" → **"Private office"**; "Dedicated 7 days/week" → **"Dedicated Desk"** (labels in `functions.php` + email composer; prices stay ACF-driven). Consent copy now spans the policy link inline: *"By submitting, I agree to two/fiftyseven contacting me to follow up about these numbers — see the Contact Policy"* (all three blocks, wrapped in `.calc__share-consent-text`).
+- **Meet people slider cap:** scale runs 1–60 then 70–200 by 10 (`PEOPLE_SCALE`, slider max = index 73). Base `.calc__slider-value` keeps **2ch** (the C1 15 / C6 30 readouts); meet overrides to 3ch via `.meet-pricing .calc__slider-value { min-inline-size: 3ch }` (base's 2ch would shift at 99→100).
+- **Swup re-init:** `initMeetPricing()` added to `main.js` + both `transitions.js` call sites (page:view + bfcache pageshow). The bfcache branch also gained `initWorkspacePricing()` (it was missing there pre-restructure — a latent gap surfaced in review).
+- **DRY refactor (2026-08-17, staged on `feature/calculators-continued`)** — all but one of the parked candidates shipped:
+  - `.calc__option-card` / `.calc__option-head` promoted to `_calc-base.scss`; C2 addons + impact toggle + C1 annual card converted (markup in both `block.php`s; per-calc sheets keep only their unique rules — annual top margin, addon text-input caret).
+  - Shared `assets/js/modules/calc-utils.js` — `fmt$` / `fmtN` (single Intl formatter; C2's `'$'+toLocaleString` variant retired for parity) + `bindRovingRadio(radios, onSelect)` (same capture-phase arrows + Enter/Space semantics each engine had). All three engines import it; the four duplicated roving blocks and `fmt$` copies are gone. `fmtHrs` intentionally stays per-engine (C6 `N hrs` vs C2 half-hour rounding, no space).
+  - Single `two57_meet_rooms()` (functions.php) — slug → `name` + ACF `key`; consumed by `block.php` `$rooms_all`, the wp_head rooms injector, and `inc/calc-share-email.php` (figures + `$rooms_allowed`). Injector labels normalised to the block.php capitals ("Meeting Room" etc.).
+  - **Still parked:** stepper/slider `paint/update` binding — each engine's slider has genuinely different scale/readout contracts; hold until a real second consumer forces a shared one.
+
 ### Code-review notes (2026-08-10)
 
 - Fixed invalid token `--layout-content-wide` → `--layout-wide-size` (token doesn't exist in theme).
 - Re-indented `block.php` (fields-grid wrapper + `<details>` had broken leading whitespace). Tags verified balanced.
+
+### Code-review notes (2026-08-17)
+
+- Fixed **C1 workspace-pricing share regression**: the sticky restructure moved `[data-calc-share]` out of the `[data-js="calc-office-costs"]` root, so `initCalcShare(root, …)` silently no-oped; now `root.parentElement` (matches C2).
+- Restored the `initInjectPrices()` indentation accident in `transitions.js`; added `initWorkspacePricing()` to the bfcache pageshow branch.
+- Both fixes folded into the C2 commit (`1d36abb`).
+- **DRY refactor review (2026-08-17, staged on `feature/calculators-continued`):** option-card/rooms/JS-helper dedupe re-verified — `bindRovingRadio` preserves each engine's exact keydown semantics (capture phase, guard-on-disabled via the engine's `onSelect`), `fmt$` output matches the retired meet `'$'+toLocaleString` (en-NZ identical formatting), `.calc__option-card` carries the `position: relative` the swatch anchored to, and `two57_meet_rooms()` returns the same slugs/keys in the same order. Build + `php -l` clean; only `assets/dist/.vite/manifest.json` + hashed CSS/JS change in dist.
+- Docs (`docs/`) not staged — reference-only, as before.
+
+## 12. Refactor phase — shared styling + engine dedupe review
+
+Reviewed 2026-08-17 across all four shipped calcs (C1 workspace-pricing, C2 meet-pricing, C5 office-carbon, C6 hours-to-impact). Scope: shared `.calc__*` styling that can be DRY'd and engine/template duplication worth a shared helper. Ordered by value/risk; each item notes what changes and where.
+
+### CSS — `_calc-base.scss` + per-calc sheets
+
+1. **Delete dead `.calc__stepper` block** (`_calc-base.scss:239-279`). Vestigial from an older design — all four block templates use `.calc__stepper-btn` + `.calc__slider-value`; nothing references `.calc__stepper` or its nested `button`/`output` selectors. ~40 lines of duplicate button/output styles. **Follow-up:** sync the two stale catalogue rows (this doc lines `§11` `.calc__stepper` row + the C1 plan stepper row).
+
+2. **Extract a `@mixin calc-input()`** — the bordered-input recipe is repeated 4×:
+   - `.calc__input` (`_calc-base.scss:485-502`)
+   - `.calc__day-row-inputs input` (`_calc-base.scss:618-637`) — narrower padding + monospace
+   - `.calc__share-input` (`_calc-base.scss:1073-1091`) — `flex` sizing on top
+   - `.meet-pricing__addon-extra input[type="number"]` (`_calc-meet-pricing.scss:191-208`)
+   Common: `border-tertiary`/`radius-xs`/`content-inverse` bg/`content-primary` color/`tabular-nums` + `:focus` outline. **As built:** `@mixin calc-input( $focus-offset: 2px )` — padding/font stay in the per-rule declarations, since the four inputs diverge there (the day-row fields swap to monospace + `1px` ring, the share input adds `flex` sizing + `field-sizing`).
+
+3. **Extract a `@mixin calc-icon-btn($radius, $fill)`** — small square/round icon-button recipe repeated 3× (default fill = stepper look; `$fill: false` = transparent + hover-invert):
+   - `.calc__stepper-btn` (`_calc-base.scss:298-328`) — `radius-xs`, filled bg + hover tint
+   - `.calc__day-row-remove` (`_calc-base.scss:649-679`) — `50%`, transparent → filled on hover
+   - `.calc-source__trigger` (`_calc-base.scss:935-957`) — `50%`, `18px` fixed
+   Common: flex-center, `--space-l` sizing, `border-tertiary`, colour transitions, `:hover`/`:focus-visible` treatment.
+
+4. **Consolidate accent-column naming** — three names, one concept:
+   - `workspace-pricing__result-col--accent` (`_calc-workspace-pricing.scss:158`) — empty placeholder
+   - `hours-to-impact__result-col--accent` (`_calc-hours-to-impact.scss:14`) — empty placeholder
+   - `calc__result-col--save` (`office-carbon` block.php:130) — **used in markup, never defined in CSS**
+   Collapse to a single shared `.calc__result-col--accent` in `_calc-base.scss`; update the three templates. (Currently inert — all three just piggyback `.calc__result-col` — but the missing definition for `.calc__result-col--save` is a real gap if anyone later styles it.)
+
+5. **Tiny cleanup: `.calc__slider-value`** (`_calc-base.scss:423-436`) — declares `text-align: right` then immediately `text-align: center` (last wins). Drop the dead `right` declaration.
+
+**Not refactoring:** the per-block `padding-block: var(--space-xl-3xl)` shell rule is the theme-wide `.block` convention (also in `_faq`, `_testimonial`, `_cta-section`, etc.) — already consistent, keep as-is.
+
+### PHP — block templates (`blocks/*/block.php`)
+
+6. **DRY the `.calc__share` section (~40 lines × 4).** The email form, honeypot, consent, status output and copy-link card are byte-identical across all four calcs; only the h2 (`save your quote, send it on` vs `save your number, share it, send it on`) and the two card body copies differ. Extract a single renderer — `two57_calc_share()` helper (in `functions.php`, echoing the shared section) or a `get_template_part('partials/calc-share')` — with per-calc copy passed as args.
+
+7. **DRY the intro block (~20 lines × 4).** The `calc__intro` eyebrow/heading/tagline block (including the `$is_preview` fallback) is verbatim in all four templates. Same partial/helper treatment.
+
+### JS — shared helpers into `assets/js/modules/calc-utils.js`
+
+8. **`bindStepper()` — team/people stepper wiring.** `paintSlider()` (sets `--pct` + outgoing value + dec/inc disabled) and `updateTeam()` (clamp to max, sync range, disable buttons, repaint) are near-identical in C1, C5, C6, plus C2's people variant (which adds the scale-index contract). Parked in the 2026-08-17 refactor review ("no real second consumer forces a shared one") — C5 is now that fifth consumer; revisit. Signature sketch: `bindStepper(root, { rangeSel, sliderSel, outSel, decSel, incSel, max, valueFor, current, onUpdate })` — selectors passed as strings so each engine keeps its own `[data-calc-team-*]` / `[data-calc-people-*]` naming; `valueFor` (index → shown value) + `current` (→ index) express meet's stepped-scale contract.
+
+9. **Dedupe small handlers:**
+   - **Stepper-only number input** — the `stepperOnly` capture-phase keydown guard on `[data-calc-weeks], [data-calc-hours]` is duplicated in C5 + C6 → helper.
+   - **Breakdown trigger → `<details>` proxy** (toggle `open`, sync `aria-expanded`, smooth-scroll into view) is duplicated ×4 → helper taking the details id.
+   - **`bindSourceTooltips`** (`.calc-source__trigger` open/close + click-away) duplicated in C1 + C5 → helper.
+
+### Execution order
+
+Recommended sequence: **CSS 1, 4, 5** (pure deletions/naming, zero visual change) → **CSS 2, 3** (mixins) → **PHP 6, 7** (highest-value dedupe) → **JS 8, 9** (larger, independent — can land as a follow-up pass). Verify with `npm run build` + `php -l` after each batch; dist assets change only in the rebuilt manifest/hashes.
+
+### Status
+
+All items implemented (2026-08-17), in the recommended order:
+
+- **CSS 1 (`.calc__stepper` deleted)** — dead block removed from `_calc-base.scss`; catalogue rows here (§11 + C1 plan) synced to `.calc__stepper-btn` / `.calc__slider-row`.
+- **CSS 4 (accent column consolidated)** — single shared `.calc__result-col--accent` in base; the three per-calc names (`workspace-pricing__result-col--accent`, `hours-to-impact__result-col--accent`, and the never-defined `calc__result-col--save`) retired, three templates updated.
+- **CSS 5** — dead `text-align: right` removed from `.calc__slider-value`; stale "both calcs cap at 15/30" comment corrected.
+- **CSS 2 (`@mixin calc-input`)** — extracted in base; applies to `.calc__input`, `.calc__day-row-inputs input` (1px ring), `.calc__share-input`, `.meet-pricing__addon-extra input[type="number"]` (via `@use 'calc-base'`).
+- **CSS 3 (`@mixin calc-icon-btn($radius, $fill)`)** — extracted in base; applies to `.calc__stepper-btn` (filled), `.calc__day-row-remove` (transparent, 50%), `.calc-source__trigger` (transparent, 50%, keeps its fill-on-focus override). Note: the trigger previously had **no** focus ring (fill-on-hover only) — the mixin's `:focus-visible` outline (2px, `border-primary`) is a deliberate a11y addition, kept alongside the trigger's fill-on-focus override.
+- **PHP 6 (`two57_calc_share()` in functions.php)** — share row rendered once; per-calc copy passed as an array (meet overrides; workspace/hours/carbon use the defaults). All four `block.php`s call it.
+- **PHP 7 (`two57_calc_intro()` in functions.php)** — eyebrow/heading/tagline intro (+ `$is_preview` fallback) rendered once; all four templates call it.
+- **JS 8 (`bindStepper()` in calc-utils.js)** — wired in all four engines (team steppers value-based; meet people stepper index-based over `PEOPLE_SCALE`); engines keep only their state mutation in `onUpdate` (workspace roster sync). Replaces the "still parked" stepper note above — the four consumers now justify the shared helper.
+- **JS 9** — `restrictStepperInputs()` (C5 + C6), `bindBreakdownTrigger()` (C1, C5, C6), `bindSourceTooltips()` (C1 + C5) extracted into calc-utils.js; local copies removed.
+
+Verified: `npm run build` clean (only pre-existing swiper `@import` deprecation warnings, unchanged rules in dist — dead `.calc__stepper` gone, mixin-expanded `.calc__stepper-btn` / `.calc-source__trigger` present, all stepper/breakdown/tooltip selectors in the JS bundle) + `php -l` clean on `functions.php` and all four `block.php`s.
+
+### T1 — Calc Widget implementation (2026-08-18)
+
+Port of the standalone `meetings/index.html` `.quick-quote` teaser (`shared-js/quote-preview.js`) into a lightweight ACF block (`calc-widget`) using the shared `.calc__*` catalogue. No email/share, no URL round-trip, no breakdown — it's a teaser that deep-links to the full C2 meet-pricing calculator with state carried via URL params (`?room&dur=hour&hours&people&impact`).
+
+- **Engine** — `assets/js/modules/calc-widget.js` exports `initCalcWidget()` on `[data-js="calc-widget"]`. People stepper via `bindStepper` (same non-linear `PEOPLE_SCALE` as meet-pricing: 1–60 by 1, then 70–200 by 10); hours stepper via `bindStepper` (1–12, value-based); room radio pills with `bindRovingRadio` (arrow-key nav); auto-recommendation always picks the smallest room that fits the current people count (re-recommends on every people-slider change, so the total tracks in both directions); impact discount toggle (whole-card click target, matching office-costs booking pattern); impact copy swap (giving vs receiving when discount is applied); CTA `href` updated on every render with `URLSearchParams` carrying `room/dur/hours/people/impact` to the full calc.
+- **Markup** — `blocks/calc-widget/block.php` (identity `calc-widget`, `data-color-space`): intro (`two57_calc_intro`), `.calc__body` (1.5fr/1fr grid), inputs card (people slider row, hours slider row, room radio grid with capacity from SSOT, impact discount `.calc__option-card`), sticky `.calc__result--sticky` aside (estimated total + impact statement with label matching `.calc__result-label` styling + CTA button using `.calc__breakdown-trigger` with chevron rotated right). Room slugs + names from `two57_meet_rooms()`; capacities from ACF `room_<key>_capacity`; rates read by JS from `window.twofiftyseven.rooms` (no DOM duplication).
+- **ACF** — `acf-json/group_two57_block_calc_widget.json` (`cw_eyebrow`/`cw_heading`/`cw_tagline` + `room_set` select [all/host] + `pricing_url` page_link [admin picks the full calc page] + `colour_space` select); location `acf/calc-widget`; registered in `functions.php` after `office-costs`. Default intro: eyebrow "Estimate", heading "get a number for your meeting", tagline "Pick a room, your duration and how many people…".
+- **SCSS** — `assets/css/06-components/_calc-widget.scss` (shell padding, 1.5fr/1fr body grid, slider readout 2 steps down `--text-3xl-size` + 3ch, room pill grid 2-col→3-col, room tiles matching meet-pricing style, impact statement, CTA caret rotated -45deg to point right, `text-decoration: none` on the `<a>` trigger); forwarded in `_index.scss`.
+- **Wiring** — `main.js` + `transitions.js` (one import + two call sites: bfcache + page:view).
+- **Refinements:** impact label uses `.calc__result-label | text-l` (same as "Estimated total"); suffix + context merged into single line ("of subsidised space which has contributed $450,000+ paid forward since 2021") with "of subsidised space" in `<strong>`; talk-link block removed; `pricing_url` ACF field is `page_link` (page picker) not free-text `url`.
+
+**Verify (residual):** in-browser pass — people slider auto-room-switch both directions; hours slider total update; room pill manual selection; impact discount toggle (whole card) + copy swap; CTA deep-link params; host room set renders only large rooms; no-JS fallback (static `$0` total + CTA href to pricing page).
+
+### T3 — Calc Summary implementation plan
+
+> **Source:** the "The math / costs less than going it alone" section on `https://twofiftyseven.pages.dev/workspace/hub/`. A compact dashboard widget: **2 sliders above (team size + avg days/week) → 4 linked cards in a row**. Each card shows a single headline figure (live-updating) and links to a full calculator page for the detail. Designed to sit on workspace product pages (Hub, Base, Desk) as a quick "see your number" teaser that funnels into the detailed calculators.
+
+#### Layout (from demo)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│  [Team size slider: 1–15]    [Avg days/week slider: 1–5]    │
+├──────────────┬──────────────┬──────────────┬─────────────────┤
+│ At 257       │ You'd save   │ Carbon pos   │ Hours to impact │
+│ $X/yr        │ $X           │ X t CO₂e/yr  │ $X              │
+│ all-in       │ vs private   │ after 200%   │ of subsidised   │
+│ nothing extra│ office $X/yr │ offset       │ space funded    │
+│ see included→│ see how→     │ see method→  │ see where→      │
+└──────────────┴──────────────┴──────────────┴─────────────────┘
+```
+
+- **4-col grid** desktop → 2-col ≤1100px → 1-col ≤600px (saving card `order: -1` on mobile, matching demo)
+- **Card 1 (dark):** "At two/fiftyseven" — annual membership cost → links to what's included page
+- **Card 2 (lime/accent):** "You'd save" — savings vs private office → links to office-costs calculator
+- **Card 3 (ground):** "Carbon position" — net carbon after 200% offset → links to office-carbon calculator
+- **Card 4 (ground):** "Hours to impact" — $ of subsidised space funded → links to hours-to-impact calculator
+- Each card is an `<a>` (whole card = link), hover lifts subtly
+
+#### ACF fields
+
+| Field | Type | Purpose |
+|---|---|---|
+| `cs_eyebrow` | text | Section eyebrow (default: "The math") |
+| `cs_heading` | text | H2 heading (default: "costs less than going it alone") |
+| `cs_tagline` | textarea | Intro line (default: "All inclusions, no surprises…") |
+| `link_inclusions` | page_link | Card 1 destination — "see what's included" page |
+| `link_office_costs` | page_link | Card 2 destination — office costs calculator page |
+| `link_carbon` | page_link | Card 3 destination — carbon calculator page |
+| `link_giving` | page_link | Card 4 destination — giving/hours-to-impact calculator page |
+| `colour_space` | select | neutral / forest / purple / maroon |
+
+All 4 link fields are `page_link` so admin picks the destination page from a dropdown (same pattern as T1's `pricing_url`).
+
+#### Engine (`assets/js/modules/calc-summary.js`)
+
+Exports `initCalcSummary()` on `[data-js="calc-summary"]`. Reads `window.twofiftyseven.prices` + `.impact` (same SSOT as all other calcs). No URL sync, no share/email — it's a summary dashboard, not a full calculator.
+
+**Inputs:**
+- `[data-cs-team-range|slider|inc|dec|out]` — team size stepper (1–15, `bindStepper`, value-based)
+- `[data-cs-days-range|slider|inc|dec|out]` — avg days/week stepper (1–5, `bindStepper`, value-based)
+
+**Outputs (4 cards, each an `<a>` with a figure + sub + link label):**
+- `[data-cs-257-cost]` — annual at 257
+- `[data-cs-save]` — savings vs private office
+- `[data-cs-save-context]` — "vs running your own… $X/yr"
+- `[data-cs-carbon]` — net carbon position
+- `[data-cs-impact]` — $ of subsidised space funded
+
+**Formulas (simplified from the full calc engines):**
+
+State = `{ team: 1, days: 3 }`. Constants from the existing engines.
+
+| Card | Formula | Source engine |
+|---|---|---|
+| At 257 | `prices['flexi-' + days].price × team × 12` (Flexi-N membership per person × team × 12 months) | workspace-pricing.js |
+| You'd save | `privateAnnual − oursAnnual` where `privateAnnual = team × 14200` (benchmark) and `oursAnnual` = card 1 figure | workspace-pricing.js `computeComparison` |
+| Carbon position | `ours_offset_kg = person_days × PERSON_DAY_257 × (1 − 2.0)` → signed net (negative = good). `person_days = team × days × 46` | office-carbon.js `compute` (simplified — 257 side only, fixed 46 weeks + 8h/day) |
+| Hours to impact | `team × days × 8 × 46 × givingRate` (person-hours × $1/hr) | workspace-pricing.js kaupapa bridge |
+
+The carbon formula uses the same `PERSON_DAY_257` constant and `OFFSET_RATIO_PUBLIC = 2.0` from office-carbon.js. The private-office carbon is NOT shown (this is a summary, not a comparison) — only the 257 net position (which is always net-negative after 200% offset).
+
+#### Markup (`blocks/calc-summary/block.php`)
+
+- Identity: `calc-summary`
+- Uses `two57_calc_intro()` for the heading
+- `.calc__body` but **not** the standard 2-col inputs/result grid — instead a vertical stack: inputs row on top, card grid below
+- Inputs: `.calc__inputs` card containing 2 `.calc__slider-row` steppers side-by-side (2-col grid → 1-col mobile)
+- Cards: `.calc-summary__cards` (4-col grid), each card is `<a class="calc-summary__card calc-summary__card--{variant}">` with eyebrow + figure + sub + link label
+- Card variants: `--cost` (dark/inverse), `--saving` (accent/lime), `--carbon`, `--giving` (both surface ground)
+- The 4 card hrefs are the ACF `page_link` values (rendered server-side, no-JS fallback)
+
+#### SCSS (`assets/css/06-components/_calc-summary.scss`)
+
+- Shell padding + `@use 'calc-base'` for the `calc-input` mixin
+- Inputs row: 2-col grid for the two steppers (1-col mobile)
+- Card grid: `repeat(4, minmax(0,1fr))` → `repeat(2,…)` ≤1100px → 1-col ≤600px
+- Card styling: rounded, `min-height` for visual balance, hover `translateY(-3px)` + shadow, focus-visible outline
+- Card variants via `--variant` modifier (dark, accent, ground) using theme semantic tokens
+- Figure: `font-weight: 700`, `clamp(2rem, 2.2vw + 1rem, 3rem)`, `tabular-nums`
+- Link label: monospace, uppercase, `margin-top: auto` (pinned to card bottom), opacity 0.7 → 1 on hover
+
+#### Files to create/modify
+
+| File | Action |
+|---|---|
+| `blocks/calc-summary/block.php` | **Create** — block markup |
+| `assets/js/modules/calc-summary.js` | **Create** — engine |
+| `assets/css/06-components/_calc-summary.scss` | **Create** — per-calc SCSS |
+| `acf-json/group_two57_block_calc_summary.json` | **Create** — ACF field group |
+| `assets/css/06-components/_index.scss` | **Modify** — `@forward 'calc-summary';` |
+| `assets/js/main.js` | **Modify** — import + init |
+| `assets/js/modules/transitions.js` | **Modify** — import + 2 call sites (bfcache + page:view) |
+| `functions.php` | **Modify** — `acf_register_block_type()` after `calc-widget` |
+| `docs/wp-calculators-plan.md` | **Modify** — mark T3 done, add implementation state |
+
+#### Build checklist
+
+1. Block PHP: 2 slider rows + 4 linked cards (ACF page_link hrefs)
+2. Engine: `bindStepper` × 2, simplified `compute()` for 4 figures, render to card spans
+3. SCSS: card grid + variants + slider row layout
+4. ACF JSON: 7 fields (eyebrow, heading, tagline, 4× page_link, colour_space)
+5. Wire main.js + transitions.js + functions.php + _index.scss
+6. `npm run build` + `php -l` clean
+
+### T3 — Implementation state (2026-08-18)
+
+Built on `feature/calculators-continued` per the plan above. Build + PHP lint green; pending commit. Refined in-session after the first build: stepper +/− buttons and slider suffixes removed (sliders only), all font sizes moved onto the theme type scale, card hover changed to a background-only shift, and link labels switched to monospace + chevron carets.
+
+- **Markup** — `blocks/calc-summary/block.php` (identity `calc-summary`, `data-color-space`, root `data-js="calc-summary"`): intro (`two57_calc_intro`); `.calc__inputs.calc-summary__inputs` 2-col grid holding the team-size + avg-days/week `.calc__slider-row` sliders — bare range inputs, **no +/- steppers** (`.calc__slider-controls` overridden to a single `1fr` column so the track fills the row), readout = `.calc__slider-value` number only (no "person/people · day/days" suffix); `.calc-summary__cards` 4-col grid of whole-card `<a>`s — `--cost` (dark ink) "At two/fiftyseven" → `link_inclusions`, `--saving` (accent) "You'd save" (sub embeds live `[data-cs-private]` office anchor) → `link_office_costs`, `--carbon` "Carbon position" → `link_carbon`, `--giving` "Hours to impact" → `link_giving`. All 4 hrefs are ACF `page_link` fields (admin-picked pages), falling back to the source-calculator paths. Each card's link label is monospace uppercase, flush-left text + right-pointing `.calc-summary__caret` chevron.
+- **Engine** — `assets/js/modules/calc-summary.js` (`initCalcSummary`): two `bindStepper`s (value-based, index+1 so sliders run 1–15 / 1–5, zero-start like every other calc — no `decSel`/`incSel`, `bindStepper` tolerates their absence); `compute()` reads `window.twofiftyseven.prices['flexi-N']` (fallback `9 + N×100`) + `impact.givingRatePerPersonHour`. Formulas — ours annual = `flexi × team × 12`; private annual = `team × 14,200 × (days/5)`; saving = difference; carbon = `team × days × 46 × PERSON_DAY_257 × (1 − 2.0)` kg (negative, rendered as `−N.NN t CO₂e/yr`); giving = `team × days × 46 × 8 × givingRate`. Constants lifted from workspace-pricing.js + office-carbon.js. No URL sync / share — hands off via the card links.
+- **SCSS** — `assets/css/06-components/_calc-summary.scss`: inputs 2-col → 1-col ≤600px; slider readout at `--text-3xl-size`; `.calc__slider-controls` forced to `1fr` (no steppers); card grid `repeat(4)→repeat(2) ≤1100px→1 ≤600px` with saving card `order:-1` on mobile; variants via semantic tokens (`--cost` = `--color-surface-inverse-primary`/`--content-inverse`, `--saving` = `--color-btn-primary-invert-bg`/`-text`, carbon+giving = `--color-surface-secondary`); **all type sizes on the theme scale** — figure `--text-2xl-size`, unit `--text-m-size`, sub `--text-s-size`, link `--text-xs-size`; hover = `color-mix` background shift within the card's own colour family, **no lift/translate, no text-colour change** (each hover pins `color` to defeat the global `a:hover` `unset` from `_links.scss`); `.calc-summary__link` `margin-block-start:auto` pinned to card bottom; caret chevron mirrors `.calc__breakdown-caret` (border-right/bottom 2px `currentColor`, right-pointing rotate); cards grid has its own `is-inview` reveal (mirrors `calc-base.reveal`).
+- **ACF** — `acf-json/group_two57_block_calc_summary.json` (`cs_eyebrow`/`cs_heading`/`cs_tagline` + `link_inclusions`/`link_office_costs`/`link_carbon`/`link_giving` page_link, `return_format: url`, `allow_null` + `colour_space`); location `acf/calc-summary`; registered in `functions.php` after `calc-widget`.
+- **Wiring** — `main.js` (import + init), `transitions.js` (import + bfcache + page:view), `_index.scss` (`@forward 'calc-summary'`).
+
+**Verify (residual):** in-browser pass — both sliders drive their readouts and all four figures recompute on any change (team 1–15, days 1–5); cost/save/carbon/giving figures render correct live values including the nested `__figure-unit` (`/yr`, ` t CO₂e/yr`); saving sub's private-office anchor updates; card hover shifts background within the card's colour family with no lift and no text-colour change (dark `--cost` card especially); focus ring visible on keyboard nav; mobile reflow (inputs 1-col, saving card first, cards 1-col); card links resolve to the admin-picked pages; no-JS fallback (static `$0` figures + server-rendered hrefs, reveal degrades to visible-only-with-JS like the other calc blocks).

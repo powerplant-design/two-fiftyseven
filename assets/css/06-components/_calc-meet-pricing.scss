@@ -1,0 +1,241 @@
+@use 'calc-base';
+@use '../02-tokens/breakpoints' as bp;
+
+// ============================================================
+// 257 Meet Pricing Calculator — block-specific overrides
+// ============================================================
+// Shared calculator styling lives in _calc-base.scss (.calc__*).
+// This file holds only the meet-pricing-specific shell + room tiles,
+// addon cards, people-slider readout, the sticky quote panel extras
+// (impact card + impact-discount toggle), and the discount row tint.
+// ============================================================
+
+.meet-pricing {
+	padding-block: var(--space-xl-3xl);
+}
+
+// Body grid — source uses 1.5fr 1fr (form left wider than quote right).
+.meet-pricing .calc__body {
+	grid-template-columns: 1.5fr 1fr;
+
+	@media (max-width: #{bp.$bp-lg}) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// Share row lives OUTSIDE the body grid (own container below it) so the
+// sticky quote aside releases and scrolls off before it. The grid gap no
+// longer applies, so restore the same spacing between grid and share.
+.meet-pricing .calc__share {
+	margin-block-start: var(--space-s-xl);
+	padding-block-start: var(--space-s-xl);
+}
+
+// People slider readout — number only (no "people" suffix). The base
+// .calc__slider-value reserves 2ch (caps 15/30); meet's people scale runs
+// to 200 so widen to 3ch — otherwise the readout nudges the controls at
+// 99 → 100.
+.meet-pricing .calc__slider-value {
+	min-inline-size: 3ch;
+}
+
+// Recommendation line above the room grid — small monospace caption.
+.meet-pricing__room-rec {
+	color: var(--color-content-secondary);
+	margin-block-start: var(--space-2xs);
+}
+
+.meet-pricing__room-rec strong {
+	color: var(--color-content-primary);
+	font-weight: 600;
+}
+
+// ── Room tile grid (per-calc; sized to the room_set in block.php) ──
+// ── Room tile grid + Room tiles + Duration cards (shared) ──────
+// The room selector and the duration selector use the exact same card
+// layout — a 2-col grid on mobile, 3-col ≥700px — with clickable card
+// buttons that carry a name + small monospace caption. Shared selectors
+// keep the two in lock-step; the only divergence is durations have no
+// "recommended" hint (always room-driven).
+.meet-pricing__room-grid,
+.meet-pricing__duration-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: var(--space-xs);
+
+	@media (min-width: 700px) {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.meet-pricing__room-option,
+.meet-pricing__duration-option {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding: var(--space-s);
+	border: 2px solid transparent;
+	border-radius: var(--corner-radius-m);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	text-align: left;
+	cursor: pointer;
+	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease, color var(--transition-speed) ease, transform var(--transition-speed) ease;
+
+	&:hover:not([aria-disabled="true"]) {
+		border-color: var(--color-border-primary);
+	}
+
+	&[aria-checked="true"] {
+		background-color: var(--color-btn-primary-bg);
+		border-color: var(--color-btn-primary-bg);
+		color: var(--color-btn-primary-text);
+	}
+
+	&[aria-checked="true"] .meet-pricing__room-cap,
+	&[aria-checked="true"] .meet-pricing__duration-cap {
+		color: color-mix(in srgb, var(--color-btn-primary-text) 75%, transparent);
+	}
+
+	&[data-recommended="true"]:not([aria-checked="true"]) {
+		border-color: var(--color-border-tertiary);
+	}
+
+	&[aria-disabled="true"] {
+		opacity: 0.35;
+		pointer-events: none;
+		cursor: not-allowed;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.meet-pricing__room-name,
+.meet-pricing__duration-name {
+	font-weight: 700;
+	font-size: var(--text-m-size);
+	line-height: 1.15;
+}
+
+.meet-pricing__room-cap,
+.meet-pricing__duration-cap {
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-xs-size);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+	color: var(--color-content-secondary);
+}
+
+// ── Add-on cards (tea / projector / sound / catering) ────────────
+.meet-pricing__addon-list {
+	display: grid;
+	// minmax(0, …) so the single column shrinks to the container instead of
+	// growing to the widest card's content (the nowrap pricing lines).
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--space-xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+// The card recipe (bordered card, top-right swatch, glow on check) is the
+// shared .calc__option-card; only the unruly per-head text box stays here —
+// the card cursor would suggest the whole input toggles the addon instead.
+.meet-pricing__addon {
+	.meet-pricing__addon-extra input[type="number"] {
+		cursor: text;
+	}
+}
+
+.meet-pricing__addon-title {
+	font-weight: 700;
+	color: var(--color-content-primary);
+}
+
+.meet-pricing__addon-price {
+	color: var(--color-content-secondary);
+}
+
+.meet-pricing__addon-body {
+	margin: var(--space-2xs) 0 0;
+	color: var(--color-content-secondary);
+}
+
+// Extra controls (tea-type select, catering per-head) only show when
+// the addon is toggled on. Source uses [data-on="true"]; the CSS :has
+// selector achieves the same with the checkbox state — no JS hook
+// needed, and it stays in sync with the swatch.
+.meet-pricing__addon-extra {
+	display: none;
+	margin-block-start: var(--space-s);
+}
+
+.meet-pricing__addon:has(input:checked) .meet-pricing__addon-extra {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-xs);
+}
+
+.meet-pricing__addon-extra label {
+	color: var(--color-content-secondary);
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-xs-size);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+}
+
+.meet-pricing__addon-extra input[type="number"] {
+	@include calc-base.calc-input( 1px );
+	inline-size: auto;
+	min-inline-size: 5rem;
+	padding-block: var(--space-2xs);
+	padding-inline: var(--space-2xs);
+	font-size: var(--text-s-size);
+}
+
+// ── Sticky quote panel extras ────────────────────────────────────
+// The dark .calc__result-grid is the parent; colour tokens are inverse.
+.meet-pricing__impact {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding-block-start: var(--space-xs);
+	border-block-start: 1px solid var(--color-border-secondary);
+}
+
+.meet-pricing__impact-label {
+	color: color-mix(in srgb, var(--color-content-inverse) 78%, transparent);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+}
+
+.meet-pricing__impact-amount {
+	font-variant-numeric: tabular-nums;
+	color: var(--color-content-inverse);
+	line-height: 1.1;
+}
+
+.meet-pricing__impact-context {
+	color: color-mix(in srgb, var(--color-content-inverse) 78%, transparent);
+	margin: 0;
+
+	strong { color: var(--color-content-inverse); }
+}
+
+// ── Discount rows in the itemised quote list ──────────────────────
+.meet-pricing__quote-row--discount .calc__compare-row-value {
+	color: var(--color-content-inverse);
+	font-weight: 600;
+}
+
+// Per-calc override of the empty prompt colour so it reads on the dark
+// inverse card even when not inside the result grid (the root .calc__compare
+// is flex-col so the prompt stretches to fill via the shared .calc__result-empty).
+.meet-pricing .calc__result-empty {
+	color: color-mix(in srgb, var(--color-content-inverse) 72%, transparent);
+}

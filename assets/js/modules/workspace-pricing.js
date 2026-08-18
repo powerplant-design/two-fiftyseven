@@ -23,6 +23,7 @@
  */
 
 import { initCalcShare } from './calc-share.js';
+import { bindRovingRadio, bindStepper, bindBreakdownTrigger, bindSourceTooltips, fmt$, fmtN } from './calc-utils.js';
 
 // --- Cited methodology + benchmarks (stay in code) ---
 const M = {
@@ -95,18 +96,6 @@ const TIER_LABELS = {
 };
 
 // --- Formatters ---
-function fmt$( n ) {
-	return new Intl.NumberFormat( 'en-NZ', {
-		style: 'currency',
-		currency: 'NZD',
-		maximumFractionDigits: 0,
-	} ).format( Math.round( n ) );
-}
-
-function fmtN( n ) {
-	return new Intl.NumberFormat( 'en-NZ' ).format( Math.round( n ) );
-}
-
 function round100( n ) {
 	return Math.round( n / 100 ) * 100;
 }
@@ -469,16 +458,16 @@ function renderResults( root, state, computed, prices, annualDiscount ) {
 		el.textContent = fmt$( computed.givingDollars );
 	} );
 
-	root.querySelectorAll( '.workspace-pricing__bar--private' ).forEach( ( bar ) => {
+	root.querySelectorAll( '.calc__chart-bar--ref' ).forEach( ( bar ) => {
 		bar.style.setProperty( '--bar-pct', cmp.pctPrivate + '%' );
 	} );
-	root.querySelectorAll( '.workspace-pricing__bar--coworking-low' ).forEach( ( bar ) => {
+	root.querySelectorAll( '.calc__chart-bar--low' ).forEach( ( bar ) => {
 		bar.style.setProperty( '--bar-pct', cmp.pctCwLow + '%' );
 	} );
-	root.querySelectorAll( '.workspace-pricing__bar--coworking-high' ).forEach( ( bar ) => {
+	root.querySelectorAll( '.calc__chart-bar--high' ).forEach( ( bar ) => {
 		bar.style.setProperty( '--bar-pct', cmp.pctCwHigh + '%' );
 	} );
-	root.querySelectorAll( '.workspace-pricing__bar--ours' ).forEach( ( bar ) => {
+	root.querySelectorAll( '.calc__chart-bar--ours' ).forEach( ( bar ) => {
 		bar.style.setProperty( '--bar-pct', cmp.pctOurs + '%' );
 	} );
 
@@ -492,22 +481,6 @@ function renderResults( root, state, computed, prices, annualDiscount ) {
 	} );
 }
 
-// --- Tooltip handling ---
-function bindSourceTooltips( root ) {
-	root.addEventListener( 'click', ( e ) => {
-		const trigger = e.target.closest( '.calc-source__trigger' );
-		if ( trigger ) {
-			const wrap = trigger.closest( '.calc-source' );
-			const isOpen = wrap.dataset.open === 'true';
-			root.querySelectorAll( '.calc-source[data-open="true"]' ).forEach( ( el ) => { el.dataset.open = 'false'; } );
-			wrap.dataset.open = isOpen ? 'false' : 'true';
-			e.stopPropagation();
-		} else {
-			root.querySelectorAll( '.calc-source[data-open="true"]' ).forEach( ( el ) => { el.dataset.open = 'false'; } );
-		}
-	} );
-}
-
 // --- Events ---
 function bindEvents( root, state, prices, annualDiscount ) {
 	function rerender() {
@@ -516,38 +489,29 @@ function bindEvents( root, state, prices, annualDiscount ) {
 		writeURL( state );
 	}
 
-	const teamRange = root.querySelector( '[data-calc-team-range]' );
-	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
-	const teamOut = root.querySelector( '[data-calc-team-out]' );
-	const teamDec = root.querySelector( '[data-calc-team-dec]' );
-	const teamInc = root.querySelector( '[data-calc-team-inc]' );
-
-	function paintSlider( n ) {
-		if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.TEAM_MAX > 0 ? ( n / M.TEAM_MAX ) * 100 : 0 }%` );
-		if ( teamOut ) teamOut.value = n;
-	}
-
-	function updateTeam( n ) {
-		state.team = Math.max( 0, Math.min( M.TEAM_MAX, n ) );
-		if ( state.members.length < state.team ) {
-			while ( state.members.length < state.team ) state.members.push( { tier: M.DEFAULT_TIER } );
-		} else if ( state.members.length > state.team ) {
-			state.members = state.members.slice( 0, state.team );
-		}
-		if ( teamRange ) teamRange.value = state.team;
-		if ( teamDec ) teamDec.disabled = state.team <= 0;
-		if ( teamInc ) teamInc.disabled = state.team >= M.TEAM_MAX;
-		paintSlider( state.team );
-		renderRoster( root, state, prices );
-		rerender();
-	}
-
-	if ( teamRange ) {
-		teamRange.addEventListener( 'input', () => updateTeam( parseInt( teamRange.value, 10 ) ) );
-		paintSlider( state.team );
-	}
-	if ( teamDec ) teamDec.addEventListener( 'click', () => updateTeam( state.team - 1 ) );
-	if ( teamInc ) teamInc.addEventListener( 'click', () => updateTeam( state.team + 1 ) );
+	// Team stepper — shared wiring (range + −/+ + readout); onUpdate keeps the
+	// roster in lock-step with the team size.
+	const stepper = bindStepper( root, {
+		rangeSel: '[data-calc-team-range]',
+		sliderSel: '[data-calc-team-slider]',
+		outSel: '[data-calc-team-out]',
+		decSel: '[data-calc-team-dec]',
+		incSel: '[data-calc-team-inc]',
+		max: M.TEAM_MAX,
+		valueFor: ( i ) => i,
+		current: () => state.team,
+		onUpdate: ( n ) => {
+			state.team = n;
+			if ( state.members.length < state.team ) {
+				while ( state.members.length < state.team ) state.members.push( { tier: M.DEFAULT_TIER } );
+			} else if ( state.members.length > state.team ) {
+				state.members = state.members.slice( 0, state.team );
+			}
+			renderRoster( root, state, prices );
+			rerender();
+		},
+	} );
+	stepper.paintCurrent();
 
 	// Commitment radio group (WAI-ARIA pattern, see §7)
 	const commitRadios = Array.from( root.querySelectorAll( '[data-calc-commitment-group] [data-calc-commitment]' ) );
@@ -568,27 +532,7 @@ function bindEvents( root, state, prices, annualDiscount ) {
 		commitRadios.forEach( ( radio ) => {
 			radio.addEventListener( 'click', () => selectCommit( radio ) );
 		} );
-		const navKeys = [ 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown' ];
-		commitRadios.forEach( ( radio, idx ) => {
-			radio.addEventListener( 'keydown', ( e ) => {
-				if ( navKeys.includes( e.key ) ) {
-					e.preventDefault();
-					e.stopPropagation();
-					let nextIdx;
-					if ( e.key === 'ArrowLeft' || e.key === 'ArrowUp' ) {
-						nextIdx = idx <= 0 ? commitRadios.length - 1 : idx - 1;
-					} else {
-						nextIdx = idx >= commitRadios.length - 1 ? 0 : idx + 1;
-					}
-					commitRadios[ nextIdx ].focus();
-					selectCommit( commitRadios[ nextIdx ] );
-				} else if ( e.key === 'Enter' || e.key === ' ' ) {
-					e.preventDefault();
-					e.stopPropagation();
-					selectCommit( radio );
-				}
-			}, { capture: true } );
-		} );
+		bindRovingRadio( commitRadios, selectCommit );
 	}
 
 	// Annual checkbox
@@ -623,21 +567,7 @@ function bindEvents( root, state, prices, annualDiscount ) {
 	} );
 
 	// Breakdown trigger proxies into the full-width <details>
-	const breakdownTrigger = root.querySelector( '[data-breakdown-trigger]' );
-	const breakdownDetails = document.getElementById( 'workspace-pricing-methodology' );
-	if ( breakdownTrigger && breakdownDetails ) {
-		breakdownTrigger.addEventListener( 'click', () => {
-			const wasOpen = breakdownDetails.open;
-			breakdownDetails.open = ! wasOpen;
-			breakdownTrigger.setAttribute( 'aria-expanded', String( ! wasOpen ) );
-			if ( ! wasOpen ) {
-				breakdownDetails.scrollIntoView( { behavior: 'smooth', block: 'start' } );
-			}
-		} );
-		breakdownDetails.addEventListener( 'toggle', () => {
-			breakdownTrigger.setAttribute( 'aria-expanded', String( breakdownDetails.open ) );
-		} );
-	}
+	bindBreakdownTrigger( root, 'workspace-pricing-methodology' );
 
 	return rerender;
 }
@@ -651,17 +581,6 @@ function initCalc( root ) {
 
 	const state = readURL();
 
-	const teamRange = root.querySelector( '[data-calc-team-range]' );
-	const teamSlider = root.querySelector( '[data-calc-team-slider]' );
-	if ( teamRange ) teamRange.value = state.team;
-	const teamOut = root.querySelector( '[data-calc-team-out]' );
-	if ( teamSlider ) teamSlider.style.setProperty( '--pct', `${ M.TEAM_MAX > 0 ? ( state.team / M.TEAM_MAX ) * 100 : 0 }%` );
-	if ( teamOut ) teamOut.value = state.team;
-	const teamDec = root.querySelector( '[data-calc-team-dec]' );
-	const teamInc = root.querySelector( '[data-calc-team-inc]' );
-	if ( teamDec ) teamDec.disabled = state.team <= 0;
-	if ( teamInc ) teamInc.disabled = state.team >= M.TEAM_MAX;
-
 	root.querySelectorAll( '[data-calc-commitment-group] [data-calc-commitment]' ).forEach( ( btn ) => {
 		btn.setAttribute( 'aria-checked', parseInt( btn.getAttribute( 'data-calc-commitment' ), 10 ) === state.commitment ? 'true' : 'false' );
 	} );
@@ -674,8 +593,10 @@ function initCalc( root ) {
 	const rerender = bindEvents( root, state, prices, annualDiscount );
 	rerender();
 
-	// Share row (email + copy link) — shared handler module.
-	initCalcShare( root, {
+	// Share row (email + copy link) — shared handler module. The share section
+	// lives OUTSIDE the calc body grid (see the sticky aside restructure), so
+	// look it up from the wrapper parent rather than the data-js root.
+	initCalcShare( root.parentElement, {
 		slug: 'workspace-pricing',
 		getState: () => ( {
 			team:       state.team,

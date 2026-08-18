@@ -1,0 +1,514 @@
+@use '../02-tokens/breakpoints' as bp;
+
+// ============================================================
+// 257 Office Costs Calculator — block-specific overrides
+// ============================================================
+// Shared calculator styling lives in _calc-base.scss (.calc__*).
+// This file holds only the office-costs specifics: the group
+// headings, the per-member days roster, the input-suffix rows,
+// the booking add-on card, the scenario slots + compare dialog,
+// the breakdown category grid and the custom-expense rows.
+// The result headline, savings band and chart all reuse the
+// shared .calc__result-grid-headline / .calc__chart* recipes.
+// ============================================================
+
+.office-costs {
+	padding-block: var(--space-xl-3xl);
+}
+
+// On phones, give the calc card the full viewport width (same as the
+// other calculator blocks) instead of the global inline padding.
+@media (max-width: #{bp.$bp-md}) {
+	.office-costs .wrapper {
+		--wrapper-padding-inline: 0;
+	}
+}
+
+// The share row lives outside the .calc__body grid (so the sticky result
+// column releases before it), so the grid gap no longer spaces it.
+.office-costs .calc__share {
+	margin-block-start: var(--space-m);
+}
+
+// Team-size slider readout runs 0–15 — 2 digits, so reserve 2ch to stop
+// the readout nudging the controls when crossing 9 → 10.
+.office-costs .calc__slider-value {
+	min-inline-size: 2ch;
+}
+
+// Step the input font size down one notch in the type scale, and constrain
+// width so the suffix wraps naturally (matching the demo calculator layout).
+.office-costs .calc__input {
+	font-size: var(--text-m-size);
+	max-inline-size: 160px;
+}
+
+.office-costs .office-costs__input-row .calc__input {
+	max-inline-size: 140px;
+}
+
+// ── Group headings ──────────────────────────────────────────
+// The seven section headers inside the inputs column, separated with a
+// hairline so each group reads as its own card section.
+.office-costs__group-heading {
+	margin: 0;
+	padding-block-start: var(--space-l);
+	border-block-start: 1px solid var(--color-border-tertiary);
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-s-size);
+	font-weight: 700;
+	letter-spacing: var(--kerning-caps);
+	text-transform: uppercase;
+	color: var(--color-content-secondary);
+}
+
+.office-costs__group-heading:first-child {
+	padding-block-start: 0;
+	border-block-start: 0;
+}
+
+// ── Slider + input suffixes ────────────────────────────────
+// "person / people" after the team readout; the unitary labels inside the
+// input rows ($/m²/yr, /mo, /pp/yr…). Monospace, muted, so the numbers lead.
+.office-costs__slider-suffix,
+.office-costs__input-suffix {
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-s-size);
+	color: var(--color-content-secondary);
+	white-space: nowrap;
+}
+
+// ── Grade radio cards (4-column grid) ──────────────────────
+.office-costs__radio-cards {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--space-xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.office-costs__radio-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-2xs);
+	inline-size: auto;
+	padding: var(--space-xs);
+	border: 1px solid var(--color-border-tertiary);
+	border-radius: var(--corner-radius-m);
+	background-color: color-mix(in srgb, var(--color-content-inverse) 70%, transparent);
+	color: var(--color-content-primary);
+	text-align: initial;
+	cursor: pointer;
+	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+
+	.office-costs__radio-indicator {
+		position: absolute;
+		top: var(--space-s);
+		right: var(--space-s);
+		inline-size: var(--space-s);
+		block-size: var(--space-s);
+		border-radius: 999px;
+		border: 2px solid var(--color-content-primary);
+		background-color: transparent;
+		transition: background-color var(--transition-speed) ease, border-color var(--transition-speed) ease;
+	}
+
+	&[aria-checked="true"] .office-costs__radio-indicator {
+		background-color: var(--color-btn-primary-bg);
+		border-color: var(--color-btn-primary-bg);
+	}
+
+	&[aria-checked="true"] {
+		border-color: var(--color-border-primary);
+		background-color: var(--color-content-inverse);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.office-costs__radio-card-title {
+	font-weight: 600;
+}
+
+.office-costs__radio-card-body {
+	color: var(--color-content-secondary);
+}
+
+// ── Range-input rows (one or more number inputs, optional suffix) ──
+// Flex-wrap so suffix text breaks to a new line when the input hits its
+// max-width — matches the demo calculator's oc-var__field-row layout.
+.office-costs__input-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--space-xs);
+}
+
+.office-costs__input-row--2,
+.office-costs__input-row--3 {
+	gap: var(--space-xs);
+}
+
+// Each input in a multi-input row gets its own mini-label above it.
+.office-costs__input-item {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+}
+
+.office-costs__input-item-label {
+	color: var(--color-content-secondary);
+}
+
+// Inside the booking option card the row needs a little air above it.
+.office-costs__input-row--booking {
+	margin-block-start: var(--space-xs);
+}
+
+// ── Per-member days roster ─────────────────────────────────
+.office-costs__days-roster {
+	display: grid;
+	gap: var(--space-2xs);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.office-costs__roster-row {
+	display: grid;
+	grid-template-columns: minmax(7rem, 1fr) minmax(0, 2fr) auto;
+	gap: var(--space-m);
+	align-items: center;
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+		gap: var(--space-2xs);
+	}
+}
+
+.office-costs__roster-label {
+	color: var(--color-content-secondary);
+}
+
+.office-costs__roster-slider {
+	// Let the grid column (minmax 0) size it instead of the base 100%.
+	min-inline-size: 0;
+	inline-size: auto;
+}
+
+.office-costs__roster-out {
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-s-size);
+	color: var(--color-content-secondary);
+	white-space: nowrap;
+}
+
+// ── Stat stack (the four rows under the headline) ─────────
+.office-costs__stats {
+	--stack-gap: var(--space-2xs);
+}
+
+// Equal 3-column rows so label / value / unit align consistently across rows.
+.office-costs .calc__stat {
+	grid-template-columns: 1fr 1fr 1fr;
+}
+
+// The base .calc__stat-label / .calc__stat-unit use --color-content-secondary
+// (with extra opacity on the unit), which is too low-contrast in the result
+// aside. Lift both to the same colour as the headline number.
+.office-costs .calc__stat-label,
+.office-costs .calc__stat-unit {
+	color: var(--color-content-inverse);
+	opacity: 1;
+}
+
+// ── Scenario slots ─────────────────────────────────────────
+.office-costs__scenarios {
+	--stack-gap: var(--space-xs);
+	padding: var(--space-m);
+	border-radius: var(--corner-radius-m);
+	background-color: var(--color-surface-secondary);
+}
+
+.office-costs__scenarios-label {
+	color: var(--color-content-secondary);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+}
+
+.office-costs__scenarios-row {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--space-2xs);
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.office-costs__scenario-slot {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--space-2xs);
+	padding: var(--space-s);
+	border: 1px solid var(--color-border-tertiary);
+	border-radius: var(--corner-radius-m);
+	background-color: transparent;
+	color: var(--color-content-primary);
+	text-align: initial;
+	cursor: pointer;
+	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.office-costs__scenario-num {
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-xs-size);
+	opacity: 0.6;
+}
+
+.office-costs__scenario-name {
+	font-weight: 700;
+	overflow-wrap: anywhere;
+}
+
+.office-costs__scenario-value {
+	font-family: var(--font-monospace-family);
+	font-variant-numeric: tabular-nums;
+	font-size: var(--text-s-size);
+	color: var(--color-content-secondary);
+}
+
+// Filled slots hold a live number — lift the card a touch.
+.office-costs__scenario-slot--filled {
+	border-color: var(--color-border-primary);
+	background-color: var(--color-content-inverse);
+}
+
+.office-costs__scenarios-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-m);
+}
+
+.office-costs__scenarios-btn {
+	border: 0;
+	border-bottom: 1px solid var(--color-border-secondary);
+	padding: 0 0 var(--space-3xs);
+	background-color: transparent;
+	color: var(--color-content-primary);
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-s-size);
+	cursor: pointer;
+	transition: border-color var(--transition-speed) ease, color var(--transition-speed) ease;
+
+	&:hover {
+		border-color: var(--color-btn-primary-bg);
+		color: var(--color-btn-primary-bg);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+// ── Compare dialog ─────────────────────────────────────────
+.office-costs__compare {
+	inline-size: min(42rem, calc(100vw - 2 * var(--space-m)));
+	border: 1px solid var(--color-border-primary);
+	border-radius: var(--corner-radius-xl);
+	background-color: var(--color-surface-primary);
+	color: var(--color-content-primary);
+	padding: 0;
+
+	&::backdrop {
+		background-color: color-mix(in srgb, var(--color-content-primary) 45%, transparent);
+		backdrop-filter: blur(2px);
+	}
+
+	// Fully custom dialog (no native chrome): drop the UA paddings/colors.
+	&[open] {
+		display: flex;
+		flex-direction: column;
+	}
+}
+
+.office-costs__compare-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-m);
+	padding: var(--space-m);
+	border-bottom: 1px solid var(--color-border-tertiary);
+}
+
+.office-costs__compare-title {
+	margin: 0;
+}
+
+.office-costs__compare-close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	inline-size: var(--space-l);
+	block-size: var(--space-l);
+	padding: 0;
+	border: 1px solid var(--color-border-tertiary);
+	border-radius: 50%;
+	background-color: transparent;
+	color: var(--color-content-primary);
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-l-size);
+	line-height: 1;
+	cursor: pointer;
+	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease;
+
+	&:hover {
+		border-color: var(--color-border-primary);
+		background-color: var(--color-content-inverse);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.office-costs__compare-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--space-s);
+	padding: var(--space-m);
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.office-costs__compare-col {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding: var(--space-s);
+	border: 1px solid var(--color-border-tertiary);
+	border-radius: var(--corner-radius-m);
+}
+
+.office-costs__compare-col-value {
+	font-variant-numeric: tabular-nums;
+}
+
+.office-costs__compare-col-meta {
+	color: var(--color-content-secondary);
+}
+
+.office-costs__compare-empty {
+	color: var(--color-content-secondary);
+	opacity: 0.7;
+}
+
+// ── Breakdown extras (category grid + value-add rows) ──────
+.office-costs__sub-heading {
+	margin-block-start: var(--space-l);
+}
+
+.office-costs__category-grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--space-s);
+
+	@media (max-width: #{bp.$bp-md}) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	@media (max-width: 600px) {
+		grid-template-columns: 1fr;
+	}
+}
+
+.office-costs__category {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding: var(--space-s);
+	border: 1px solid var(--color-border-tertiary);
+	border-radius: var(--corner-radius-m);
+	background-color: var(--color-surface-secondary);
+}
+
+.office-costs__category-label {
+	color: var(--color-content-secondary);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+}
+
+.office-costs__category-value {
+	font-variant-numeric: tabular-nums;
+}
+
+.office-costs__category-pct {
+	color: var(--color-content-secondary);
+}
+
+// Sourced-line anchor inside the breakdown rows: small, monospace, and the
+// only coloured element so it reads as "go read the research".
+.office-costs__row-source {
+	color: var(--color-link);
+	text-decoration: underline;
+	text-underline-offset: 2px;
+	white-space: nowrap;
+
+	&:hover {
+		color: var(--color-link-hover);
+	}
+}
+
+// The breakdown rows carry a label + note + optional source link; the base
+// .calc__compare-row-label is flex so the source drops in naturally. Keep the
+// note off the action line so the numbers stay the visual anchor.
+.office-costs__breakdown-row .calc__compare-row-label,
+.office-costs__value-row .calc__compare-row-label {
+	flex-wrap: wrap;
+}
+
+// ── Custom expense rows (label + value + remove) ───────────
+.office-costs__custom-row {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 8em auto;
+	gap: var(--space-2xs);
+	align-items: center;
+
+	@media (max-width: 600px) {
+		grid-template-columns: minmax(0, 1fr) auto;
+	}
+}
+
+// The row reuses the base .calc__input look but at a smaller size and with
+// zero min-width so the label + value fields shrink to fit the inputs
+// column instead of overflowing it horizontally. Override the max-width
+// cap so custom-row fields stretch the full container width.
+.office-costs__custom-row .calc__input {
+	min-inline-size: 0;
+	max-inline-size: none;
+	font-size: var(--text-m-size);
+}
+
+.office-costs__custom-value {
+	font-variant-numeric: tabular-nums;
+}

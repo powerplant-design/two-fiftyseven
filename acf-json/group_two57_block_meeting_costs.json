@@ -1,0 +1,118 @@
+{
+    "key": "group_two57_block_meeting_costs",
+    "title": "257 Meeting Costs Calculator Block",
+    "fields": [
+        {
+            "key": "field_two57_mc_eyebrow",
+            "label": "Eyebrow",
+            "name": "mc_eyebrow",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Optional small label above the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Meeting cost calculator",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_mc_heading",
+            "label": "Heading",
+            "name": "mc_heading",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "The H1 heading for the calculator.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "what does a meeting, workshop or away-day really cost?",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_two57_mc_tagline",
+            "label": "Tagline",
+            "name": "mc_tagline",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Intro paragraph below the heading.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Compare running your event at an industry-standard Wellington venue against running it at two/fiftyseven. Group size and times drive a mid-market benchmark band; catering, AV, facilitation and materials are added as you select them.",
+            "new_lines": "br",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": ""
+        },
+        {
+            "key": "field_two57_mc_colour_space",
+            "label": "Colour space",
+            "name": "colour_space",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Controls the colour theme for this block.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "neutral": "Neutral",
+                "forest": "Forest",
+                "purple": "Purple",
+                "maroon": "Maroon"
+            },
+            "default_value": "forest",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "block",
+                "operator": "==",
+                "value": "acf\/meeting-costs"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": "Controls the heading and colour space for the 257 Meeting Costs calculator block.",
+    "show_in_rest": 1,
+    "display_title": "",
+    "allow_ai_access": false,
+    "ai_description": "",
+    "modified": 1785813321642
+}

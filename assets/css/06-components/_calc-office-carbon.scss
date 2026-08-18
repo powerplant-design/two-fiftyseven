@@ -1,0 +1,38 @@
+// ============================================================
+// 257 Office Carbon Calculator — block-specific overrides
+// ============================================================
+// Shared calculator styling lives in _calc-base.scss (.calc__*).
+// This file holds only the office-carbon-specific shell +
+// anything that deviates from the shared defaults.
+// ============================================================
+
+@use '../02-tokens/breakpoints' as bp;
+
+.office-carbon {
+	padding-block: var(--space-xl-3xl);
+}
+
+// Sourced-note text rendered inside breakdown rows by the engine
+.calc-source__note {
+	display: inline;
+	font-size: var(--text-xs-size);
+	opacity: 0.65;
+}
+
+// kgCO₂e / tCO₂e unit inside breakdown row values — two steps down the type
+// scale (m → s → xs) and baseline-aligned with the number beside it.
+.office-carbon .calc__compare-row-value .calc__kg-unit {
+	display: inline-block;
+	vertical-align: baseline;
+	font-size: var(--text-xs-size);
+	line-height: 1;
+	margin-inline-start: 0.35em;
+	white-space: nowrap;
+}
+
+// Inside the sticky result figures the unit sits at xl (two steps below the
+// 3xl number) while the breakdown lines keep the xs treatment above.
+.office-carbon .calc__result-figure .calc__kg-unit {
+	font-size: var(--text-xl-size);
+	margin-inline-start: 0.3em;
+}

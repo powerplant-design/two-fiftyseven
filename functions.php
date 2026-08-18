@@ -341,6 +341,106 @@ require_once get_template_directory() . '/inc/mcp-event-helper.php';
 
 // Calculators — shared "email this calculation" REST endpoint + MailPoet
 // lead capture (reusable across every calculator block's share row).
+//
+// Meet-pricing room slugs → display name + ACF key stub. Single source of
+// truth shared by the block.php tile renderer, the wp_head rooms injector
+// below, and the email composer (inc/calc-share-email.php).
+function two57_meet_rooms(): array {
+	return [
+		'meeting-room'   => [ 'name' => 'Meeting Room',   'key' => 'meeting' ],
+		'silver-linings' => [ 'name' => 'Silver Linings', 'key' => 'silver_linings' ],
+		'studio'         => [ 'name' => 'Studio',         'key' => 'studio' ],
+		'workshop'       => [ 'name' => 'Workshop Space', 'key' => 'workshop' ],
+		'event'          => [ 'name' => 'Event Space',    'key' => 'event' ],
+		'entire'         => [ 'name' => 'Entire Space',   'key' => 'entire' ],
+	];
+}
+
+// Render the standard calculator section intro (eyebrow / heading / tagline)
+// used identically by every calculator block template.
+function two57_calc_intro( string $eyebrow = '', string $heading = '', string $tagline = '', bool $is_preview = false ): void {
+	if ( $eyebrow || $heading || $tagline ) : ?>
+		<div class="calc__intro | stack" data-scroll data-scroll-repeat>
+			<?php if ( $eyebrow ) : ?>
+				<p class="calc__eyebrow | text-monospace text-s">
+					<?php echo esc_html( $eyebrow ); ?>
+				</p>
+			<?php endif; ?>
+			<?php if ( $heading ) : ?>
+				<h1 class="calc__heading | text-3xl text-wrap-balance"><?php echo esc_html( $heading ); ?></h1>
+			<?php endif; ?>
+			<?php if ( $tagline ) : ?>
+				<p class="calc__tagline | text-l text-wrap-balance">
+					<?php echo nl2br( esc_html( $tagline ) ); ?>
+				</p>
+			<?php endif; ?>
+		</div>
+	<?php elseif ( $is_preview ) : ?>
+		<p style="opacity:0.5;text-align:center;padding:1rem;">Add a heading in the block settings →</p>
+	<?php endif;
+}
+
+// Render the standard calculator share row (email me + copy link) used by
+// every calculator block template. Per-calc copy overrides via $copy; the
+// defaults are the "numbers" wording shared by workspace / hours / carbon.
+function two57_calc_share( array $copy = [] ): void {
+	$copy = wp_parse_args( $copy, [
+		'title'      => 'save your number, share it, send it on',
+		'email_title' => 'Email me these numbers',
+		'email_body'  => 'Get the numbers and a one-line summary in your inbox, ready to forward to your team.',
+		'copy_title'  => 'Share the numbers',
+		'copy_body'   => 'Same numbers, any browser, your team clicks and sees the exact same numbers.',
+	] );
+	?>
+	<div class="calc__share | stack" data-calc-share>
+		<p class="calc__share-eyebrow | text-monospace text-s">Take this with you</p>
+		<h2 class="calc__share-title | text-3xl text-wrap-balance"><?php echo esc_html( $copy['title'] ); ?></h2>
+
+		<div class="calc__share-row">
+
+			<!-- Email card -->
+			<div class="calc__share-card | stack">
+				<h3 class="calc__share-card-title | text-l font-bold"><?php echo esc_html( $copy['email_title'] ); ?></h3>
+				<p class="calc__share-card-body"><?php echo esc_html( $copy['email_body'] ); ?></p>
+				<form class="calc__share-form | cluster" data-calc-share-email novalidate>
+					<input
+						class="calc__share-input"
+						type="email" name="email"
+						placeholder="you@example.com"
+						autocomplete="email"
+						data-calc-share-email-input
+						aria-label="Your email"
+						required
+					>
+					<input
+						class="calc__share-honeypot visually-hidden"
+						type="text" name="website" tabindex="-1" autocomplete="off"
+						aria-hidden="true"
+						data-calc-share-honeypot
+					>
+					<button class="btn" data-type="primary" type="submit" data-calc-share-submit>Send →</button>
+					<p class="calc__share-consent | text-s">
+						<label class="calc__share-check">
+							<input type="checkbox" name="consent" checked data-calc-share-consent>
+							<span class="calc__share-consent-text">By submitting, I agree to two/fiftyseven contacting me to follow up about these numbers — see the <a href="/contact-policy/">Contact Policy</a></span>
+						</label>
+					</p>
+				</form>
+				<p class="calc__share-status | text-xs text-monospace" data-calc-share-status role="status" aria-live="polite"></p>
+			</div>
+
+			<!-- Copy link card -->
+			<div class="calc__share-card | stack">
+				<h3 class="calc__share-card-title | text-l font-bold"><?php echo esc_html( $copy['copy_title'] ); ?></h3>
+				<p class="calc__share-card-body"><?php echo esc_html( $copy['copy_body'] ); ?></p>
+				<button class="btn" data-type="secondary" type="button" data-calc-share-copy>Copy link →</button>
+			</div>
+
+		</div>
+	</div>
+	<?php
+}
+
 require_once get_template_directory() . '/inc/calc-share-email.php';
 
 
@@ -615,6 +715,96 @@ add_action( 'acf/init', function (): void {
 		'category'        => 'layout',
 		'icon'            => 'calculator',
 		'keywords'        => [ 'calculator', 'workspace', 'pricing', 'office', 'costs', 'membership' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'meet-pricing',
+		'title'           => __( '257 Calc Meet Pricing', 'two-fiftyseven' ),
+		'description'     => __( 'Meeting + event room quote tool: pick a room, duration, dates and add-ons, see an itemised total live. Optional Host variant restricts to the large rooms only.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/meet-pricing/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'meeting', 'pricing', 'room', 'event', 'quote', 'book' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'office-carbon',
+		'title'           => __( '257 Calc Office Carbon', 'two-fiftyseven' ),
+		'description'     => __( 'Carbon position calculator: private central-Wellington office vs two/fiftyseven for a team, with a 200% verified offset. Tadpole ACE 2025 methodology. For ESG / sustainability / procurement leads.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/office-carbon/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'carbon', 'offset', 'esg', 'climate', 'office' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'meeting-costs',
+		'title'           => __( '257 Calc Meeting Costs', 'two-fiftyseven' ),
+		'description'     => __( 'Meeting cost comparison calculator: running an event at an industry-standard Wellington venue vs at two/fiftyseven. Group size, times, catering, AV, facilitation, materials.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/meeting-costs/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'meeting', 'costs', 'venue', 'event', 'workshop', 'comparison' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'office-costs',
+		'title'           => __( '257 Calc Office Costs', 'two-fiftyseven' ),
+		'description'     => __( 'Wellington office cost calculator: configure rent, outgoings, utilities, cleaning, compliance, furniture, admin, legals and custom lines for a team, compared against two/fiftyseven memberships. 3-slot scenario saving.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/office-costs/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'office', 'costs', 'rent', 'scenario', 'comparison', 'expenses' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'calc-widget',
+		'title'           => __( '257 Calc Widget', 'two-fiftyseven' ),
+		'description'     => __( 'Lightweight quote teaser for meeting room bookings. Pick people, hours and a room (auto-recommended), see a starting estimate, deep-link to the full quote tool. Optional Impact Discount toggle.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/calc-widget/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'widget', 'quote', 'meeting', 'estimate', 'teaser' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
+
+	acf_register_block_type( [
+		'name'            => 'calc-summary',
+		'title'           => __( '257 Calc Summary', 'two-fiftyseven' ),
+		'description'     => __( 'Dashboard widget: two sliders (team size + avg days/week) feed four linked cards — annual cost at 257, savings vs a private office, net carbon position, hours-to-impact giving. Each card links to its full calculator.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/calc-summary/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'summary', 'dashboard', 'cards', 'workspace', 'cost', 'carbon', 'giving' ],
 		'mode'            => 'edit',
 		'supports'        => [
 			'innerBlocks' => false,
@@ -1050,7 +1240,7 @@ add_action( 'wp_head', function (): void {
 	// — Memberships + day passes → prices object —
 	$prices = [
 		'dedicated' => [
-			'name'      => 'Dedicated 7 days/week',
+			'name'      => 'Dedicated Desk',
 			'shortName' => 'Dedicated',
 			'price'     => (int) get_field( 'membership_dedicated_monthly', 'option' ),
 			'unit'      => 'monthly',
@@ -1113,51 +1303,17 @@ add_action( 'wp_head', function (): void {
 
 	$annual_discount_pct = (float) get_field( 'annual_prepay_discount_pct', 'option' );
 
-	// — Rooms → rooms object —
-	$rooms = [
-		'meeting-room'   => [
-			'name'      => 'Meeting room',
-			'capacity'  => (int) get_field( 'room_meeting_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_meeting_day', 'option' ),
-			'hour'      => (int) get_field( 'room_meeting_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_meeting_evening', 'option' ),
-		],
-		'silver-linings' => [
-			'name'      => 'Silver Linings',
-			'capacity'  => (int) get_field( 'room_silver_linings_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_silver_linings_day', 'option' ),
-			'hour'      => (int) get_field( 'room_silver_linings_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_silver_linings_evening', 'option' ),
-		],
-		'studio'         => [
-			'name'      => 'Studio',
-			'capacity'  => (int) get_field( 'room_studio_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_studio_day', 'option' ),
-			'hour'      => (int) get_field( 'room_studio_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_studio_evening', 'option' ),
-		],
-		'workshop'       => [
-			'name'      => 'Workshop space',
-			'capacity'  => (int) get_field( 'room_workshop_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_workshop_day', 'option' ),
-			'hour'      => (int) get_field( 'room_workshop_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_workshop_evening', 'option' ),
-		],
-		'event'          => [
-			'name'      => 'Event space',
-			'capacity'  => (int) get_field( 'room_event_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_event_day', 'option' ),
-			'hour'      => (int) get_field( 'room_event_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_event_evening', 'option' ),
-		],
-		'entire'         => [
-			'name'      => 'Entire two/fiftyseven',
-			'capacity'  => (int) get_field( 'room_entire_capacity', 'option' ),
-			'day'       => (int) get_field( 'room_entire_day', 'option' ),
-			'hour'      => (int) get_field( 'room_entire_hour', 'option' ),
-			'evening'   => (int) get_field( 'room_entire_evening', 'option' ),
-		],
-	];
+	// — Rooms → rooms object (slugs + names from two57_meet_rooms()) —
+	$rooms = [];
+	foreach ( two57_meet_rooms() as $slug => $room_info ) {
+		$rooms[ $slug ] = [
+			'name'      => $room_info['name'],
+			'capacity'  => (int) get_field( 'room_' . $room_info['key'] . '_capacity', 'option' ),
+			'day'       => (int) get_field( 'room_' . $room_info['key'] . '_day', 'option' ),
+			'hour'      => (int) get_field( 'room_' . $room_info['key'] . '_hour', 'option' ),
+			'evening'   => (int) get_field( 'room_' . $room_info['key'] . '_evening', 'option' ),
+		];
+	}
 
 	// — Add-ons + catering → addons object —
 	$addons = [
