@@ -781,6 +781,21 @@ add_action( 'acf/init', function (): void {
 			'align'       => false,
 		],
 	] );
+
+	acf_register_block_type( [
+		'name'            => 'calc-widget',
+		'title'           => __( '257 Calc Widget', 'two-fiftyseven' ),
+		'description'     => __( 'Lightweight quote teaser for meeting room bookings. Pick people, hours and a room (auto-recommended), see a starting estimate, deep-link to the full quote tool. Optional Impact Discount toggle.', 'two-fiftyseven' ),
+		'render_template' => get_template_directory() . '/blocks/calc-widget/block.php',
+		'category'        => 'layout',
+		'icon'            => 'calculator',
+		'keywords'        => [ 'calculator', 'widget', 'quote', 'meeting', 'estimate', 'teaser' ],
+		'mode'            => 'edit',
+		'supports'        => [
+			'innerBlocks' => false,
+			'align'       => false,
+		],
+	] );
 } );
 
 

@@ -639,7 +639,7 @@ assets/css/06-components/
 
 ## Status
 
-Last updated: 2026-08-18 (work on `feature/calculators-continued` branch)
+Last updated: 2026-08-18 (T1 calc widget built on `feature/calculators-continued`)
 
 - [x] **F1** — ACF Options SSOT ✅ committed (`2ee8788`)
 - [x] **F2** — `window.twofiftyseven` injector ✅ committed (`2ee8788`)
@@ -656,7 +656,7 @@ Last updated: 2026-08-18 (work on `feature/calculators-continued` branch)
 - [x] **C5** — Office carbon ✅ built on `feature/calculators-continued` (see "C5 — Office carbon implementation" below; pending commit)
 - [x] **C4** — Meeting costs ✅ built + staged on `feature/calculators-continued` (see "C4 — Meeting costs implementation plan" + "C4 — Implementation state (2026-08-18)" below; pending commit — reverified green `2026-08-18`)
 - [x] **C3** — Office costs ✅ built + staged on `feature/calculators-continued` (see "C3 — Office costs implementation plan" + "C3 — Implementation state (2026-08-18)" below; pending commit)
-- [ ] **T1** — Quick quote teaser
+- [x] **T1** — Quick quote teaser ✅ built on `feature/calculators-continued` (see "T1 — Calc Widget implementation" below; pending commit)
 - [ ] **T2** — Impact stats partial
 
 > **Next action (2026-08-11):** merge `feature/calculators` → `main` and deploy so C1 + C6 (slider system, tooltip fix, default tier) can be tested on the live site. After deploy, verify on live: slider drag/stepper/readout on both calcs, roster defaulting to Dedicated, annual-prepay row visibility, and tooltip behaviour on mobile (no horizontal overflow).
@@ -1128,3 +1128,16 @@ All items implemented (2026-08-17), in the recommended order:
 - **JS 9** — `restrictStepperInputs()` (C5 + C6), `bindBreakdownTrigger()` (C1, C5, C6), `bindSourceTooltips()` (C1 + C5) extracted into calc-utils.js; local copies removed.
 
 Verified: `npm run build` clean (only pre-existing swiper `@import` deprecation warnings, unchanged rules in dist — dead `.calc__stepper` gone, mixin-expanded `.calc__stepper-btn` / `.calc-source__trigger` present, all stepper/breakdown/tooltip selectors in the JS bundle) + `php -l` clean on `functions.php` and all four `block.php`s.
+
+### T1 — Calc Widget implementation (2026-08-18)
+
+Port of the standalone `meetings/index.html` `.quick-quote` teaser (`shared-js/quote-preview.js`) into a lightweight ACF block (`calc-widget`) using the shared `.calc__*` catalogue. No email/share, no URL round-trip, no breakdown — it's a teaser that deep-links to the full C2 meet-pricing calculator with state carried via URL params (`?room&dur=hour&hours&people&impact`).
+
+- **Engine** — `assets/js/modules/calc-widget.js` exports `initCalcWidget()` on `[data-js="calc-widget"]`. People stepper via `bindStepper` (same non-linear `PEOPLE_SCALE` as meet-pricing: 1–60 by 1, then 70–200 by 10); hours stepper via `bindStepper` (1–12, value-based); room radio pills with `bindRovingRadio` (arrow-key nav); auto-recommendation always picks the smallest room that fits the current people count (re-recommends on every people-slider change, so the total tracks in both directions); impact discount toggle (whole-card click target, matching office-costs booking pattern); impact copy swap (giving vs receiving when discount is applied); CTA `href` updated on every render with `URLSearchParams` carrying `room/dur/hours/people/impact` to the full calc.
+- **Markup** — `blocks/calc-widget/block.php` (identity `calc-widget`, `data-color-space`): intro (`two57_calc_intro`), `.calc__body` (1.5fr/1fr grid), inputs card (people slider row, hours slider row, room radio grid with capacity from SSOT, impact discount `.calc__option-card`), sticky `.calc__result--sticky` aside (estimated total + impact statement with label matching `.calc__result-label` styling + CTA button using `.calc__breakdown-trigger` with chevron rotated right). Room slugs + names from `two57_meet_rooms()`; capacities from ACF `room_<key>_capacity`; rates read by JS from `window.twofiftyseven.rooms` (no DOM duplication).
+- **ACF** — `acf-json/group_two57_block_calc_widget.json` (`cw_eyebrow`/`cw_heading`/`cw_tagline` + `room_set` select [all/host] + `pricing_url` page_link [admin picks the full calc page] + `colour_space` select); location `acf/calc-widget`; registered in `functions.php` after `office-costs`. Default intro: eyebrow "Estimate", heading "get a number for your meeting", tagline "Pick a room, your duration and how many people…".
+- **SCSS** — `assets/css/06-components/_calc-widget.scss` (shell padding, 1.5fr/1fr body grid, slider readout 2 steps down `--text-3xl-size` + 3ch, room pill grid 2-col→3-col, room tiles matching meet-pricing style, impact statement, CTA caret rotated -45deg to point right, `text-decoration: none` on the `<a>` trigger); forwarded in `_index.scss`.
+- **Wiring** — `main.js` + `transitions.js` (one import + two call sites: bfcache + page:view).
+- **Refinements:** impact label uses `.calc__result-label | text-l` (same as "Estimated total"); suffix + context merged into single line ("of subsidised space which has contributed $450,000+ paid forward since 2021") with "of subsidised space" in `<strong>`; talk-link block removed; `pricing_url` ACF field is `page_link` (page picker) not free-text `url`.
+
+**Verify (residual):** in-browser pass — people slider auto-room-switch both directions; hours slider total update; room pill manual selection; impact discount toggle (whole card) + copy swap; CTA deep-link params; host room set renders only large rooms; no-JS fallback (static `$0` total + CTA href to pricing page).

@@ -1,0 +1,148 @@
+@use 'calc-base';
+@use '../02-tokens/breakpoints' as bp;
+
+// ============================================================
+// 257 Calc Widget — block-specific overrides
+// ============================================================
+// Lightweight quote teaser. Shared calculator styling lives in
+// _calc-base.scss (.calc__*). This file holds only the widget-
+// specific shell + room pills + impact statement.
+// ============================================================
+
+.calc-widget {
+	padding-block: var(--space-xl-3xl);
+}
+
+// Body grid — 1.5fr 1fr (form left wider than result right).
+.calc-widget .calc__body {
+	grid-template-columns: 1.5fr 1fr;
+
+	@media (max-width: #{bp.$bp-lg}) {
+		grid-template-columns: 1fr;
+	}
+}
+
+// People slider readout — 3ch (people scale runs to 200).
+.calc-widget .calc__slider-value {
+	min-inline-size: 3ch;
+	font-size: var(--text-3xl-size);
+}
+
+// ── Room hint text ──────────────────────────────────────────
+.calc-widget__room-hint {
+	opacity: 0.55;
+	font-size: 0.7em;
+	font-weight: 400;
+}
+
+// ── Room pill grid ──────────────────────────────────────────
+// Reuses the meet-pricing room-tile layout: 2-col mobile, 3-col ≥700px.
+.calc-widget__room-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: var(--space-xs);
+
+	@media (min-width: 700px) {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.calc-widget__room-option {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding: var(--space-s);
+	border: 2px solid transparent;
+	border-radius: var(--corner-radius-m);
+	background-color: var(--color-content-inverse);
+	color: var(--color-content-primary);
+	font-family: var(--font-body-family);
+	text-align: left;
+	cursor: pointer;
+	transition: border-color var(--transition-speed) ease, background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+
+	&:hover:not([aria-disabled="true"]) {
+		border-color: var(--color-border-primary);
+	}
+
+	&[aria-checked="true"] {
+		background-color: var(--color-btn-primary-bg);
+		border-color: var(--color-btn-primary-bg);
+		color: var(--color-btn-primary-text);
+	}
+
+	&[aria-checked="true"] .calc-widget__room-cap {
+		color: color-mix(in srgb, var(--color-btn-primary-text) 75%, transparent);
+	}
+
+	&[data-recommended="true"]:not([aria-checked="true"]) {
+		border-color: var(--color-border-tertiary);
+	}
+
+	&[aria-disabled="true"] {
+		opacity: 0.35;
+		pointer-events: none;
+		cursor: not-allowed;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--color-border-primary);
+		outline-offset: 2px;
+	}
+}
+
+.calc-widget__room-name {
+	font-weight: 700;
+	font-size: var(--text-m-size);
+	line-height: 1.15;
+}
+
+.calc-widget__room-cap {
+	font-family: var(--font-monospace-family);
+	font-size: var(--text-xs-size);
+	text-transform: uppercase;
+	letter-spacing: var(--kerning-caps);
+	color: var(--color-content-secondary);
+}
+
+// ── Impact discount card ────────────────────────────────────
+.calc-widget__impact-title {
+	font-weight: 700;
+	color: var(--color-content-primary);
+}
+
+.calc-widget__impact-body {
+	margin: var(--space-2xs) 0 0;
+	color: var(--color-content-secondary);
+}
+
+// ── Impact statement in result aside ────────────────────────
+.calc-widget__impact {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2xs);
+	padding-block-start: var(--space-xs);
+	border-block-start: 1px solid var(--color-border-secondary);
+}
+
+.calc-widget__impact-amount {
+	font-variant-numeric: tabular-nums;
+	color: var(--color-content-inverse);
+	line-height: 1.1;
+}
+
+.calc-widget__impact-context {
+	color: color-mix(in srgb, var(--color-content-inverse) 78%, transparent);
+	margin: 0;
+
+	strong { color: var(--color-content-inverse); }
+}
+
+// ── CTA caret — rotate the shared chevron 90deg to point right ─
+.calc-widget__cta-caret::after {
+	transform: rotate(-45deg) translate(-1px, 1px);
+}
+
+.calc-widget .calc__breakdown-trigger {
+	text-decoration: none;
+}

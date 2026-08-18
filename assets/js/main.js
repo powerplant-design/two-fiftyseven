@@ -23,6 +23,7 @@ import { initMeetPricing } from './modules/meet-pricing.js';
 import { initOfficeCarbon } from './modules/office-carbon.js';
 import { initMeetingCosts } from './modules/meeting-costs.js';
 import { initOfficeCosts } from './modules/office-costs.js';
+import { initCalcWidget } from './modules/calc-widget.js';
 import { initNavDrawer }     from './modules/nav-drawer.js';
 import { initNavMobile }     from './modules/nav-mobile.js';
 
@@ -46,6 +47,7 @@ initMeetPricing();
 initOfficeCarbon();
 initMeetingCosts();
 initOfficeCosts();
+initCalcWidget();
 initTestimonials();
 initCaseStudies();
 initNavDrawer();
